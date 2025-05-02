@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: salahor20/tcs:db
+    container_name: tcs_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tcs
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - tcs_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: tcs_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - tcs_net
+
+  backend:
+    image: salahor20/tcs:backend
+    container_name: tcs_backend
+    env_file:
+      - .env.prod
+    command: >
+      sh -c "
+        sleep 10 &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - tcs_net
+
+  frontend:
+    image: salahor20/tcs:frontend
+    container_name: tcs_frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.prod
+    depends_on:
+      - backend
+    networks:
+      - tcs_net
+
+volumes:
+  db_data:
+
+networks:
+  tcs_net:
+    driver: bridge

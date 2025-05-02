@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: tcs_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tcs
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - tcs_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: tcs_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    networks:
+      - tcs_net
+
+  backend:
+    build:
+      context: ./backend/TCS
+      dockerfile: Dockerfile
+    container_name: tcs_backend
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend/tcs:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+    networks:
+      - tcs_net
+
+  frontend:
+    build:
+      context: ./frontend/tcs
+      dockerfile: Dockerfile
+    container_name: tcs_frontend
+    volumes:
+      - ./frontend/tcs:/app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.dev
+    stdin_open: true
+    tty: true
+    networks:
+      - tcs_net
+
+volumes:
+  db_data:
+
+networks:
+  tcs_net:
+    driver: bridge
