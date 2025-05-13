@@ -1,0 +1,87 @@
+/* ================================
+   Experience.css
+   ================================ */
+
+   .section {
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section h3 {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    color: #008291;
+  }
+  
+  .experience-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: start;
+  }
+  
+  .experience-item input[type="text"],
+  .experience-item textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+  }
+  
+  .experience-item input[type="text"]:focus,
+  .experience-item textarea:focus {
+    border-color: #008291;
+  }
+  
+  .experience-item input[type="text"]::placeholder,
+  .experience-item textarea::placeholder {
+    color: #aaa;
+  }
+  
+  .experience-item button {
+    background-color: transparent;
+    border: none;
+    color: #d9534f;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .experience-item button:hover {
+    color: #b52b27;
+  }
+  
+  button {
+    background-color: #008291;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+  }
+  .input-icon {
+  color: #b5c6d6;
+  font-size: 1.2em;
+  padding: 0 16px 0 12px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+  
+  button:hover {
+    background-color: #006b70;
+  }
+  

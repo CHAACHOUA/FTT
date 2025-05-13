@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import '../styles/candidate/signup.css';
+import logo from '../../assets/logo-digitalio.png';
+
 const API = process.env.REACT_APP_API_BASE_URL;
 
 export default function CandidateSignup() {
@@ -13,14 +18,24 @@ export default function CandidateSignup() {
     last_name: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Validation dynamique du mot de passe
+  const passwordValidations = {
+    length: formData.password.length >= 12,
+    uppercase: /[A-Z]/.test(formData.password),
+    match: formData.password === formData.confirmPassword && formData.confirmPassword !== ''
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Effacer erreur quand l'utilisateur tape
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -28,12 +43,17 @@ export default function CandidateSignup() {
     setLoading(true);
     setError('');
 
-    console.log("Tentative d'envoi des données :", formData); // Voir dans console navigateur
+    if (!Object.values(passwordValidations).every(Boolean)) {
+      setError("Le mot de passe ne respecte pas les critères requis.");
+      setLoading(false);
+      return;
+    }
 
     try {
+      const { confirmPassword, ...dataToSend } = formData;
       const res = await axios.post(
-        `${API}/api/users/register-candidate/`,
-        formData,
+        `${API}/api/users/auth/signup/candidate`,
+        dataToSend,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -41,15 +61,9 @@ export default function CandidateSignup() {
         }
       );
 
-      console.log("Réponse API :", res.data);
-
       const { access, refresh, role, email } = res.data;
-
-      // Stocker les tokens et infos dans AuthContext
       login({ access, refresh }, { role, email });
-
-      // Redirection vers la page suivante
-      navigate('/upload-cv');
+      navigate('/profile');
     } catch (err) {
       console.error("Erreur d'inscription :", err.response?.data || err.message);
       const errorMessage = err.response?.data?.message || "Erreur lors de l'inscription. Veuillez réessayer.";
@@ -60,73 +74,120 @@ export default function CandidateSignup() {
   };
 
   return (
-    <div className="auth-form" style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
-      <h2>Sign Up as Candidate</h2>
+    <div className="auth-container">
+          <div className="logo-container">
+        <Link to="/">
+          <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
+        </Link>
+      </div>
+      <h2 className="auth-title">Créer un compte</h2>
 
-      {error && (
-        <div className="message message-error" style={{ color: "red", marginBottom: "10px" }}>
-          {error}
-        </div>
-      )}
+      {error && <div className="auth-error">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group" style={{ marginBottom: "10px" }}>
-          <label>First Name</label>
+      <form onSubmit={handleSubmit} className="auth-form">
+
+        {/* Prénom */}
+        <div className="auth-input">
+          <FiUser className="icon" />
           <input
             type="text"
             name="first_name"
-            placeholder="First Name"
+            placeholder="Prénom *"
             value={formData.first_name}
             onChange={handleChange}
             required
           />
         </div>
 
-        <div className="form-group" style={{ marginBottom: "10px" }}>
-          <label>Last Name</label>
+        {/* Nom */}
+        <div className="auth-input">
+          <FiUser className="icon" />
           <input
             type="text"
             name="last_name"
-            placeholder="Last Name"
+            placeholder="Nom *"
             value={formData.last_name}
             onChange={handleChange}
             required
           />
         </div>
 
-        <div className="form-group" style={{ marginBottom: "10px" }}>
-          <label>Email</label>
+        {/* Email */}
+        <div className="auth-input">
+          <FiMail className="icon" />
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Email *"
             value={formData.email}
             onChange={handleChange}
             required
           />
         </div>
 
-        <div className="form-group" style={{ marginBottom: "10px" }}>
-          <label>Password</label>
+        {/* Mot de passe */}
+        <div className="auth-input password-wrapper">
+          <FiLock className="icon" />
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Password"
+            placeholder="Mot de passe *"
             value={formData.password}
             onChange={handleChange}
             required
           />
+          <div
+            className="toggle-password"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FiEyeOff /> : <FiEye />}
+          </div>
+        </div>
+
+        {/* Confirmation du mot de passe */}
+        <div className="auth-input password-wrapper">
+          <FiLock className="icon" />
+          <input
+            type={showConfirm ? "text" : "password"}
+            name="confirmPassword"
+            placeholder="Confirmer le mot de passe *"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <div
+            className="toggle-password"
+            onClick={() => setShowConfirm(!showConfirm)}
+          >
+            {showConfirm ? <FiEyeOff /> : <FiEye />}
+          </div>
+        </div>
+
+        {/* Animation Validation */}
+        <div className="password-rules">
+          <p className={passwordValidations.length ? 'valid' : 'invalid'}>
+            • Minimum 12 caractères
+          </p>
+          <p className={passwordValidations.uppercase ? 'valid' : 'invalid'}>
+            • Au moins une lettre majuscule
+          </p>
+          <p className={passwordValidations.match ? 'valid' : 'invalid'}>
+            • Les mots de passe correspondent
+          </p>
         </div>
 
         <button
           type="submit"
-          className="btn btn-primary"
+          className="auth-button"
           disabled={loading}
-          style={{ width: "100%", padding: "10px", marginTop: "10px" }}
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? 'Inscription...' : "S'inscrire"}
         </button>
       </form>
+
+      <div className="auth-footer">
+        Vous avez déjà un compte ? <a href="/login">Se connecter</a>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,25 @@
+/* ProfileView.css */
+.profile-container {
+  display: flex;
+}
+
+.profile-content {
+  margin-left: 100px;
+  padding: 40px;
+  width: 100%;
+}
+
+.validate-button {
+  margin: 20px 100px;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.validate-button:hover {
+  background-color: #3498db;
+}

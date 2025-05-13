@@ -1,0 +1,155 @@
+/* Navbar container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 32px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eee;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Logo */
+.navbar-logo {
+  height: 60px;
+}
+
+/* Right section */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Buttons */
+/* Classe commune pour les boutons */
+.navbar-btn {
+  width: 140px;         /* même largeur */
+  height: 40px;         /* même hauteur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+/* Bouton outline */
+.btn-outline {
+  border: 1px solid #1877b4;
+  background: none;
+  color: #1877b4;
+}
+
+.btn-outline:hover {
+  background: #f0f8ff;
+}
+
+/* Bouton plein */
+.btn-primary {
+  background-color: #1877b4;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #135f91;
+}
+
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 100;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #333;
+  display: block;
+  transition: background 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+.navbar-user {
+  background: none;
+  border: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+.user-circle {
+  width: 32px;
+  height: 32px;
+  background-color: #86d3e8;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #333;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background 0.2s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.logout {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}

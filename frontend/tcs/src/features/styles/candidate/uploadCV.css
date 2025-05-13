@@ -1,0 +1,159 @@
+/* ================================
+   UploadCV.css
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.upload-cv-container {
+  background: #fff;
+  border-radius: 16px;
+  margin: 20px auto;
+    padding: 40px 36px 32px 36px;
+  width: 90%;
+  max-width: 750px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  font-family: 'Poppins', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-title {
+  font-size: 2rem;
+  margin-bottom: 32px;
+  color: #2b3a5a;
+  text-align: center;
+  font-weight: 700;
+}
+
+.drop-zone {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #008291;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.drop-zone.dragging {
+  border-color: #006e78;
+  background: #f0f7f8;
+  transform: scale(1.02);
+}
+
+.drop-zone.has-file {
+  border-style: solid;
+  border-color: #008291;
+  background: #f0f7f8;
+}
+
+.file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.upload-icon {
+  color: #008291;
+  margin-bottom: 16px;
+}
+
+.drop-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #008291;
+  margin: 0;
+}
+
+.drop-subtext {
+  font-size: 14px;
+  color: #666;
+  margin: 8px 0 0 0;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #008291;
+}
+
+.file-size {
+  font-size: 14px;
+  color: #666;
+}
+
+.upload-button {
+  background: #008291;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.upload-button:hover:not(:disabled) {
+  background: #006e78;
+  transform: translateY(-1px);
+}
+
+.upload-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #fff2f2;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  color: #d32f2f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  

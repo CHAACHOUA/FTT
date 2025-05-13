@@ -1,12 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// Importation du composant Navbar
+import Navbar from './NavBar.jsx'; // Assurez-vous que le chemin est correct
+
+// Assurez-vous que le chemin vers le CSS est correct
+
 export default function Home() {
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Welcome to TCS</h1>
-      <p><Link to="/signup-candidate">Sign up as Candidate</Link></p>
-      <p><Link to="/login">Login</Link></p>
+    <div>
+      {/* Intégration du Navbar */}
+      <Navbar />
+
+     
     </div>
   );
 }

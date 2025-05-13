@@ -1,7 +1,11 @@
+// src/features/candidate/common/Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import '../styles/common/login.css';
+import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import logo from '../../assets/logo-digitalio.png';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +19,7 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,7 +33,7 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-       `${API}/api/users/login/`,
+        `${API}/api/users/auth/login/candidate`,
         formData,
         {
           headers: {
@@ -38,13 +43,10 @@ export default function Login() {
       );
 
       const { access, refresh, role, email } = res.data;
-
-      // Stocker dans AuthContext
       login({ access, refresh }, { role, email });
 
-      // Redirection selon le rôle
       if (role === 'candidate') {
-        navigate('/upload-cv');
+        navigate('/');
       } else if (role === 'company') {
         navigate('/company-dashboard');
       } else {
@@ -60,48 +62,75 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px' }}>
-      <h2>Login</h2>
+    <div className="login-container">
+       <div className="logo-container">
+              <Link to="/">
+                <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
+              </Link>
+            </div>
+      <h2 className="login-title">Se connecter</h2>
 
       {error && (
-        <div style={{ color: 'red', marginBottom: '10px' }}>
+        <div className="error-message">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Email</label>
+        {/* Email */}
+        <div className="input-group">
+          <span className="icon">
+            <FiMail />
+          </span>
+          <label>Email *</label>
           <input
             type="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
             required
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+        {/* Mot de passe */}
+        <div className="input-group">
+          <span className="icon">
+            <FiLock />
+          </span>
+          <label>Mot de passe *</label>
+          <div className="password-wrapper" style={{ width: '100%' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Mot de passe"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ cursor: 'pointer' }}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </span>
+          </div>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          style={{ width: "100%", padding: "10px", marginTop: "10px" }}
+          className="login-button"
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Connexion...' : 'Se connecter'}
         </button>
       </form>
+
+      <div className="login-footer">
+        <a href="/signup-candidate">Pas de compte ? S'inscrire</a>
+        <a href="/forgot-password">Mot de passe oublié ?</a>
+      </div>
     </div>
   );
 }
