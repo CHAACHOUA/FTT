@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'candidates.apps.CandidatesConfig',
     'forums.apps.ForumsConfig',
-    'organizers.apps.OrganizersConfig'
+    'organizers.apps.OrganizersConfig',
+    'recruiters.apps.RecruitersConfig',
+    'company.apps.CompanyConfig'
 ]
 
 MIDDLEWARE = [

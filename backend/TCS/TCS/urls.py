@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/users/',include('users.urls')),
     path('api/candidates/', include('candidates.urls')),
     path('api/forums/', include('forums.urls')),
-    path('api/organizers/', include('organizers.urls'))
+    path('api/organizers/', include('organizers.urls')),
+    path('api/company/', include('company.urls')),
+    path('api/recruites/', include('recruiters.urls'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

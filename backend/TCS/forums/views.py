@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 
 from .models import Forum, ForumRegistration
-from .serializers import ForumSerializer, ForumRegistrationSerializer
+from .serializers import ForumSerializer, ForumRegistrationSerializer, ForumDetailSerializer
 from candidates.models import Candidate
 
 
@@ -25,11 +25,19 @@ def forum_list(request):
 def forum_detail(request, pk):
     try:
         forum = get_object_or_404(Forum, pk=pk)
-        serializer = ForumSerializer(forum)
+        serializer = ForumDetailSerializer(forum)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Forum.DoesNotExist:
+        return Response(
+            {"detail": "Forum non trouvé."},
+            status=status.HTTP_404_NOT_FOUND
+        )
     except Exception as e:
-        return Response({"detail": f"Erreur lors de la récupération du forum: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        print(f"Erreur dans forum_detail : {e}")  # 🔍 Affiche l'erreur dans la console
+        return Response(
+            {"detail": f"Erreur serveur : {str(e)}"},  # 👈 retourne le détail de l’erreur
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 # 📌 Inscrire un candidat à un forum (requiert une authentification)
 @api_view(['POST'])
