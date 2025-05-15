@@ -12,8 +12,9 @@ import ResetPassword from './features/candidate/ResetPassword';
 import ChangePassword from './features/candidate/ChangePassword';
 import DeleteAccount from './features/candidate/DeleteAccount';
 import ForumView from './features/candidate/ForumView';
-
 import Home from './features/common/Home';
+import ForumDetail from './features/forum/ForumDetail';
+
 import ProfileView from './features/candidate/ProfileView';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
        <Route path="/settings" element={<ProfileView />} />
        <Route path="/forums" element={<ForumView />} />
        <Route path="/" element={<Home />} />
+       <Route path="/forums/:id" element={<ForumDetail />} />
 
        <Route path="/profile" element={<ProfileView />} />
       </Routes>

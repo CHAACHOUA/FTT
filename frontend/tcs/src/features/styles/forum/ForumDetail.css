@@ -1,0 +1,114 @@
+/* Container principal */
+.container, .p-6.max-w-5xl.mx-auto {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Titre principal */
+h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a202c; /* gris foncé */
+}
+
+/* Image principale */
+img {
+  max-width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Paragraphes avec info */
+p {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Sections */
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2d3748; /* gris légèrement plus clair */
+  border-bottom: 2px solid #3182ce; /* bleu clair */
+  padding-bottom: 0.25rem;
+}
+
+/* Card entreprise participante */
+.border {
+  border: 1px solid #e2e8f0; /* gris clair */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  background-color: #f7fafc; /* fond très clair */
+  transition: box-shadow 0.3s ease;
+}
+
+.border:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Flex items centre */
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+/* Image logo entreprise */
+.w-16.h-16.object-contain.mr-4 {
+  width: 64px;
+  height: 64px;
+  margin-right: 1rem;
+}
+
+/* Titre entreprise */
+.text-xl.font-semibold {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Titre recruteurs */
+.text-lg.font-semibold {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Recruteur container */
+.ml-4 {
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Photo recruteur */
+.w-16.h-16.rounded-full.object-cover.mt-1 {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 0.25rem;
+}
+
+/* Texte gris clair pour message vide */
+.text-gray-500 {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .w-16.h-16.object-contain.mr-4 {
+    margin-bottom: 0.75rem;
+    margin-right: 0;
+  }
+}
