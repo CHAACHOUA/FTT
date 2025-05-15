@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from .models import Forum, ForumRegistration
+from organizers.serializers import OrganizerSerializer
 
 
 class ForumSerializer(serializers.ModelSerializer):
+    organizer = OrganizerSerializer(read_only=True)
+
     class Meta:
         model = Forum
         fields = '__all__'

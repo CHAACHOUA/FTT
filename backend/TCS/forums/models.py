@@ -2,6 +2,8 @@ from django.db import models
 
 from candidates.models import Candidate
 
+from organizers.models import Organizer
+
 
 # Create your models here.
 class Forum(models.Model):
@@ -17,6 +19,7 @@ class Forum(models.Model):
     description = models.TextField(blank=True)
     date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, related_name='forums')  # 👈 Lien ajouté
 
     def __str__(self):
         return self.name
