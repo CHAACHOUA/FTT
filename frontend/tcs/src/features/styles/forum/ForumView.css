@@ -1,0 +1,31 @@
+.forum-hero {
+  background-size: cover;
+  background-position: center;
+  padding: 80px 20px;
+  color: white;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 20px;
+  height: 300px;
+  margin: 20px;
+  position: relative;
+}
+
+.forum-hero-content {
+  max-width: 600px;
+  padding: 20px 30px;
+  border-radius: 12px;
+}
+
+.forum-hero h1 {
+  font-size: 60px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.forum-hero p {
+  font-size: 18px;
+  font-weight: 500;
+}

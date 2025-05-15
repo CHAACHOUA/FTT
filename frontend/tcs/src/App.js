@@ -11,7 +11,7 @@ import RequestPasswordReset from './features/candidate/RequestPasswordReset';
 import ResetPassword from './features/candidate/ResetPassword';
 import ChangePassword from './features/candidate/ChangePassword';
 import DeleteAccount from './features/candidate/DeleteAccount';
-
+import ForumView from './features/candidate/ForumView';
 
 import Home from './features/common/Home';
 import ProfileView from './features/candidate/ProfileView';
@@ -31,7 +31,7 @@ function App() {
        <Route path="/change-password" element={<ChangePassword />} />
        <Route path="/delete-account" element={<DeleteAccount />} />
        <Route path="/settings" element={<ProfileView />} />
-
+       <Route path="/forums" element={<ForumView />} />
        <Route path="/" element={<Home />} />
 
        <Route path="/profile" element={<ProfileView />} />

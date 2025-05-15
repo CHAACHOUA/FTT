@@ -5,6 +5,7 @@ import '../styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
 
 import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
+import { MdEventAvailable } from "react-icons/md";
 
 const Navbar = () => {
   const { isAuthenticated, role, email, logout } = useAuth();
@@ -42,11 +43,17 @@ const Navbar = () => {
                 <Link to="/profile" className="dropdown-item">
                   <BsPerson className="dropdown-icon" /> Mon profil
                 </Link>
-                <Link to="/settings" className="dropdown-item">
-                  <BsGear className="dropdown-icon" /> Paramètres
-                </Link>
+                
+             <Link to="/forums" className="dropdown-item">
+  <MdEventAvailable className="dropdown-icon" /> Forums
+</Link>
+            
                 <Link to="/dashboard-candidate" className="dropdown-item">
                   <BsBarChart className="dropdown-icon" /> Dashboard
+                </Link>
+
+                    <Link to="/settings" className="dropdown-item">
+                  <BsGear className="dropdown-icon" /> Paramètres
                 </Link>
                 <button onClick={logout} className="dropdown-item logout">
                   <BsBoxArrowRight className="dropdown-icon" /> Se déconnecter
