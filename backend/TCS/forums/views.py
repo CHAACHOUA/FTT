@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
 
 from .models import Forum, ForumRegistration
 from .serializers import ForumSerializer, ForumRegistrationSerializer, ForumDetailSerializer
@@ -20,6 +20,38 @@ def forum_list(request):
         return Response({"detail": f"Erreur lors de la récupération des forums: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_forums(request):
+    """
+    Récupère les forums où le candidat est inscrit et ceux où il n'est pas inscrit.
+    Utilise ForumSerializer pour le formatage des données.
+    """
+
+    try:
+        candidate = get_object_or_404(Candidate, user=request.user)
+
+        if not candidate:
+            return Response({"detail": "Le profil candidat n'existe pas pour cet utilisateur."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        registered_forums = Forum.objects.filter(registrations__candidate=candidate).order_by('-date')
+        unregistered_forums = Forum.objects.exclude(registrations__candidate=candidate).order_by('-date')
+
+        data = {
+            "registered": ForumSerializer(registered_forums, many=True).data,
+            "unregistered": ForumSerializer(unregistered_forums, many=True).data,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        # 🚨 Gestion d'erreur
+        print(f"Erreur lors de la récupération des forums: {str(e)}")
+        return Response(
+            {"detail": f"Erreur lors de la récupération des forums: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def forum_detail(request, pk):
