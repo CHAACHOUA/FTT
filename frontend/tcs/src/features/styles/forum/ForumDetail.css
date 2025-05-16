@@ -1,114 +1,167 @@
-/* Container principal */
-.container, .p-6.max-w-5xl.mx-auto {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+
+/* Card principale */
+.forum-detail-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 1000px;
+  margin: 32px auto;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Titre principal */
-h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #1a202c; /* gris foncé */
-}
-
-/* Image principale */
-img {
-  max-width: 100%;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-/* Paragraphes avec info */
-p {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-/* Sections */
-h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #2d3748; /* gris légèrement plus clair */
-  border-bottom: 2px solid #3182ce; /* bleu clair */
-  padding-bottom: 0.25rem;
-}
-
-/* Card entreprise participante */
-.border {
-  border: 1px solid #e2e8f0; /* gris clair */
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  background-color: #f7fafc; /* fond très clair */
-  transition: box-shadow 0.3s ease;
-}
-
-.border:hover {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Flex items centre */
-.flex {
+/* Header */
+.forum-detail-header {
   display: flex;
   align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
-/* Image logo entreprise */
-.w-16.h-16.object-contain.mr-4 {
-  width: 64px;
-  height: 64px;
-  margin-right: 1rem;
-}
-
-/* Titre entreprise */
-.text-xl.font-semibold {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-/* Titre recruteurs */
-.text-lg.font-semibold {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-/* Recruteur container */
-.ml-4 {
-  margin-left: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Photo recruteur */
-.w-16.h-16.rounded-full.object-cover.mt-1 {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+.forum-detail-logo img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
   object-fit: cover;
-  margin-top: 0.25rem;
 }
 
-/* Texte gris clair pour message vide */
-.text-gray-500 {
-  color: #a0aec0;
-  font-style: italic;
+.forum-detail-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background: #eee;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-weight: bold;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .flex {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.forum-detail-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2e4269;
+}
 
-  .w-16.h-16.object-contain.mr-4 {
-    margin-bottom: 0.75rem;
-    margin-right: 0;
-  }
+.forum-detail-organizer {
+  font-size: 1rem;
+  color: #6078a0;
+}
+
+/* Tabs */
+.forum-detail-tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #eee;
+}
+
+.forum-detail-tab {
+  padding-bottom: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #1e3a8a;
+}
+
+.forum-detail-tab.active {
+  border-bottom: 3px solid #008291;
+  color: #008291;
+}
+
+/* Main content */
+.forum-detail-main {
+  display: flex;
+  gap: 40px;
+}
+
+/* Section gauche */
+.forum-detail-left {
+  flex: 1;
+}
+
+.forum-detail-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2e4269;
+  margin-bottom: 12px;
+}
+
+.forum-detail-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #334155;
+}
+
+/* Section droite */
+.forum-detail-right {
+  width: 300px;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.forum-detail-right-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #2e4269;
+}
+
+.forum-detail-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #334155;
+}
+
+.icon {
+  color: #008291;
+}
+
+/* Entreprises */
+.forum-detail-companies-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.forum-detail-company-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.forum-detail-company-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.forum-detail-company-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2e4269;
+  text-align: center;
+}
+
+.forum-detail-company-recruiters {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Offres */
+.forum-detail-offers {
+  margin-top: 20px;
+  color: #4a5568;
+  font-size: 1rem;
+  text-align: center;
 }

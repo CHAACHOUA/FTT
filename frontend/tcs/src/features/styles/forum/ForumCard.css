@@ -12,12 +12,12 @@
 
 .forum-image {
   width: 100%;
-  height: 150px;
+  height: 120px;
   object-fit: cover;
 }
 
 .forum-content {
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   font-size: 14px;
-  color: #6b7280;
+  color: #133270;
 }
 
 .organizer-logo {
@@ -122,4 +122,37 @@
   color: #010a3c;
   font-family: 'Poppins';
   margin: 0;
+}
+.forum-buttons {
+  display: flex;
+ justify-content: space-between;
+ align-items: center;
+  margin-top: 1rem;
+}
+
+.forum-button {
+  padding: 0.5rem 1rem;
+  background-color: #008291; /* couleur principale */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.forum-button:hover {
+  background-color: #006f73; /* couleur au survol */
+}
+
+.inscription-button {
+  background-color: #0a9396;
+}
+
+.inscription-button:hover {
+  background-color: #007c8a;
+}
+
+.forum-button-link {
+  text-decoration: none;
 }
