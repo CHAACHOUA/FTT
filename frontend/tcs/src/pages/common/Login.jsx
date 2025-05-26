@@ -33,7 +33,7 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-        `${API}/api/users/auth/login/candidate`,
+        `${API}/api/users/auth/login/candidate/`,
         formData,
         {
           headers: {

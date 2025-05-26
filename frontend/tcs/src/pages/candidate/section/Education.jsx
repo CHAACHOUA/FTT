@@ -1,32 +1,72 @@
-// src/features/candidate/section/Education.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../../styles/candidate/Education.css';
-import { FaUniversity } from 'react-icons/fa';
+import { FaUniversity, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
-import { BsCalendar } from 'react-icons/bs';
-import { FaTrash, FaPlusCircle } from 'react-icons/fa';
-import Form from 'react-bootstrap/Form';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
 const years = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
 
 const Education = ({ formData, onUpdate }) => {
+  useEffect(() => {
+    if (!formData.educations) return;
+    const updated = formData.educations.map((edu) => {
+      // Si déjà enrichi, on laisse tel quel
+      if (edu.start_month && edu.start_year && edu.end_month && edu.end_year) return edu;
+
+      const parseDate = (dateStr) => {
+        if (!dateStr || typeof dateStr !== 'string') return { month: '', year: '' };
+        const parts = dateStr.split('-');
+        if (parts.length < 2) return { month: '', year: '' };
+        const year = parts[0];
+        const month = months[parseInt(parts[1], 10) - 1];
+        return { month, year };
+      };
+
+      const { month: start_month, year: start_year } = parseDate(edu.start_date);
+      const { month: end_month, year: end_year } = parseDate(edu.end_date);
+      return { ...edu, start_month, start_year, end_month, end_year };
+    });
+    onUpdate({ educations: updated });
+  }, []);
+
+  const getMonthIndex = (monthName) => months.indexOf(monthName);
+  const formatDate = (month, year) => {
+    if (!month || !year) return null;
+    const m = String(getMonthIndex(month) + 1).padStart(2, '0');
+    return `${year}-${m}-01`;
+  };
+
   const handleListChange = (index, field, value) => {
     const updatedList = [...(formData.educations || [])];
     updatedList[index] = { ...updatedList[index], [field]: value };
+
+    // Recalcule start_date / end_date
+    const edu = updatedList[index];
+    updatedList[index].start_date = formatDate(edu.start_month, edu.start_year);
+    updatedList[index].end_date = formatDate(edu.end_month, edu.end_year);
+
     onUpdate({ educations: updatedList });
   };
 
   const addEducation = () => {
-    onUpdate({
-      educations: [
-        ...(formData.educations || []),
-        { degree: '', institution: '', start_month: '', start_year: '', end_month: '', end_year: '' }
-      ],
-    });
+    const updatedList = [
+      ...(formData.educations || []),
+      {
+        degree: '',
+        institution: '',
+        start_month: '',
+        start_year: '',
+        end_month: '',
+        end_year: '',
+        start_date: null,
+        end_date: null,
+      },
+    ];
+    onUpdate({ educations: updatedList });
   };
 
   const removeEducation = (index) => {
@@ -34,10 +74,18 @@ const Education = ({ formData, onUpdate }) => {
     onUpdate({ educations: updatedList });
   };
 
-  // Toujours au moins un bloc vide
-  const educations = (formData.educations && formData.educations.length > 0)
+  const educations = formData.educations?.length
     ? formData.educations
-    : [{ degree: '', institution: '', start_month: '', start_year: '', end_month: '', end_year: '' }];
+    : [{
+        degree: '',
+        institution: '',
+        start_month: '',
+        start_year: '',
+        end_month: '',
+        end_year: '',
+        start_date: null,
+        end_date: null,
+      }];
 
   return (
     <div className="section education-section">
@@ -52,10 +100,10 @@ const Education = ({ formData, onUpdate }) => {
                 type="text"
                 value={edu.degree}
                 onChange={(e) => handleListChange(index, 'degree', e.target.value)}
-                autoComplete="off"
               />
             </div>
           </div>
+
           <div className="input-modern">
             <span className="input-icon"><FaUniversity /></span>
             <div className="input-wrapper-modern">
@@ -64,12 +112,10 @@ const Education = ({ formData, onUpdate }) => {
                 type="text"
                 value={edu.institution}
                 onChange={(e) => handleListChange(index, 'institution', e.target.value)}
-                autoComplete="off"
               />
             </div>
           </div>
-          
-          {/* Dates en grille moderne */}
+
           <div className="date-grid-row">
             <div className="date-group">
               <div className="date-group-label">Début</div>
@@ -79,12 +125,10 @@ const Education = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={edu.start_month || ''}
-                    onChange={e => handleListChange(index, 'start_month', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'start_month', e.target.value)}
                   >
                     <option value="">Mois</option>
-                    {months.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
+                    {months.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div className="date-select-col">
@@ -92,16 +136,15 @@ const Education = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={edu.start_year || ''}
-                    onChange={e => handleListChange(index, 'start_year', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'start_year', e.target.value)}
                   >
                     <option value="">Année</option>
-                    {years.map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
+                    {years.map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
             </div>
+
             <div className="date-group">
               <div className="date-group-label">Fin</div>
               <div className="date-grid">
@@ -110,12 +153,10 @@ const Education = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={edu.end_month || ''}
-                    onChange={e => handleListChange(index, 'end_month', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'end_month', e.target.value)}
                   >
                     <option value="">Mois</option>
-                    {months.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
+                    {months.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div className="date-select-col">
@@ -123,27 +164,24 @@ const Education = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={edu.end_year || ''}
-                    onChange={e => handleListChange(index, 'end_year', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'end_year', e.target.value)}
                   >
                     <option value="">Année</option>
-                    {years.map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
+                    {years.map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
             </div>
           </div>
-          
-          {formData.educations && formData.educations.length > 0 && (
-            <div className="remove-btn-modern-wrapper">
-              <button className="remove-btn-modern" onClick={() => removeEducation(index)}>
-                <FaTrash style={{ marginRight: 6 }} /> Supprimer
-              </button>
-            </div>
-          )}
+
+          <div className="remove-btn-modern-wrapper">
+            <button className="remove-btn-modern" onClick={() => removeEducation(index)}>
+              <FaTrash style={{ marginRight: 6 }} /> Supprimer
+            </button>
+          </div>
         </div>
       ))}
+
       <button className="add-btn-modern" onClick={addEducation} style={{ marginTop: '10px' }}>
         <FaPlusCircle className="add-btn-icon" /> Ajouter
       </button>

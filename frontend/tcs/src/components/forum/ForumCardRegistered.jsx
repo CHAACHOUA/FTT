@@ -1,7 +1,7 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import '../../features/styles/forum/ForumCardRegistered.css';
+import '../../pages/styles/forum/ForumCardRegistered.css';
 import photo_forum from '../../assets/forum-base.webp'
 
 const ForumCardRegistered = ({ forum }) => {

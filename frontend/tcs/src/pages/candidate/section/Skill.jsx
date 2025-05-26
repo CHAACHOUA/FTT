@@ -1,4 +1,4 @@
-// src/features/candidate/section/Skill.jsx
+// src/pages/candidate/section/Skill.jsx
 import React from 'react';
 import { FaStar, FaTrash, FaPlusCircle } from 'react-icons/fa';
 

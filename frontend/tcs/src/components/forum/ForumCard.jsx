@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../../features/styles/forum/ForumCard.css';
+import '../../pages/styles/forum/ForumCard.css';
 import photo_forum from '../../assets/forum-base.webp';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';

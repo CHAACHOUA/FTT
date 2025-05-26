@@ -1,4 +1,4 @@
-// src/features/candidate/section/Language.jsx
+// src/pages/candidate/section/Language.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaGlobe, FaTrash, FaPlusCircle } from 'react-icons/fa';

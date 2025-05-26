@@ -115,6 +115,7 @@
   border-radius: 8px;
   padding: 12px 24px;
   font-size: 16px;
+  margin: 20px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -151,6 +152,72 @@
 .spin {
   animation: spin 1s linear infinite;
 }
+.upload-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2b3a5a;
+}
+
+.view-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #0066cc;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.view-link:hover {
+  text-decoration: underline;
+}
+.upload-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  width: 100%;
+  gap: 20px;
+  position: relative;
+}
+
+.view-wrapper {
+  position: absolute;
+  left: 0;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.view-link {
+  color: #0066cc;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.view-link:hover {
+  text-decoration: underline;
+}
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

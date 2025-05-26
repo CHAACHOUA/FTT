@@ -1,7 +1,25 @@
-// src/features/candidate/section/Presentation.jsx
 import React from 'react';
 import '../../styles/candidate/Presentation.css';
-import { FaUser, FaVenusMars } from 'react-icons/fa';
+import { FaUser, FaVenusMars, FaCamera } from 'react-icons/fa';
+
+const API_URL = process.env.REACT_APP_API_BASE_URL;
+
+const getInitials = (firstName, lastName) => {
+  if (!firstName && !lastName) return '??';
+  return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+};
+
+const getProfilePictureURL = (profile_picture) => {
+  if (!profile_picture) return null;
+
+  if (typeof profile_picture === 'string') {
+    return profile_picture.startsWith('http')
+      ? profile_picture
+      : `${API_URL}${profile_picture}`;
+  }
+
+  return URL.createObjectURL(profile_picture);
+};
 
 const Presentation = ({ formData, onUpdate }) => {
   const handleFieldChange = (e) => {
@@ -9,11 +27,47 @@ const Presentation = ({ formData, onUpdate }) => {
     onUpdate({ [name]: value });
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size <= 2 * 1024 * 1024) {
+      onUpdate({ profile_picture: file });
+    } else {
+      alert('Fichier trop volumineux (max 2Mo)');
+    }
+  };
+
   return (
     <div className="presentation-section">
       <h3 className="presentation-title">Votre profil</h3>
 
-      {/* Civilité (title) */}
+      {/* Photo de profil */}
+      <div className="profile-photo-container">
+        {formData.profile_picture ? (
+          <img
+            src={getProfilePictureURL(formData.profile_picture)}
+            alt="Photo de profil"
+            className="profile-photo"
+          />
+        ) : (
+          <div className="profile-initials-circle">
+            {getInitials(formData.first_name, formData.last_name)}
+          </div>
+        )}
+
+        <label htmlFor="profile_picture" className="upload-photo-btn">
+          <FaCamera /> Importer une photo (recommandé)
+          <input
+            type="file"
+            id="profile_picture"
+            name="profile_picture"
+            accept="image/png, image/jpeg"
+            onChange={handlePhotoChange}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
+
+      {/* Civilité */}
       <div className="input-modern">
         <span className="input-icon"><FaVenusMars /></span>
         <div className="input-wrapper-modern">

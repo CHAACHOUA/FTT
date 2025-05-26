@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi"; // Icones pour le mot de passe
-import '../../features/styles/common/login.css'; // Import du même style
+import '../../pages/styles/common/login.css'; // Import du même style
 import logo from '../../assets/logo-digitalio.png';
 
 const ResetPassword = () => {

@@ -1,9 +1,9 @@
 ""// ForumView.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ForumCard from '../forum/ForumCard';
-import  ForumCardRegistered from'../forum/ForumCardRegistered'
-import '../../features/styles/forum/ForumList.css';
+import ForumCard from '../../components/forum/ForumCard';
+import  ForumCardRegistered from'../../components/forum/ForumCardRegistered'
+import '../../pages/styles/forum/ForumList.css';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../common/NavBar';
 

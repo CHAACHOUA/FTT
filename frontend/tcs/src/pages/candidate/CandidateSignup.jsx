@@ -52,7 +52,7 @@ export default function CandidateSignup() {
     try {
       const { confirmPassword, ...dataToSend } = formData;
       const res = await axios.post(
-        `${API}/api/users/auth/signup/candidate`,
+        `${API}/api/users/auth/signup/candidate/`,
         dataToSend,
         {
           headers: {

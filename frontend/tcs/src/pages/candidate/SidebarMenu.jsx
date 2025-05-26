@@ -1,4 +1,4 @@
-// src/features/candidate/components/SidebarMenu.jsx
+// src/pages/candidate/components/SidebarMenu.jsx
 
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';

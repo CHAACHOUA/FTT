@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../features/styles/candidate/Education.css';
+import '../../pages/styles/candidate/Education.css';
 
 const DeleteAccount = () => {
   const [error, setError] = useState('');

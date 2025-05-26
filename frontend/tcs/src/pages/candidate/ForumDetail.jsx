@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Calendar, Building2 } from 'lucide-react';
-import '../../features/styles/forum/ForumDetail.css';
+import '../../pages/styles/forum/ForumDetail.css';
 
 const ForumDetail = () => {
   const { id } = useParams();

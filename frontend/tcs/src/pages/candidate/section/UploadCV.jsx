@@ -1,17 +1,21 @@
-// src/features/candidate/section/UploadCV.jsx
+// src/pages/candidate/section/UploadCV.jsx
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
-import { FileUp, FileCheck, Loader2, AlertCircle, Upload } from "lucide-react";
+import { FileCheck, Loader2, AlertCircle, Upload, Eye } from "lucide-react";
 import '../../styles/candidate/uploadCV.css';
 
-const UploadCV = ({ onUpload }) => {
+const UploadCV = ({ onUpload, formData }) => {
   const { accessToken } = useAuth();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
+
+  const existingCVUrl = formData?.cv_file?.startsWith('http')
+    ? formData.cv_file
+    : `${API}${formData?.cv_file}`;
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -36,7 +40,6 @@ const UploadCV = ({ onUpload }) => {
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setIsDragging(false);
-    
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && droppedFile.type === 'application/pdf') {
       setFile(droppedFile);
@@ -52,15 +55,15 @@ const UploadCV = ({ onUpload }) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('cv', file);
+    const formDataUpload = new FormData();
+    formDataUpload.append('cv', file);
 
     setLoading(true);
 
     try {
       const response = await axios.post(
         `${API}/api/candidates/upload-cv/`,
-        formData,
+        formDataUpload,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -69,10 +72,8 @@ const UploadCV = ({ onUpload }) => {
         }
       );
 
-      console.log('CV parsed:', response.data);
-      onUpload(response.data); 
+      onUpload(response.data);
     } catch (err) {
-      console.error('Erreur CV :', err.response?.data || err.message);
       const errorMessage = err.response?.data?.detail || "Une erreur est survenue lors de l'upload.";
       setError(`❌ ${errorMessage}`);
     } finally {
@@ -82,7 +83,7 @@ const UploadCV = ({ onUpload }) => {
 
   return (
     <div className="upload-cv-container" id="uploadcv">
-      <h2 className="upload-title"> Upload your CV</h2>
+      <h2 className="upload-title">Upload your CV</h2>
 
       {error && (
         <div className="error-message">
@@ -90,42 +91,51 @@ const UploadCV = ({ onUpload }) => {
         </div>
       )}
 
-      <div 
+      <div
         className={`drop-zone ${isDragging ? 'dragging' : ''} ${file ? 'has-file' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <input 
-          type="file" 
-          accept="application/pdf" 
+        <input
+          type="file"
+          accept="application/pdf"
           onChange={handleFileChange}
           className="file-input"
         />
         <div className="drop-zone-content">
           <Upload size={32} className="upload-icon" />
-          {file ? (
-            <div className="file-info">
-              <span className="file-name">{file.name}</span>
-              <span className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-            </div>
-          ) : (
-            <>
-              <p className="drop-text">Drag & drop your CV here</p>
-              <p className="drop-subtext">or click to browse</p>
-            </>
-          )}
+          <p className="drop-text">Drag & drop your CV here</p>
+          <p className="drop-subtext">or click to browse</p>
         </div>
       </div>
 
-      <button 
-        onClick={handleUpload} 
-        disabled={loading || !file} 
-        className="upload-button"
-      >
-        {loading ? <Loader2 size={18} className="spin" /> : <FileCheck size={18} />} 
-        {loading ? ' Uploading...' : ' Upload CV'}
-      </button>
+      <div className="upload-footer">
+        <div className="view-wrapper">
+          {(file || formData?.cv_file) && (
+            <a
+              href={existingCVUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="view-link"
+            >
+              <Eye size={16} style={{ marginRight: 4 }} />
+              Voir
+            </a>
+          )}
+        </div>
+
+        <div className="button-wrapper">
+          <button
+            onClick={handleUpload}
+            disabled={loading || !file}
+            className="upload-button"
+          >
+            {loading ? <Loader2 size={18} className="spin" /> : <FileCheck size={18} />}
+            {loading ? ' Uploading...' : ' Upload CV'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

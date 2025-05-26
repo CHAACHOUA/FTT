@@ -1,21 +1,21 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CandidateSignup from './features/candidate/CandidateSignup';
-import Login from './features/common/Login';
-import NavBar from './features/common/NavBar';
-import UploadCV from './features/candidate/section/UploadCV';
-import ValidateProfile from './features/candidate/ValidateProfile';
-import ValidateEmailChange from './features/candidate/ValidateEmailChange';
-import RequestPasswordReset from './features/candidate/RequestPasswordReset';
-import ResetPassword from './features/candidate/ResetPassword';
-import ChangePassword from './features/candidate/ChangePassword';
-import DeleteAccount from './features/candidate/DeleteAccount';
-import ForumView from './features/candidate/ForumView';
-import Home from './features/common/Home';
-import ForumDetail from './features/forum/ForumDetail';
+import CandidateSignup from './pages/candidate/CandidateSignup';
+import Login from './pages/common/Login';
+import NavBar from './pages/common/NavBar';
+import UploadCV from './pages/candidate/section/UploadCV';
+import ValidateProfile from './pages/candidate/ValidateProfile';
+import ValidateEmailChange from './pages/candidate/ValidateEmailChange';
+import RequestPasswordReset from './pages/candidate/RequestPasswordReset';
+import ResetPassword from './pages/candidate/ResetPassword';
+import ChangePassword from './pages/candidate/ChangePassword';
+import DeleteAccount from './pages/candidate/DeleteAccount';
+import ForumView from './pages/candidate/ForumView';
+import Home from './pages/common/Home';
+import ForumDetail from './pages/candidate/ForumDetail';
 
-import ProfileView from './features/candidate/ProfileView';
+import ProfileView from './pages/candidate/ProfileView';
 
 function App() {
   return (

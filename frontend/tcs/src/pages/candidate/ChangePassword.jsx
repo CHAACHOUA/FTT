@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-import '../../features/styles/candidate/Education.css'; // on garde le même fichier CSS
+import '../../pages/styles/candidate/Education.css'; // on garde le même fichier CSS
 
 
 const ChangePassword = () => {

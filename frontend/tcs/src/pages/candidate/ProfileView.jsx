@@ -1,4 +1,3 @@
-// src/features/candidate/ProfileView.jsx
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import UploadCV from './section/UploadCV';
@@ -24,10 +23,9 @@ const ProfileView = () => {
 
   const isSettingsPage = location.pathname.startsWith('/settings');
 
-  // ▶️ Récupération des données
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API}/api/candidates/profile/`, {
+      const response = await axios.get(`${API}/api/candidates/profile/me/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -49,18 +47,59 @@ const ProfileView = () => {
   };
 
   const handleCVUpload = (parsedData) => {
-    console.log("Données extraites du CV :", parsedData);
     setFormData((prevData) => ({ ...prevData, ...parsedData }));
   };
 
   const handleSubmit = async () => {
     try {
-      await axios.post(`${API}/api/candidates/complete-profile/`, formData, {
+      const form = new FormData();
+
+      if (formData.profile_picture instanceof File) {
+        form.append('profile_picture', formData.profile_picture);
+      }
+
+      if (formData.cv_file instanceof File) {
+        form.append('cv_file', formData.cv_file);
+      }
+
+      const appendIfExists = (key, value) => {
+        if (value) form.append(key, value);
+      };
+
+      appendIfExists('first_name', formData.first_name);
+      appendIfExists('last_name', formData.last_name);
+      appendIfExists('title', formData.title);
+      appendIfExists('phone', formData.phone);
+      appendIfExists('linkedin', formData.linkedin);
+      appendIfExists('education_level', formData.education_level);
+      appendIfExists('preferred_contract_type', formData.preferred_contract_type);
+
+      if (Array.isArray(formData.educations)) {
+        form.append('educations', JSON.stringify(formData.educations));
+      }
+
+      if (Array.isArray(formData.experiences)) {
+        form.append('experiences', JSON.stringify(formData.experiences));
+      }
+
+      if (Array.isArray(formData.candidate_languages)) {
+        form.append('candidate_languages', JSON.stringify(formData.candidate_languages));
+      }
+
+      if (Array.isArray(formData.skills)) {
+        const skillsFormatted = formData.skills.map((s) =>
+          typeof s === 'string' ? { name: s } : s
+        );
+        form.append('skills', JSON.stringify(skillsFormatted));
+      }
+
+      await axios.post(`${API}/api/candidates/profile/`, form, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
+
       alert('Profil mis à jour avec succès !');
       setLoading(true);
       await fetchData();
@@ -78,32 +117,27 @@ const ProfileView = () => {
       <div className="profile-content">
         {!isSettingsPage ? (
           <>
-            <UploadCV onUpload={handleCVUpload} />
-
+            <section>
+              <UploadCV onUpload={handleCVUpload} formData={formData} />
+            </section>
             <section id="presentation">
               <Presentation formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <section id="contact">
               <Contact formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <section id="education">
               <Education formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <section id="experience">
               <Experience formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <section id="language">
               <Language formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <section id="skill">
               <Skill formData={formData} onUpdate={handleUpdate} />
             </section>
-
             <button className="validate-button" onClick={handleSubmit}>
               Enregistrer les modifications
             </button>
@@ -111,13 +145,10 @@ const ProfileView = () => {
         ) : (
           <>
             <section id="changepassword">
-                            <ChangePassword  />
-
+              <ChangePassword />
             </section>
-
             <section id="deleteaccount">
-                          <DeleteAccount  />
-
+              <DeleteAccount />
             </section>
           </>
         )}
