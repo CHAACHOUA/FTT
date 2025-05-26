@@ -24,15 +24,14 @@ def login_candidate_user(email: str, password: str):
 
     if not user:
         return Response({
-  "message": "Un e-mail de validation a déjà été envoyé à votre adresse. Veuillez vérifier votre boîte de réception ou cliquez ici pour le renvoyer",
-            "error":"Votre compte est inactif !",
-  "activation_resend_possible": True
-}
-        , status=status.HTTP_401_UNAUTHORIZED)
+            'message': 'Identifiants incorrects. Veuillez réessayer.'
+        }, status=status.HTTP_401_UNAUTHORIZED)
 
     if not user.is_active:
         return Response({
-            'message': 'Votre compte est inactif.'
+            'message': 'Un e-mail de validation a déjà été envoyé à votre adresse. Veuillez vérifier votre boîte de réception ou cliquez ici pour le renvoyer',
+             'error': 'User is inactive',
+             'activation_resend_possible':True
         }, status=status.HTTP_403_FORBIDDEN)
 
     refresh = RefreshToken.for_user(user)
