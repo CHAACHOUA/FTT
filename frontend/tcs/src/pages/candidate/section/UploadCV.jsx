@@ -74,8 +74,11 @@ const UploadCV = ({ onUpload, formData }) => {
 
       onUpload(response.data);
     } catch (err) {
-      const errorMessage = err.response?.data?.detail || "Une erreur est survenue lors de l'upload.";
-      setError(`❌ ${errorMessage}`);
+const errorMessage =
+  err.response?.data?.error ||
+  err.response?.data?.detail ||
+  "Une erreur est survenue lors de l'upload.";      setError(` ${errorMessage}`);
+console.log('Full error:', err.response?.data);
     } finally {
       setLoading(false);
     }
@@ -120,7 +123,7 @@ const UploadCV = ({ onUpload, formData }) => {
               className="view-link"
             >
               <Eye size={16} style={{ marginRight: 4 }} />
-              Voir
+              Voir Le CV
             </a>
           )}
         </div>

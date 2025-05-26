@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -38,40 +39,44 @@ export default function CandidateSignup() {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    if (!Object.values(passwordValidations).every(Boolean)) {
-      setError("Le mot de passe ne respecte pas les critères requis.");
-      setLoading(false);
-      return;
-    }
+  if (!Object.values(passwordValidations).every(Boolean)) {
+    toast.error("Le mot de passe ne respecte pas les critères requis.");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const { confirmPassword, ...dataToSend } = formData;
-      const res = await axios.post(
-        `${API}/api/users/auth/signup/candidate/`,
-        dataToSend,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+  try {
+    const { confirmPassword, ...dataToSend } = formData;
+    const res = await axios.post(
+      `${API}/api/users/auth/signup/candidate/`,
+      dataToSend,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
-      const { access, refresh, role, email } = res.data;
-      login({ access, refresh }, { role, email });
-      navigate('/profile');
-    } catch (err) {
-      console.error("Erreur d'inscription :", err.response?.data || err.message);
-      const errorMessage = err.response?.data?.message || "Erreur lors de l'inscription. Veuillez réessayer.";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const { access, refresh, role, email } = res.data;
+
+    toast.success("Inscription réussie !");
+    login({ access, refresh }, { role, email });
+    navigate('/login');
+  } catch (err) {
+    console.error("Erreur d'inscription :", err.response?.data || err.message);
+
+    const errorMessage = err.response?.data?.message || "Erreur lors de l'inscription. Veuillez réessayer.";
+
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-container">

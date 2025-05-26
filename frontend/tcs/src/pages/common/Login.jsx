@@ -1,6 +1,7 @@
-// src/features/candidate/common/Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import '../styles/common/login.css';
@@ -20,6 +21,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showResendButton, setShowResendButton] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,6 +32,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setShowResendButton(false);
 
     try {
       const res = await axios.post(
@@ -42,7 +45,8 @@ export default function Login() {
         }
       );
 
-      const { access, refresh, role, email } = res.data;
+      const { access, refresh, role, email, message } = res.data;
+      toast.success(message || "Connexion réussie !");
       login({ access, refresh }, { role, email });
 
       if (role === 'candidate') {
@@ -54,34 +58,56 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      const errorMessage = err.response?.data?.error || "Erreur lors de la connexion. Veuillez réessayer.";
+
+      const resData = err.response?.data || {};
+      const errorMessage =
+        resData.error  || "Erreur lors de la connexion. Veuillez réessayer.";
+
+      toast.error(errorMessage);
+
+    if (resData.activation_resend_possible) {
+  setShowResendButton(true);
+  toast.info(resData.message || "Votre compte est inactif.");
+}
+
       setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleResendActivation = async () => {
+    try {
+      const res = await axios.post(`${API}/api/users/auth/resend-activation/`, {
+        email: formData.email,
+      });
+      toast.success(res.data.message || "Lien d’activation envoyé.");
+      setShowResendButton(false);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Erreur lors de l’envoi du mail.";
+      toast.error(msg);
+    }
+  };
+
   return (
     <div className="login-container">
-       <div className="logo-container">
-              <Link to="/">
-                <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
-              </Link>
-            </div>
+      <div className="logo-container">
+        <Link to="/">
+          <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
+        </Link>
+      </div>
       <h2 className="login-title">Se connecter</h2>
-
-      {error && (
-        <div className="error-message">
-          {error}
+ {showResendButton && (
+        <div className="resend-container">
+          <button onClick={handleResendActivation} className="resend-activation-button">
+            Renvoyer le mail d’activation
+          </button>
         </div>
       )}
-
       <form onSubmit={handleSubmit}>
         {/* Email */}
         <div className="input-group">
-          <span className="icon">
-            <FiMail />
-          </span>
+          <span className="icon"><FiMail /></span>
           <label>Email *</label>
           <input
             type="email"
@@ -95,9 +121,7 @@ export default function Login() {
 
         {/* Mot de passe */}
         <div className="input-group">
-          <span className="icon">
-            <FiLock />
-          </span>
+          <span className="icon"><FiLock /></span>
           <label>Mot de passe *</label>
           <div className="password-wrapper" style={{ width: '100%' }}>
             <input
@@ -126,6 +150,8 @@ export default function Login() {
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>
       </form>
+
+     
 
       <div className="login-footer">
         <a href="/signup-candidate">Pas de compte ? S'inscrire</a>

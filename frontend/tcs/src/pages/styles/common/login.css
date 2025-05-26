@@ -76,6 +76,24 @@ body {
   color: #2196f3;
   font-weight: 500;
 }
+.resend-container {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.resend-activation-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.95rem;
+  padding: 0.5rem;
+}
+
+.resend-activation-button:hover {
+  text-decoration: none;
+}
 
 /* Login Button */
 .login-button {

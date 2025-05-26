@@ -14,13 +14,17 @@ import DeleteAccount from './pages/candidate/DeleteAccount';
 import ForumView from './pages/candidate/ForumView';
 import Home from './pages/common/Home';
 import ForumDetail from './pages/candidate/ForumDetail';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ProfileView from './pages/candidate/ProfileView';
 
 function App() {
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
       <Routes>
+
        <Route path="/signup-candidate" element={<CandidateSignup />} />
        <Route path="/upload-cv" element={<UploadCV />} /> 
        <Route path="/login" element={<Login />} />
@@ -39,6 +43,7 @@ function App() {
        <Route path="/profile" element={<ProfileView />} />
       </Routes>
     </Router>
+    
   );
 }
 

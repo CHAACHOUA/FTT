@@ -1,4 +1,3 @@
-// src/pages/candidate/section/Experience.jsx
 import React, { useEffect } from 'react';
 import '../../styles/candidate/Education.css';
 import { FaBriefcase, FaBuilding, FaRegStickyNote, FaTrash, FaPlusCircle } from 'react-icons/fa';
@@ -8,49 +7,59 @@ const months = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const years = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
+const years = Array.from({ length: 80 }, (_, i) => 2030 - i);
 
 const getMonthIndex = (monthName) => months.indexOf(monthName);
 const getMonthName = (index) => months[index];
+
 const parseDate = (dateStr) => {
   if (!dateStr || typeof dateStr !== 'string') return { month: '', year: '' };
-  const parts = dateStr.split('-');
-  if (parts.length < 2) return { month: '', year: '' };
-  const year = parts[0];
-  const month = getMonthName(parseInt(parts[1], 10) - 1);
-  return { month, year };
+  const [year, month] = dateStr.split('-');
+  return {
+    month: getMonthName(parseInt(month, 10) - 1),
+    year
+  };
+};
+
+const formatDate = (month, year) => {
+  if (!month || !year) return null;
+  const m = String(getMonthIndex(month) + 1).padStart(2, '0');
+  return `${year}-${m}-01`;
 };
 
 const Experience = ({ formData, onUpdate }) => {
   useEffect(() => {
     if (!formData.experiences) return;
+
+    const isAlreadyParsed = formData.experiences.every(
+      (exp) => exp.start_month && exp.start_year && exp.end_month && exp.end_year
+    );
+    if (isAlreadyParsed) return;
+
     const updated = formData.experiences.map((exp) => {
-      const { month: start_month, year: start_year } = parseDate(exp.start_date);
-      const { month: end_month, year: end_year } = parseDate(exp.end_date);
-      return { ...exp, start_month, start_year, end_month, end_year };
+      const start = parseDate(exp.start_date);
+      const end = parseDate(exp.end_date);
+      return {
+        ...exp,
+        start_month: exp.start_month || start.month,
+        start_year: exp.start_year || start.year,
+        end_month: exp.end_month || end.month,
+        end_year: exp.end_year || end.year,
+      };
     });
+
     onUpdate({ experiences: updated });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [formData.experiences]);
 
   const updateDatesAndSend = (updatedList) => {
     const transformed = updatedList.map((exp) => {
-      const startMonthIdx = getMonthIndex(exp.start_month);
-      const endMonthIdx = getMonthIndex(exp.end_month);
-
-      const startMonth = startMonthIdx >= 0 ? String(startMonthIdx + 1).padStart(2, '0') : '01';
-      const endMonth = endMonthIdx >= 0 ? String(endMonthIdx + 1).padStart(2, '0') : '01';
-
       return {
         ...exp,
-        start_date: exp.start_year ? `${exp.start_year}-${startMonth}-01` : null,
-        end_date: exp.end_year ? `${exp.end_year}-${endMonth}-01` : null,
-        start_month: exp.start_month,
-        start_year: exp.start_year,
-        end_month: exp.end_month,
-        end_year: exp.end_year,
+        start_date: formatDate(exp.start_month, exp.start_year),
+        end_date: formatDate(exp.end_month, exp.end_year),
       };
     });
+
     onUpdate({ experiences: transformed });
   };
 
@@ -70,35 +79,32 @@ const Experience = ({ formData, onUpdate }) => {
         start_year: '',
         end_month: '',
         end_year: '',
-        description: '',
         start_date: null,
         end_date: null,
+        description: '',
       },
     ];
-    updateDatesAndSend(updatedList);
+    onUpdate({ experiences: updatedList });
   };
 
   const removeExperience = (index) => {
     const updatedList = formData.experiences.filter((_, i) => i !== index);
-    updateDatesAndSend(updatedList);
+    onUpdate({ experiences: updatedList });
   };
 
-  const experiences =
-    formData.experiences && formData.experiences.length > 0
-      ? formData.experiences
-      : [
-          {
-            job_title: '',
-            company: '',
-            start_month: '',
-            start_year: '',
-            end_month: '',
-            end_year: '',
-            description: '',
-            start_date: null,
-            end_date: null,
-          },
-        ];
+  const experiences = formData.experiences?.length
+    ? formData.experiences
+    : [{
+        job_title: '',
+        company: '',
+        start_month: '',
+        start_year: '',
+        end_month: '',
+        end_year: '',
+        start_date: null,
+        end_date: null,
+        description: '',
+      }];
 
   return (
     <div className="section education-section">
@@ -117,7 +123,6 @@ const Experience = ({ formData, onUpdate }) => {
               />
             </div>
           </div>
-
           <div className="input-modern">
             <span className="input-icon"><FaBuilding /></span>
             <div className="input-wrapper-modern">
@@ -130,8 +135,6 @@ const Experience = ({ formData, onUpdate }) => {
               />
             </div>
           </div>
-
-          {/* Dates */}
           <div className="date-grid-row">
             <div className="date-group">
               <div className="date-group-label">Début</div>
@@ -141,12 +144,10 @@ const Experience = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={exp.start_month || ''}
-                    onChange={e => handleListChange(index, 'start_month', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'start_month', e.target.value)}
                   >
                     <option value="">Mois</option>
-                    {months.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
+                    {months.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div className="date-select-col">
@@ -154,17 +155,14 @@ const Experience = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={exp.start_year || ''}
-                    onChange={e => handleListChange(index, 'start_year', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'start_year', e.target.value)}
                   >
                     <option value="">Année</option>
-                    {years.map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
+                    {years.map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
             </div>
-
             <div className="date-group">
               <div className="date-group-label">Fin</div>
               <div className="date-grid">
@@ -173,12 +171,10 @@ const Experience = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={exp.end_month || ''}
-                    onChange={e => handleListChange(index, 'end_month', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'end_month', e.target.value)}
                   >
                     <option value="">Mois</option>
-                    {months.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
+                    {months.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div className="date-select-col">
@@ -186,18 +182,15 @@ const Experience = ({ formData, onUpdate }) => {
                   <select
                     className="modern-date-select"
                     value={exp.end_year || ''}
-                    onChange={e => handleListChange(index, 'end_year', e.target.value)}
+                    onChange={(e) => handleListChange(index, 'end_year', e.target.value)}
                   >
                     <option value="">Année</option>
-                    {years.map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
+                    {years.map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
             </div>
           </div>
-
           <div className="input-modern">
             <span className="input-icon"><FaRegStickyNote /></span>
             <div className="input-wrapper-modern">
@@ -210,17 +203,13 @@ const Experience = ({ formData, onUpdate }) => {
               />
             </div>
           </div>
-
-          {formData.experiences?.length > 0 && (
-            <div className="remove-btn-modern-wrapper">
-              <button className="remove-btn-modern" onClick={() => removeExperience(index)}>
-                <FaTrash style={{ marginRight: 6 }} /> Supprimer
-              </button>
-            </div>
-          )}
+          <div className="remove-btn-modern-wrapper">
+            <button className="remove-btn-modern" onClick={() => removeExperience(index)}>
+              <FaTrash style={{ marginRight: 6 }} /> Supprimer
+            </button>
+          </div>
         </div>
       ))}
-
       <button className="add-btn-modern" onClick={addExperience} style={{ marginTop: '10px' }}>
         <FaPlusCircle className="add-btn-icon" /> Ajouter
       </button>

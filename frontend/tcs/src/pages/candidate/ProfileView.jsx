@@ -13,6 +13,8 @@ import { useAuth } from '../../context/AuthContext';
 import './ProfileView.css';
 import DeleteAccount from './DeleteAccount';
 import ChangePassword from './ChangePassword';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfileView = () => {
   const [formData, setFormData] = useState({});
@@ -32,7 +34,8 @@ const ProfileView = () => {
       });
       setFormData(response.data);
     } catch (err) {
-      console.error("Erreur lors de la récupération des données :", err.message);
+      const message = err.response?.data?.error || err.message || "Erreur inconnue lors du chargement du profil.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -93,19 +96,25 @@ const ProfileView = () => {
         form.append('skills', JSON.stringify(skillsFormatted));
       }
 
-      await axios.post(`${API}/api/candidates/profile/`, form, {
+      const res = await axios.post(`${API}/api/candidates/profile/`, form, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      alert('Profil mis à jour avec succès !');
+      toast.success(res.data.message || "Profil mis à jour avec succès !");
       setLoading(true);
       await fetchData();
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement :", err.message);
-      alert("Une erreur s'est produite lors de l'enregistrement.");
+      const resData = err.response?.data || {};
+      const msg =
+        resData.error ||
+        resData.message ||
+        err.message ||
+        "Une erreur s'est produite lors de l'enregistrement.";
+
+      toast.error(msg);
     }
   };
 
