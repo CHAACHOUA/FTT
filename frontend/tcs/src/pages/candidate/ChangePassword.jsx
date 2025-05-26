@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-import '../../pages/styles/candidate/Education.css'; // on garde le même fichier CSS
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../pages/styles/candidate/Education.css';
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -14,8 +15,6 @@ const ChangePassword = () => {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -27,16 +26,9 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
-
-    if (newPassword !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas.');
-      return;
-    }
 
     if (!Object.values(passwordValidations).every(Boolean)) {
-      setError('Le mot de passe ne respecte pas les critères requis.');
+      toast.error('Le mot de passe ne respecte pas les critères requis.');
       return;
     }
 
@@ -52,13 +44,19 @@ const ChangePassword = () => {
         }
       });
 
-      setMessage(response.data.message || 'Mot de passe changé avec succès.');
+      const msg = response.data.message || 'Mot de passe changé avec succès.';
+      toast.success(msg);
+
+      // Reset inputs
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
+
+      // Redirection
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue.');
+      const msg = err.response?.data?.error || 'Une erreur est survenue.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -67,9 +65,6 @@ const ChangePassword = () => {
   return (
     <div className="section education-section">
       <h3 className="education-title">Changer le mot de passe</h3>
-
-      {message && <div className="success-message">{message}</div>}
-      {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         {/* Ancien mot de passe */}

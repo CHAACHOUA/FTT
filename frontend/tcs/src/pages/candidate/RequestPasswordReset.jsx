@@ -1,29 +1,28 @@
-// src/pages/auth/RequestPasswordReset.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import '../../pages/styles/common/login.css'; 
 import logo from '../../assets/logo-digitalio.png';
 
 const RequestPasswordReset = () => {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
     setLoading(true);
 
     try {
       const response = await axios.post(`${API}/api/users/auth/request-password-reset/`, { email });
-      setMessage(response.data.success);
+      toast.success(response.data.success || "Lien envoyé. Vérifiez votre boîte mail.");
+      setEmail('');
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue.');
+      const msg = err.response?.data?.error || 'Une erreur est survenue.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -31,15 +30,13 @@ const RequestPasswordReset = () => {
 
   return (
     <div className="login-container">
-       <div className="logo-container">
+      <div className="logo-container">
         <Link to="/">
           <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
         </Link>
       </div>
-      <h2 className="login-title">Réinitialisation du mot de passe</h2>
 
-      {message && <div className="success-message">{message}</div>}
-      {error && <div className="error-message">{error}</div>}
+      <h2 className="login-title">Réinitialisation du mot de passe</h2>
 
       <form onSubmit={handleSubmit}>
         <div className="input-group">

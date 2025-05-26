@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FiLock, FiEye, FiEyeOff } from "react-icons/fi"; // Icones pour le mot de passe
-import '../../pages/styles/common/login.css'; // Import du même style
+import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../pages/styles/common/login.css';
 import logo from '../../assets/logo-digitalio.png';
 
 const ResetPassword = () => {
@@ -11,14 +13,11 @@ const ResetPassword = () => {
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
 
-  // Validation du mot de passe
   const passwordValidations = {
     length: newPassword.length >= 8,
     uppercase: /[A-Z]/.test(newPassword),
@@ -27,18 +26,9 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
 
-    // Vérification que les mots de passe correspondent
-    if (newPassword !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas.');
-      return;
-    }
-
-    // Validation du mot de passe
     if (!Object.values(passwordValidations).every(Boolean)) {
-      setError('Le mot de passe ne respecte pas les critères requis.');
+      toast.error('Le mot de passe ne respecte pas les critères requis.');
       return;
     }
 
@@ -48,10 +38,14 @@ const ResetPassword = () => {
         new_password: newPassword,
         confirm_password: confirmPassword
       });
-      setMessage(response.data.success);
+
+      const msg = response.data.success || 'Mot de passe réinitialisé avec succès.';
+      toast.success(msg);
+
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue.');
+      const msg = err.response?.data?.error || 'Une erreur est survenue.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -59,18 +53,15 @@ const ResetPassword = () => {
 
   return (
     <div className="login-container">
-         <div className="logo-container">
-              <Link to="/">
-                <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
-              </Link>
-            </div>
+      <div className="logo-container">
+        <Link to="/">
+          <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
+        </Link>
+      </div>
       <h2 className="login-title">Nouveau mot de passe</h2>
 
-      {message && <div className="success-message">{message}</div>}
-      {error && <div className="error-message">{error}</div>}
-
       <form onSubmit={handleSubmit}>
-        {/* Champ de mot de passe */}
+        {/* Nouveau mot de passe */}
         <div className="input-group">
           <FiLock className="icon" />
           <label>Nouveau mot de passe *</label>
@@ -89,7 +80,7 @@ const ResetPassword = () => {
           </div>
         </div>
 
-        {/* Champ de confirmation du mot de passe */}
+        {/* Confirmation */}
         <div className="input-group">
           <FiLock className="icon" />
           <label>Confirmer le mot de passe *</label>
@@ -108,7 +99,7 @@ const ResetPassword = () => {
           </div>
         </div>
 
-        {/* Règles de validation du mot de passe avec animation */}
+        {/* Règles */}
         <div className="password-rules">
           <p className={passwordValidations.length ? 'valid' : 'invalid'}>
             • Minimum 8 caractères
