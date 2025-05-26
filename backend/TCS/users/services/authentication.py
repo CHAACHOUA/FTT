@@ -4,22 +4,41 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+
 def login_candidate_user(email: str, password: str):
     """
     Authentifie l'utilisateur avec l'email et le mot de passe fournis.
-    Retourne les tokens JWT + infos de base si les identifiants sont valides.
+    Gère aussi le cas d'un compte inactif (user.is_active=False).
+    Retourne les tokens JWT + infos si tout est OK.
     """
     if not email or not password:
-        return Response({'error': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'message': 'Veuillez fournir un email et un mot de passe.'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     user = authenticate(email=email, password=password)
 
     if not user:
-        return Response({'error': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({
+  "message": "Un e-mail de validation a déjà été envoyé à votre adresse. Veuillez vérifier votre boîte de réception ou cliquez ici pour le renvoyer",
+            "error":"Votre compte est inactif !",
+  "activation_resend_possible": True
+}
+        , status=status.HTTP_401_UNAUTHORIZED)
+
+    if not user.is_active:
+        return Response({
+            'message': 'Votre compte est inactif.'
+        }, status=status.HTTP_403_FORBIDDEN)
 
     refresh = RefreshToken.for_user(user)
 
     return Response({
+        'message': 'Bienvenue à votre espace candidat ',
         'refresh': str(refresh),
         'access': str(refresh.access_token),
         'role': user.role,

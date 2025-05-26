@@ -3,6 +3,7 @@ from users.views.auth_views import (
     register_candidate,
     login_candidate,
     activate_account,
+    resend_activation
 )
 from users.views.email_views import validate_email_change
 from users.views.password_views import (
@@ -12,6 +13,7 @@ from users.views.password_views import (
 )
 from users.views.deletion_views import delete_candidate_account
 
+
 urlpatterns = [
     # 🔐 Authentification
     path('auth/signup/candidate/', register_candidate, name='register_candidate'),
@@ -20,6 +22,8 @@ urlpatterns = [
 
     # 📧 Email
     path('auth/validate-email-change/<str:token_str>/', validate_email_change, name='validate_email_change'),
+    #resend activation account
+    path('auth/resend-activation/', resend_activation, name='resend_activation'),
 
     # 🔁 Mot de passe
     path('auth/request-password-reset/', request_password_reset, name='request_password_reset'),
