@@ -1,9 +1,13 @@
 from django.urls import path
-from . import views
+from forums.views.forum_views import forum_list, forum_detail
+from forums.views.registration_views import register_to_forum, my_forums
 
 urlpatterns = [
-    path('', views.forum_list, name='forum-list'),
-    path('<int:pk>/', views.forum_detail, name='forum-detail'),
-    path('<int:forum_id>/register/', views.register_to_forum, name='register-to-forum'),
-    path('candidate/', views.my_forums, name='my-forums')
+    # 📄 Lecture des forums
+    path('', forum_list, name='forum-list'),
+    path('<int:pk>/', forum_detail, name='forum-detail'),
+
+    # ✅ Inscriptions du candidat
+    path('<int:forum_id>/register/', register_to_forum, name='register-to-forum'),
+    path('candidate/', my_forums, name='my-forums'),
 ]

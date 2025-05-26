@@ -18,6 +18,7 @@ class Candidate(models.Model):
     preferred_contract_type = models.CharField(max_length=255, blank=True)
     cv_file = models.FileField(upload_to='cvs/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return f"Candidate: {self.first_name} {self.last_name}"
@@ -29,9 +30,8 @@ class Experience(models.Model):
     job_title = models.CharField(max_length=255)
     company = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     def __str__(self):
         return f"{self.job_title} at {self.company}"
 
@@ -41,8 +41,8 @@ class Education(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='educations')
     degree = models.CharField(max_length=255)
     institution = models.CharField(max_length=255)
-    start_year = models.IntegerField(null=True)
-    end_year = models.IntegerField(null=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.degree} - {self.institution}"
