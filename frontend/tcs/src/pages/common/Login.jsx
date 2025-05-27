@@ -45,9 +45,8 @@ export default function Login() {
         }
       );
 
-      const { access, refresh, role, email, message } = res.data;
-      toast.success(message || "Connexion réussie !");
-      login({ access, refresh }, { role, email });
+      const { access, refresh, role, email, message, name } = res.data;
+      login({ access, refresh }, { role, email ,name});
 
       if (role === 'candidate') {
         navigate('/');
@@ -57,20 +56,23 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
+  const resData = err.response?.data || {};
+  const statusCode = err.response?.status;
 
-      const resData = err.response?.data || {};
-      const errorMessage =
-        resData.error  || "Erreur lors de la connexion. Veuillez réessayer.";
+  const errorMessage =
+    resData.message ||
+    resData.error ||
+    "Erreur lors de la connexion. Veuillez réessayer.";
 
-      toast.error(errorMessage);
+  toast.error(errorMessage);
 
-    if (resData.activation_resend_possible) {
-  setShowResendButton(true);
-  toast.info(resData.message || "Votre compte est inactif.");
-}
+  // Activer le bouton de renvoi si le compte est inactif
+  if (resData.activation_resend_possible || statusCode === 403) {
+    setShowResendButton(true);
+  }
 
-      setError(errorMessage);
+  setError(errorMessage);
+
     } finally {
       setLoading(false);
     }

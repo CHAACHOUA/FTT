@@ -8,13 +8,12 @@ import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from "react-icons/md";
 
 const Navbar = () => {
-  const { isAuthenticated, role, email, logout } = useAuth();
+  const { isAuthenticated, role, email, logout, name } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
-
-  const getInitials = (email) => {
-    if (!email) return '';
-    return email.slice(0, 2).toUpperCase();
+  const getInitials = (name) => {
+    if (!name) return '';
+    return name.slice(0, 2).toUpperCase();
   };
 
   return (
@@ -34,8 +33,8 @@ const Navbar = () => {
         ) : role === 'candidate' && (
           <div className="dropdown">
             <button className="navbar-user" onClick={toggleDropdown}>
-              <div className="user-circle">{getInitials(email)}</div>
-              <span className="user-name">{email}</span> ▾
+              <div className="user-circle">{getInitials(name)}</div>
+              <span className="user-name">{name}</span> ▾
             </button>
 
             {showDropdown && (

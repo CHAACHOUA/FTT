@@ -34,7 +34,11 @@ const ProfileView = () => {
       });
       setFormData(response.data);
     } catch (err) {
-      const message = err.response?.data?.error || err.message || "Erreur inconnue lors du chargement du profil.";
+      const message =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        "Erreur inconnue lors du chargement du profil.";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -74,6 +78,7 @@ const ProfileView = () => {
       appendIfExists('title', formData.title);
       appendIfExists('phone', formData.phone);
       appendIfExists('linkedin', formData.linkedin);
+      appendIfExists('email', formData.email);
       appendIfExists('education_level', formData.education_level);
       appendIfExists('preferred_contract_type', formData.preferred_contract_type);
 
@@ -103,7 +108,15 @@ const ProfileView = () => {
         },
       });
 
-      toast.success(res.data.message || "Profil mis à jour avec succès !");
+ 
+     toast.success(
+  typeof res.data === 'string'
+    ? res.data
+    : res.data.detail || res.data.message || "Profil mis à jour avec succès !"
+);
+
+      console.log("Réponse brute du backend :", res.data);
+
       setLoading(true);
       await fetchData();
     } catch (err) {
