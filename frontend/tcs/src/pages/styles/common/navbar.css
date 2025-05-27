@@ -1,14 +1,22 @@
 /* Navbar container */
+body {
+  background: linear-gradient(to bottom, #f0f4f8, #ffffff);
+}
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 32px;
+  height: 60px;
   background-color: #ffffff;
   border-bottom: 1px solid #eee;
   font-family: 'Poppins', sans-serif;
 }
-
+.navbar-blur {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+}
 /* Logo */
 .navbar-logo {
   height: 60px;

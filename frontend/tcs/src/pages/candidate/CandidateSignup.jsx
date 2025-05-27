@@ -64,7 +64,7 @@ export default function CandidateSignup() {
 
     const { access, refresh, role, email } = res.data;
 
-    toast.success("Inscription réussie !");
+    toast.success(res.data.message || "Inscription réussie ! Veuillez vérifier votre mail ");
     login({ access, refresh }, { role, email });
     navigate('/login');
   } catch (err) {

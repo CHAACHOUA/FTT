@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 
 import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from "react-icons/md";
-
+import { useEffect } from 'react';
 const Navbar = () => {
   const { isAuthenticated, role, email, logout, name } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -15,6 +15,22 @@ const Navbar = () => {
     if (!name) return '';
     return name.slice(0, 2).toUpperCase();
   };
+
+
+useEffect(() => {
+  const handleScroll = () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 0) {
+      navbar.classList.add('navbar-blur');
+    } else {
+      navbar.classList.remove('navbar-blur');
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+
 
   return (
     <nav className="navbar">

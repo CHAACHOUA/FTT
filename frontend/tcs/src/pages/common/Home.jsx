@@ -22,6 +22,25 @@ export default function Home() {
           <p>Choisissez un forum et découvrez les entreprises participantes.</p>
         </div>
       </section>
+        <section 
+        className="forum-hero" 
+        style={{ backgroundImage: `url(${forums_bg})` }}
+      >
+        <div className="forum-hero-content">
+          <h1>Rencontrez vos futurs jobs.</h1>
+          <p>Choisissez un forum et découvrez les entreprises participantes.</p>
+        </div>
+      </section>
+      
+        <section 
+        className="forum-hero" 
+        style={{ backgroundImage: `url(${forums_bg})` }}
+      >
+        <div className="forum-hero-content">
+          <h1>Rencontrez vos futurs jobs.</h1>
+          <p>Choisissez un forum et découvrez les entreprises participantes.</p>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,8 +1,7 @@
-// src/pages/candidate/section/UploadCV.jsx
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
-import { FileCheck, Loader2, AlertCircle, Upload, Eye } from "lucide-react";
+import { FileCheck, Loader2, AlertCircle, Upload, Eye } from 'lucide-react';
 import '../../styles/candidate/uploadCV.css';
 
 const UploadCV = ({ onUpload, formData }) => {
@@ -59,6 +58,7 @@ const UploadCV = ({ onUpload, formData }) => {
     formDataUpload.append('cv', file);
 
     setLoading(true);
+    setError('');
 
     try {
       const response = await axios.post(
@@ -72,21 +72,60 @@ const UploadCV = ({ onUpload, formData }) => {
         }
       );
 
-      onUpload(response.data);
+      const taskId = response.data.task_id;
+      if (!taskId) throw new Error("ID de tâche manquant");
+
+      checkTaskStatus(taskId);
     } catch (err) {
-const errorMessage =
-  err.response?.data?.error ||
-  err.response?.data?.detail ||
-  "Une erreur est survenue lors de l'upload.";      setError(` ${errorMessage}`);
-console.log('Full error:', err.response?.data);
-    } finally {
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        'Une erreur est survenue lors de l\'upload.';
+      setError(errorMessage);
+      console.log('Full error:', err.response?.data);
       setLoading(false);
     }
+  };
+
+  const checkTaskStatus = async (taskId) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`${API}/api/candidates/task_status/${taskId}/`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        const { state, result } = res.data;
+
+        if (state === 'SUCCESS') {
+          clearInterval(interval);
+          setLoading(false);
+          onUpload(result); // Injecte les données dans ProfileView
+        }
+
+        if (state === 'FAILURE') {
+          clearInterval(interval);
+          setLoading(false);
+          setError("❌ L'analyse du CV a échoué.");
+          console.log('ok')
+        }
+      } catch (err) {
+        clearInterval(interval);
+        setLoading(false);
+        setError("Erreur lors du suivi de l'analyse.");
+      }
+    }, 3000);
   };
 
   return (
     <div className="upload-cv-container" id="uploadcv">
       <h2 className="upload-title">Upload your CV</h2>
+
+      {loading && (
+        <div className="parsing-banner">
+          <Loader2 size={18} className="spin" />
+          <span>Analyse du CV en cours, veuillez patienter...</span>
+        </div>
+      )}
 
       {error && (
         <div className="error-message">
