@@ -5,7 +5,6 @@ from .models import Candidate, Experience, Education, Skill, CandidateLanguage, 
 from users.models import User
 
 
-from users.utils import send_user_token
 
 
 class CandidateRegistrationSerializer(serializers.ModelSerializer):
@@ -17,23 +16,11 @@ class CandidateRegistrationSerializer(serializers.ModelSerializer):
         exclude = ['user']
 
     def create(self, validated_data):
-        # Récupération des données
         email = validated_data.pop('email')
         password = validated_data.pop('password')
 
-        # Création de l'utilisateur et du candidat
         user = User.objects.create_user(email=email, password=password, role='candidate')
         candidate = Candidate.objects.create(user=user, **validated_data)
-
-        try:
-            # Envoi du lien de validation par email
-            send_user_token(user, "activation")
-        except Exception as e:
-            # Si l'envoi échoue, on supprime l'utilisateur et le candidat
-            print(f"Error sending activation email: {e}")
-            user.delete()
-            candidate.delete()
-            raise serializers.ValidationError("Activation email could not be sent. Please try again.")
 
         return candidate
 

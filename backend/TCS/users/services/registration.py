@@ -11,14 +11,16 @@ from candidates.serializers import CandidateRegistrationSerializer
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 
+from users.utils import send_user_token
+
 
 def register_new_candidate(request):
     """
     Gère l'enregistrement d'un nouveau candidat :
-    - valide les données via le serializer
-    - crée le candidat et l'utilisateur associé
-    - retourne les tokens JWT si tout est bon
-    - gère les erreurs fréquentes avec messages explicites
+    - Valide les données
+    - Crée l'utilisateur et le candidat
+    - Envoie l'email d'activation
+    - Retourne les tokens JWT
     """
     serializer = CandidateRegistrationSerializer(data=request.data)
 
@@ -31,10 +33,20 @@ def register_new_candidate(request):
     try:
         candidate = serializer.save()
         user = candidate.user
-        refresh = RefreshToken.for_user(user)
 
+        try:
+            send_user_token(user, "activation")
+        except Exception as e:
+            print(f"Erreur d'envoi de mail : {e}")
+            user.delete()
+            candidate.delete()
+            return Response({
+                "message": "Erreur lors de l'envoi de l'email d'activation. Réessayez."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        refresh = RefreshToken.for_user(user)
         return Response({
-            "message": "Inscription réussie.",
+            "message": "Inscription réussie. Vérifiez votre email pour activer votre compte.",
             "refresh": str(refresh),
             "access": str(refresh.access_token),
             "role": user.role,
@@ -53,6 +65,7 @@ def register_new_candidate(request):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
+        print("Erreur lors de l'inscription :", e)
         return Response({
             "message": "Erreur inattendue lors de l'inscription.",
             "details": str(e)

@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from users.models import UserToken
-
 from users.utils import send_user_token
 
 signer = TimestampSigner()
