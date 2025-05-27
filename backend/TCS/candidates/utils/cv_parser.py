@@ -3,26 +3,29 @@ import PyPDF2
 import json
 from django.conf import settings
 
-
+# Initialise le client OpenAI avec ta clé API
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 def read_pdf(file):
-    """Lit un fichier PDF et retourne tout le texte extrait."""
+    """Lit un fichier PDF et retourne tout le texte extrait proprement."""
     reader = PyPDF2.PdfReader(file)
     text = ""
     for page in reader.pages:
-        text += page.extract_text() + "\n"
+        content = page.extract_text()
+        if content:
+            text += content + "\n"
     return text
 
 def parse_cv_with_chatgpt(cv_text):
-    """Envoie le texte du CV à ChatGPT et récupère uniquement le JSON parsé."""
+    """Envoie le contenu d’un CV à ChatGPT et récupère uniquement un JSON structuré."""
+
     prompt = f"""
 Tu es un assistant RH expert. Analyse le contenu du CV ci-dessous et retourne uniquement un JSON **valide**, sans aucun commentaire ni texte autour, avec les champs suivants :
 
 {{
   "first_name": "",
   "last_name": "",
-  "title":"Madame | Monsieur | Autre"
+  "title": "Madame | Monsieur | Autre",
   "email": "",
   "phone": "",
   "linkedin": "",
@@ -70,10 +73,14 @@ Voici le contenu du CV :
     return response.choices[0].message.content.strip()
 
 def parse_uploaded_pdf(file):
+    """Lit et parse un fichier PDF contenant un CV."""
     cv_text = read_pdf(file)
     parsed_result = parse_cv_with_chatgpt(cv_text)
 
     try:
         return json.loads(parsed_result)
     except json.JSONDecodeError:
-        return {"error": "Failed to parse JSON correctly.", "raw_result": parsed_result}
+        return {
+            "error": "Failed to parse JSON correctly.",
+            "raw_result": parsed_result
+        }
