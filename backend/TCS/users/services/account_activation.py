@@ -10,42 +10,61 @@ signer = TimestampSigner()
 
 def activate_user_account(token):
     """
-    Active le compte utilisateur si le token est valide et non utilisé.
+    Active le compte utilisateur si le token est valide, non expiré et non utilisé.
+    Gère tous les cas d'erreur propres.
     """
     try:
-        # Désigne le token signé (valide 24h)
+        # 🔓 Déchiffrer le token signé (validité 24h)
         unsigned_token = signer.unsign(token, max_age=60 * 60 * 24)
 
-        # Récupérer le token utilisateur en base
-        user_token = UserToken.objects.get(token=unsigned_token, type="activation", is_used=False)
+        # 🔍 Vérifie l'existence du token et son état
+        user_token = UserToken.objects.get(
+            token=unsigned_token,
+            type="activation",
+            is_used=False
+        )
+
         user = user_token.user
 
-        # Vérifie si déjà activé
         if user.is_active:
-            return Response({"message": "Account already activated."}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Ce compte est déjà activé."},
+                status=status.HTTP_200_OK
+            )
 
-        # Activation
+        # ✅ Activer l'utilisateur
         user.is_active = True
         user.save()
 
-        # Marque le token comme utilisé
+        # ✅ Marquer le token comme utilisé
         user_token.is_used = True
         user_token.save()
 
-        return Response({"message": "Account activated successfully."}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Compte activé avec succès."},
+            status=status.HTTP_200_OK
+        )
 
     except SignatureExpired:
-        return Response({"error": "The activation link has expired."}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(
+            {"error": "Le lien d’activation a expiré. Veuillez en demander un nouveau."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     except BadSignature:
-        return Response({"error": "Invalid activation link."}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(
+            {"error": "Lien d’activation invalide."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     except UserToken.DoesNotExist:
-        return Response({"error": "Invalid or used token."}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(
+            {"error": "Ce lien est invalide ou a déjà été utilisé."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        return Response(
+            {"error": "Une erreur est survenue lors de l’activation du compte."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 User = get_user_model()
 

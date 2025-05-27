@@ -25,11 +25,11 @@ def request_password_reset_service(request):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        return Response({'success': 'If the email is registered, a reset link will be sent.'})  # Pas d'info sensible
-
+        return Response({'success': "Si l'adresse e-mail est enregistrée, un lien de réinitialisation sera envoyé."
+})  # Pas d'info sensible
     send_user_token(user, token_type="password_reset")
-
-    return Response({'success': 'If the email is registered, a reset link will be sent.'})
+    return Response({'success': "Si l'adresse e-mail est enregistrée, un lien de réinitialisation sera envoyé."
+})
 
 
 def reset_user_password(request, token):
@@ -43,7 +43,7 @@ def reset_user_password(request, token):
     try:
         user_token = UserToken.objects.get(token=token_str, type="password_reset", is_used=False)
     except UserToken.DoesNotExist:
-        return Response({'error': 'Token not found or already used'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Lien utilisé est introuvable ou déjà utilisé. Veuillez vérifier à nouveau votre adresse mail !'}, status=status.HTTP_404_NOT_FOUND)
 
     if user_token.created_at < now() - timedelta(hours=24):
         return Response({'error': 'Token expired'}, status=status.HTTP_400_BAD_REQUEST)

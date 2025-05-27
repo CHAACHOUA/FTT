@@ -32,11 +32,10 @@ def complete_profile_view(request):
             except json.JSONDecodeError:
                 data[field] = []
 
-    complete_candidate_profile(user, data)
-    print(data)
 
 
-    return Response({'detail': 'Profil mis à jour avec succès.'}, status=status.HTTP_200_OK)
+
+    return  complete_candidate_profile(user, data)
 
 
 @api_view(['GET'])

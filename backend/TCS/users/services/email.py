@@ -22,7 +22,7 @@ def validate_email_change_token(token_str):
 
         # Vérifie si l'email est déjà pris
         if User.objects.filter(email=new_email).exists():
-            return Response({"error": "This email is already taken. Please choose another one."},
+            return Response({"error": "Cette adresse e-mail est déjà utilisée. Veuillez en choisir une autre.."},
                             status=status.HTTP_400_BAD_REQUEST)
 
         # Appliquer le changement
@@ -34,15 +34,15 @@ def validate_email_change_token(token_str):
 
         return Response({
             'new_email': new_email,
-            "message": "Email updated successfully."
+            "message": "Adresse e-mail mise à jour avec succès"
         }, status=status.HTTP_200_OK)
 
     except (SignatureExpired, BadSignature):
-        return Response({"error": "The validation link has expired or is invalid."},
+        return Response({"error": "Le lien de validation a expiré ou est invalide."},
                         status=status.HTTP_400_BAD_REQUEST)
 
     except UserToken.DoesNotExist:
-        return Response({"error": "Invalid or used token."},
+        return Response({"error": "Le lien de validation a expiré ou est invalide."},
                         status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:

@@ -13,13 +13,12 @@ from candidates.serializers import CandidateSerializer
 def complete_candidate_profile(user, data):
     """
     Met à jour l'ensemble du profil candidat de manière modulaire.
-    - Vérifie l'état du compte
-    - Met à jour toutes les sections
-    - Déclenche un email si changement d'adresse
+    Gère les erreurs internes, vérifie l'état du compte,
+    et déclenche un email si l'adresse change.
     """
     if not user.is_active:
         return Response(
-            {"error": "Your account is not activated. Please check your email."},
+            {"error": "Votre compte n'est pas activé. Veuillez vérifier votre email."},
             status=status.HTTP_403_FORBIDDEN
         )
 
@@ -27,28 +26,41 @@ def complete_candidate_profile(user, data):
         candidate = user.candidate_profile
     except AttributeError:
         return Response(
-            {"error": "Candidate profile not found."},
+            {"error": "Profil candidat introuvable."},
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # 🧩 Mise à jour des sections du profil
-    update_base_info(candidate, data)
-    update_skills(candidate, data)
-    update_educations(candidate, data)
-    update_experiences(candidate, data)
-    update_languages(candidate, data)
+    try:
+        # 🔄 Mise à jour des sections
+        update_base_info(candidate, data)
+        update_skills(candidate, data)
+        update_educations(candidate, data)
+        update_experiences(candidate, data)
+        update_languages(candidate, data)
 
-    # 📧 Si l'email a changé, envoyer un lien de validation
-    new_email = data.get('email')
-    if new_email and new_email != user.email:
-        send_user_token(user, "email_change", new_email)
+        # 📧 Envoi du mail de validation si email modifié
+        new_email = data.get('email')
+        if new_email and new_email != user.email:
+            try:
+                send_user_token(user, "email_change", new_email)
+                return Response({
+                    'message': "Veuillez valider votre nouvelle adresse email. Un lien de confirmation a été envoyé."
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({
+                    "error": "L'email n'a pas pu être envoyé. Veuillez réessayer plus tard.",
+                    "detail": str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # ✅ Retour du profil mis à jour
+        serializer = CandidateSerializer(candidate)
         return Response({
-            'message': 'Please verify your new email. A validation link has been sent.'
+            'message': "Profil candidat mis à jour avec succès.",
+            'profile': serializer.data
         }, status=status.HTTP_200_OK)
 
-    # ✅ Retour du profil mis à jour
-    serializer = CandidateSerializer(candidate)
-    return Response({
-        'message': 'Candidate profile completed and saved.',
-        'profile': serializer.data
-    }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {"error": f"Erreur lors de la mise à jour du profil : {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
