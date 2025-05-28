@@ -31,10 +31,13 @@ const Experience = ({ formData, onUpdate }) => {
   useEffect(() => {
     if (!formData.experiences) return;
 
-    const isAlreadyParsed = formData.experiences.every(
-      (exp) => exp.start_month && exp.start_year && exp.end_month && exp.end_year
+    const needsParsing = formData.experiences.some(
+      (exp) =>
+        (!exp.start_month || !exp.start_year) &&
+        typeof exp.start_date === 'string'
     );
-    if (isAlreadyParsed) return;
+
+    if (!needsParsing) return;
 
     const updated = formData.experiences.map((exp) => {
       const start = parseDate(exp.start_date);

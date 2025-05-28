@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import '../../styles/candidate/Education.css';
-import { FaUniversity } from 'react-icons/fa';
+import { FaUniversity, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
-import { FaTrash, FaPlusCircle } from 'react-icons/fa';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
 const years = Array.from({ length: 80 }, (_, i) => 2030 - i);
 
 const getMonthIndex = (monthName) => months.indexOf(monthName);
@@ -24,8 +24,7 @@ const parseDate = (dateStr) => {
 
 const formatDate = (month, year) => {
   if (!month || !year) return null;
-  const monthIndex = getMonthIndex(month);
-  const m = String(monthIndex + 1).padStart(2, '0');
+  const m = String(getMonthIndex(month) + 1).padStart(2, '0');
   return `${year}-${m}-01`;
 };
 
@@ -33,10 +32,13 @@ const Education = ({ formData, onUpdate }) => {
   useEffect(() => {
     if (!formData.educations) return;
 
-    const isAlreadyParsed = formData.educations.every(
-      (edu) => edu.start_month && edu.start_year && edu.end_month && edu.end_year
+    const needsParsing = formData.educations.some(
+      (edu) =>
+        (!edu.start_month || !edu.start_year) &&
+        typeof edu.start_date === 'string'
     );
-    if (isAlreadyParsed) return;
+
+    if (!needsParsing) return;
 
     const updated = formData.educations.map((edu) => {
       const start = parseDate(edu.start_date);
@@ -53,15 +55,20 @@ const Education = ({ formData, onUpdate }) => {
     onUpdate({ educations: updated });
   }, [formData.educations]);
 
+  const updateDatesAndSend = (updatedList) => {
+    const transformed = updatedList.map((edu) => ({
+      ...edu,
+      start_date: formatDate(edu.start_month, edu.start_year),
+      end_date: formatDate(edu.end_month, edu.end_year),
+    }));
+
+    onUpdate({ educations: transformed });
+  };
+
   const handleListChange = (index, field, value) => {
     const updatedList = [...(formData.educations || [])];
     updatedList[index] = { ...updatedList[index], [field]: value };
-
-    const edu = updatedList[index];
-    updatedList[index].start_date = formatDate(edu.start_month, edu.start_year);
-    updatedList[index].end_date = formatDate(edu.end_month, edu.end_year);
-
-    onUpdate({ educations: updatedList });
+    updateDatesAndSend(updatedList);
   };
 
   const addEducation = () => {
@@ -126,6 +133,7 @@ const Education = ({ formData, onUpdate }) => {
               />
             </div>
           </div>
+
           <div className="date-grid-row">
             <div className="date-group">
               <div className="date-group-label">Début</div>
@@ -154,6 +162,7 @@ const Education = ({ formData, onUpdate }) => {
                 </div>
               </div>
             </div>
+
             <div className="date-group">
               <div className="date-group-label">Fin</div>
               <div className="date-grid">
@@ -182,6 +191,7 @@ const Education = ({ formData, onUpdate }) => {
               </div>
             </div>
           </div>
+
           <div className="remove-btn-modern-wrapper">
             <button className="remove-btn-modern" onClick={() => removeEducation(index)}>
               <FaTrash style={{ marginRight: 6 }} /> Supprimer
