@@ -16,7 +16,6 @@ def async_parse_cv(file_path):
             cv_text = read_pdf(f)
 
         parsed_result = parse_cv_with_chatgpt(cv_text)
-
         try:
             return json.loads(parsed_result)
         except json.JSONDecodeError:

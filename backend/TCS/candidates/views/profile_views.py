@@ -32,9 +32,6 @@ def complete_profile_view(request):
             except json.JSONDecodeError:
                 data[field] = []
 
-
-
-
     return  complete_candidate_profile(user, data)
 
 
