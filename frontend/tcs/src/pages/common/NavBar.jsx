@@ -8,7 +8,8 @@ import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from "react-icons/md";
 import { useEffect } from 'react';
 const Navbar = () => {
-  const { isAuthenticated, role, email, logout, name } = useAuth();
+  const { isAuthenticated, role, logout } = useAuth();
+  const [name, setName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
   const getInitials = (name) => {
@@ -26,6 +27,11 @@ useEffect(() => {
       navbar.classList.remove('navbar-blur');
     }
   };
+  const storedName = localStorage.getItem('name');
+  if (storedName) {
+    setName(storedName);
+  }
+
 
   window.addEventListener('scroll', handleScroll);
   return () => window.removeEventListener('scroll', handleScroll);
@@ -63,9 +69,7 @@ useEffect(() => {
   <MdEventAvailable className="dropdown-icon" /> Forums
 </Link>
             
-                <Link to="/dashboard-candidate" className="dropdown-item">
-                  <BsBarChart className="dropdown-icon" /> Dashboard
-                </Link>
+             
 
                     <Link to="/settings" className="dropdown-item">
                   <BsGear className="dropdown-icon" /> Paramètres

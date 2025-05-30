@@ -116,7 +116,7 @@ const ProfileView = () => {
 );
 
       console.log("Réponse brute du backend :", res.data);
-
+      localStorage.setItem('name', formData.first_name || '');
       setLoading(true);
       await fetchData();
     } catch (err) {

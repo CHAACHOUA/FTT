@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("access") || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refresh") || null);
   const [role, setRole] = useState(localStorage.getItem("role") || null);
-  const [email, setEmail] = useState(localStorage.getItem("email") || null);
   const [name, setName] = useState(localStorage.getItem("name") || null);
 
   const isAuthenticated = !!accessToken;
@@ -20,13 +19,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem("access", tokens.access);
     localStorage.setItem("refresh", tokens.refresh);
     localStorage.setItem("role", userData.role);
-    localStorage.setItem("email", userData.email);
     localStorage.setItem("name", name);
 
     setAccessToken(tokens.access);
     setRefreshToken(tokens.refresh);
     setRole(userData.role);
-    setEmail(userData.email);
     setName(userData.name);
    
   };
@@ -36,14 +33,12 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("role");
-    localStorage.removeItem("email");
     localStorage.removeItem("name");
 
 
     setAccessToken(null);
     setRefreshToken(null);
     setRole(null);
-    setEmail(null);
     setName(null);
   };
 
@@ -52,7 +47,6 @@ export function AuthProvider({ children }) {
     setAccessToken(localStorage.getItem("access"));
     setRefreshToken(localStorage.getItem("refresh"));
     setRole(localStorage.getItem("role"));
-    setEmail(localStorage.getItem("email"));
     setName(localStorage.getItem("name"));
   }, []);
 
@@ -62,7 +56,6 @@ export function AuthProvider({ children }) {
         accessToken,
         refreshToken,
         role,
-        email,
         name,
         isAuthenticated,
         login,
