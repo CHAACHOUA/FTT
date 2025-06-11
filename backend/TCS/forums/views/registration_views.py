@@ -13,4 +13,5 @@ def my_forums(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def register_to_forum(request, forum_id):
-    return register_candidate_to_forum(request.user, forum_id)
+    return register_candidate_to_forum(request.user, forum_id, data=request.data)
+

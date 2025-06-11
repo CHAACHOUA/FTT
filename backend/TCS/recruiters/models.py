@@ -26,3 +26,28 @@ class RecruiterForumParticipation(models.Model):
 
     def __str__(self):
         return f"{self.recruiter} in {self.forum}"
+
+class Offer(models.Model):
+    recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, related_name='offers')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='offers')
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='offers')
+
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=255, blank=True)
+
+    contract_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('CDI', 'CDI'),
+            ('CDD', 'CDD'),
+            ('Stage', 'Stage'),
+            ('Alternance', 'Alternance'),
+            ('Freelance', 'Freelance'),
+        ]
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} @ {self.company.name}"

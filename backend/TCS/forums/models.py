@@ -24,13 +24,31 @@ class Forum(models.Model):
     def __str__(self):
         return self.name
 
+
 class ForumRegistration(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='registrations')
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)  # ou Candidate si tu as un modèle dédié
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
+    search = models.OneToOneField(
+        'CandidateSearch',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='registration_reverse'
+    )
 
     class Meta:
-        unique_together = ('forum', 'candidate')  # empêche l'inscription multiple
+        unique_together = ('forum', 'candidate')
 
     def __str__(self):
         return f"{self.candidate} inscrit à {self.forum}"
+
+class CandidateSearch(models.Model):
+    contract_type = models.CharField(max_length=50)
+    sector = models.CharField(max_length=100)
+    experience = models.PositiveIntegerField(null=True, blank=True)
+    region = models.CharField(max_length=100)
+    rqth = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.contract_type}, {self.region}"

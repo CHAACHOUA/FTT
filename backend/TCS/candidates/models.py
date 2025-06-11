@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 
 
+
 class Candidate(models.Model):
     TITLE_CHOICES = [
         ('Madame', 'Madame'),
@@ -76,3 +77,8 @@ class CandidateLanguage(models.Model):
 
     def __str__(self):
         return f"{self.candidate.first_name} speaks {self.language.name} ({self.level})"
+
+
+
+
+
