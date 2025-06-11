@@ -1,40 +1,39 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import '../../pages/styles/forum/ForumCardRegistered.css';
-import photo_forum from '../../assets/forum-base.webp'
+import '../../pages/styles/forum/ForumList.css';
+import photo_forum from '../../assets/forum-base.webp';
 
-const ForumCardRegistered = ({ forum }) => {
+const ForumCardRegistered = ({ forum, onRefresh }) => {
+  const formatDateRange = (start, end) => {
+    if (!start || !end) return "Dates à venir";
+    const d1 = new Date(start);
+    const d2 = new Date(end);
+    if (isNaN(d1) || isNaN(d2)) return "Dates à venir";
+    return `${d1.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - ${d2.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+  };
+
   return (
     <div className="forum-card-registered">
-      <img src={photo_forum} alt={forum.name} className="forum-card-image" />
+      <img
+        src={forum.image || photo_forum}
+        alt={forum.name}
+        className="forum-card-image"
+      />
+
       <div className="forum-card-content">
-        <div className="forum-card-header">
+        <div className="forum-card-left">
           <div className="forum-card-date">
-            <Calendar size={18} />
-            <span>{new Date(forum.date).toLocaleDateString('fr-FR', {
-              weekday: 'short',
-              day: 'numeric',
-              month: 'short'
-            })}</span>
+            <Calendar size={16} />
+            <span>{formatDateRange(forum.date_debut, forum.date_fin)}</span>
           </div>
-          <div className="forum-card-status">
-            <span className="forum-status-tag">Inscrit</span>
-          </div>
+          <div className="forum-card-title">{forum.name}</div>
         </div>
 
-        <h3 className="forum-card-title">{forum.name}</h3>
-        <p className="forum-card-description">
-          {forum.description.length > 100
-            ? forum.description.substring(0, 100) + '...'
-            : forum.description}
-        </p>
+       <Link to={`/event/dashboard/${forum.id}`} className="forum-card-link">
+  Accéder à l'événement
+</Link>
 
-        <div className="forum-card-footer">
-          <Link to={`/forums/${forum.id}`} className="forum-card-link">
-            Accéder à l'événement
-          </Link>
-        </div>
       </div>
     </div>
   );

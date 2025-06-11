@@ -1,6 +1,11 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { AuthProvider } from './context/AuthContext';
+import AuthWatcher from './components/AuthWatcher';
+
 import CandidateSignup from './pages/candidate/CandidateSignup';
 import Login from './pages/common/Login';
 import NavBar from './pages/common/NavBar';
@@ -14,36 +19,36 @@ import DeleteAccount from './pages/candidate/DeleteAccount';
 import ForumView from './pages/candidate/ForumView';
 import Home from './pages/common/Home';
 import ForumDetail from './pages/candidate/ForumDetail';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import ProfileView from './pages/candidate/ProfileView';
+import Dashboard from './pages/candidate/Event/Dashboard';
 
 function App() {
   return (
-    <Router>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+    <AuthProvider>
+      <Router>
+        <AuthWatcher />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
-      <Routes>
-
-       <Route path="/signup-candidate" element={<CandidateSignup />} />
-       <Route path="/upload-cv" element={<UploadCV />} /> 
-       <Route path="/login" element={<Login />} />
-       <Route path="/navbar" element={<NavBar />} />
-       <Route path="/activate/:token" element={<ValidateProfile />} />
-       <Route path="/validate-email/:token" element={<ValidateEmailChange />} />
-       <Route path="/forgot-password" element={<RequestPasswordReset />} />
-       <Route path="/reset-password/:token" element={<ResetPassword />} />
-       <Route path="/change-password" element={<ChangePassword />} />
-       <Route path="/delete-account" element={<DeleteAccount />} />
-       <Route path="/settings" element={<ProfileView />} />
-       <Route path="/forums" element={<ForumView />} />
-       <Route path="/" element={<Home />} />
-       <Route path="/forums/:id" element={<ForumDetail />} />
-
-       <Route path="/profile" element={<ProfileView />} />
-      </Routes>
-    </Router>
-    
+        <Routes>
+          <Route path="/signup-candidate" element={<CandidateSignup />} />
+          <Route path="/upload-cv" element={<UploadCV />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/navbar" element={<NavBar />} />
+          <Route path="/activate/:token" element={<ValidateProfile />} />
+          <Route path="/validate-email/:token" element={<ValidateEmailChange />} />
+          <Route path="/forgot-password" element={<RequestPasswordReset />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/delete-account" element={<DeleteAccount />} />
+          <Route path="/settings" element={<ProfileView />} />
+          <Route path="/forums" element={<ForumView />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/forums/:id" element={<ForumDetail />} />
+          <Route path="/event/dashboard/:id" element={<Dashboard />} />
+          <Route path="/profile" element={<ProfileView />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

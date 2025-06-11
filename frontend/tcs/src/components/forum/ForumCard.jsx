@@ -1,96 +1,76 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import '../../pages/styles/forum/ForumCard.css';
-import photo_forum from '../../assets/forum-base.webp';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import { Calendar, MapPin, Video } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import ForumRegistrationPopup from './ForumRegistrationPopup';
+import defaultImage from '../../assets/forum-base.webp';
+import logo from '../../assets/Logo-FTT.png';
+import '../../pages/styles/forum/ForumList.css';
+import '../../pages/styles/forum/Popup.css';
 
-const ForumCard = ({ forum, isRegistered }) => {
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
-  const { accessToken } = useAuth();
-  const navigate = useNavigate();
-  const API = process.env.REACT_APP_API_BASE_URL;
+const ForumCard = ({ forum, isRegistered, onRegistered }) => {
+  const [open, setOpen] = useState(false);
 
-  const handleRegister = async () => {
-    if (!accessToken) {
-      navigate('/login');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        `${API}/api/forums/${forum.id}/register/`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      setMessage("Inscription réussie !");
-    } catch (err) {
-      if (err.response && err.response.data.detail) {
-        setMessage(err.response.data.detail);
-      } else {
-        setMessage("Erreur lors de l'inscription.");
-      }
-    } finally {
-      setLoading(false);
-    }
+  const formatDateRange = (start, end) => {
+    if (!start || !end) return 'Dates à venir';
+    const d1 = new Date(start);
+    const d2 = new Date(end);
+    if (isNaN(d1) || isNaN(d2)) return 'Dates à venir';
+    return `Du ${d1.toLocaleDateString('fr-FR')} au ${d2.toLocaleDateString('fr-FR')}`;
   };
 
   return (
-    <div className="forum-card">
-      <img src={photo_forum} alt={forum.name} className="forum-image" />
-      <div className="forum-content">
-        <div className="forum-organizer">
-          {forum.organizer.logo && (
-            <img src={forum.organizer.logo} alt={forum.organizer.name} className="organizer-logo" />
-          )}
-          <span className="organizer-name">Organisé par {forum.organizer.name}</span>
-        </div>
-
-        <h3 className="forum-title">{forum.name}</h3>
-
-        <div className="forum-meta">
-          <div className="forum-meta-item">
-            <Calendar size={16} /> Du {new Date(forum.date).toLocaleDateString('fr-FR')}
+    <>
+      <div className="forum-card">
+        <img src={forum.image || defaultImage} alt="Bannière" className="forum-image-banner" />
+        <div className="forum-card-body">
+          <div className="forum-organizer">
+            <img src={forum.organizer?.logo || logo} alt="logo" className="organizer-logo-seekube" />
+            <span className="organizer-text">Organisé par {forum.organizer?.name}</span>
           </div>
-          <div className="forum-meta-item">
-            <MapPin size={16} /> {forum.type === 'presentiel' ? 'Présentiel' : 'Virtuel'}
+
+          <h2 className="forum-title">{forum.name}</h2>
+
+          <div className="forum-meta">
+            <div><Calendar size={16} /> {forum.date}</div>
+            <div>
+              {forum.type?.toLowerCase() === 'virtuel' ? (
+                <Video size={16} />
+              ) : (
+                <MapPin size={16} />
+              )}
+              &nbsp;{forum.type}
+            </div>
+          </div>
+
+          <p className="forum-description">
+            {forum.description?.length > 300
+              ? forum.description.slice(0, 300) + '…'
+              : forum.description}
+          </p>
+
+          <div className="forum-actions-seekube">
+            <Link to={`/forums/${forum.id}`}>
+              <button className="btn-seekube btn-outline">En savoir plus</button>
+            </Link>
+            {!isRegistered && (
+              <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>
+                S'inscrire
+              </button>
+            )}
           </div>
         </div>
-
-        <p className="forum-description">
-          {forum.description.length > 150
-            ? forum.description.substring(0, 150) + '...'
-            : forum.description}
-        </p>
-
-        <div className="forum-actions">
-          <Link to={`/forums/${forum.id}`} className="forum-button-link">
-            <button className="en-savoir-plus">En savoir plus</button>
-          </Link>
-
-          {!isRegistered && (
-            <button 
-              className="s-inscrire"
-              onClick={handleRegister}
-              disabled={loading}
-            >
-              {loading ? "Inscription..." : "S'inscrire"}
-            </button>
-          )}
-        </div>
-
-        {message && (
-          <p className="forum-message">{message}</p>
-        )}
       </div>
-    </div>
+
+      <ForumRegistrationPopup
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        forumId={forum.id}
+        onSubmit={() => {
+          onRegistered?.(); // 🔄 Callback pour refetch dans ForumView
+          setOpen(false);
+        }}
+      />
+    </>
   );
 };
 

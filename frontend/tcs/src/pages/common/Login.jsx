@@ -58,13 +58,12 @@ export default function Login() {
     } catch (err) {
   const resData = err.response?.data || {};
   const statusCode = err.response?.status;
-
   const errorMessage =
     resData.message ||
     resData.error ||
     "Erreur lors de la connexion. Veuillez réessayer.";
-
   toast.error(errorMessage);
+  console.log(resData.message)
 
   // Activer le bouton de renvoi si le compte est inactif
   if (resData.activation_resend_possible || statusCode === 403) {

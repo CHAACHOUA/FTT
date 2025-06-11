@@ -1,42 +1,37 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-digitalio.png';
 import '../styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
-
 import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from "react-icons/md";
-import { useEffect } from 'react';
+
 const Navbar = () => {
   const { isAuthenticated, role, logout } = useAuth();
   const [name, setName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+
   const toggleDropdown = () => setShowDropdown(!showDropdown);
-  const getInitials = (name) => {
-    if (!name) return '';
-    return name.slice(0, 2).toUpperCase();
-  };
 
+  const getInitials = (name) => name ? name.slice(0, 2).toUpperCase() : '';
 
-useEffect(() => {
-  const handleScroll = () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 0) {
-      navbar.classList.add('navbar-blur');
-    } else {
-      navbar.classList.remove('navbar-blur');
-    }
-  };
-  const storedName = localStorage.getItem('name');
-  if (storedName) {
-    setName(storedName);
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 0) {
+        navbar.classList.add('navbar-blur');
+      } else {
+        navbar.classList.remove('navbar-blur');
+      }
+    };
 
+    const storedName = localStorage.getItem('name');
+    if (storedName) setName(storedName);
 
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
-
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav className="navbar">
@@ -64,17 +59,13 @@ useEffect(() => {
                 <Link to="/profile" className="dropdown-item">
                   <BsPerson className="dropdown-icon" /> Mon profil
                 </Link>
-                
-             <Link to="/forums" className="dropdown-item">
-  <MdEventAvailable className="dropdown-icon" /> Forums
-</Link>
-            
-             
-
-                    <Link to="/settings" className="dropdown-item">
+                <Link to="/forums" className="dropdown-item">
+                  <MdEventAvailable className="dropdown-icon" /> Forums
+                </Link>
+                <Link to="/settings" className="dropdown-item">
                   <BsGear className="dropdown-icon" /> Paramètres
                 </Link>
-                <button onClick={logout} className="dropdown-item logout">
+                <button onClick={() => logout(() => navigate('/login'))} className="dropdown-item logout">
                   <BsBoxArrowRight className="dropdown-icon" /> Se déconnecter
                 </button>
               </div>

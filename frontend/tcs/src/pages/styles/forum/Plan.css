@@ -1,0 +1,166 @@
+.plan-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.plan-header {
+  display: flex;
+  gap: 32px;
+}
+
+.plan-header-left {
+  flex: 2;
+}
+
+.plan-header-right {
+  flex: 1;
+  border-left: 1px solid #e5e7eb;
+  padding-left: 24px;
+}
+
+.plan-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.stand-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  padding: 16px;
+  border-radius: 12px;
+  background: repeating-linear-gradient(
+      0deg,
+      #fef2f2 0,
+      #fef2f2 40px,
+      #fff 40px,
+      #fff 80px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #fef2f2 0,
+      #fef2f2 40px,
+      #fff 40px,
+      #fff 80px
+    );
+  border: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.stand-cell {
+  background-color: #1f2937;
+  color: white;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-direction: column;
+  text-align: center;
+}
+
+.stand-label {
+  font-weight: bold;
+}
+
+.path-step .stand-step-number {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #22c55e;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 4px 7px;
+  font-weight: bold;
+}
+
+.entry {
+  background-color: #ef4444;
+  border-radius: 10px;
+  position: relative;
+}
+
+.entry-label {
+  position: absolute;
+  bottom: -18px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.filter-block {
+  margin-bottom: 16px;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.time-estimate {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  background-color: #fff7ed;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #fcd34d;
+}
+
+.plan-bottom {
+  margin-top: 24px;
+}
+
+.company-step-card {
+  display: flex;
+  align-items: center;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #3b82f6;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.step-number {
+  font-weight: bold;
+  font-size: 1.1rem;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.company-info h4 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.company-info p {
+  margin: 2px 0 0 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+.stand-cell.corridor {
+  background-color: transparent;
+  border: none;
+  color: transparent;
+  pointer-events: none;
+  box-shadow: none;
+}

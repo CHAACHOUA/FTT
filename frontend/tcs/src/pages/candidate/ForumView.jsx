@@ -1,8 +1,7 @@
-""// ForumView.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import ForumCard from '../../components/forum/ForumCard';
-import  ForumCardRegistered from'../../components/forum/ForumCardRegistered'
+import ForumCardRegistered from '../../components/forum/ForumCardRegistered';
 import '../../pages/styles/forum/ForumList.css';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../common/NavBar';
@@ -15,37 +14,36 @@ const ForumView = () => {
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
 
-  useEffect(() => {
-    const fetchForums = async () => {
-      if (accessToken) {
-        try {
-          const response = await axios.get(`${API}/api/forums/candidate/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-          setRegisteredForums(response.data.registered);
-          setUnregisteredForums(response.data.unregistered);
-          setError(null);
-        } catch (err) {
-          console.error('Erreur lors de la récupération des forums inscrits :', err.message);
-          setError("Erreur lors du chargement des forums.");
-        }
-      } else {
-        // Requête pour récupérer tous les forums s'il n'est pas connecté
-        try {
-          const response = await axios.get(`${API}/api/forums/`);
-          setAllForums(response.data);
-          setError(null);
-        } catch (err) {
-          console.error('Erreur lors de la récupération des forums :', err.message);
-          setError("Erreur lors du chargement des forums.");
-        }
+  const fetchForums = useCallback(async () => {
+    if (accessToken) {
+      try {
+        const response = await axios.get(`${API}/api/forums/candidate/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setRegisteredForums(response.data.registered);
+        setUnregisteredForums(response.data.unregistered);
+        setError(null);
+      } catch (err) {
+        console.error('Erreur lors de la récupération des forums inscrits :', err.message);
+        setError("Erreur lors du chargement des forums.");
       }
-    };
+    } else {
+      try {
+        const response = await axios.get(`${API}/api/forums/`);
+        setAllForums(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Erreur lors de la récupération des forums :', err.message);
+        setError("Erreur lors du chargement des forums.");
+      }
+    }
+  }, [accessToken, API]);
 
+  useEffect(() => {
     fetchForums();
-  }, [accessToken]);
+  }, [fetchForums]);
 
   return (
     <div>
@@ -55,17 +53,20 @@ const ForumView = () => {
 
         {accessToken ? (
           <>
-            <h2>Forums où vous êtes inscrit</h2>
             <div className="forum-row">
               {registeredForums.map(forum => (
-                <ForumCardRegistered key={forum.id} forum={forum} isRegistered={true} />
+                <ForumCardRegistered key={forum.id} forum={forum} />
               ))}
             </div>
 
-            <h2>Autres forums</h2>
             <div className="forum-grid">
               {unregisteredForums.map(forum => (
-                <ForumCard key={forum.id} forum={forum} isRegistered={false} />
+                <ForumCard
+                  key={forum.id}
+                  forum={forum}
+                  isRegistered={false}
+                  onRegistered={fetchForums} // ✅ pour actualiser les forums après inscription
+                />
               ))}
             </div>
           </>
@@ -74,7 +75,12 @@ const ForumView = () => {
             <h2>Liste des Forums</h2>
             <div className="forum-grid">
               {allForums.map(forum => (
-                <ForumCard key={forum.id} forum={forum} isRegistered={false} />
+                <ForumCard
+                  key={forum.id}
+                  forum={forum}
+                  isRegistered={false}
+                  onRegistered={fetchForums}
+                />
               ))}
             </div>
           </>
