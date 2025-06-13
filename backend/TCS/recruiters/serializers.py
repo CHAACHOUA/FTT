@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from company.serializers import CompanySerializer
-from .models import Recruiter, Offer
+from .models import Recruiter, Offer, FavoriteOffer
 from forums.serializers import ForumSerializer
 
 
@@ -29,6 +29,7 @@ class OfferSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'location',
+            'sector',
             'contract_type',
             'created_at',
             'company_name',
@@ -37,3 +38,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def get_recruiter_name(self, obj):
         return f"{obj.recruiter.first_name} {obj.recruiter.last_name}"
+class FavoriteOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteOffer
+        fields = ['id', 'candidate', 'offer', 'added_at']

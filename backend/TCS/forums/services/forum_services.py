@@ -11,7 +11,7 @@ def get_all_forums():
     """
     try:
         forums = Forum.objects.all().order_by('-date')
-        serializer = ForumSerializer(forums, many=True)
+        serializer = ForumDetailSerializer(forums, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(

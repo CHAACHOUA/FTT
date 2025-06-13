@@ -44,8 +44,8 @@ class ForumRegistration(models.Model):
         return f"{self.candidate} inscrit à {self.forum}"
 
 class CandidateSearch(models.Model):
-    contract_type = models.CharField(max_length=50)
-    sector = models.CharField(max_length=100)
+    contract_type = models.JSONField(default=list)
+    sector = models.JSONField(default=list)
     experience = models.PositiveIntegerField(null=True, blank=True)
     region = models.CharField(max_length=100)
     rqth = models.BooleanField(default=False)

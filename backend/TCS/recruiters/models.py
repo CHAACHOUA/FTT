@@ -2,7 +2,7 @@
 from django.db import models
 from users.models import User
 from company.models import Company
-
+from candidates.models import Candidate
 from forums.models import Forum
 
 
@@ -28,6 +28,13 @@ class RecruiterForumParticipation(models.Model):
         return f"{self.recruiter} in {self.forum}"
 
 class Offer(models.Model):
+    SECTOR_CHOICES = [
+        ('IT', 'Informatique'),
+        ('Marketing', 'Marketing'),
+        ('Commerce', 'Commerce'),
+        ('RH', 'Ressources Humaines'),
+        ('Finance', 'Finance'),
+    ]
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, related_name='offers')
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='offers')
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='offers')
@@ -35,7 +42,7 @@ class Offer(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255, blank=True)
-
+    sector = models.CharField(max_length=100, choices=SECTOR_CHOICES)
     contract_type = models.CharField(
         max_length=50,
         choices=[
@@ -51,3 +58,15 @@ class Offer(models.Model):
 
     def __str__(self):
         return f"{self.title} @ {self.company.name}"
+class FavoriteOffer(models.Model):
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='favorite_offers')
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name='favorited_by')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('candidate', 'offer')
+        verbose_name = "Offre Favorite"
+        verbose_name_plural = "Offres Favorites"
+
+    def __str__(self):
+        return f"{self.candidate.user.email} ❤️ {self.offer.title}"

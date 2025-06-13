@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from users.models import User
 
@@ -20,6 +21,7 @@ class Candidate(models.Model):
     cv_file = models.FileField(upload_to='cvs/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    public_token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
 
     def __str__(self):
         return f"Candidate: {self.first_name} {self.last_name}"

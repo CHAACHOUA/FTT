@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from forums.models import Forum
-from forums.serializers import ForumSerializer
+from forums.serializers import ForumDetailSerializer
 from candidates.models import Candidate
 
 
@@ -18,8 +18,8 @@ def get_candidate_forum_lists(user):
         unregistered = Forum.objects.exclude(registrations__candidate=candidate).order_by('-date')
 
         return Response({
-            "registered": ForumSerializer(registered, many=True).data,
-            "unregistered": ForumSerializer(unregistered, many=True).data,
+            "registered": ForumDetailSerializer(registered, many=True).data,
+            "unregistered": ForumDetailSerializer(unregistered, many=True).data,
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
