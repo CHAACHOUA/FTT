@@ -1,0 +1,89 @@
+/* Overlay sombre */
+.popup-wrapper {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenu du popup */
+.popup-content {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: popupAppear 0.3s ease-out;
+}
+
+/* Animation d’apparition */
+@keyframes popupAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bouton de fermeture */
+.popup-content button[aria-label="Fermer"] {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.popup-content button[aria-label="Fermer"]:hover {
+  color: #e63946;
+}
+
+/* Titre */
+.popup-content h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1d4ed8;
+  margin-bottom: 1rem;
+}
+
+/* QR Code centré */
+.popup-content svg {
+  margin: 0 auto;
+  display: block;
+  max-width: 200px;
+  height: auto;
+}
+
+/* Lien affiché en bas */
+.popup-content p {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #555;
+  word-break: break-all;
+}
+.popup-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #1d4ed8;
+  text-decoration: underline;
+  word-break: break-all;
+  transition: color 0.2s ease;
+}
+
+.popup-link:hover {
+  color: #2563eb;
+}

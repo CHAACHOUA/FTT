@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import '../styles/common/login.css';
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import logo from '../../assets/logo-digitalio.png';
+import Loading from '../../pages/common/Loading'; // ✅ import
 
 export default function Login() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function Login() {
       );
 
       const { access, refresh, role, email, message, name } = res.data;
-      login({ access, refresh }, { role, email ,name});
+      login({ access, refresh }, { role, email, name });
 
       if (role === 'candidate') {
         navigate('/');
@@ -56,22 +57,19 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
-  const resData = err.response?.data || {};
-  const statusCode = err.response?.status;
-  const errorMessage =
-    resData.message ||
-    resData.error ||
-    "Erreur lors de la connexion. Veuillez réessayer.";
-  toast.error(errorMessage);
-  console.log(resData.message)
+      const resData = err.response?.data || {};
+      const statusCode = err.response?.status;
+      const errorMessage =
+        resData.message ||
+        resData.error ||
+        "Erreur lors de la connexion. Veuillez réessayer.";
+      toast.error(errorMessage);
 
-  // Activer le bouton de renvoi si le compte est inactif
-  if (resData.activation_resend_possible || statusCode === 403) {
-    setShowResendButton(true);
-  }
+      if (resData.activation_resend_possible || statusCode === 403) {
+        setShowResendButton(true);
+      }
 
-  setError(errorMessage);
-
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -90,6 +88,9 @@ export default function Login() {
     }
   };
 
+  // ✅ Affichage de Loading pendant la connexion
+  if (loading) return <Loading />;
+
   return (
     <div className="login-container">
       <div className="logo-container">
@@ -97,16 +98,18 @@ export default function Login() {
           <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
         </Link>
       </div>
+
       <h2 className="login-title">Se connecter</h2>
- {showResendButton && (
+
+      {showResendButton && (
         <div className="resend-container">
           <button onClick={handleResendActivation} className="resend-activation-button">
             Renvoyer le mail d’activation
           </button>
         </div>
       )}
+
       <form onSubmit={handleSubmit}>
-        {/* Email */}
         <div className="input-group">
           <span className="icon"><FiMail /></span>
           <label>Email *</label>
@@ -120,7 +123,6 @@ export default function Login() {
           />
         </div>
 
-        {/* Mot de passe */}
         <div className="input-group">
           <span className="icon"><FiLock /></span>
           <label>Mot de passe *</label>
@@ -143,20 +145,14 @@ export default function Login() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="login-button"
-        >
-          {loading ? 'Connexion...' : 'Se connecter'}
+        <button type="submit" className="login-button">
+          Se connecter
         </button>
       </form>
 
-     
-
       <div className="login-footer">
-        <a href="/signup-candidate">Pas de compte ? S'inscrire</a>
-        <a href="/forgot-password">Mot de passe oublié ?</a>
+        <Link to="/signup-candidate">Pas de compte ? S'inscrire</Link>
+        <Link to="/forgot-password">Mot de passe oublié ?</Link>
       </div>
     </div>
   );

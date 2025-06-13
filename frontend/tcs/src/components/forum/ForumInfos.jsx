@@ -1,19 +1,65 @@
 import React from 'react';
+import '../../pages/styles/forum/ForumInfos.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarDays, faBuilding } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/Logo-FTT.png';
 
-
-const ForumInfos = ({ forum }) => {
+const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
+  const recruiterCount = forum.companies.reduce(
+    (sum, company) => sum + company.recruiters.length,
+    0
+  );
+  const LogoCompany = logo;
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-2">À propos :</h3>
-          <h1 className="text-2xl font-bold mb-2">{forum.name}</h1>
-        <p className="text-gray-500 mb-4">Organisé par {forum.organizer?.name}</p>
+    <div className="forum-infos-container">
+      {/* Partie gauche : description */}
+      <div className="forum-infos-left">
+        <h2 className="forum-infos-title">Bienvenue !</h2>
+        <p className="forum-infos-description">{forum.description}</p>
+        {forum.highlight && (
+          <p className="forum-infos-highlight">{forum.highlight}</p>
+        )}
+      </div>
 
-      <p className="mb-4">{forum.description}</p>
-      {forum.highlight && <p className="mb-2 text-gray-700">{forum.highlight}</p>}
-      <p className="mb-2 text-sm text-gray-500">Type : {forum.type}</p>
-      <p className="text-sm text-gray-500">
-        Date : {forum.date} 
-      </p>
+      {/* Partie droite : bloc événement */}
+      <div className="forum-infos-right">
+        <h3 className="forum-infos-right-title">Détails de l’évènement</h3>
+
+        <div className="forum-detail-line">
+          <FontAwesomeIcon icon={faCalendarDays} className="fa-icon" />
+          <span>Du {forum.date}</span>
+        </div>
+
+        <div className="forum-detail-line">
+          <FontAwesomeIcon icon={faBuilding} className="fa-icon" />
+          <span>{forum.companies.length} Entreprises</span>
+        </div>
+
+        <div className="forum-detail-line">
+          <span>Plus de {recruiterCount} recruteurs n'attendent que toi !</span>
+          <div className="forum-recruiters-logo-list">
+            {forum.companies.slice(0, 5).map((company, idx) => (
+              <img
+                key={idx}
+                src={company.logo || LogoCompany}
+                alt={company.name}
+                className="forum-recruiter-logo"
+              />
+            ))}
+            {forum.companies.length > 5 && (
+              <span className="forum-more-recruiters">
+                +{forum.companies.length - 5}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {showRegisterButton && (
+          <button className="forum-register-button" onClick={onRegister}>
+            S'inscrire
+          </button>
+        )}
+      </div>
     </div>
   );
 };

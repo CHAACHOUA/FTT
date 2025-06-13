@@ -11,24 +11,23 @@ const getInitials = (firstName, lastName) => {
 
 const getProfilePictureURL = (profile_picture) => {
   if (!profile_picture) return null;
-
   if (typeof profile_picture === 'string') {
     return profile_picture.startsWith('http')
       ? profile_picture
       : `${API_URL}${profile_picture}`;
   }
-
   return URL.createObjectURL(profile_picture);
 };
 
-const Presentation = ({ formData, onUpdate }) => {
+const Presentation = ({ formData, onUpdate = () => {}, readOnly = false }) => {
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    onUpdate({ [name]: value });
+    if (!readOnly) onUpdate({ [name]: value });
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
+    if (readOnly) return;
     if (file && file.size <= 2 * 1024 * 1024) {
       onUpdate({ profile_picture: file });
     } else {
@@ -54,17 +53,19 @@ const Presentation = ({ formData, onUpdate }) => {
           </div>
         )}
 
-        <label htmlFor="profile_picture" className="upload-photo-btn">
-          <FaCamera /> Importer une photo (recommandé)
-          <input
-            type="file"
-            id="profile_picture"
-            name="profile_picture"
-            accept="image/png, image/jpeg"
-            onChange={handlePhotoChange}
-            style={{ display: 'none' }}
-          />
-        </label>
+        {!readOnly && (
+          <label htmlFor="profile_picture" className="upload-photo-btn">
+            <FaCamera /> Importer une photo (recommandé)
+            <input
+              type="file"
+              id="profile_picture"
+              name="profile_picture"
+              accept="image/png, image/jpeg"
+              onChange={handlePhotoChange}
+              style={{ display: 'none' }}
+            />
+          </label>
+        )}
       </div>
 
       {/* Civilité */}
@@ -80,6 +81,7 @@ const Presentation = ({ formData, onUpdate }) => {
             value={formData.title || ''}
             onChange={handleFieldChange}
             className="modern-select"
+            disabled={readOnly}
           >
             <option value="" disabled hidden></option>
             <option value="Monsieur">Monsieur</option>
@@ -103,6 +105,7 @@ const Presentation = ({ formData, onUpdate }) => {
             value={formData.first_name || ''}
             onChange={handleFieldChange}
             autoComplete="given-name"
+            disabled={readOnly}
           />
         </div>
       </div>
@@ -121,6 +124,7 @@ const Presentation = ({ formData, onUpdate }) => {
             value={formData.last_name || ''}
             onChange={handleFieldChange}
             autoComplete="family-name"
+            disabled={readOnly}
           />
         </div>
       </div>

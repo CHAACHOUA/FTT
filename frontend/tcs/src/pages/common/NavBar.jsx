@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-digitalio.png';
 import '../styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
-import { BsPerson, BsGear, BsBarChart, BsBoxArrowRight } from 'react-icons/bs';
-import { MdEventAvailable } from "react-icons/md";
+import { BsPerson, BsGear, BsBoxArrowRight } from 'react-icons/bs';
+import { MdEventAvailable } from 'react-icons/md';
 
 const Navbar = () => {
   const { isAuthenticated, role, logout } = useAuth();
@@ -19,16 +19,20 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const navbar = document.querySelector('.navbar');
-      if (window.scrollY > 0) {
-        navbar.classList.add('navbar-blur');
-      } else {
-        navbar.classList.remove('navbar-blur');
+      if (navbar) {
+        if (window.scrollY > 0) {
+          navbar.classList.add('navbar-blur');
+        } else {
+          navbar.classList.remove('navbar-blur');
+        }
       }
     };
 
+    // Récupération du prénom stocké
     const storedName = localStorage.getItem('name');
     if (storedName) setName(storedName);
 
+    // Ajout de l'écouteur scroll
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -65,7 +69,10 @@ const Navbar = () => {
                 <Link to="/settings" className="dropdown-item">
                   <BsGear className="dropdown-icon" /> Paramètres
                 </Link>
-                <button onClick={() => logout(() => navigate('/login'))} className="dropdown-item logout">
+                <button
+                  onClick={() => logout(() => navigate('/login'))}
+                  className="dropdown-item logout"
+                >
                   <BsBoxArrowRight className="dropdown-icon" /> Se déconnecter
                 </button>
               </div>

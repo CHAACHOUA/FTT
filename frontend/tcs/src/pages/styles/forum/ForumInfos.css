@@ -1,0 +1,104 @@
+.forum-infos-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.forum-infos-left {
+  flex: 1;
+  min-width: 300px;
+}
+
+.forum-infos-right {
+  width: 350px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px #0000000f;
+}
+
+.forum-infos-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1d3557;
+}
+
+.forum-infos-description {
+  font-size: 1rem;
+  color: #3a4a61;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.forum-infos-highlight {
+  font-size: 1rem;
+  color: #3a4a61;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.forum-infos-right-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #2e4269;
+}
+
+.forum-detail-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #334155;
+  flex-wrap: wrap;
+}
+
+.fa-icon {
+  color: #008291;
+}
+
+.forum-recruiters-logo-list {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.forum-recruiter-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f3f4f6;
+}
+
+.forum-more-recruiters {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.forum-register-button {
+  margin-top: 16px;
+  background-color: #2cb4f5;
+  color: white;
+  font-weight: 600;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1rem;
+}

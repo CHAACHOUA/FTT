@@ -2,17 +2,17 @@ import React from 'react';
 import '../../styles/candidate/Contact.css';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
 
-const Contact = ({ formData, onUpdate }) => {
+const Contact = ({ formData, onUpdate = () => {}, readOnly = false }) => {
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    onUpdate({ [name]: value });
+    if (!readOnly) onUpdate({ [name]: value });
   };
 
   return (
     <div className="contact-section">
       <h3 className="contact-title">Contact</h3>
 
-      {/* Phone */}
+      {/* Téléphone */}
       <div className="input-modern">
         <div className="input-icon-country">
           <span className="input-icon"><FaPhone /></span>
@@ -20,15 +20,18 @@ const Contact = ({ formData, onUpdate }) => {
           <span className="country-code">(+33)</span>
         </div>
         <div className="input-wrapper-modern">
-          <label className={`floating-label ${formData.phone ? 'filled' : ''}`}>Téléphone <span className="required">*</span></label>
+          <label className={`floating-label ${formData.phone ? 'filled' : ''}`}>
+            Téléphone <span className="required">*</span>
+          </label>
           <input
             type="text"
             name="phone"
             value={formData.phone || ''}
             onChange={handleFieldChange}
             autoComplete="tel"
+            disabled={readOnly}
           />
-          {formData.phone && (
+          {!readOnly && formData.phone && (
             <span className="clear-btn" onClick={() => onUpdate({ phone: '' })}>✕</span>
           )}
         </div>
@@ -38,13 +41,16 @@ const Contact = ({ formData, onUpdate }) => {
       <div className="input-modern">
         <span className="input-icon"><FaEnvelope /></span>
         <div className="input-wrapper-modern">
-          <label className={`floating-label ${formData.email ? 'filled' : ''}`}>Mail <span className="required">*</span></label>
+          <label className={`floating-label ${formData.email ? 'filled' : ''}`}>
+            Mail <span className="required">*</span>
+          </label>
           <input
             type="email"
             name="email"
             value={formData.email || ''}
             onChange={handleFieldChange}
             autoComplete="email"
+            disabled={readOnly}
           />
         </div>
       </div>

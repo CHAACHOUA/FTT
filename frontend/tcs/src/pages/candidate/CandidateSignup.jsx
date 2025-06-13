@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import '../styles/candidate/signup.css';
 import logo from '../../assets/logo-digitalio.png';
+import Loading from '../../pages/common/Loading'; // ✅ import du composant de chargement
 
 const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -27,7 +28,6 @@ export default function CandidateSignup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Validation dynamique du mot de passe
   const passwordValidations = {
     length: formData.password.length >= 12,
     uppercase: /[A-Z]/.test(formData.password),
@@ -39,48 +39,47 @@ export default function CandidateSignup() {
     setError('');
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  if (!Object.values(passwordValidations).every(Boolean)) {
-    toast.error("Le mot de passe ne respecte pas les critères requis.");
-    setLoading(false);
-    return;
-  }
+    if (!Object.values(passwordValidations).every(Boolean)) {
+      toast.error("Le mot de passe ne respecte pas les critères requis.");
+      setLoading(false);
+      return;
+    }
 
-  try {
-    const { confirmPassword, ...dataToSend } = formData;
-    const res = await axios.post(
-      `${API}/api/users/auth/signup/candidate/`,
-      dataToSend,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    try {
+      const { confirmPassword, ...dataToSend } = formData;
+      const res = await axios.post(
+        `${API}/api/users/auth/signup/candidate/`,
+        dataToSend,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
-    const { access, refresh, role, email } = res.data;
+      const { access, refresh, role, email } = res.data;
 
-    toast.success(res.data.message || "Inscription réussie ! Veuillez vérifier votre mail ");
-    login({ access, refresh }, { role, email });
-    navigate('/login');
-  } catch (err) {
-    console.error("Erreur d'inscription :", err.response?.data || err.message);
+      toast.success(res.data.message || "Inscription réussie ! Veuillez vérifier votre mail ");
+      login({ access, refresh }, { role, email });
+      navigate('/login');
+    } catch (err) {
+      console.error("Erreur d'inscription :", err.response?.data || err.message);
+      const errorMessage = err.response?.data?.message || "Erreur lors de l'inscription. Veuillez réessayer.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const errorMessage = err.response?.data?.message || "Erreur lors de l'inscription. Veuillez réessayer.";
-
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  // ✅ Affichage du loader pendant la soumission
+  if (loading) return <Loading />;
 
   return (
     <div className="auth-container">
-          <div className="logo-container">
+      <div className="logo-container">
         <Link to="/">
           <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
         </Link>
@@ -91,7 +90,6 @@ export default function CandidateSignup() {
 
       <form onSubmit={handleSubmit} className="auth-form">
 
-        {/* Prénom */}
         <div className="auth-input">
           <FiUser className="icon" />
           <input
@@ -104,7 +102,6 @@ export default function CandidateSignup() {
           />
         </div>
 
-        {/* Nom */}
         <div className="auth-input">
           <FiUser className="icon" />
           <input
@@ -117,7 +114,6 @@ export default function CandidateSignup() {
           />
         </div>
 
-        {/* Email */}
         <div className="auth-input">
           <FiMail className="icon" />
           <input
@@ -130,7 +126,6 @@ export default function CandidateSignup() {
           />
         </div>
 
-        {/* Mot de passe */}
         <div className="auth-input password-wrapper">
           <FiLock className="icon" />
           <input
@@ -149,7 +144,6 @@ export default function CandidateSignup() {
           </div>
         </div>
 
-        {/* Confirmation du mot de passe */}
         <div className="auth-input password-wrapper">
           <FiLock className="icon" />
           <input
@@ -168,7 +162,6 @@ export default function CandidateSignup() {
           </div>
         </div>
 
-        {/* Animation Validation */}
         <div className="password-rules">
           <p className={passwordValidations.length ? 'valid' : 'invalid'}>
             • Minimum 12 caractères
@@ -186,12 +179,12 @@ export default function CandidateSignup() {
           className="auth-button"
           disabled={loading}
         >
-          {loading ? 'Inscription...' : "S'inscrire"}
+          S'inscrire
         </button>
       </form>
 
       <div className="auth-footer">
-        Vous avez déjà un compte ? <a href="/login">Se connecter</a>
+        Vous avez déjà un compte ? <Link to="/login">Se connecter</Link>
       </div>
     </div>
   );

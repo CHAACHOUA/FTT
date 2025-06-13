@@ -11,6 +11,70 @@ body {
   font-family: 'Poppins', sans-serif;
   background-color: #f5f7fa;
 }
+.filter-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem 2rem;
+}
+.forum-header-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.status-dropdown {
+  font-size: 1rem;
+  padding: 10px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  color: #1f2a4d;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.forum-badge {
+  background-color: #e2e8f0;
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+}
+
+
+
+.forum-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2a4d;
+  margin: 0 0 0.5rem 0; /* supprime margin-bottom inutile */
+  width: 100%;
+  text-align: left;     /* aligne à gauche */
+}
+.forum-section p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 1.5rem 0;
+  width: 100%;
+  text-align: left;     /* aligne à gauche */
+}
+
+.forum-section {
+  padding: 2rem;
+  background-color: #f9fbfd;
+}
+.filter-dropdown {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+}
 
 /* ---------------------- */
 /* Section container      */
@@ -315,4 +379,53 @@ body {
 @keyframes fadeIn {
   from {opacity: 0; transform: translateY(8px);}
   to {opacity: 1; transform: translateY(0);}
+}
+
+.no-results-message {
+  margin-top: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.no-results-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #94a3b8;
+}
+.forum-card-registered {
+  background-color: #ffffff; /* Fond blanc professionnel */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Ombre légère */
+}
+
+.forum-card-date {
+  color: #cfadbe8d; /* Gris neutre lisible */
+}
+
+.forum-card-title {
+  color: #1f2937; /* Gris très foncé pour bonne lisibilité */
+}
+
+.forum-badge {
+  background-color: #d1fae5; /* Vert très clair */
+  color: #047857; /* Vert foncé lisible */
+}
+
+.forum-card-link {
+  background-color: #2563eb; /* Bleu pro */
+  color: #ffffff;
+}
+
+.forum-card-link:hover {
+  background-color: #1d4ed8; /* Bleu plus foncé au hover */
+}
+
+.forum-ended {
+  filter: grayscale(0.5) brightness(0.9); /* Désaturation + légère obscurité */
+  opacity: 0.8;
+  pointer-events: none;
 }

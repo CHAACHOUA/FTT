@@ -15,6 +15,7 @@ import DeleteAccount from './DeleteAccount';
 import ChangePassword from './ChangePassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loading from '../../pages/common/Loading'; // ✅ Import du composant de chargement
 
 const ProfileView = () => {
   const [formData, setFormData] = useState({});
@@ -108,14 +109,12 @@ const ProfileView = () => {
         },
       });
 
- 
-     toast.success(
-  typeof res.data === 'string'
-    ? res.data
-    : res.data.detail || res.data.message || "Profil mis à jour avec succès !"
-);
+      toast.success(
+        typeof res.data === 'string'
+          ? res.data
+          : res.data.detail || res.data.message || "Profil mis à jour avec succès !"
+      );
 
-      console.log("Réponse brute du backend :", res.data);
       localStorage.setItem('name', formData.first_name || '');
       setLoading(true);
       await fetchData();
@@ -131,7 +130,8 @@ const ProfileView = () => {
     }
   };
 
-  if (loading) return <div>Chargement des données...</div>;
+  // ✅ Affichage du loader si le profil est en chargement
+  if (loading) return <Loading />;
 
   return (
     <div className="profile-container">

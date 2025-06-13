@@ -1,14 +1,33 @@
 .forum-detail-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 18px;
   min-height: 400Px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 24px;
   max-width: 1000px;
   margin: 32px auto;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
+}
+.banner {
+  width: 100%;
+  height: 200px;
+  margin: 0;
+  padding: 0;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  overflow: hidden;
 }
 
+.forum-banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.card{
+  padding: 30px;
+}
 .forum-detail-header {
   display: flex;
   align-items: center;
@@ -133,86 +152,34 @@
   flex-wrap: wrap;
 }
 
-.icon {
-  color: #008291;
-}
-
-.forum-recruiters-logo-list {
+.forum-detail-tabs {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #eee;
+  padding: 0 16px;
 }
 
-.forum-recruiter-logo {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  border-radius: 6px;
-  background: white;
-  padding: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.forum-more-recruiters {
-  font-size: 0.9rem;
-  color: #4b5563;
-  font-weight: 600;
-}
-
-.forum-detail-right button {
-  background-color: #2cb4f5;
-  color: white;
-  padding: 12px 0;
-  font-weight: 600;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 16px;
-}
-
-.forum-detail-companies-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.forum-detail-company-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  padding: 16px;
+.forum-detail-tab {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-}
-
-.forum-detail-company-logo {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.forum-detail-company-name {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2e4269;
-  text-align: center;
-}
-
-.forum-detail-company-recruiters {
+  padding: 12px 0;
+  cursor: pointer;
+  font-weight: 500;
   font-size: 0.9rem;
   color: #6b7280;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+   margin-right: 40px;
+
 }
 
-.forum-detail-offers {
-  margin-top: 20px;
-  color: #4a5568;
-  font-size: 1rem;
-  text-align: center;
+.forum-detail-tab svg {
+  margin-bottom: 6px;
+}
+
+.forum-detail-tab.active {
+  color: #008291;
+  border-bottom: 3px solid #008291;
 }

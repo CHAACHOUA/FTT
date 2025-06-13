@@ -10,22 +10,25 @@ import '../../pages/styles/forum/Popup.css';
 const ForumCard = ({ forum, isRegistered, onRegistered }) => {
   const [open, setOpen] = useState(false);
 
-  const formatDateRange = (start, end) => {
-    if (!start || !end) return 'Dates à venir';
-    const d1 = new Date(start);
-    const d2 = new Date(end);
-    if (isNaN(d1) || isNaN(d2)) return 'Dates à venir';
-    return `Du ${d1.toLocaleDateString('fr-FR')} au ${d2.toLocaleDateString('fr-FR')}`;
-  };
-
   return (
     <>
       <div className="forum-card">
-        <img src={forum.image || defaultImage} alt="Bannière" className="forum-image-banner" />
+        <img
+          src={ defaultImage}
+          alt="Bannière"
+          className="forum-image-banner"
+        />
+
         <div className="forum-card-body">
           <div className="forum-organizer">
-            <img src={forum.organizer?.logo || logo} alt="logo" className="organizer-logo-seekube" />
-            <span className="organizer-text">Organisé par {forum.organizer?.name}</span>
+            <img
+              src={forum.organizer?.logo || logo}
+              alt="logo organisateur"
+              className="organizer-logo-seekube"
+            />
+            <span className="organizer-text">
+              Organisé par {forum.organizer?.name}
+            </span>
           </div>
 
           <h2 className="forum-title">{forum.name}</h2>
@@ -49,11 +52,14 @@ const ForumCard = ({ forum, isRegistered, onRegistered }) => {
           </p>
 
           <div className="forum-actions-seekube">
-            <Link to={`/forums/${forum.id}`}>
-              <button className="btn-seekube btn-outline">En savoir plus</button>
-            </Link>
+          <Link to={`/forums/event`} state={{ forum }}>
+  <button className="btn-seekube btn-outline">En savoir plus</button>
+</Link>
             {!isRegistered && (
-              <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>
+              <button
+                className="btn-seekube btn-filled"
+                onClick={() => setOpen(true)}
+              >
                 S'inscrire
               </button>
             )}
@@ -66,7 +72,7 @@ const ForumCard = ({ forum, isRegistered, onRegistered }) => {
         onClose={() => setOpen(false)}
         forumId={forum.id}
         onSubmit={() => {
-          onRegistered?.(); // 🔄 Callback pour refetch dans ForumView
+          onRegistered?.(); // Pour refetch dans ForumView après inscription
           setOpen(false);
         }}
       />

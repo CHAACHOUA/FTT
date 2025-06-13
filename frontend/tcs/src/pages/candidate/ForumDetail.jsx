@@ -1,125 +1,103 @@
-// ForumDetail.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import { Calendar, Building2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import ForumRegistrationPopup from '../../components/forum/ForumRegistrationPopup';
+import ForumInfos from '../../components/forum/ForumInfos';
+import ForumCompanies from '../../components/forum/ForumCompanies';
 import '../../pages/styles/forum/ForumDetail.css';
 import Navbar from '../common/NavBar';
+import Logo from '../../assets/Logo-FTT.png';
+import Photo from '../../assets/forum-base.webp';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle, faBuilding, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 
 const ForumDetail = () => {
-  const { id } = useParams();
-  const [forum, setForum] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { state } = useLocation();
+  const forum = state?.forum;
+
   const [activeTab, setActiveTab] = useState('general');
   const [open, setOpen] = useState(false);
-  const API = process.env.REACT_APP_API_BASE_URL;
 
-  useEffect(() => {
-    axios.get(`${API}/api/forums/${id}/`)
-      .then(res => {
-        setForum(res.data);
-        setLoading(false);
-        console.log(res.data)
-      })
-      .catch(err => {
-        console.error("Erreur de récupération du forum:", err);
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) return <p>Chargement...</p>;
   if (!forum) return <p>Forum introuvable.</p>;
 
-  const recruiterCount = forum.companies.reduce((sum, company) => sum + company.recruiters.length, 0);
-
+  const forumPhoto = Photo;
+  const logo = forum.organizer?.logo || Logo;
 
   return (
     <div>
       <Navbar />
       <div className="forum-detail-card">
-        <div className="forum-detail-header">
-          <div className="forum-detail-logo">
-            {forum.organizer.logo ? (
-              <img src={forum.organizer.logo} alt={forum.organizer.name} />
-            ) : (
-              <div className="forum-detail-logo-placeholder">Logo</div>
-            )}
-          </div>
-          <div>
-            <h1 className="forum-detail-title">{forum.name}</h1>
-            <p className="forum-detail-organizer">Organisé par {forum.organizer.name}</p>
-          </div>
+        <div className="banner">
+          <img
+            src={forumPhoto}
+            alt="Bannière du forum"
+            className="forum-banner-image"
+          />
         </div>
 
-        <div className="forum-detail-tabs">
-          <div className={`forum-detail-tab ${activeTab === 'general' ? 'active' : ''}`} onClick={() => setActiveTab('general')}>Informations générales</div>
-          <div className={`forum-detail-tab ${activeTab === 'companies' ? 'active' : ''}`} onClick={() => setActiveTab('companies')}>Entreprises</div>
-          <div className={`forum-detail-tab ${activeTab === 'offers' ? 'active' : ''}`} onClick={() => setActiveTab('offers')}>Offres</div>
+        <div className="card">
+          {/* En-tête */}
+          <div className="forum-detail-header">
+            <div className="forum-detail-logo">
+              <img src={logo} alt={forum.organizer?.name} />
+            </div>
+            <div>
+              <h1 className="forum-detail-title">{forum.name}</h1>
+              <p className="forum-detail-organizer">Organisé par {forum.organizer?.name}</p>
+            </div>
+          </div>
+
+          {/* Onglets */}
+          <div className="forum-detail-tabs">
+            <div
+              className={`forum-detail-tab ${activeTab === 'general' ? 'active' : ''}`}
+              onClick={() => setActiveTab('general')}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} size="lg" />
+              <span>Informations générales</span>
+            </div>
+            <div
+              className={`forum-detail-tab ${activeTab === 'companies' ? 'active' : ''}`}
+              onClick={() => setActiveTab('companies')}
+            >
+              <FontAwesomeIcon icon={faBuilding} size="lg" />
+              <span>Entreprises</span>
+            </div>
+            <div
+              className={`forum-detail-tab ${activeTab === 'offers' ? 'active' : ''}`}
+              onClick={() => setActiveTab('offers')}
+            >
+              <FontAwesomeIcon icon={faBriefcase} size="lg" />
+              <span>Offres</span>
+            </div>
+          </div>
+
+          {/* Contenu */}
+          {activeTab === 'general' && (
+            <ForumInfos
+              forum={forum}
+              onRegister={() => setOpen(true)}
+              showRegisterButton={true}
+            />
+          )}
+
+          {activeTab === 'companies' && (
+            <ForumCompanies companies={forum.companies} />
+          )}
+
+          {activeTab === 'offers' && (
+            <div className="forum-detail-offers">
+              <p>Veuillez vous inscrire au forum pour accéder aux offres disponibles.</p>
+              <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>S'inscrire</button>
+            </div>
+          )}
+
+          {/* Popup d'inscription */}
+          <ForumRegistrationPopup
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            forumId={forum.id}
+          />
         </div>
-
-        {activeTab === 'general' && (
-          <div className="forum-detail-main">
-            <div className="forum-detail-left">
-              <h3 className="forum-detail-subtitle">À propos du Forum :</h3>
-              <p className="forum-detail-description">{forum.description}</p>
-              <p className="forum-job-text">
-                {forum.highlight || "À la recherche d'un emploi ou d’un stage dans votre domaine ? Ce forum est fait pour vous !"}
-              </p>
-            </div>
-
-            <div className="forum-detail-right">
-              <h3 className="forum-detail-right-title">Détails de l’évènement</h3>
-              <div className="forum-detail-line">
-                <Calendar size={20} className="icon" />
-                <span>{forum.date}</span>
-              </div>
-              <div className="forum-detail-line">
-                <Building2 size={20} className="icon" />
-                <span>{forum.type}</span>
-              </div>
-              <div className="forum-detail-line">
-                <span>Nombre d'entreprises participantes :</span>
-                <strong>{forum.companies.length}</strong>
-              </div>
-              <div className="forum-detail-line">
-                <span>{recruiterCount} recruteurs n'attendent que toi !</span>
-                <div className="forum-recruiters-logo-list">
-                  {forum.companies.slice(0, 5).map((company, idx) => (
-                    <img key={idx} src={company.logo} alt={company.name} className="forum-recruiter-logo" />
-                  ))}
-                  {forum.companies.length > 5 && (
-                    <span className="forum-more-recruiters">+{forum.companies.length - 5}</span>
-                  )}
-                </div>
-              </div>
-              <button onClick={() => setOpen(true)}>S'inscrire</button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'companies' && (
-          <div className="forum-detail-companies-list">
-            {forum.companies.map((company, index) => (
-              <div key={index} className="forum-detail-company-card">
-                {company.logo && (
-                  <img src={company.logo} alt={company.name} className="forum-detail-company-logo" />
-                )}
-                <h3 className="forum-detail-company-name">{company.name}</h3>
-                <p className="forum-detail-company-recruiters">Recruteurs : {company.recruiters.length}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'offers' && (
-          <div className="forum-detail-offers">
-            <p>Veuillez vous inscrire au forum pour accéder aux offres disponibles.</p>
-            <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>S'inscrire</button>
-          </div>
-        )}
-
-        <ForumRegistrationPopup isOpen={open} onClose={() => setOpen(false)}   forumId={forum.id} />
       </div>
     </div>
   );

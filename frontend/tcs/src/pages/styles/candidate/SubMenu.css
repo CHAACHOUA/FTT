@@ -2,42 +2,48 @@
   display: flex;
   justify-content: center;
   font-family: 'Poppins';
-  gap: 32px;
-  padding: 14px 0;
-  border-bottom: 1px solid #e5e7eb; /* Tailwind gray-200 */
+  gap: 40px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .submenu-button {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
   background: transparent;
   border: none;
-  font-size: 14px;
-  color: #6b7280; /* Tailwind gray-500 */
+  color: #6b7280; /* gris par défaut */
+  font-size: 13px;
   cursor: pointer;
-  padding: 6px 0;
-  position: relative;
   transition: color 0.2s ease;
+  position: relative;
+  padding-bottom: 8px;
 }
 
 .submenu-button:hover {
-  color: #1f2937; /* Tailwind gray-800 */
+  color: #1f2937; /* gris plus foncé au hover */
 }
 
 .submenu-button.active {
-  color: #3b82f6; /* Tailwind blue-500 */
+  color: #000000;
   font-weight: 600;
 }
 
-.submenu-button.active::before {
+.submenu-button.active::after {
   content: '';
   position: absolute;
-  bottom: -12px;
+  bottom: 0;
   left: 0;
   right: 0;
+  margin: auto;
+  width: 24px;
   height: 2px;
-  background-color: #3b82f6;
-  border-radius: 2px;
+  background-color: #000000;
+  border-radius: 1px;
+}
+
+.submenu-icon {
+  font-size: 18px;
+  margin-bottom: 6px;
 }

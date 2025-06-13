@@ -1,0 +1,93 @@
+.search-bar-container {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.search-bar-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px 14px 10px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: border-color 0.2s;
+}
+
+.search-bar:focus {
+  border-color: #008291;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 130, 145, 0.1);
+}
+
+/* Grille et carte entreprise (déjà adapté de ton précédent design) */
+.forum-detail-companies-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.forum-detail-company-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.forum-detail-company-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.forum-detail-company-logo-container {
+  flex-shrink: 0;
+}
+
+.forum-detail-company-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: white;
+  padding: 6px;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.forum-detail-company-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.forum-detail-company-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.forum-detail-company-recruiters {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 6px;
+}

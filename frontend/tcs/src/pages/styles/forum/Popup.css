@@ -33,3 +33,28 @@
   color: white;
   cursor: pointer;
 }
+.react-select__control {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 2px;
+}
+
+.react-select__control--is-focused {
+  border-color: #008291;
+  box-shadow: 0 0 0 2px rgba(0, 130, 145, 0.2);
+}
+
+.react-select__multi-value {
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 9999px;
+  padding: 4px 8px;
+}
+
+.react-select__multi-value__label {
+  color: white;
+}
+
+.react-select__multi-value__remove {
+  color: white;
+}

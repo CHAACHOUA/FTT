@@ -4,7 +4,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
-import AuthWatcher from './components/AuthWatcher';
 
 import CandidateSignup from './pages/candidate/CandidateSignup';
 import Login from './pages/common/Login';
@@ -20,15 +19,14 @@ import ForumView from './pages/candidate/ForumView';
 import Home from './pages/common/Home';
 import ForumDetail from './pages/candidate/ForumDetail';
 import ProfileView from './pages/candidate/ProfileView';
+import PublicProfileView from './pages/candidate/PublicProfileView';
 import Dashboard from './pages/candidate/Event/Dashboard';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <AuthWatcher />
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
-
         <Routes>
           <Route path="/signup-candidate" element={<CandidateSignup />} />
           <Route path="/upload-cv" element={<UploadCV />} />
@@ -43,9 +41,12 @@ function App() {
           <Route path="/settings" element={<ProfileView />} />
           <Route path="/forums" element={<ForumView />} />
           <Route path="/" element={<Home />} />
-          <Route path="/forums/:id" element={<ForumDetail />} />
-          <Route path="/event/dashboard/:id" element={<Dashboard />} />
+          <Route path="/forums/event" element={<ForumDetail />} />
+          <Route path="/event/dashboard/" element={<Dashboard />} />
           <Route path="/profile" element={<ProfileView />} />
+          <Route path="/public/candidate/:token" element={<PublicProfileView />} />
+
+
         </Routes>
       </Router>
     </AuthProvider>

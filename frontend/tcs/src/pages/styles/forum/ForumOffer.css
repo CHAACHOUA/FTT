@@ -1,60 +1,67 @@
 .forum-offers-container {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  width: 70%;
-  margin: 0 auto; /* centre horizontalement */
+  gap: 24px;
+  width: 90%;
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding-bottom: 2rem;
 }
 
-/* Sur écran ≥ 768px : 2 offres par ligne */
 @media screen and (min-width: 768px) {
   .forum-offers-container {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Carte principale */
+@media screen and (min-width: 1200px) {
+  .forum-offers-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .forum-offer-card {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: white;
+  background-color: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px;
-  transition: box-shadow 0.2s ease;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .forum-offer-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
-/* Logo */
 .forum-offer-logo {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
+  border-radius: 8px;
   border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  margin-right: 16px;
+  margin-right: 1.25rem;
   flex-shrink: 0;
+  background-color: #f9fafb;
+  padding: 4px;
 }
 
-/* Contenu central */
 .forum-offer-content {
   flex-grow: 1;
 }
 
 .forum-offer-recruiter {
   font-size: 0.875rem;
+  font-weight: 500;
   color: #2563eb;
   margin-bottom: 4px;
-  font-weight: 500;
 }
 
 .forum-offer-title {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #111827;
 }
 
@@ -62,7 +69,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4b5563;
 }
@@ -74,26 +81,73 @@
   color: #3b82f6;
 }
 
-/* Actions à droite */
 .forum-offer-actions {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  margin-left: 16px;
+  margin-left: 1rem;
 }
 
 .forum-offer-action-button {
   border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 6px;
-  background-color: white;
-  color: #6b7280;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
 
 .forum-offer-action-button:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.favorites-toggle-button {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.favorites-toggle-button:hover {
   background-color: #f3f4f6;
+}
+
+.forum-offers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem auto 1.5rem;
+  max-width: 1100px;
+  padding: 0 1rem;
+}
+.favorites-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.favorites-label:hover {
+  color: #3b82f6;
+}
+
+.favorites-icon {
+  font-size: 1.1rem;
+  color: #ef4444;
 }
