@@ -2,15 +2,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from candidates.serializers import CandidateRegistrationSerializer
-
-
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from candidates.serializers import CandidateRegistrationSerializer
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-
 from users.utils import send_user_token
 
 

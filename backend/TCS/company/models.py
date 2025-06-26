@@ -3,18 +3,12 @@ from django.db import models
 from forums.models import Forum
 
 
-class Sector(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True)
-    sectors = models.ManyToManyField(Sector, related_name='companies', blank=True)
-
+    sectors = models.JSONField(default=list, blank=True)
     def __str__(self):
         return self.name
 

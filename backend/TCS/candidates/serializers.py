@@ -3,8 +3,7 @@
 from rest_framework import serializers
 from .models import Candidate, Experience, Education, Skill, CandidateLanguage, Language
 from users.models import User
-
-
+from forums.serializers import CandidateSearchSerializer
 
 
 class CandidateRegistrationSerializer(serializers.ModelSerializer):
@@ -81,3 +80,4 @@ class CandidateSerializer(serializers.ModelSerializer):
             'email',
             'profile_picture'
         ]
+

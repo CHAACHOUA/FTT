@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from users.models import AccountDeletion, UserToken
 from candidates.models import Candidate
-
-
+from recruiters.models import Recruiter
 def delete_candidate_account_and_data(user, reason):
     """
     Supprime et anonymise le compte d'un candidat :
@@ -61,3 +60,46 @@ def delete_candidate_account_and_data(user, reason):
     UserToken.objects.filter(user=user).delete()
 
     return Response({"message": "Compte candidat supprimé et anonymisé avec succès."}, status=status.HTTP_200_OK)
+
+def delete_recruiter_account_and_data(user, reason):
+    """
+    Supprime et anonymise le compte d’un recruteur :
+    - vérifie son rôle
+    - enregistre la raison
+    - supprime les fichiers liés (photo)
+    - anonymise le profil recruteur
+    - anonymise l’utilisateur
+    - supprime les tokens
+    """
+    if user.role != 'recruiter':
+        return Response({"error": "Seuls les recruteurs peuvent supprimer leur compte ici."},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    # Enregistre la demande de suppression
+    AccountDeletion.objects.create(user=user, reason=reason)
+
+    try:
+        recruiter = user.recruiter_profile
+    except Recruiter.DoesNotExist:
+        recruiter = None
+
+    if recruiter:
+        if recruiter.profile_picture:
+            recruiter.profile_picture.delete(save=False)
+
+        recruiter.first_name = ""
+        recruiter.last_name = ""
+        recruiter.phone = ""
+        recruiter.title = ""
+        recruiter.save()
+
+    # Anonymise l'utilisateur
+    user.email = f"anonyme_{uuid.uuid4()}@anon.com"
+    user.set_unusable_password()
+    user.is_active = False
+    user.save()
+
+    # Supprime les anciens tokens
+    UserToken.objects.filter(user=user).delete()
+
+    return Response({"message": "Compte recruteur supprimé et anonymisé avec succès."}, status=status.HTTP_200_OK)

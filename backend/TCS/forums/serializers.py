@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import Forum, ForumRegistration, CandidateSearch
 from organizers.serializers import OrganizerSerializer
-
-
 from company.serializers import CompanyWithRecruitersSerializer
 
 
@@ -59,3 +57,15 @@ class ForumRegistrationSerializer(serializers.ModelSerializer):
         search_data = validated_data.pop('search')
         search = CandidateSearch.objects.create(**search_data)
         return ForumRegistration.objects.create(search=search, **validated_data)
+
+class ForumCandidateSerializer(serializers.ModelSerializer):
+    candidate = serializers.SerializerMethodField()
+    search = CandidateSearchSerializer(read_only=True)
+
+    class Meta:
+        model = ForumRegistration
+        fields = ['candidate', 'search']
+
+    def get_candidate(self, obj):
+        from candidates.serializers import CandidateSerializer
+        return CandidateSerializer(obj.candidate).data

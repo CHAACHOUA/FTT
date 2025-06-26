@@ -3,7 +3,11 @@ from .models import Company
 from recruiters.models import Offer
 
 
+
+
 class CompanySerializer(serializers.ModelSerializer):
+    sectors = serializers.JSONField()
+
     class Meta:
         model = Company
         fields = '__all__'
@@ -12,7 +16,6 @@ class CompanyWithRecruitersSerializer(serializers.ModelSerializer):
     recruiters = serializers.SerializerMethodField()
     offers = serializers.SerializerMethodField()
     stand = serializers.SerializerMethodField()
-    sectors = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Company
@@ -42,4 +45,5 @@ class CompanyWithRecruitersSerializer(serializers.ModelSerializer):
             return None
         forum_company = obj.forum_participations.filter(forum=forum).first()
         return forum_company.stand if forum_company else None
+
 
