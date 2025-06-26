@@ -8,14 +8,15 @@ import { useAuth } from '../../context/AuthContext';
 import Navbar from '../common/NavBar';
 import { FaSearch } from 'react-icons/fa';
 import Loading from '../../pages/common/Loading'; 
-import {getUserFromToken} from '../../context/decoder-jwt'
-const ForumView = () => {
+import { getUserFromToken } from "../../context/decoder-jwt"
+
+const ForumRecruiterView = () => {
   const [registeredForums, setRegisteredForums] = useState([]);
   const [unregisteredForums, setUnregisteredForums] = useState([]);
   const [allForums, setAllForums] = useState([]);
   const [displayedForums, setDisplayedForums] = useState([]);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // ✅ état de chargement
+  const [isLoading, setIsLoading] = useState(true); 
   const [statusFilter, setStatusFilter] = useState('ongoing');
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
@@ -25,7 +26,7 @@ const ForumView = () => {
     try {
       setIsLoading(true);
       if (accessToken) {
-        const res = await axios.get(`${API}/api/forums/candidate/`, {
+        const res = await axios.get(`${API}/api/forums/recruiter/my-forums/`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
         setRegisteredForums(res.data.registered || []);
@@ -55,7 +56,6 @@ const ForumView = () => {
     statusFilter === 'ongoing' ? isOngoing(forum) : isEnded(forum)
   );
 
-  // ✅ Affichage du loader si la page est en chargement
   if (isLoading) {
     return <Loading />;
   }
@@ -96,7 +96,7 @@ const ForumView = () => {
                 {filteredRegisteredForums.length > 0 ? (
                   <div className="forum-row">
                     {filteredRegisteredForums.map(forum => (
-                      <ForumCardRegistered key={forum.id} forum={forum} role={user.role} />
+                      <ForumCardRegistered role={user.role}key={forum.id} forum={forum} />
                     ))}
                   </div>
                 ) : (
@@ -125,8 +125,8 @@ const ForumView = () => {
                     {displayedForums.map(forum => (
                       <ForumCard
                         key={forum.id}
-                        forum={forum}
                         role={user.role}
+                        forum={forum}
                         isRegistered={false}
                         onRegistered={fetchForums}
                       />
@@ -160,4 +160,4 @@ const ForumView = () => {
   );
 };
 
-export default ForumView;
+export default ForumRecruiterView;

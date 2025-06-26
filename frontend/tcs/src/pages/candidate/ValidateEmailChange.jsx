@@ -29,7 +29,7 @@ const ValidateEmailChange = () => {
         }
 
         setTimeout(() => {
-          navigate('/profile');
+          navigate('/candidate/profile');
         }, 400);
       } catch (error) {
         const msg =
@@ -39,7 +39,7 @@ const ValidateEmailChange = () => {
         toast.error(msg);
 
         setTimeout(() => {
-          navigate('/profile');
+          navigate('/candidate/profile');
         }, 400);
       }
     };

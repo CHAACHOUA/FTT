@@ -6,34 +6,29 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("access") || null);
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refresh") || null);
-  const [role, setRole] = useState(localStorage.getItem("role") || null);
   const [name, setName] = useState(localStorage.getItem("name") || null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const isAuthenticated = !!accessToken;
 
   const login = (tokens, userData) => {
-    const userName = userData.name || "Candidat";
+    const userName = userData.name || "User";
     localStorage.setItem("access", tokens.access);
     localStorage.setItem("refresh", tokens.refresh);
-    localStorage.setItem("role", userData.role);
     localStorage.setItem("name", userName);
 
     setAccessToken(tokens.access);
     setRefreshToken(tokens.refresh);
-    setRole(userData.role);
     setName(userName);
   };
 
   const logout = (onRedirect) => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    localStorage.removeItem("role");
     localStorage.removeItem("name");
 
     setAccessToken(null);
     setRefreshToken(null);
-    setRole(null);
     setName(null);
 
     if (onRedirect) onRedirect();
@@ -74,7 +69,6 @@ export function AuthProvider({ children }) {
       try {
         setAccessToken(localStorage.getItem("access"));
         setRefreshToken(localStorage.getItem("refresh"));
-        setRole(localStorage.getItem("role"));
         setName(localStorage.getItem("name"));
       } catch (e) {
         logout();
@@ -91,7 +85,6 @@ export function AuthProvider({ children }) {
       value={{
         accessToken,
         refreshToken,
-        role,
         name,
         isAuthenticated,
         login,

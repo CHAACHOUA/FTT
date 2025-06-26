@@ -10,6 +10,7 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
     0
   );
   const LogoCompany = logo;
+  const baseURL=process.env.REACT_APP_API_BASE_URL;
   return (
     <div className="forum-infos-container">
       {/* Partie gauche : description */}
@@ -39,12 +40,13 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
           <span>Plus de {recruiterCount} recruteurs n'attendent que toi !</span>
           <div className="forum-recruiters-logo-list">
             {forum.companies.slice(0, 5).map((company, idx) => (
-              <img
-                key={idx}
-                src={company.logo || LogoCompany}
-                alt={company.name}
-                className="forum-recruiter-logo"
-              />
+            <img
+  key={idx}
+  src={company.logo ? (company.logo.startsWith('http') ? company.logo : `${baseURL}${company.logo}`) : LogoCompany}
+  alt={company.name}
+  className="forum-recruiter-logo"
+  onError={(e) => { e.target.onerror = null; e.target.src = LogoCompany; }}
+/>
             ))}
             {forum.companies.length > 5 && (
               <span className="forum-more-recruiters">

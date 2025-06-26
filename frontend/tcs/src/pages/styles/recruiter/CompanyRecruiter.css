@@ -1,0 +1,57 @@
+.company-recruiters-section {
+  background: #fff;
+  border-radius: 16px;
+  margin: 20px auto;
+  padding: 40px 36px 32px 36px;
+  width: 90%;
+  max-width: 750px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+.company-recruiters-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2b3a5a;
+  margin-bottom: 28px;
+}
+
+.recruiters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.recruiter-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items:center;
+  justify-content: space-around;
+  transition: box-shadow 0.2s ease;
+  text-align:center;
+}
+
+.recruiter-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.recruiter-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #f3f4f6;
+  margin-bottom: 10px;
+}
+
+.recruiter-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin: 0;
+}

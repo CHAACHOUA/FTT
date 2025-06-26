@@ -5,14 +5,17 @@ import '../styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
 import { BsPerson, BsGear, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from 'react-icons/md';
+import { getUserFromToken } from "../../context/decoder-jwt";
 
 const Navbar = () => {
-  const { isAuthenticated, role, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [name, setName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
+  const user = getUserFromToken();
+
 
   const getInitials = (name) => name ? name.slice(0, 2).toUpperCase() : '';
 
@@ -51,7 +54,7 @@ const Navbar = () => {
             <Link to="/signup-candidate" className="navbar-btn btn-outline">S'inscrire</Link>
             <Link to="/login" className="navbar-btn btn-primary">Se connecter</Link>
           </>
-        ) : role === 'candidate' && (
+        ) :  (
           <div className="dropdown">
             <button className="navbar-user" onClick={toggleDropdown}>
               <div className="user-circle">{getInitials(name)}</div>
@@ -60,15 +63,23 @@ const Navbar = () => {
 
             {showDropdown && (
               <div className="dropdown-menu">
-                <Link to="/profile" className="dropdown-item">
-                  <BsPerson className="dropdown-icon" /> Mon profil
-                </Link>
-                <Link to="/forums" className="dropdown-item">
-                  <MdEventAvailable className="dropdown-icon" /> Forums
-                </Link>
-                <Link to="/settings" className="dropdown-item">
-                  <BsGear className="dropdown-icon" /> Paramètres
-                </Link>
+               <Link
+                  to={`/${user.role === 'recruiter' ? 'recruiter' : 'candidate'}/profile`}
+                  className="dropdown-item">
+              <BsPerson className="dropdown-icon" /> Mon profil
+              </Link>
+               <Link
+  to={user.role === 'recruiter' ? '/recruiter/forums' : '/forums'}
+  className="dropdown-item"
+>
+  <MdEventAvailable className="dropdown-icon" /> Forums
+</Link>
+               <Link
+  to={user.role === 'recruiter' ? '/settings-recruiter' : '/settings'}
+  className="dropdown-item"
+>
+  <BsGear className="dropdown-icon" /> Paramètres
+</Link>
                 <button
                   onClick={() => logout(() => navigate('/login'))}
                   className="dropdown-item logout"

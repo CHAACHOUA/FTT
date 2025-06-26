@@ -16,8 +16,10 @@ import ChangePassword from './ChangePassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../pages/common/Loading'; // ✅ Import du composant de chargement
-
 const ProfileView = () => {
+
+
+
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const { accessToken } = useAuth();

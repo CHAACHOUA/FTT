@@ -2,9 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { AuthProvider } from './context/AuthContext';
-
 import CandidateSignup from './pages/candidate/CandidateSignup';
 import Login from './pages/common/Login';
 import NavBar from './pages/common/NavBar';
@@ -21,6 +19,10 @@ import ForumDetail from './pages/candidate/ForumDetail';
 import ProfileView from './pages/candidate/ProfileView';
 import PublicProfileView from './pages/candidate/PublicProfileView';
 import Dashboard from './pages/candidate/Event/Dashboard';
+import ForumRecruiterView from './pages/recruiter/ForumRecruiterView';
+import RecruiterProfileView from './pages/recruiter/RecruiterProfileView';
+import RecruiterDashboard from './pages/recruiter/event/RecruiterDashboard'
+
 
 function App() {
   return (
@@ -39,13 +41,18 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/settings" element={<ProfileView />} />
+          <Route path="/settings-recruiter" element={<RecruiterProfileView />} />
+          <Route path="/recruiter/forums" element={<ForumRecruiterView />} />
           <Route path="/forums" element={<ForumView />} />
           <Route path="/" element={<Home />} />
           <Route path="/forums/event" element={<ForumDetail />} />
-          <Route path="/event/dashboard/" element={<Dashboard />} />
-          <Route path="/profile" element={<ProfileView />} />
+          <Route path="/event/candidate/dashboard/" element={<Dashboard />} />
+          <Route path="/event/recruiter/dashboard/" element={<RecruiterDashboard />} />
+          <Route path="/candidate/profile" element={<ProfileView />} />
           <Route path="/public/candidate/:token" element={<PublicProfileView />} />
 
+
+          <Route path="/recruiter/profile" element={<RecruiterProfileView />} />
 
         </Routes>
       </Router>

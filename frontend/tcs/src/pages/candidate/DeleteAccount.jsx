@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../pages/styles/candidate/Education.css';
-
+import { getUserFromToken } from '../../context/decoder-jwt'
 const DeleteAccount = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -12,6 +12,7 @@ const DeleteAccount = () => {
   const [customReason, setCustomReason] = useState('');
   const navigate = useNavigate();
   const API = process.env.REACT_APP_API_BASE_URL;
+  const role = getUserFromToken(); // 👈 ici tu récupères le rôle
 
   const handleDelete = async () => {
     const reasonToSend = selectedReason === 'Autre' ? customReason.trim() : selectedReason;
@@ -44,6 +45,11 @@ const DeleteAccount = () => {
     }
   };
 
+  // 📋 Raisons selon le rôle
+  const reasons = role === 'candidate'
+    ? ['J’ai trouvé un emploi', 'Je ne suis pas satisfait de l’expérience', 'Autre']
+    : ['Je ne suis pas satisfait de l’expérience', 'Autre'];
+
   return (
     <div className="account-settings-section">
       <h2 className="account-title">Supprimer le compte</h2>
@@ -66,35 +72,17 @@ const DeleteAccount = () => {
             <h3>Pourquoi voulez-vous supprimer votre compte ?</h3>
 
             <div className="radio-group">
-              <label>
-                <input
-                  type="radio"
-                  value="Je ne suis pas satisfait de l’expérience"
-                  checked={selectedReason === "Je ne suis pas satisfait de l’expérience"}
-                  onChange={(e) => setSelectedReason(e.target.value)}
-                />
-                Je ne suis pas satisfait de l’expérience
-              </label>
-
-              <label>
-                <input
-                  type="radio"
-                  value="J’ai trouvé un emploi"
-                  checked={selectedReason === "J’ai trouvé un emploi"}
-                  onChange={(e) => setSelectedReason(e.target.value)}
-                />
-                J’ai trouvé un emploi
-              </label>
-
-              <label>
-                <input
-                  type="radio"
-                  value="Autre"
-                  checked={selectedReason === "Autre"}
-                  onChange={(e) => setSelectedReason(e.target.value)}
-                />
-                Autre
-              </label>
+              {reasons.map((reason) => (
+                <label key={reason}>
+                  <input
+                    type="radio"
+                    value={reason}
+                    checked={selectedReason === reason}
+                    onChange={(e) => setSelectedReason(e.target.value)}
+                  />
+                  {reason}
+                </label>
+              ))}
             </div>
 
             {selectedReason === 'Autre' && (

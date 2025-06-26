@@ -6,7 +6,7 @@ import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import '../../pages/styles/forum/ForumList.css';
 import photo_forum from '../../assets/forum-base.webp';
 
-const ForumCardRegistered = ({ forum }) => {
+const ForumCardRegistered = ({ forum, role }) => {
   const isOngoing = () => {
     const now = new Date();
     const forumDate = new Date(forum.date);
@@ -14,12 +14,18 @@ const ForumCardRegistered = ({ forum }) => {
   };
 
   const formatDate = (date) => {
-    if (!date) return "Date inconnue";
+    if (!date) return 'Date inconnue';
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
   };
 
   const ongoing = isOngoing();
+
+  // Déterminer le lien du dashboard en fonction du rôle
+  const dashboardPath =
+    role === 'recruiter'
+      ? '/event/recruiter/dashboard'
+      : '/event/candidate/dashboard';
 
   return (
     <div className={`forum-card-registered ${!ongoing ? 'forum-ended' : ''}`}>
@@ -48,7 +54,7 @@ const ForumCardRegistered = ({ forum }) => {
 
         {ongoing && (
           <Link
-            to={`/event/dashboard`}
+            to={dashboardPath}
             state={{ forum }}
             className="forum-card-link"
           >

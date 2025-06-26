@@ -21,7 +21,12 @@ input,
   transition: border 0.2s, background 0.2s;
   margin-bottom: 0.75rem;
 }
-
+.popup-content .icon,
+.popup-content svg {
+  width: 1rem; /* Ajuste selon tes besoins (ex: 24px = 1.5rem) */
+  height: 1rem;
+ 
+}
 input:focus,
 .react-select__control--is-focused {
   background-color: #fff;

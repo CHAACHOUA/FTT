@@ -1,10 +1,38 @@
 .submenu-wrapper {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Poppins';
-  gap: 40px;
   padding: 16px 0;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.submenu-tabs {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 16px;
+}
+
+.submenu-section-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #607d8b;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+}
+
+.submenu-section-title.active-section {
+  color: #2196f3;
+  cursor: default;
+  border-bottom: 2px solid #2196f3;
+  padding-bottom: 4px;
+}
+
+.submenu-buttons-container {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
 }
 
 .submenu-button {
@@ -13,7 +41,7 @@
   align-items: center;
   background: transparent;
   border: none;
-  color: #6b7280; /* gris par défaut */
+  color: #6b7280;
   font-size: 13px;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -22,7 +50,7 @@
 }
 
 .submenu-button:hover {
-  color: #1f2937; /* gris plus foncé au hover */
+  color: #1f2937;
 }
 
 .submenu-button.active {
@@ -46,4 +74,8 @@
 .submenu-icon {
   font-size: 18px;
   margin-bottom: 6px;
+}
+
+.submenu-label {
+  text-align: center;
 }
