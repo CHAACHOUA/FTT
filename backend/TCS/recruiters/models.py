@@ -76,3 +76,17 @@ class FavoriteOffer(models.Model):
 
     def __str__(self):
         return f"{self.candidate.user.email} ❤️ {self.offer.title}"
+
+# models.py
+class Meeting(models.Model):
+    candidate = models.ForeignKey('candidates.Candidate', on_delete=models.CASCADE, related_name='meetings')
+    recruiter = models.ForeignKey('recruiters.Recruiter', on_delete=models.CASCADE, related_name='meetings')
+    forum = models.ForeignKey('forums.Forum', on_delete=models.CASCADE, related_name='meetings')
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name='meetings')
+    scanned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('candidate', 'recruiter', 'forum')
+
+    def __str__(self):
+        return f"Meeting: {self.recruiter} met {self.candidate} at {self.forum.name}"

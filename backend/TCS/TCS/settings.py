@@ -55,9 +55,13 @@ INSTALLED_APPS = [
     'forums.apps.ForumsConfig',
     'organizers.apps.OrganizersConfig',
     'recruiters.apps.RecruitersConfig',
-    'company.apps.CompanyConfig'
+    'company.apps.CompanyConfig',
+    'matching.apps.MatchingConfig'
 ]
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -175,7 +179,6 @@ SIMPLE_JWT = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 CORS_ALLOW_ALL_ORIGINS = True
-
 FRONTEND_URL = config('FRONTEND_URL')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')

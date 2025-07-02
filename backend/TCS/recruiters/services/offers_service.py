@@ -20,3 +20,25 @@ def get_favorite_offers(candidate):
     offers = [fav.offer for fav in favorites]
     return OfferSerializer(offers, many=True).data
 
+def get_offers_by_recruiter_company(recruiter, forum_id):
+    company = recruiter.company
+    return Offer.objects.filter(company=company, forum_id=forum_id).select_related('company', 'recruiter')
+
+def create_offer_service(recruiter, data):
+    print(data)
+    return Offer.objects.create(
+        recruiter=recruiter,
+        company=recruiter.company,
+        **data
+    )
+
+def update_offer_service(recruiter, offer_id, data):
+    offer = get_object_or_404(Offer, id=offer_id, recruiter=recruiter)
+    for field, value in data.items():
+        setattr(offer, field, value)
+    offer.save()
+    return offer
+
+def delete_offer_service(recruiter, offer_id):
+    offer = get_object_or_404(Offer, id=offer_id, recruiter=recruiter)
+    offer.delete()
