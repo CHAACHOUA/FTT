@@ -74,6 +74,7 @@ const Dashboard = () => {
                 setActiveTab('info'); // Redirection automatique vers l'onglet info
               }}
               token={token}
+              forum={forum}
             />
           )}
           {activeTab === 'cv' && (

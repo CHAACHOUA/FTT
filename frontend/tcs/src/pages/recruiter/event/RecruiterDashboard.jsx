@@ -7,7 +7,9 @@ import CompanyProfile from '../CompanyProfile';
 import ForumInfos from '../../../components/forum/ForumInfos';
 import CandidatesList from './CandidatesList'; // Exemple pour la section CVthèque
 import { useAuth } from '../../../context/AuthContext';
-
+import RencontresList from './RencontresList'
+import OffersList from './OffersList';
+import Matching from './Matching';
 const RecruiterDashboard = () => {
   // Récupère l'objet "forum" depuis l'état de la location (injecté par la navigation)
   const { state } = useLocation();
@@ -34,9 +36,13 @@ const RecruiterDashboard = () => {
         <div className="recruiter-dashboard-content">
           <div className="dashboard-section">
             {active === 'infos' && <ForumInfos forum={forum} />}
-            {active === 'membres' && <Members forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+            {active === 'membres' && <Members accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'entreprise' && <CompanyProfile forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+            {active === 'rencontres' && <RencontresList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+            {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
+            {active === 'matching' && <Matching forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
+
           </div>
         </div>
       </div>

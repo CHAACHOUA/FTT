@@ -20,6 +20,8 @@ const SubMenu = ({ active, setActive, sectionActive, setSectionActive }) => {
   const jobdatingItems = [
     { id: 'cvtheque', label: 'CVthèque', icon: <FaFolderOpen /> },
     { id: 'matching', label: 'Matching candidats', icon: <FaUserCheck /> },
+    { id: 'rencontres', label: 'Mes rencontres', icon: <FaUsers /> },
+
   ];
 
   const handleSectionClick = (section) => {

@@ -9,6 +9,7 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
     (sum, company) => sum + company.recruiters.length,
     0
   );
+  console.log(forum)
   const LogoCompany = logo;
   const baseURL=process.env.REACT_APP_API_BASE_URL;
   return (

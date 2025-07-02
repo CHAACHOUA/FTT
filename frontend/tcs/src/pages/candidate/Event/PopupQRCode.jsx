@@ -5,8 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/candidate/Popupqrcode.css';
 
-const PopupQRCode = ({ isOpen, onClose, token }) => {
-  const url = `${window.location.origin}/public/candidate/${token}`;
+const PopupQRCode = ({ isOpen, onClose, token, forum }) => {
+  const url = forum
+    ? `${window.location.origin}/public/candidate/${token}?forum=${forum.id}`
+    : `${window.location.origin}/public/candidate/${token}`;
 
   return (
     <Dialog
@@ -25,6 +27,13 @@ const PopupQRCode = ({ isOpen, onClose, token }) => {
 
         <h2>Scannez ce QR Code</h2>
         <QRCode value={url} size={200} />
+
+        {/* Affichage du forum */}
+        {forum && (
+          <p style={{ marginTop: '10px', fontWeight: 'bold' }}>
+            Forum : {forum.name}
+          </p>
+        )}
 
         {/* Lien cliquable */}
         <a

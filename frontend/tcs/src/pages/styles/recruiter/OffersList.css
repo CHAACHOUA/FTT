@@ -1,0 +1,155 @@
+.offers-list-wrapper {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.offers-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-add-offer {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.offers-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.offer-card {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+}
+
+.logo-section {
+  flex-shrink: 0;
+}
+
+.company-logo-large {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f0f0f0;
+}
+
+.offer-main-content {
+  flex: 1;
+}
+
+.recruiter-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.recruiter-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+.recruiter-initials {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #6f42c1;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recruiter-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.company-handle {
+  color: #888;
+  font-size: 0.9rem;
+  margin-left: 4px;
+}
+
+.offer-title {
+  margin: 4px 0 10px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.location-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.offer-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 6px;
+}
+
+.offer-meta-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.offer-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-action {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.btn-action:hover {
+  color: #0056b3;
+}
