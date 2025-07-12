@@ -20,9 +20,11 @@ import ProfileView from './pages/candidate/ProfileView';
 import PublicProfileView from './pages/candidate/PublicProfileView';
 import Dashboard from './pages/candidate/Event/Dashboard';
 import ForumRecruiterView from './pages/recruiter/ForumRecruiterView';
+import ForumOrganizerView from './pages/organizer/ForumOrganizerView';
 import RecruiterProfileView from './pages/recruiter/RecruiterProfileView';
-import RecruiterDashboard from './pages/recruiter/event/RecruiterDashboard'
-
+import RecruiterDashboard from './pages/recruiter/event/RecruiterDashboard';
+import MatchingCandidates from './pages/recruiter/event/MatchingCandidates';
+import OrganizerDashboard from './pages/organizer/Event/OrganizerDashboard';
 
 function App() {
   return (
@@ -43,15 +45,16 @@ function App() {
           <Route path="/settings" element={<ProfileView />} />
           <Route path="/settings-recruiter" element={<RecruiterProfileView />} />
           <Route path="/recruiter/forums" element={<ForumRecruiterView />} />
+          <Route path="/organizer/forums" element={<ForumOrganizerView />} />
           <Route path="/forums" element={<ForumView />} />
           <Route path="/" element={<Home />} />
           <Route path="/forums/event" element={<ForumDetail />} />
           <Route path="/event/candidate/dashboard/" element={<Dashboard />} />
           <Route path="/event/recruiter/dashboard/" element={<RecruiterDashboard />} />
+          <Route path="/event/organizer/dashboard/" element={<OrganizerDashboard />} />
           <Route path="/candidate/profile" element={<ProfileView />} />
           <Route path="/public/candidate/:token" element={<PublicProfileView />} />
-
-
+          <Route path="/matching-candidates" element={<MatchingCandidates />} />
           <Route path="/recruiter/profile" element={<RecruiterProfileView />} />
 
         </Routes>

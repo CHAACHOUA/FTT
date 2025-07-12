@@ -69,7 +69,13 @@ const Navbar = () => {
               <BsPerson className="dropdown-icon" /> Mon profil
               </Link>
                <Link
-  to={user.role === 'recruiter' ? '/recruiter/forums' : '/forums'}
+  to={
+    user.role === 'recruiter'
+      ? '/recruiter/forums'
+      : user.role === 'organizer'
+      ? '/organizer/forums'
+      : '/forums'
+  }
   className="dropdown-item"
 >
   <MdEventAvailable className="dropdown-icon" /> Forums

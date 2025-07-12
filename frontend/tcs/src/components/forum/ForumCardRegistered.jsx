@@ -22,10 +22,13 @@ const ForumCardRegistered = ({ forum, role }) => {
   const ongoing = isOngoing();
 
   // Déterminer le lien du dashboard en fonction du rôle
-  const dashboardPath =
-    role === 'recruiter'
-      ? '/event/recruiter/dashboard'
-      : '/event/candidate/dashboard';
+const dashboardPath =
+  role === 'recruiter'
+    ? '/event/recruiter/dashboard'
+    : role === 'organizer'
+    ? '/event/organizer/dashboard'
+    : '/event/candidate/dashboard';
+
 
   return (
     <div className={`forum-card-registered ${!ongoing ? 'forum-ended' : ''}`}>

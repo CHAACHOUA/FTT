@@ -1,0 +1,587 @@
+/* Style CSS Moderne et Épuré */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.companies-dashboard-wrapper {
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.companies-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.companies-dashboard-search {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 18px 26px;
+  box-shadow: 0 6px 24px -4px rgba(59, 130, 246, 0.10), 0 1.5px 6px 0 rgba(0,0,0,0.04);
+  min-width: 340px;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s;
+  position: relative;
+}
+.companies-dashboard-search:hover, .companies-dashboard-search:focus-within {
+  box-shadow: 0 12px 32px -6px rgba(59, 130, 246, 0.18), 0 2px 8px 0 rgba(59,130,246,0.08);
+  border: 1.5px solid #3b82f6;
+}
+.search-icon {
+  margin-right: 16px;
+  color: #3b82f6;
+  font-size: 20px;
+  transition: color 0.3s ease;
+  opacity: 0.85;
+}
+.dashboard-search-bar {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1.08rem;
+  color: #1e293b;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  padding: 0 2px;
+}
+.dashboard-search-bar::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+  opacity: 0.8;
+  font-size: 1.01rem;
+}
+@media (max-width: 700px) {
+  .companies-dashboard-search {
+    min-width: 0;
+    width: 100%;
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+  .search-icon { font-size: 17px; margin-right: 10px; }
+}
+
+.add-company-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+.add-company-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.add-company-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+.companies-dashboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.company-dashboard-card {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.company-dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #e2e8f0;
+}
+
+/* Ajout/override pour dashboard moderne */
+.company-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.company-details {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.company-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.company-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+.offers-badge {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.recruiters-badge {
+  background: #fef9c3;
+  color: #eab308;
+}
+.status-badge {
+  background: #f3e8ff;
+  color: #a21caf;
+  text-transform: capitalize;
+}
+.status-badge.publie, .status-badge.published {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.status-badge.brouillon, .status-badge.draft {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.date-badge {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.add-recruiter-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-left: 18px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.13);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.add-recruiter-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: scale(1.08);
+}
+
+/* Recruteurs */
+.recruiters-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.recruiter-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+  color: #475569;
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border-left: 3px solid #3b82f6;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.recruiter-item:hover {
+  background: #eff6ff;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+  color: #1e293b;
+}
+.recruiter-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e0e7ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 1.1rem;
+  overflow: hidden;
+}
+.recruiter-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.recruiter-initials {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3b82f6;
+}
+.recruiter-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.recruiter-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recruiter-email {
+  font-size: 0.92rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.company-name {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.3s ease;
+}
+
+.company-dashboard-card:hover .company-name {
+  color: #3b82f6;
+}
+
+.company-info {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.company-info:first-of-type {
+  margin-top: 0;
+}
+
+.company-dashboard-card:hover .company-info {
+  color: #475569;
+}
+
+.recruiters-list {
+  margin-top: 20px;
+  padding-left: 48px;
+  position: relative;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recruiters-list::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #3b82f6, #e2e8f0);
+  border-radius: 1px;
+}
+
+.no-recruiter {
+  font-size: 14px;
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .companies-dashboard-wrapper {
+    padding: 20px;
+  }
+  
+  .companies-dashboard-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .companies-dashboard-search {
+    min-width: auto;
+  }
+  
+  .dashboard-search-bar {
+    min-width: 250px;
+  }
+  
+  .company-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .company-logo {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .company-name {
+    font-size: 1.125rem;
+  }
+  
+  .recruiters-list {
+    padding-left: 32px;
+  }
+}
+
+/* Animations subtiles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.company-dashboard-card {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.company-dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.company-dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.company-dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+.company-dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+.company-dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+
+@media (max-width: 700px) {
+  .company-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .add-recruiter-button { margin-left: 0; margin-top: 10px; }
+  .company-stats-row { flex-direction: column; gap: 4px; }
+}
+
+.company-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 2px solid #f1f5f9;
+  padding: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 8px;
+}
+.company-dashboard-card:hover .company-logo {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+@media (max-width: 700px) {
+  .company-logo {
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+    border-radius: 7px;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30, 41, 59, 0.32);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.25s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter: blur(2.5px);
+}
+.modal-content {
+  background: rgba(255,255,255,0.85);
+  border-radius: 28px;
+  box-shadow: 0 16px 48px 0 rgba(59, 130, 246, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
+  padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+  width: 440px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalPop 0.32s cubic-bezier(0.4,0,0.2,1);
+  border: 1.5px solid #e0e7ef;
+  backdrop-filter: blur(8px);
+}
+.modal-illustration {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(59,130,246,0.13);
+}
+.modal-illustration svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+}
+.modal-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+  text-align: center;
+  letter-spacing: -1px;
+}
+.modal-subtitle {
+  font-size: 1.08rem;
+  color: #64748b;
+  margin-bottom: 1.3rem;
+  text-align: center;
+  font-weight: 500;
+}
+.invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+  align-items: center;
+}
+.invite-input-group {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.invite-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #3b82f6;
+  font-size: 1.2rem;
+  opacity: 0.85;
+}
+.invite-input {
+  width: 100%;
+  min-width: 220px;
+  max-width: 340px;
+  padding: 0.95rem 1.2rem 0.95rem 2.7rem;
+  border-radius: 13px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 1.13rem;
+  color: #1e293b;
+  background: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  transition: border 0.2s, box-shadow 0.2s;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(59,130,246,0.04);
+}
+.invite-input:focus {
+  border: 1.5px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+}
+.invite-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 13px;
+  padding: 1rem 2.5rem;
+  font-size: 1.13rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.13);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.2rem;
+}
+.invite-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+.invite-status {
+  margin-top: 1.2rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.8rem 1.3rem;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  justify-content: center;
+}
+.invite-status.success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.invite-status.error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 2;
+}
+.modal-close:hover { color: #3b82f6; }
+@media (max-width: 500px) {
+  .modal-content { padding: 1.2rem 0.5rem; min-width: 0; }
+  .invite-input { min-width: 0; max-width: 100%; font-size: 0.98rem; }
+  .invite-btn { font-size: 0.98rem; padding: 0.7rem 1.2rem; }
+  .modal-illustration { width: 44px; height: 44px; }
+  .modal-illustration svg { width: 22px; height: 22px; }
+}

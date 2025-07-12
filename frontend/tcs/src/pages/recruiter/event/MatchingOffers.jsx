@@ -3,18 +3,15 @@ import axios from 'axios';
 import { FaUsers } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import Loading from '../../common/Loading';
-import CandidatesList from './CandidatesList';
+import { useNavigate } from 'react-router-dom';
 
-const Matching = ({ forum, accessToken, apiBaseUrl }) => {
+const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [errorOffers, setErrorOffers] = useState(null);
-
   const [matchingInProgressForOffer, setMatchingInProgressForOffer] = useState(null);
-  const [candidates, setCandidates] = useState([]);
-  const [loadingCandidates, setLoadingCandidates] = useState(false);
-  const [errorCandidates, setErrorCandidates] = useState(null);
 
+  const navigate = useNavigate();
   const forum_id = forum.id;
 
   useEffect(() => {
@@ -38,24 +35,23 @@ const Matching = ({ forum, accessToken, apiBaseUrl }) => {
 
   const handleStartMatching = async (offerId) => {
     setMatchingInProgressForOffer(offerId);
-    setCandidates([]);
-    setErrorCandidates(null);
-    setLoadingCandidates(true);
 
     try {
-      // Appel direct synchrone : la réponse contient les candidats directement
       const res = await axios.post(
-        `${apiBaseUrl}/api/matching/start/${offerId}/`, // modifie selon ton endpoint synchrone
+        `${apiBaseUrl}/api/matching/start/${offerId}/`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      setCandidates(res.data.candidates || []);
-      setLoadingCandidates(false);
-      setMatchingInProgressForOffer(null);
+      navigate('/matching-candidates', {
+        state: {
+          candidates: res.data.candidates || [],
+        },
+      });
+
     } catch (err) {
-      setErrorCandidates(err.response?.data?.detail || 'Erreur lors du matching');
-      setLoadingCandidates(false);
+      alert(err.response?.data?.detail || 'Erreur lors du matching');
+    } finally {
       setMatchingInProgressForOffer(null);
     }
   };
@@ -66,8 +62,15 @@ const Matching = ({ forum, accessToken, apiBaseUrl }) => {
 
       {loadingOffers && <Loading />}
       {errorOffers && <div className="error">{errorOffers}</div>}
-
       {!loadingOffers && offers.length === 0 && <p>Aucune offre disponible.</p>}
+
+      {/* Loader global pendant matching (optionnel) */}
+      {matchingInProgressForOffer && (
+        <div className="global-loading" style={{ marginBottom: '1rem' }}>
+          <Loading />
+          <p>Matching en cours pour l'offre #{matchingInProgressForOffer}...</p>
+        </div>
+      )}
 
       <div className="offers-list">
         {offers.map((offer) => (
@@ -78,25 +81,13 @@ const Matching = ({ forum, accessToken, apiBaseUrl }) => {
 
             <button
               onClick={() => handleStartMatching(offer.id)}
-              disabled={matchingInProgressForOffer === offer.id}
+              disabled={matchingInProgressForOffer !== null}
               className="btn btn-primary"
-              title="Lancer matching candidats"
             >
-              <FaUsers /> Matching candidat
+              {matchingInProgressForOffer === offer.id
+                ? <Loading />
+                : <><FaUsers /> Matching candidat</>}
             </button>
-
-            {matchingInProgressForOffer === offer.id && (
-              <div className="matching-result">
-                {loadingCandidates && <Loading />}
-                {errorCandidates && <div className="error">{errorCandidates}</div>}
-                {!loadingCandidates && candidates.length > 0 && (
-                  <CandidatesList candidates={candidates} />
-                )}
-                {!loadingCandidates && candidates.length === 0 && !errorCandidates && (
-                  <p>Aucun candidat trouvé pour cette offre.</p>
-                )}
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -104,4 +95,4 @@ const Matching = ({ forum, accessToken, apiBaseUrl }) => {
   );
 };
 
-export default Matching;
+export default MatchingOffers;

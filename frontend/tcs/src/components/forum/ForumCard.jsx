@@ -81,15 +81,16 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
         />
       )}
 
-      {role === 'recruiter' && (
-        <ForumRecruiterRegistrationPopup
-          isOpen={open}
-          onClose={() => setOpen(false)}
-          forumId={forum.id}
-          onSubmit={() => {
-            onRegistered?.();
-            setOpen(false);
-          }}
+  {(role === 'recruiter' || role === 'organizer') && (
+  <ForumRecruiterRegistrationPopup
+    isOpen={open}
+    onClose={() => setOpen(false)}
+    forumId={forum.id}
+    onSubmit={() => {
+      onRegistered?.();
+      setOpen(false);
+    }}
+  
         />
       )}
     </>

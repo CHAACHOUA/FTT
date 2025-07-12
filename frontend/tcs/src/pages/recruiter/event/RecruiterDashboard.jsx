@@ -9,7 +9,7 @@ import CandidatesList from './CandidatesList'; // Exemple pour la section CVthè
 import { useAuth } from '../../../context/AuthContext';
 import RencontresList from './RencontresList'
 import OffersList from './OffersList';
-import Matching from './Matching';
+import MatchingOffers from './MatchingOffers';
 const RecruiterDashboard = () => {
   // Récupère l'objet "forum" depuis l'état de la location (injecté par la navigation)
   const { state } = useLocation();
@@ -41,7 +41,7 @@ const RecruiterDashboard = () => {
             {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'rencontres' && <RencontresList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
-            {active === 'matching' && <Matching forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
+            {active === 'matching' && <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
 
           </div>
         </div>
