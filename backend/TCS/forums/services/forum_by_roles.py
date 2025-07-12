@@ -8,6 +8,8 @@ from candidates.models import Candidate
 
 from recruiters.models import Recruiter
 
+from organizers.models import Organizer
+
 
 def get_candidate_forum_lists(user):
     """
@@ -49,4 +51,24 @@ def get_recruiter_forum_lists(user):
     except Exception as e:
         return Response({
             "detail": f"Erreur lors de la récupération des forums du recruteur : {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def get_organizer_forum_lists(user):
+    """
+    Retourne les forums organisés par l'organisateur et ceux qu’il n’a pas organisés.
+    """
+    try:
+        organizer = get_object_or_404(Organizer, user=user)
+
+        organized = Forum.objects.filter(organizer=organizer).order_by('-date')
+        not_organized = Forum.objects.exclude(organizer=organizer).order_by('-date')
+
+        return Response({
+            "organized": ForumDetailSerializer(organized, many=True).data,
+            "not_organized": ForumDetailSerializer(not_organized, many=True).data,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            "detail": f"Erreur lors de la récupération des forums de l’organisateur : {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

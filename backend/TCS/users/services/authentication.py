@@ -6,9 +6,7 @@ from candidates.models import Candidate
 from users.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from recruiters.models import Recruiter
-
-
-
+from organizers.models import Organizer
 
 
 def login_user_view(email: str, password: str):
@@ -34,6 +32,8 @@ def login_user_view(email: str, password: str):
         return login_candidate_user(email, password)
     elif user.role == "recruiter":
         return login_recruiter_user(email, password)
+    elif user.role == "organizer":
+        return login_organizer_user(email, password)
     else:
         return Response({"message": "Rôle utilisateur non supporté."},
                         status=status.HTTP_403_FORBIDDEN)
@@ -96,3 +96,32 @@ def login_recruiter_user(email: str, password: str):
         "access": str(refresh.access_token),
         "name": recruiter.first_name
     }, status=status.HTTP_200_OK)
+
+def login_organizer_user(email: str, password: str):
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"message": "Aucun compte trouvé avec cet email."},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    if not user.check_password(password):
+        return Response({"message": "Identifiants incorrects. Veuillez réessayer."},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        organizer = Organizer.objects.get(user=user)
+    except ObjectDoesNotExist:
+        return Response({"message": "Profil recruteur introuvable."},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    refresh = RefreshToken.for_user(user)
+    refresh['role'] = user.role
+    refresh['email'] = user.email
+
+    return Response({
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "name": organizer.name
+    }, status=status.HTTP_200_OK)
+

@@ -33,8 +33,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('candidate', 'Candidate'),
         ('company', 'Company'),
         ('admin', 'Admin'),
+        ('organizer', 'Organizer'),
     )
-
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='candidate')
     is_active = models.BooleanField(default=False)

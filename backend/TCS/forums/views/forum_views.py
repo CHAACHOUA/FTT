@@ -10,6 +10,8 @@ from candidates.models import Candidate
 from forums.services.forum_candidate_participation import get_candidates_for_forum
 from recruiters.models import RecruiterForumParticipation
 from forums.serializers import ForumCandidateSerializer
+from forums.services.forum_by_roles import get_candidate_forum_lists, get_recruiter_forum_lists,get_organizer_forum_lists
+
 
 
 @api_view(['GET'])
@@ -77,3 +79,41 @@ def forum_candidates(request, forum_id):
             {"error": "Une erreur inattendue est survenue."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_forum_candidates(request, forum_id):
+    user = request.user
+
+    if not hasattr(user, 'organizer_profile'):
+        return Response({"error": "Accès réservé aux organisateur."}, status=status.HTTP_403_FORBIDDEN)
+
+
+    try:
+        registrations = get_candidates_for_forum(forum_id)
+        serializer = ForumCandidateSerializer(registrations, many=True)
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except ValueError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception:
+        return Response(
+            {"error": "Une erreur inattendue est survenue."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_forums(request):
+    return get_candidate_forum_lists(request.user)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recruiter_my_forums(request):
+    return get_recruiter_forum_lists(request.user)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def organizer_my_forums(request):
+    return get_organizer_forum_lists(request.user)

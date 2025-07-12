@@ -22,9 +22,7 @@ def matching_offer_candidates(recruiter, offer_id, top_n=10):
 
     # Construire le texte de l'offre et des candidats
     offer_text = build_offer_text(offer)
-    print(offer_text)
     candidate_texts = [build_candidate_text(cand) for cand in candidates]
-    print(candidate_texts)
 
     # Calculer embeddings
     offer_embedding = model.encode(offer_text, convert_to_tensor=True)
