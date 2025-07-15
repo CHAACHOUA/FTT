@@ -13,8 +13,10 @@ def get_recruiters_company(user):
         return None
 
     company = recruiter.company
-    # Récupérer tous les recruteurs de la même company
-    recruiters = Recruiter.objects.filter(company=company)
+    # Récupérer tous les recruteurs de la même company avec des comptes actifs
+    recruiters = Recruiter.objects.filter(
+        company=company,
+    )
 
     # Sérialisation avec RecruiterSerializer
     return RecruiterSerializer(recruiters, many=True).data

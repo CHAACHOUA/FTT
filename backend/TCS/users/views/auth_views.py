@@ -1,15 +1,16 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from users.services.registration import register_new_candidate
 from users.services.authentication import login_user_view
 from users.services.account_activation import activate_user_account,resend_activation_link
+from users.services.recruiter_invitation import send_recruiter_invitation, complete_recruiter_registration
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_candidate(request):
     """
-    Enregistrement d’un candidat
+    Enregistrement d'un candidat
     """
     return register_new_candidate(request)
 
@@ -35,7 +36,25 @@ def activate_account(request, token):
 @permission_classes([AllowAny])
 def resend_activation(request):
     """
-    Permet à un utilisateur de demander manuellement le renvoi du lien d’activation.
+    Permet à un utilisateur de demander manuellement le renvoi du lien d'activation.
     """
     email = request.data.get('email')
     return resend_activation_link(email)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def invite_recruiter(request):
+    """
+    Envoie un lien d'invitation à un recruteur (réservé aux organizers, admins et recruiters)
+    """
+    return send_recruiter_invitation(request)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def complete_recruiter_setup(request, token):
+    """
+    Permet au recruteur de finaliser son inscription avec mot de passe
+    """
+    return complete_recruiter_registration(request, token)

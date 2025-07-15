@@ -23,10 +23,11 @@ def send_user_token(user, token_type, new_email=None):
     Envoie un email à l'utilisateur avec un lien pour :
     - activer son compte,
     - changer son email,
-    - réinitialiser son mot de passe.
+    - réinitialiser son mot de passe,
+    - inviter un recruteur.
 
     :param user: L'utilisateur concerné.
-    :param token_type: Le type de token : "activation", "email_change" ou "password_reset".
+    :param token_type: Le type de token : "activation", "email_change", "password_reset" ou "recruiter_invitation".
     :param new_email: Nouvelle adresse email si applicable (pour "email_change").
     """
     # Supprimer les anciens tokens non utilisés du même type
@@ -53,6 +54,20 @@ def send_user_token(user, token_type, new_email=None):
         url = f"{settings.FRONTEND_URL}/reset-password/{token_str}/"
         subject = "Reset your password"
         message = f"Click the link below to reset your password:\n{url}\n\nThis link will expire in 24 hours."
+        recipient_email = user.email
+
+    elif token_type == "recruiter_invitation":
+        url = f"{settings.FRONTEND_URL}/complete-recruiter-setup/{token_str}/"
+        subject = "Invitation to join our platform as a recruiter"
+        message = f"""Vous avez été invité à rejoindre notre plateforme en tant que recruteur.
+
+Cliquez sur le lien ci-dessous pour finaliser votre inscription et définir votre mot de passe :
+{url}
+
+Ce lien expirera dans 24 heures.
+
+Cordialement,
+L'équipe TCS"""
         recipient_email = user.email
 
     else:

@@ -3,7 +3,9 @@ from users.views.auth_views import (
     register_candidate,
     login_user,
     activate_account,
-    resend_activation
+    resend_activation,
+    invite_recruiter,
+    complete_recruiter_setup
 )
 from users.views.email_views import validate_email_change
 from users.views.password_views import (
@@ -24,6 +26,10 @@ urlpatterns = [
     path('auth/validate-email-change/<str:token_str>/', validate_email_change, name='validate_email_change'),
     #resend activation account
     path('auth/resend-activation/', resend_activation, name='resend_activation'),
+
+    # 👥 Invitation recruteur
+    path('auth/invite-recruiter/', invite_recruiter, name='invite_recruiter'),
+    path('auth/complete-recruiter-setup/<str:token>/', complete_recruiter_setup, name='complete_recruiter_setup'),
 
     # 🔁 Mot de passe
     path('auth/request-password-reset/', request_password_reset, name='request_password_reset'),
