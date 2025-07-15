@@ -2,14 +2,40 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ForumRegistrationPopup from './ForumRegistrationPopup';
-import ForumRecruiterRegistrationPopup from './ForumRecruiterRegistrationPopup'; // import
 import defaultImage from '../../assets/forum-base.webp';
 import logo from '../../assets/Logo-FTT.png';
 import '../../pages/styles/forum/ForumList.css';
 import '../../pages/styles/forum/Popup.css';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
   const [open, setOpen] = useState(false);
+
+  // Fonction pour l'inscription directe du recruteur
+  const handleRecruiterRegistration = async () => {
+    try {
+      const API = process.env.REACT_APP_API_BASE_URL;
+      const token = localStorage.getItem('access');
+
+      const response = await axios.post(
+        `${API}/api/forums/${forum.id}/register-recruiter/`,
+        {}, // Pas besoin de données, on utilise le profil du recruteur connecté
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      toast.success('Inscription réussie ! Votre entreprise a été ajoutée au forum en attente d\'approbation.');
+      onRegistered?.();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.detail || "Erreur lors de l'inscription.");
+    }
+  };
 
   return (
     <>
@@ -59,7 +85,7 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
             {!isRegistered && (
               <button
                 className="btn-seekube btn-filled"
-                onClick={() => setOpen(true)}
+                onClick={role === 'recruiter' ? handleRecruiterRegistration : () => setOpen(true)}
               >
                 S'inscrire
               </button>
@@ -78,19 +104,6 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
             onRegistered?.();
             setOpen(false);
           }}
-        />
-      )}
-
-  {(role === 'recruiter' || role === 'organizer') && (
-  <ForumRecruiterRegistrationPopup
-    isOpen={open}
-    onClose={() => setOpen(false)}
-    forumId={forum.id}
-    onSubmit={() => {
-      onRegistered?.();
-      setOpen(false);
-    }}
-  
         />
       )}
     </>

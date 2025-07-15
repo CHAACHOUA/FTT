@@ -1,0 +1,110 @@
+/* Fond général du dashboard */
+.dashboard-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4f2cc6 0%, #233a7d 100%);
+    padding: 40px 0 0 0;
+    color: #fff;
+  }
+  
+  .dashboard-header {
+    text-align: left;
+    max-width: 1200px;
+    margin: 0 auto 32px auto;
+    padding: 0 32px;
+  }
+  .dashboard-header h1 {
+    font-size: 2.7rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .dashboard-header p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+  }
+  
+  .dashboard-kpis {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin: 32px auto 40px auto;
+    max-width: 1200px;
+  }
+  .dashboard-kpi-card {
+    flex: 1;
+    min-width: 200px;
+    border-radius: 16px;
+    padding: 24px 24px 16px 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.08);
+    transition: box-shadow 0.2s;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #5a5a8e;
+  }
+  .kpi-label {
+    color: #e0e0e0;
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  .kpi-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  
+  .dashboard-submenu {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 48px auto 0 auto;
+    max-width: 900px;
+  }
+  
+  .submenu-btn {
+    flex: 1;
+    min-width: 260px;
+    background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 48px 0 40px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.10);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    margin: 0 0;
+    outline: none;
+  }
+  .submenu-btn:hover {
+    background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
+    color: #fff;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);
+  }
+  
+  @media (max-width: 900px) {
+    .dashboard-kpis, .dashboard-submenu {
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+    }
+    .dashboard-header {
+      padding: 0 12px;
+    }
+  }
+  

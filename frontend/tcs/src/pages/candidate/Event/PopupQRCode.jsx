@@ -26,7 +26,8 @@ const PopupQRCode = ({ isOpen, onClose, token, forum }) => {
         </button>
 
         <h2>Scannez ce QR Code</h2>
-        <QRCode value={url} size={200} />
+
+        <QRCode value={url}  className='qrcode'/>
 
         {/* Affichage du forum */}
         {forum && (

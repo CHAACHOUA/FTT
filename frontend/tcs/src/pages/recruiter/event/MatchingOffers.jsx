@@ -4,12 +4,15 @@ import { FaUsers } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import Loading from '../../common/Loading';
 import { useNavigate } from 'react-router-dom';
+import MatchingCandidates from './MatchingCandidates';
 
 const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [errorOffers, setErrorOffers] = useState(null);
   const [matchingInProgressForOffer, setMatchingInProgressForOffer] = useState(null);
+  const [showCandidatesModal, setShowCandidatesModal] = useState(false);
+  const [candidatesData, setCandidatesData] = useState([]);
 
   const navigate = useNavigate();
   const forum_id = forum.id;
@@ -43,11 +46,8 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      navigate('/matching-candidates', {
-        state: {
-          candidates: res.data.candidates || [],
-        },
-      });
+      setCandidatesData(res.data.candidates || []);
+      setShowCandidatesModal(true);
 
     } catch (err) {
       alert(err.response?.data?.detail || 'Erreur lors du matching');
@@ -56,9 +56,13 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
     }
   };
 
+  if (matchingInProgressForOffer) {
+    return <Loading />;
+  }
+
   return (
-    <div className="matching-container">
-      <h2>Offres pour le forum : {forum.name}</h2>
+    <div className="matching-offers-section">
+      <h2 className="matching-title">Offres pour le forum : {forum.name}</h2>
 
       {loadingOffers && <Loading />}
       {errorOffers && <div className="error">{errorOffers}</div>}
@@ -66,23 +70,23 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
 
       {/* Loader global pendant matching (optionnel) */}
       {matchingInProgressForOffer && (
-        <div className="global-loading" style={{ marginBottom: '1rem' }}>
+        <div className="global-loading-overlay">
           <Loading />
-          <p>Matching en cours pour l'offre #{matchingInProgressForOffer}...</p>
         </div>
       )}
 
-      <div className="offers-list">
+      <div className="matching-offers-list">
         {offers.map((offer) => (
-          <div key={offer.id} className="offer-card">
-            <h3>{offer.title}</h3>
-            <p>{offer.description}</p>
-            <p><strong>Lieu :</strong> {offer.location || 'Non spécifié'}</p>
-
+          <div key={offer.id} className="matching-offer-card">
+            <h3 className="offer-title">{offer.title}</h3>
+            <p className="offer-description">{offer.description}</p>
+            <div className="offer-meta-row">
+              <span><strong>Lieu :</strong> {offer.location || 'Non spécifié'}</span>
+            </div>
             <button
               onClick={() => handleStartMatching(offer.id)}
               disabled={matchingInProgressForOffer !== null}
-              className="btn btn-primary"
+              className="btn-matching-offer"
             >
               {matchingInProgressForOffer === offer.id
                 ? <Loading />
@@ -91,6 +95,15 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
           </div>
         ))}
       </div>
+
+      {showCandidatesModal && (
+        <div className="modal-backdrop" onClick={() => setShowCandidatesModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '900px', width: '95vw', minHeight: '60vh'}}>
+            <button style={{float: 'right', fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#4f2cc6'}} onClick={() => setShowCandidatesModal(false)}>&times;</button>
+            <MatchingCandidates candidates={candidatesData} onClose={() => setShowCandidatesModal(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

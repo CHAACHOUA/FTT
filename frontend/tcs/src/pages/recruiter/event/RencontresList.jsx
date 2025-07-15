@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
-import './CandidatesList.css'; // on réutilise le même CSS
+import './CandidateListRecruiter.css'; // on réutilise le même CSS
 
 const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
   const [candidates, setCandidates] = useState([]);

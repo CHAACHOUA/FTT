@@ -1,0 +1,342 @@
+
+.candidates-list {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4f2cc6 0%, #233a7d 100%);
+  color: #fff;
+ 
+}
+
+.candidates-content {
+
+  margin: 0 auto;
+}
+
+.candidates-main {
+  width: 100%;
+}
+
+.kpi-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.kpi-card {
+  flex: 1;
+  min-width: 200px;
+  border-radius: 16px;
+  padding: 24px 24px 16px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.08);
+  transition: box-shadow 0.2s;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #5a5a8e;
+}
+
+.kpi-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.kpi-label {
+  color: #fff;
+  font-weight: 500;
+  font-size: 1.13rem;
+  letter-spacing: 0.2px;
+}
+
+.kpi-value {
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 2px;
+}
+
+.kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-left: 12px;
+  background: #4f8cff;
+  color: #fff;
+}
+.kpi-pink { background: #ff5e69 !important; }
+.kpi-blue { background: #4f8cff !important; }
+.kpi-green { background: #34d399 !important; }
+
+.kpi-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  color: #fff;
+  font-size: 1.08rem;
+}
+.kpi-list li {
+  margin-bottom: 2px;
+}
+
+/* Section principale avec liste et filtres */
+.candidates-content {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.candidates-main {
+  flex: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.candidates-main h2 {
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 100%;
+}
+
+/* Limiter à 2 cartes par ligne maximum */
+@media (min-width: 768px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.candidate-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.candidate-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.candidate-photo {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candidate-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-avatar {
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.candidate-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.candidate-info p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sectors-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.sector-badge {
+  background: rgba(79, 140, 255, 0.3);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(79, 140, 255, 0.5);
+}
+
+.sector-badge.empty {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.region {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.icon-location {
+  font-size: 0.8rem;
+}
+
+.cv-download {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(79, 140, 255, 0.2);
+  color: #4f8cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(79, 140, 255, 0.3);
+}
+
+.cv-download:hover {
+  background: rgba(79, 140, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Section des filtres */
+.candidates-filters {
+  width: 320px;
+  flex-shrink: 0;
+  flex: 1;
+  position: sticky;
+  top: 140px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 24px 18px 18px 18px;
+  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.08);
+  margin-bottom: 16px;
+  height: fit-content;
+}
+
+.candidates-flex-row {
+  display: flex;
+  gap: 32px;
+  align-items: stretch;
+  margin-top: 32px;
+}
+
+.candidates-wrapper {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 100px 8px 24px 8px;
+  box-sizing: border-box;
+}
+
+.candidates-content {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .candidates-wrapper {
+    padding: 100px 8px 16px 8px;
+  }
+  .kpi-row {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .kpi-card {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .candidates-content {
+    flex-direction: column;
+  }
+  
+  .candidates-filters {
+    width: 100%;
+    position: static;
+    order: -1;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .candidates-flex-row {
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+    align-items: stretch;
+  }
+  .candidates-main, .candidates-filters {
+    width: 100%;
+    flex: unset;
+  }
+  .candidates-filters {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidates-wrapper {
+    padding: 100px 4px 8px 4px;
+  }
+  .candidates-list {
+    padding: 0; /* SUPPRIMER le padding-top ici */
+  }
+  
+  .candidate-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+  
+  .candidate-photo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .cv-download {
+    align-self: center;
+  }
+  .candidates-filters {
+    padding: 16px 8px;
+  }
+}

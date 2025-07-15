@@ -1,0 +1,62 @@
+
+
+.dashboard-submenu {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 48px auto 0 auto;
+  max-width: 900px;
+}
+
+.dashboard-action-card {
+  flex: 1;
+  min-width: 320px;
+  border-radius: 16px;
+  padding: 36px 24px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.10);
+  transition: transform 0.15s, box-shadow 0.15s;
+ 
+}
+.entreprise-card{
+  background: linear-gradient(135deg, #4f8cff 0%, #38e8ff 100%);
+}
+.candidat-card {
+
+  background: linear-gradient(135deg, #b16cea 0%, #ff5e69 100%);
+}
+.demande-card {
+  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+}
+.dashboard-action-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);
+}
+.action-icon {
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 18px;
+}
+.action-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.action-desc {
+  font-size: 1.05rem;
+  color: #f3f3f3;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .dashboard-submenu {
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+} 

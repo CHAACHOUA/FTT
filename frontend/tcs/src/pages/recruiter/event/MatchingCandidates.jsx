@@ -2,33 +2,20 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
-import './CandidatesList.css'; // On reprend le même style CSS
+import './CandidateListRecruiter.css'; // On reprend le même style CSS
 
-const MatchingCandidates = () => {
+const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { candidates = [] } = location.state || {};
+  const candidates = candidatesProp || (location.state?.candidates || []);
   const [selectedCandidate, setSelectedCandidate] = React.useState(null);
-
-  if (!candidates.length) {
-    return (
-      <div className="matching-candidates-container">
-        <p>Aucun candidat trouvé pour cette offre.</p>
-        <button onClick={() => navigate(-1)}>Retour aux offres</button>
-      </div>
-    );
-  }
 
   return (
     <div className="matching-candidates-container">
-
       <div className="cards-container">
         {candidates.map((candidate, index) => {
-          // Supposons que candidate.matching_score contient le score de matching (entre 0 et 1)
-          // Sinon adapte selon la vraie structure de données.
           const score = candidate.match_score ?? candidate.score ?? null;
-
           return (
             <div
               key={index}
@@ -109,9 +96,6 @@ const MatchingCandidates = () => {
         />
       )}
 
-      <button onClick={() => navigate(-1)} className="btn btn-primary" style={{marginTop: '20px'}}>
-        Retour aux offres
-      </button>
     </div>
   );
 };

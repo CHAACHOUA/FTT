@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import '../../styles/recruiter/OfferModal.css';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -57,35 +57,55 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             />
           </label>
 
-          <label>
-            Type de contrat
-            <input
-              type="text"
-              name="contract_type"
-              value={formData.contract_type}
-              onChange={handleChange}
-            />
-          </label>
+          <div className="modal-row">
+            <label>
+              Type de contrat
+              <select
+                name="contract_type"
+                value={formData.contract_type}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionner</option>
+                <option value="CDI">CDI</option>
+                <option value="CDD">CDD</option>
+                <option value="Stage">Stage</option>
+                <option value="Alternance">Alternance</option>
+              </select>
+            </label>
 
-          <label>
-            Secteur
-            <input
-              type="text"
-              name="sector"
-              value={formData.sector}
-              onChange={handleChange}
-            />
-          </label>
+            <label>
+              Secteur
+              <select
+                name="sector"
+                value={formData.sector}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionner</option>
+                <option value="Informatique">Informatique</option>
+                <option value="Marketing">Marketing</option>
+                <option value="RH">RH</option>
+                <option value="Finance">Finance</option>
+              </select>
+            </label>
 
-          <label>
-            Localisation
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-            />
-          </label>
+            <label>
+              Localisation
+              <select
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionner</option>
+                <option value="Toulouse">Toulouse</option>
+                <option value="Paris">Paris</option>
+                <option value="Lyon">Lyon</option>
+                <option value="Bordeaux">Bordeaux</option>
+              </select>
+            </label>
+          </div>
 
           <label>
             Description

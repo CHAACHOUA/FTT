@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
-import './CandidatesList.css';
+import './CandidateListRecruiter.css';
 
 const CandidatesList = ({ forumId, accessToken, apiBaseUrl }) => {
   const [candidates, setCandidates] = useState([]);

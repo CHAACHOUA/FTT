@@ -9,11 +9,48 @@
   font-family: 'Poppins', sans-serif;
 }
 
+.company-recruiters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
 .company-recruiters-title {
   font-size: 1.75rem;
   font-weight: 700;
   color: #2b3a5a;
-  margin-bottom: 28px;
+  margin: 0;
+}
+
+.invite-recruiter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.invite-recruiter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.invite-recruiter-btn:active {
+  transform: translateY(0);
+}
+
+.invite-recruiter-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .recruiters-grid {

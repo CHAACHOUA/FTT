@@ -153,3 +153,90 @@
 .btn-action:hover {
   color: #0056b3;
 }
+
+.matching-offers-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 8px 24px 8px;
+}
+.matching-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #4f2cc6;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.matching-offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.matching-offer-card {
+  background: rgba(79, 44, 198, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px 0 rgba(80, 0, 120, 0.10);
+  padding: 28px 24px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1.5px solid #e0e7ff;
+  transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+  position: relative;
+}
+.matching-offer-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(80, 0, 120, 0.18);
+  border: 1.5px solid #a855f7;
+  transform: translateY(-2px) scale(1.01);
+}
+.matching-offer-card .offer-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #233a7d;
+  margin-bottom: 6px;
+}
+.matching-offer-card .offer-description {
+  color: #444;
+  margin-bottom: 8px;
+}
+.btn-matching-offer {
+  background: linear-gradient(90deg, #7b2ff2 0%, #1e4fd7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-top: 10px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(80, 0, 120, 0.10);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-matching-offer:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #4f8cff 100%);
+  box-shadow: 0 4px 16px 0 rgba(80, 0, 120, 0.18);
+}
+@media (max-width: 600px) {
+  .matching-offers-section {
+    padding: 18px 2vw 12px 2vw;
+  }
+  .matching-offer-card {
+    padding: 14px 6px 10px 6px;
+  }
+}
+
+.global-loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30, 30, 60, 0.55);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100vw;
+}

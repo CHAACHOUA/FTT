@@ -44,19 +44,10 @@
 
 .candidate-info {
   flex-grow: 1;
+  color: #000000;
 }
 
-.candidate-info h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
 
-.candidate-info p {
-  margin: 4px 0 0;
-  color: #6b7280;
-  font-size: 14px;
-}
 
 .cv-download {
   color: #4f46e5;
@@ -139,4 +130,17 @@
   min-width: 35px;
   font-size: 1rem;
   color: #4caf50;
+}
+
+.candidate-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000 ;
+}
+
+.candidate-info p {
+  margin: 4px 0 0;
+  color: #101011 ;
+  font-size: 14px;
 }

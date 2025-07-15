@@ -22,7 +22,7 @@ const RecruiterDashboard = () => {
   const { accessToken } = useAuth();
 
   return (
-    <div>
+    <div style={{ paddingTop: '120px' }}>
       <Navbar />
       <div className="recruiter-dashboard-container">
         {/* Passage de l'objet forum à SubMenu si besoin */}
