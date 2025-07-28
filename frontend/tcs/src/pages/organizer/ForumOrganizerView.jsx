@@ -50,8 +50,8 @@ const ForumOrganizerView = () => {
     fetchForums();
   }, [fetchForums]);
 
-  const isOngoing = forum => new Date(forum.date) >= new Date();
-  const isEnded = forum => new Date(forum.date) < new Date();
+  const isOngoing = forum => new Date(forum.start_date) >= new Date();
+  const isEnded = forum => new Date(forum.start_date) < new Date();
 
   const filteredRegisteredForums = registeredForums.filter(forum =>
     statusFilter === 'ongoing' ? isOngoing(forum) : isEnded(forum)

@@ -29,7 +29,17 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
 
         <div className="forum-detail-line">
           <FontAwesomeIcon icon={faCalendarDays} className="fa-icon" />
-          <span>Du {forum.date}</span>
+          <span>
+            {forum.start_date && forum.end_date ? (
+              forum.start_date === forum.end_date ? (
+                `Le ${forum.start_date} de ${forum.start_time} à ${forum.end_time}`
+              ) : (
+                `Du ${forum.start_date} au ${forum.end_date}`
+              )
+            ) : (
+              'Date à définir'
+            )}
+          </span>
         </div>
 
         <div className="forum-detail-line">

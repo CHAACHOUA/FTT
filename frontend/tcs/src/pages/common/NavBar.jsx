@@ -64,7 +64,13 @@ const Navbar = () => {
             {showDropdown && (
               <div className="dropdown-menu">
                <Link
-                  to={`/${user.role === 'recruiter' ? 'recruiter' : 'candidate'}/profile`}
+                  to={
+                    user.role === 'recruiter'
+                      ? '/recruiter/profile'
+                      : user.role === 'organizer'
+                      ? '/organizer/profile'
+                      : '/candidate/profile'
+                  }
                   className="dropdown-item">
               <BsPerson className="dropdown-icon" /> Mon profil
               </Link>
@@ -81,7 +87,13 @@ const Navbar = () => {
   <MdEventAvailable className="dropdown-icon" /> Forums
 </Link>
                <Link
-  to={user.role === 'recruiter' ? '/settings-recruiter' : '/settings'}
+  to={
+    user.role === 'recruiter'
+      ? '/settings-recruiter'
+      : user.role === 'organizer'
+      ? '/settings-organizer'
+      : '/settings'
+  }
   className="dropdown-item"
 >
   <BsGear className="dropdown-icon" /> Paramètres

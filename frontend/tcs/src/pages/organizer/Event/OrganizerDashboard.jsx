@@ -1,32 +1,12 @@
 // OrganizerDashboard.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaBuilding, FaUserFriends, FaBriefcase } from "react-icons/fa";
 import Navbar from "../../common/NavBar";
 import SubMenu from "./SubMenu";
 import { useAuth } from '../../../context/AuthContext';
 import { useLocation } from "react-router-dom";
+import axios from 'axios';
 import "./Dashboard.css";
-
-const kpis = [
-  {
-    label: "Entreprises",
-    value: 24, // à remplacer par tes données
-    icon: <FaBuilding />,
-    bg: "linear-gradient(135deg, #4f8cff 0%, #3358d1 100%)"
-  },
-  {
-    label: "Candidats",
-    value: 120,
-    icon: <FaUserFriends />,
-    bg: "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)"
-  },
-  {
-    label: "Offres",
-    value: 42,
-    icon: <FaBriefcase />,
-    bg: "linear-gradient(135deg, #34d399 0%, #059669 100%)"
-  }
-];
 
 export default function OrganizerDashboard() {
   const { name, accessToken } = useAuth();
@@ -34,6 +14,72 @@ export default function OrganizerDashboard() {
   const forum = location.state?.forum;
   const forumId = forum?.id;
   const API = process.env.REACT_APP_API_BASE_URL;
+  
+  const [kpis, setKpis] = useState([
+    {
+      label: "Entreprises",
+      value: 0,
+      icon: <FaBuilding />,
+      bg: "linear-gradient(135deg, #4f8cff 0%, #3358d1 100%)"
+    },
+    {
+      label: "Candidats",
+      value: 0,
+      icon: <FaUserFriends />,
+      bg: "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)"
+    },
+    {
+      label: "Offres",
+      value: 0,
+      icon: <FaBriefcase />,
+      bg: "linear-gradient(135deg, #34d399 0%, #059669 100%)"
+    }
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchKPIs = async () => {
+      if (!forumId || !accessToken) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API}/api/forums/${forumId}/kpis/`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        const data = response.data;
+        setKpis([
+          {
+            label: "Entreprises",
+            value: data.companies || 0,
+            icon: <FaBuilding />,
+            bg: "linear-gradient(135deg, #4f8cff 0%, #3358d1 100%)"
+          },
+          {
+            label: "Candidats",
+            value: data.candidates || 0,
+            icon: <FaUserFriends />,
+            bg: "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)"
+          },
+          {
+            label: "Offres",
+            value: data.offers || 0,
+            icon: <FaBriefcase />,
+            bg: "linear-gradient(135deg, #34d399 0%, #059669 100%)"
+          }
+        ]);
+      } catch (error) {
+        console.error('Erreur lors du chargement des KPIs:', error);
+        // En cas d'erreur, on garde les valeurs par défaut (0)
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchKPIs();
+  }, [forumId, accessToken, API]);
 
   return (
     <div className="dashboard-bg" style={{ paddingTop: '70px' }}>
@@ -46,7 +92,13 @@ export default function OrganizerDashboard() {
         {kpis.map((kpi) => (
           <div className="dashboard-kpi-card" key={kpi.label} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid #5a5a8e" }}>
             <div className="kpi-label">{kpi.label}</div>
-            <div className="kpi-value">{kpi.value}</div>
+            <div className="kpi-value">
+              {loading ? (
+                <div style={{ fontSize: '14px', color: '#ccc' }}>Chargement...</div>
+              ) : (
+                kpi.value
+              )}
+            </div>
             <div className="kpi-icon" style={{ background: kpi.bg, color: "#fff" }}>{kpi.icon}</div>
           </div>
         ))}

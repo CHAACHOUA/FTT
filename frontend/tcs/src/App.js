@@ -25,6 +25,8 @@ import RecruiterProfileView from './pages/recruiter/RecruiterProfileView';
 import RecruiterDashboard from './pages/recruiter/event/RecruiterDashboard';
 import MatchingCandidates from './pages/recruiter/event/MatchingCandidates';
 import OrganizerDashboard from './pages/organizer/Event/OrganizerDashboard';
+import OrganizerProfileView from './pages/organizer/OrganizerProfileView';
+import ForumInfoEdit from './pages/organizer/ForumInfoEdit';
 import CompleteRecruiterSetup from './pages/recruiter/CompleteRecruiterSetup';
 import CompaniesList from './pages/organizer/Event/CompaniesList';
 import CandidatesList from './pages/organizer/Event/CandidatesList';
@@ -61,6 +63,9 @@ function App() {
           <Route path="/recruiter/profile" element={<RecruiterProfileView />} />
           <Route path="/organizer/companies" element={<CompaniesList />} />
           <Route path="/organizer/candidates" element={<CandidatesList />} />
+          <Route path="/organizer/profile" element={<OrganizerProfileView />} />
+          <Route path="/settings-organizer" element={<OrganizerProfileView />} />
+          <Route path="/organizer/forum-info" element={<ForumInfoEdit />} />
           <Route path="/complete-recruiter-setup/:token" element={<CompleteRecruiterSetup />} />
 
         </Routes>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../../common/NavBar';
 import './CompaniesList.css';
@@ -12,18 +12,23 @@ const CompaniesList = (props) => {
   console.log('Location state:', location.state);
   console.log('Props:', props);
   
-  const companies = props.companies || location.state?.companies;
+  const initialCompanies = props.companies || location.state?.companies;
   const accessToken = props.accessToken || location.state?.accessToken;
   const apiBaseUrl = props.apiBaseUrl || location.state?.apiBaseUrl;
   const forum = props.forum || location.state?.forum;
   const forumId = props.forumId || location.state?.forumId || forum?.id;
   
-  console.log('Companies:', companies);
-  console.log('AccessToken:', accessToken);
-  console.log('ApiBaseUrl:', apiBaseUrl);
-  console.log('Forum:', forum);
-  console.log('Forum ID:', forumId);
-  console.log('Forum object keys:', Object.keys(forum || {}));
+  // État local pour gérer les entreprises avec mise à jour
+  const [companies, setCompanies] = useState(initialCompanies || []);
+  
+  // Mettre à jour l'état local quand les props changent
+  useEffect(() => {
+    if (initialCompanies) {
+      setCompanies(initialCompanies);
+    }
+  }, [initialCompanies]);
+  
+
 
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -107,6 +112,11 @@ const CompaniesList = (props) => {
       setShowAddCompanyModal(false);
       setCompanyName('');
       setError(null);
+      
+      // Ajouter la nouvelle entreprise à l'état local
+      if (result.company) {
+        setCompanies(prevCompanies => [...prevCompanies, result.company]);
+      }
       
       // Optionnel: rafraîchir les données
       if (props.onCompanyAdded) {
@@ -192,8 +202,16 @@ const CompaniesList = (props) => {
       
       if (response.ok) {
         console.log(`Entreprise ${newApprovedStatus ? 'approuvée' : 'désapprouvée'} avec succès`);
-        // Mettre à jour le statut localement
-        company.approved = newApprovedStatus;
+        
+        // Mettre à jour l'état local pour déclencher un re-render
+        setCompanies(prevCompanies => 
+          prevCompanies.map(c => 
+            c.id === company.id 
+              ? { ...c, approved: newApprovedStatus }
+              : c
+          )
+        );
+        
         // Optionnel: rafraîchir les données
         if (props.onCompanyUpdated) {
           props.onCompanyUpdated();
@@ -229,6 +247,12 @@ const CompaniesList = (props) => {
 
       if (response.ok) {
         console.log('Entreprise refusée avec succès');
+        
+        // Supprimer l'entreprise de l'état local
+        setCompanies(prevCompanies => 
+          prevCompanies.filter(c => c.id !== company.id)
+        );
+        
         // Optionnel: rafraîchir les données
         if (props.onCompanyUpdated) {
           props.onCompanyUpdated();

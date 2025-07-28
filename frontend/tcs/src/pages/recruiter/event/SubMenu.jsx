@@ -7,7 +7,7 @@ import {
   FaFolderOpen,
   FaUserCheck
 } from 'react-icons/fa';
-import '../../styles/candidate/SubMenu.css';
+import '../../styles/recruiter/SubMenu.css';
 
 const SubMenu = ({ active, setActive, sectionActive, setSectionActive }) => {
   const preparationItems = [

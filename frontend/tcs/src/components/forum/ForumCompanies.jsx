@@ -3,14 +3,27 @@ import '../../pages/styles/forum/ForumCompany.css';
 import logo from '../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import CompanyCardPopup from './CompanyCardPopup';
 
 const ForumCompanies = ({ companies }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const LogoCompany = logo;
 
   const filteredCompanies = companies.filter((company) =>
     company.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCompanyClick = (company) => {
+    setSelectedCompany(company);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedCompany(null);
+  };
 
   return (
     <div className="forum-companies-wrapper">
@@ -31,7 +44,12 @@ const ForumCompanies = ({ companies }) => {
       {/* Liste des entreprises */}
       <div className="forum-detail-companies-list">
         {filteredCompanies.map((company, index) => (
-          <div key={index} className="forum-detail-company-card">
+          <div 
+            key={index} 
+            className="forum-detail-company-card"
+            onClick={() => handleCompanyClick(company)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="forum-detail-company-logo-container">
               <img
                 src={company.logo || LogoCompany}
@@ -49,6 +67,13 @@ const ForumCompanies = ({ companies }) => {
           </div>
         ))}
       </div>
+
+      {/* Popup pour les détails de l'entreprise */}
+      <CompanyCardPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        company={selectedCompany}
+      />
     </div>
   );
 };

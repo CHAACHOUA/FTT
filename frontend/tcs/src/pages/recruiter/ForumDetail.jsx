@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import ForumRegistrationPopup from '../../components/forum/ForumRegistrationPopup';
 import ForumInfos from '../../components/forum/ForumInfos';
 import ForumCompanies from '../../components/forum/ForumCompanies';
 import '../../pages/styles/forum/ForumDetail.css';
@@ -9,14 +8,17 @@ import Logo from '../../assets/Logo-FTT.png';
 import Photo from '../../assets/forum-base.webp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faBuilding, faBriefcase } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../context/AuthContext';
+import { getUserFromToken } from '../../context/decoder-jwt';
 
 const ForumDetail = () => {
   const { state } = useLocation();
   const forum = state?.forum;
   const API = process.env.REACT_APP_API_BASE_URL;
+  const { accessToken } = useAuth();
+  const user = getUserFromToken();
 
   const [activeTab, setActiveTab] = useState('general');
-  const [open, setOpen] = useState(false);
 
   if (!forum) return <p>Forum introuvable.</p>;
 
@@ -94,8 +96,7 @@ const ForumDetail = () => {
           {activeTab === 'general' && (
             <ForumInfos
               forum={forum}
-              onRegister={() => setOpen(true)}
-              showRegisterButton={true}
+              showRegisterButton={false}
             />
           )}
 
@@ -105,21 +106,19 @@ const ForumDetail = () => {
 
           {activeTab === 'offers' && (
             <div className="forum-detail-offers">
-              <p>Veuillez vous inscrire au forum pour accéder aux offres disponibles.</p>
-              <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>S'inscrire</button>
+              <p>Consultez les offres disponibles pour ce forum.</p>
+              <button 
+                className="btn-seekube btn-filled" 
+                onClick={() => window.location.href = `/event/recruiter/dashboard`}
+              >
+                Accéder au dashboard
+              </button>
             </div>
           )}
-
-          {/* Popup d'inscription */}
-          <ForumRegistrationPopup
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            forumId={forum.id}
-          />
         </div>
       </div>
     </div>
   );
 };
 
-export default ForumDetail;
+export default ForumDetail; 

@@ -11,6 +11,25 @@ import { toast } from 'react-toastify';
 
 const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
   const [open, setOpen] = useState(false);
+  const API = process.env.REACT_APP_API_BASE_URL;
+
+  // Fonction pour construire l'URL du logo
+  const getLogoURL = (logo) => {
+    if (!logo) return logo; // Retourne le logo par défaut
+    if (typeof logo === 'string') {
+      return logo.startsWith('http') ? logo : `${API}${logo}`;
+    }
+    return logo;
+  };
+
+  // Fonction pour construire l'URL de la photo du forum
+  const getForumPhotoURL = (photo) => {
+    if (!photo) return defaultImage; // Retourne l'image par défaut
+    if (typeof photo === 'string') {
+      return photo.startsWith('http') ? photo : `${API}${photo}`;
+    }
+    return defaultImage;
+  };
 
   // Fonction pour l'inscription directe du recruteur
   const handleRecruiterRegistration = async () => {
@@ -41,7 +60,7 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
     <>
       <div className="forum-card">
         <img
-          src={defaultImage}
+          src={getForumPhotoURL(forum.photo)}
           alt="Bannière"
           className="forum-image-banner"
         />
@@ -49,7 +68,7 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
         <div className="forum-card-body">
           <div className="forum-organizer">
             <img
-              src={forum.organizer?.logo || logo}
+              src={getLogoURL(forum.organizer?.logo) || logo}
               alt="logo organisateur"
               className="organizer-logo-seekube"
             />
@@ -61,7 +80,18 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
           <h2 className="forum-title">{forum.name}</h2>
 
           <div className="forum-meta">
-            <div><Calendar size={16} /> {forum.date}</div>
+            <div>
+              <Calendar size={16} /> 
+              {forum.start_date && forum.end_date ? (
+                forum.start_date === forum.end_date ? (
+                  `${forum.start_date} ${forum.start_time} - ${forum.end_time}`
+                ) : (
+                  `${forum.start_date} - ${forum.end_date}`
+                )
+              ) : (
+                'Date à définir'
+              )}
+            </div>
             <div>
               {forum.type?.toLowerCase() === 'virtuel' ? (
                 <Video size={16} />

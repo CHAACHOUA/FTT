@@ -9,7 +9,7 @@ import photo_forum from '../../assets/forum-base.webp';
 const ForumCardRegistered = ({ forum, role }) => {
   const isOngoing = () => {
     const now = new Date();
-    const forumDate = new Date(forum.date);
+    const forumDate = new Date(forum.start_date);
     return forumDate.setHours(0, 0, 0, 0) >= now.setHours(0, 0, 0, 0);
   };
 
@@ -17,6 +17,17 @@ const ForumCardRegistered = ({ forum, role }) => {
     if (!date) return 'Date inconnue';
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  };
+
+  const formatDateTime = () => {
+    if (forum.start_date && forum.end_date) {
+      if (forum.start_date === forum.end_date) {
+        return `${formatDate(forum.start_date)} ${forum.start_time} - ${forum.end_time}`;
+      } else {
+        return `${formatDate(forum.start_date)} - ${formatDate(forum.end_date)}`;
+      }
+    }
+    return 'Date à définir';
   };
 
   const ongoing = isOngoing();
@@ -42,7 +53,7 @@ const dashboardPath =
         <div className="forum-card-left">
           <div className="forum-card-date">
             <Calendar size={16} />
-            <span>{formatDate(forum.date)}</span>
+            <span>{formatDateTime()}</span>
 
             {ongoing && (
               <span className="forum-badge">
