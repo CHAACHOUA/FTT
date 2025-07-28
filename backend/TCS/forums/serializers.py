@@ -9,7 +9,18 @@ class ForumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Forum
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'photo',
+            'start_date',
+            'end_date',
+            'start_time',
+            'end_time',
+            'type',
+            'description',
+            'organizer',
+        ]
 
 
 class ForumDetailSerializer(serializers.ModelSerializer):
@@ -22,11 +33,14 @@ class ForumDetailSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'photo',
-            'date',
+            'start_date',
+            'end_date',
+            'start_time',
+            'end_time',
             'type',
             'description',
             'organizer',
-            'companies',  # 👈 nouvelle clé avec companies + leurs recruteurs
+            'companies',
         ]
 
     def get_companies(self, obj):

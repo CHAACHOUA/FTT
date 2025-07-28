@@ -10,7 +10,7 @@ def get_all_forums():
     Retourne la liste de tous les forums, triés par date décroissante.
     """
     try:
-        forums = Forum.objects.all().order_by('-date')
+        forums = Forum.objects.all().order_by('-start_date')
         serializer = ForumDetailSerializer(forums, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:

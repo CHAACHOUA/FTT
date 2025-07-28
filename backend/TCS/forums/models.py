@@ -17,12 +17,17 @@ class Forum(models.Model):
     type = models.CharField(max_length=20, choices=FORUM_TYPE_CHOICES)
     photo = models.ImageField(upload_to='forum_photos/')
     description = models.TextField(blank=True)
-    date = models.DateField()
+    start_date = models.DateField(default='2025-07-22')
+    end_date = models.DateField(default='2025-07-22')
+    start_time = models.TimeField(default='09:00')
+    end_time = models.TimeField(default='17:00')
     created_at = models.DateTimeField(auto_now_add=True)
-    organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, related_name='forums')  # 👈 Lien ajouté
+    organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, related_name='forums') 
 
     def __str__(self):
         return self.name
+
+
 
 
 class ForumRegistration(models.Model):

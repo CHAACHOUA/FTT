@@ -18,8 +18,8 @@ def get_candidate_forum_lists(user):
     try:
         candidate = get_object_or_404(Candidate, user=user)
 
-        registered = Forum.objects.filter(registrations__candidate=candidate).order_by('-date')
-        unregistered = Forum.objects.exclude(registrations__candidate=candidate).order_by('-date')
+        registered = Forum.objects.filter(registrations__candidate=candidate).order_by('-start_date')
+        unregistered = Forum.objects.exclude(registrations__candidate=candidate).order_by('-start_date')
 
         return Response({
             "registered": ForumDetailSerializer(registered, many=True).data,
@@ -40,8 +40,8 @@ def get_recruiter_forum_lists(user):
     try:
         recruiter = get_object_or_404(Recruiter, user=user)
 
-        registered = Forum.objects.filter(recruiter_participations__recruiter=recruiter).order_by('-date')
-        unregistered = Forum.objects.exclude(recruiter_participations__recruiter=recruiter).order_by('-date')
+        registered = Forum.objects.filter(recruiter_participations__recruiter=recruiter).order_by('-start_date')
+        unregistered = Forum.objects.exclude(recruiter_participations__recruiter=recruiter).order_by('-start_date')
 
         return Response({
             "registered": ForumDetailSerializer(registered, many=True).data,
@@ -60,8 +60,8 @@ def get_organizer_forum_lists(user):
     try:
         organizer = get_object_or_404(Organizer, user=user)
 
-        organized = Forum.objects.filter(organizer=organizer).order_by('-date')
-        not_organized = Forum.objects.exclude(organizer=organizer).order_by('-date')
+        organized = Forum.objects.filter(organizer=organizer).order_by('-start_date')
+        not_organized = Forum.objects.exclude(organizer=organizer).order_by('-start_date')
 
         return Response({
             "organized": ForumDetailSerializer(organized, many=True).data,

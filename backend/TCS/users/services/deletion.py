@@ -4,6 +4,8 @@ from rest_framework import status
 from users.models import AccountDeletion, UserToken
 from candidates.models import Candidate
 from recruiters.models import Recruiter
+from organizers.models import Organizer
+
 def delete_candidate_account_and_data(user, reason):
     """
     Supprime et anonymise le compte d'un candidat :
@@ -63,12 +65,12 @@ def delete_candidate_account_and_data(user, reason):
 
 def delete_recruiter_account_and_data(user, reason):
     """
-    Supprime et anonymise le compte d’un recruteur :
+    Supprime et anonymise le compte d'un recruteur :
     - vérifie son rôle
     - enregistre la raison
     - supprime les fichiers liés (photo)
     - anonymise le profil recruteur
-    - anonymise l’utilisateur
+    - anonymise l'utilisateur
     - supprime les tokens
     """
     if user.role != 'recruiter':
@@ -103,3 +105,50 @@ def delete_recruiter_account_and_data(user, reason):
     UserToken.objects.filter(user=user).delete()
 
     return Response({"message": "Compte recruteur supprimé et anonymisé avec succès."}, status=status.HTTP_200_OK)
+
+def delete_organizer_account_and_data(user, reason):
+    """
+    Supprime et anonymise le compte d'un organizer :
+    - vérifie son rôle
+    - enregistre la raison
+    - supprime les fichiers liés (logo)
+    - anonymise le profil organizer
+    - anonymise l'utilisateur
+    - supprime les tokens
+    """
+    if user.role != 'organizer':
+        return Response({"error": "Seuls les organizers peuvent supprimer leur compte ici."},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    if not reason:
+        return Response({"error": "Merci de spécifier une raison de suppression."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Enregistre la demande de suppression
+    AccountDeletion.objects.create(user=user, reason=reason)
+
+    try:
+        organizer = user.organizer_profile
+    except Organizer.DoesNotExist:
+        organizer = None
+
+    if organizer:
+        # Supprime le logo
+        if organizer.logo:
+            organizer.logo.delete(save=False)
+
+        # Anonymise le profil
+        organizer.name = ""
+        organizer.phone_number = ""
+        organizer.save()
+
+    # Anonymise l'utilisateur
+    user.email = f"anonyme_{uuid.uuid4()}@anon.com"
+    user.set_unusable_password()
+    user.is_active = False
+    user.save()
+
+    # Supprime les anciens tokens
+    UserToken.objects.filter(user=user).delete()
+
+    return Response({"message": "Compte organizer supprimé et anonymisé avec succès."}, status=status.HTTP_200_OK)

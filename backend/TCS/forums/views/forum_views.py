@@ -11,6 +11,11 @@ from forums.services.forum_candidate_participation import get_candidates_for_for
 from recruiters.models import RecruiterForumParticipation
 from forums.serializers import ForumCandidateSerializer
 from forums.services.forum_by_roles import get_candidate_forum_lists, get_recruiter_forum_lists,get_organizer_forum_lists
+from forums.models import Forum
+from forums.serializers import ForumSerializer
+from organizers.models import Organizer
+from company.models import ForumCompany
+from recruiters.models import Offer
 
 
 
@@ -117,3 +122,90 @@ def recruiter_my_forums(request):
 @permission_classes([IsAuthenticated])
 def organizer_my_forums(request):
     return get_organizer_forum_lists(request.user)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_forum(request, forum_id):
+    """
+    Permet à un organizer de mettre à jour son forum
+    """
+    try:
+        # Vérifier que l'utilisateur est un organizer
+        organizer = Organizer.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return Response({"error": "Accès non autorisé. Seuls les organizers peuvent modifier les forums."}, 
+                       status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        # Récupérer le forum et vérifier qu'il appartient à l'organizer
+        forum = Forum.objects.get(id=forum_id, organizer=organizer)
+    except Forum.DoesNotExist:
+        # Vérifier si le forum existe mais n'appartient pas à cet organizer
+        try:
+            Forum.objects.get(id=forum_id)
+            return Response({"error": "Vous n'êtes pas autorisé à modifier ce forum."}, 
+                           status=status.HTTP_403_FORBIDDEN)
+        except Forum.DoesNotExist:
+            return Response({"error": "Forum non trouvé."}, 
+                           status=status.HTTP_404_NOT_FOUND)
+
+    # Préparer les données pour la mise à jour
+    data = request.data.copy()
+    
+    # Gérer la photo si elle est fournie
+    if 'photo' in request.FILES:
+        # Supprimer l'ancienne photo si elle existe
+        if forum.photo:
+            forum.photo.delete(save=False)
+        data['photo'] = request.FILES['photo']
+
+    # Valider et sauvegarder
+    serializer = ForumSerializer(forum, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "message": "Forum mis à jour avec succès",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            "error": "Données invalides",
+            "details": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def forum_kpis(request, forum_id):
+    """
+    Récupère les KPIs d'un forum pour l'organizer
+    """
+    try:
+        # Vérifier que l'utilisateur est un organizer
+        organizer = Organizer.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return Response({"error": "Accès non autorisé. Seuls les organizers peuvent accéder aux KPIs."}, 
+                       status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        # Récupérer le forum et vérifier qu'il appartient à l'organizer
+        forum = Forum.objects.get(id=forum_id, organizer=organizer)
+    except Forum.DoesNotExist:
+        return Response({"error": "Forum non trouvé ou vous n'êtes pas autorisé à y accéder."}, 
+                       status=status.HTTP_404_NOT_FOUND)
+
+    # Compter les entreprises participantes
+    companies_count = ForumCompany.objects.filter(forum=forum).count()
+    
+    # Compter les candidats inscrits
+    candidates_count = forum.registrations.count()
+    
+    # Compter les offres (via les entreprises participantes)
+    offers_count = Offer.objects.filter(
+        company__in=forum.company_participants.values_list('company', flat=True)
+    ).count()
+
+    return Response({
+        "companies": companies_count,
+        "candidates": candidates_count,
+        "offers": offers_count
+    }, status=status.HTTP_200_OK)

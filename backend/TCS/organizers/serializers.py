@@ -3,6 +3,8 @@ from .models import Organizer
 
 
 class OrganizerSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(source='user.email', read_only=True)
+    
     class Meta:
         model = Organizer
-        fields = '__all__'
+        fields = ['id', 'name', 'phone_number', 'logo', 'email']
