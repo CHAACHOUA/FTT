@@ -90,16 +90,19 @@ export default function OrganizerDashboard() {
       </div>
       <div className="dashboard-kpis">
         {kpis.map((kpi) => (
-          <div className="dashboard-kpi-card" key={kpi.label} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid #5a5a8e" }}>
+          <div 
+            className="dashboard-kpi-card" 
+            key={kpi.label}
+          >
             <div className="kpi-label">{kpi.label}</div>
             <div className="kpi-value">
               {loading ? (
-                <div style={{ fontSize: '14px', color: '#ccc' }}>Chargement...</div>
+                <div className="loading-text">Chargement...</div>
               ) : (
                 kpi.value
               )}
             </div>
-            <div className="kpi-icon" style={{ background: kpi.bg, color: "#fff" }}>{kpi.icon}</div>
+            <div className="kpi-icon">{kpi.icon}</div>
           </div>
         ))}
       </div>

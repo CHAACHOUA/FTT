@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/recruiter/OfferModal.css';
+import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -8,6 +9,29 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     location: '',
     description: '',
   });
+  const [sectors, setSectors] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setLoading(true);
+        const [sectorsData, contractsData] = await Promise.all([
+          getSectorsForSelect(),
+          getContractsForSelect()
+        ]);
+        setSectors(sectorsData);
+        setContracts(contractsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
 
   useEffect(() => {
     if (initialData) {
@@ -41,6 +65,16 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   if (!isOpen) return null;
 
+  if (loading) {
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <div>Chargement des options...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
@@ -67,10 +101,11 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 required
               >
                 <option value="">Sélectionner</option>
-                <option value="CDI">CDI</option>
-                <option value="CDD">CDD</option>
-                <option value="Stage">Stage</option>
-                <option value="Alternance">Alternance</option>
+                {contracts.map((contract) => (
+                  <option key={contract.value} value={contract.value}>
+                    {contract.label}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -83,10 +118,11 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 required
               >
                 <option value="">Sélectionner</option>
-                <option value="Informatique">Informatique</option>
-                <option value="Marketing">Marketing</option>
-                <option value="RH">RH</option>
-                <option value="Finance">Finance</option>
+                {sectors.map((sector) => (
+                  <option key={sector.value} value={sector.value}>
+                    {sector.label}
+                  </option>
+                ))}
               </select>
             </label>
 

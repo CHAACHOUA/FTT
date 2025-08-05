@@ -1,9 +1,9 @@
 /* Fond général du dashboard */
 .dashboard-bg {
   min-height: 100vh;
-  background: linear-gradient(135deg, #4f2cc6 0%, #233a7d 100%);
+  background: #ffffff;
   padding: 40px 0 0 0;
-  color: #fff;
+  color: #333;
 }
 
 .dashboard-header {
@@ -16,94 +16,312 @@
   font-size: 2.7rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
+  color: #111827;
 }
 .dashboard-header p {
   font-size: 1.2rem;
-  color: #e0e0e0;
+  color: #6b7280;
 }
 
 .dashboard-kpis {
-  display: flex;
-  gap: 32px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
   margin: 32px auto 40px auto;
   max-width: 1200px;
+  padding: 0 32px;
 }
+
 .dashboard-kpi-card {
-  flex: 1;
-  min-width: 200px;
+  background: #ffffff;
   border-radius: 16px;
-  padding: 24px 24px 16px 24px;
+  padding: 28px 24px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.08);
-  transition: box-shadow 0.2s;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid #5a5a8e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 2px solid #f3f4f6;
+  border-top: 4px solid;
+  overflow: hidden;
 }
+
+.dashboard-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dashboard-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  border-color: #3b82f6;
+}
+
+.dashboard-kpi-card:hover::before {
+  opacity: 1;
+}
+
+/* Couleurs différentes pour chaque type de KPI dans le dashboard */
+.dashboard-kpi-card:nth-child(1) {
+  border-top-color: #4f8cff; /* Bleu pour les entreprises */
+}
+
+.dashboard-kpi-card:nth-child(2) {
+  border-top-color: #E91E63; /* Rose vif pour les candidats */
+}
+
+.dashboard-kpi-card:nth-child(3) {
+  border-top-color: #34d399; /* Vert pour les offres */
+}
+
 .kpi-label {
-  color: #e0e0e0;
-  font-size: 1rem;
-  margin-bottom: 8px;
+  color: #000000;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
 .kpi-value {
-  font-size: 2.2rem;
-  font-weight: bold;
+  font-size: 2.5rem;
+  font-weight: 800;
   margin-bottom: 8px;
+  color: #000000;
+  line-height: 1;
 }
+
 .kpi-icon {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 38px;
-  height: 38px;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Couleurs spécifiques pour chaque KPI */
+.dashboard-kpi-card:nth-child(1) .kpi-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.dashboard-kpi-card:nth-child(2) .kpi-icon {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+}
+
+.dashboard-kpi-card:nth-child(3) .kpi-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.dashboard-kpi-card:nth-child(1)::before {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.dashboard-kpi-card:nth-child(2)::before {
+  background: linear-gradient(90deg, #ec4899, #be185d);
+}
+
+.dashboard-kpi-card:nth-child(3)::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.dashboard-kpi-card:nth-child(1):hover {
+  border-color: #3b82f6;
+}
+
+.dashboard-kpi-card:nth-child(2):hover {
+  border-color: #ec4899;
+}
+
+.dashboard-kpi-card:nth-child(3):hover {
+  border-color: #10b981;
 }
 
 .dashboard-submenu {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
   margin: 48px auto 0 auto;
-  max-width: 900px;
+  max-width: 1200px;
+  padding: 0 32px;
 }
 
-.submenu-btn {
-  flex: 1;
-  min-width: 260px;
-  background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
-  color: #fff;
-  border: none;
+.dashboard-action-card {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
   border-radius: 16px;
-  padding: 48px 0 40px 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.10);
+  padding: 32px 24px;
+  text-align: center;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-  margin: 0 0;
-  outline: none;
-}
-.submenu-btn:hover {
-  background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
-  color: #fff;
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
 }
 
-@media (max-width: 900px) {
-  .dashboard-kpis, .dashboard-submenu {
-    flex-direction: column;
-    gap: 24px;
-    align-items: center;
+.dashboard-action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+}
+
+.dashboard-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dashboard-action-card:hover::before {
+  opacity: 1;
+}
+
+.action-icon {
+  margin-bottom: 16px;
+  color: #3b82f6;
+}
+
+.action-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.action-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Couleurs spécifiques pour chaque carte */
+.offers-card .action-icon {
+  color: #10b981;
+}
+.offers-card:hover {
+  border-color: #10b981;
+}
+.offers-card::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.candidat-card .action-icon {
+  color: #f59e0b;
+}
+.candidat-card:hover {
+  border-color: #f59e0b;
+}
+.candidat-card::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.forum-info-card .action-icon {
+  color: #8b5cf6;
+}
+.forum-info-card:hover {
+  border-color: #8b5cf6;
+}
+.forum-info-card::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.entreprise-card .action-icon {
+  color: #ef4444;
+}
+.entreprise-card:hover {
+  border-color: #ef4444;
+}
+.entreprise-card::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .dashboard-submenu {
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+@media (max-width: 768px) {
+  .dashboard-bg {
+    padding: 20px 0 0 0;
+  }
+  
   .dashboard-header {
-    padding: 0 12px;
+    padding: 0 16px;
+    text-align: center;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .dashboard-header p {
+    font-size: 1rem;
+  }
+  
+  .dashboard-kpis {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  
+  .dashboard-kpi-card {
+    min-width: auto;
+  }
+  
+  .dashboard-submenu {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  
+  .dashboard-action-card {
+    padding: 24px 20px;
+  }
+  
+  .action-title {
+    font-size: 1.1rem;
+  }
+  
+  .action-desc {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .dashboard-kpi-card {
+    padding: 20px 16px 12px 16px;
+  }
+  
+  .kpi-value {
+    font-size: 1.8rem;
+  }
+  
+  .dashboard-action-card {
+    padding: 20px 16px;
   }
 } 

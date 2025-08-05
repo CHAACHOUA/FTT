@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import '../../pages/styles/forum/ForumRegistrationPopup.css';
+import { getSectorsForSelect, getContractsForSelect } from '../../constants/choices';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -14,28 +15,12 @@ import {
   faUniversalAccess,
 } from '@fortawesome/free-solid-svg-icons';
 
-const contractOptions = [
-  { label: 'CDI', value: 'CDI' },
-  { label: 'CDD / Temporaire', value: 'CDD' },
-  { label: "Contrat d'apprentissage", value: "Contrat d'apprentissage" },
-  { label: 'Contrat de professionnalisation', value: 'Contrat de professionnalisation' },
-];
-
-const staticSectorOptions = [
-  { label: 'Technologie / IT', value: 'Technologie / IT' },
-  { label: 'Finance', value: 'Finance' },
-  { label: 'Marketing', value: 'Marketing' },
-  { label: 'Santé', value: 'Santé' },
-  { label: 'Éducation', value: 'Éducation' },
-  { label: 'BTP / Construction', value: 'BTP / Construction' },
-  { label: 'Commerce / Vente', value: 'Commerce / Vente' },
-  { label: 'Logistique / Transport', value: 'Logistique / Transport' },
-  { label: 'Autre', value: 'Autre' },
-];
+// Les options seront chargées dynamiquement depuis l'API
 
 const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
   const [step, setStep] = useState(1);
   const [sectors, setSectors] = useState([]);
+  const [contracts, setContracts] = useState([]);
   const [form, setForm] = useState({
     contract_type: [],
     sector: [],
@@ -45,32 +30,28 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [choicesLoading, setChoicesLoading] = useState(true);
   const API = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    const fetchSectors = async () => {
+    const fetchChoices = async () => {
       try {
-        const res = await axios.get(`${API}/api/forums/${forumId}/`);
-        const apiSectors = Array.from(new Set(
-          res.data.companies.flatMap(c => c.sectors || [])
-        ));
-        const apiOptions = apiSectors.map(s => ({ label: s, value: s }));
-
-        const combined = [...staticSectorOptions];
-        apiOptions.forEach(opt => {
-          if (!combined.find(s => s.value === opt.value)) {
-            combined.push(opt);
-          }
-        });
-
-        setSectors(combined);
+        setChoicesLoading(true);
+        const [sectorsData, contractsData] = await Promise.all([
+          getSectorsForSelect(),
+          getContractsForSelect()
+        ]);
+        setSectors(sectorsData);
+        setContracts(contractsData);
       } catch (err) {
-        console.error('Erreur chargement secteurs :', err);
+        console.error('Erreur chargement choix :', err);
+      } finally {
+        setChoicesLoading(false);
       }
     };
 
-    if (isOpen) fetchSectors();
-  }, [isOpen, forumId, API]);
+    if (isOpen) fetchChoices();
+  }, [isOpen]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -129,40 +110,46 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
 
         {step === 1 && (
           <>
-            <label className="block font-medium mb-1">
-              <FontAwesomeIcon icon={faBriefcase} className="mr-2 text-blue-600" />
-             Quel(s) contrat(s) recherchez-vous ? 
-            </label>
-            <Select
-              options={contractOptions}
-              isMulti
-              value={contractOptions.filter(opt => form.contract_type.includes(opt.value))}
-              onChange={(selected) =>
-                setForm(prev => ({
-                  ...prev,
-                  contract_type: selected.map(opt => opt.value)
-                }))
-              }
-              className="mb-2"
-            />
-            {errors.contract_type && <p className="text-red-500 text-sm">{errors.contract_type}</p>}
+            {choicesLoading ? (
+              <div className="text-center py-4">Chargement des options...</div>
+            ) : (
+              <>
+                <label className="block font-medium mb-1">
+                  <FontAwesomeIcon icon={faBriefcase} className="mr-2 text-blue-600" />
+                 Quel(s) contrat(s) recherchez-vous ? 
+                </label>
+                <Select
+                  options={contracts}
+                  isMulti
+                  value={contracts.filter(opt => form.contract_type.includes(opt.value))}
+                  onChange={(selected) =>
+                    setForm(prev => ({
+                      ...prev,
+                      contract_type: selected.map(opt => opt.value)
+                    }))
+                  }
+                  className="mb-2"
+                />
+                {errors.contract_type && <p className="text-red-500 text-sm">{errors.contract_type}</p>}
 
-            <label className="block font-medium mt-4 mb-1">
-              <FontAwesomeIcon icon={faIndustry} className="mr-2 text-blue-600" />
-              Secteur(s) visé(s) :
-            </label>
-            <Select
-              options={sectors}
-              isMulti
-              value={sectors.filter(opt => form.sector.includes(opt.value))}
-              onChange={(selected) =>
-                setForm(prev => ({
-                  ...prev,
-                  sector: selected.map(opt => opt.value)
-                }))
-              }
-            />
-            {errors.sector && <p className="text-red-500 text-sm">{errors.sector}</p>}
+                <label className="block font-medium mt-4 mb-1">
+                  <FontAwesomeIcon icon={faIndustry} className="mr-2 text-blue-600" />
+                  Secteur(s) visé(s) :
+                </label>
+                <Select
+                  options={sectors}
+                  isMulti
+                  value={sectors.filter(opt => form.sector.includes(opt.value))}
+                  onChange={(selected) =>
+                    setForm(prev => ({
+                      ...prev,
+                      sector: selected.map(opt => opt.value)
+                    }))
+                  }
+                />
+                {errors.sector && <p className="text-red-500 text-sm">{errors.sector}</p>}
+              </>
+            )}
           </>
         )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SearchBar.css';
 import { FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { getSectorsForSelect, getContractsForSelect } from '../../constants/choices';
 
 const SearchBarOffers = ({ offers, onFilter }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +11,27 @@ const SearchBarOffers = ({ offers, onFilter }) => {
   const [showSectorDropdown, setShowSectorDropdown] = useState(false);
   const [contractOptions, setContractOptions] = useState([]);
   const [sectorOptions, setSectorOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setLoading(true);
+        const [contractsData, sectorsData] = await Promise.all([
+          getContractsForSelect(),
+          getSectorsForSelect()
+        ]);
+        setContractOptions(contractsData);
+        setSectorOptions(sectorsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
 
   useEffect(() => {
     const contracts = {};
@@ -23,8 +45,15 @@ const SearchBarOffers = ({ offers, onFilter }) => {
       if (sector) sectors[sector] = (sectors[sector] || 0) + 1;
     });
 
-    setContractOptions(Object.entries(contracts));
-    setSectorOptions(Object.entries(sectors));
+    // Mettre à jour les compteurs pour les options standardisées
+    setContractOptions(prev => prev.map(opt => ({
+      ...opt,
+      count: contracts[opt.value] || 0
+    })));
+    setSectorOptions(prev => prev.map(opt => ({
+      ...opt,
+      count: sectors[opt.value] || 0
+    })));
   }, [offers]);
 
   const toggleValue = (value, list, setList) => {
@@ -75,14 +104,14 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           </button>
           {showContractDropdown && (
             <div className="dropdown-menu-search">
-              {contractOptions.map(([contract, count]) => (
-                <label key={contract} className="dropdown-item-search">
+              {contractOptions.map((contract) => (
+                <label key={contract.value} className="dropdown-item-search">
                   <input
                     type="checkbox"
-                    checked={selectedContracts.includes(contract)}
-                    onChange={() => toggleValue(contract, selectedContracts, setSelectedContracts)}
+                    checked={selectedContracts.includes(contract.value)}
+                    onChange={() => toggleValue(contract.value, selectedContracts, setSelectedContracts)}
                   />
-                  {contract} <span className="count-search">{count}</span>
+                  {contract.label} <span className="count-search">{contract.count || 0}</span>
                 </label>
               ))}
             </div>
@@ -102,14 +131,14 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           </button>
           {showSectorDropdown && (
             <div className="dropdown-menu-search">
-              {sectorOptions.map(([sector, count]) => (
-                <label key={sector} className="dropdown-item-search">
+              {sectorOptions.map((sector) => (
+                <label key={sector.value} className="dropdown-item-search">
                   <input
                     type="checkbox"
-                    checked={selectedSectors.includes(sector)}
-                    onChange={() => toggleValue(sector, selectedSectors, setSelectedSectors)}
+                    checked={selectedSectors.includes(sector.value)}
+                    onChange={() => toggleValue(sector.value, selectedSectors, setSelectedSectors)}
                   />
-                  {sector} <span className="count-search">{count}</span>
+                  {sector.label} <span className="count-search">{sector.count || 0}</span>
                 </label>
               ))}
             </div>

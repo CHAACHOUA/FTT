@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/forum/Plan.css';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
+import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
 
 const Plan = ({ companies, forumId }) => {
   const [selectedSector, setSelectedSector] = useState('');
@@ -10,7 +11,30 @@ const Plan = ({ companies, forumId }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationTerm, setLocationTerm] = useState('');
   const [candidateSearch, setCandidateSearch] = useState(null);
+  const [sectors, setSectors] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { accessToken } = useAuth();
+
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setLoading(true);
+        const [sectorsData, contractsData] = await Promise.all([
+          getSectorsForSelect(),
+          getContractsForSelect()
+        ]);
+        setSectors(sectorsData);
+        setContracts(contractsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
 
   useEffect(() => {
     const fetchCandidateSearch = async () => {
@@ -34,8 +58,9 @@ const Plan = ({ companies, forumId }) => {
     }
   }, [accessToken, forumId]);
 
-  const allSectors = Array.from(new Set(companies.flatMap(c => c.sectors).filter(Boolean)));
-  const allContractTypes = Array.from(new Set(companies.flatMap(c => c.offers).map(o => o.contract_type).filter(Boolean)));
+  // Utiliser les secteurs et contrats standardisés au lieu des données des entreprises
+  const allSectors = sectors.map(s => s.value);
+  const allContractTypes = contracts.map(c => c.value);
 
   const companiesWithStand = companies.filter(c => c.stand);
   const filteredCompanies = companiesWithStand.filter(company => {
@@ -85,20 +110,36 @@ const Plan = ({ companies, forumId }) => {
 
         <div className="plan-header-right">
           <h3 className="plan-title">Filtres candidats</h3>
-          <div className="filter-block">
-            <label>Secteur :</label>
-            <select value={selectedSector} onChange={(e) => setSelectedSector(e.target.value)} className="filter-select">
-              <option value="">Tous</option>
-              {allSectors.map((s, i) => <option key={i} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <div className="filter-block">
-            <label>Type de contrat :</label>
-            <select value={selectedContract} onChange={(e) => setSelectedContract(e.target.value)} className="filter-select">
-              <option value="">Tous</option>
-              {allContractTypes.map((c, i) => <option key={i} value={c}>{c}</option>)}
-            </select>
-          </div>
+          {loading ? (
+            <div className="filter-block">
+              <label>Chargement des options...</label>
+            </div>
+          ) : (
+            <>
+              <div className="filter-block">
+                <label>Secteur :</label>
+                <select value={selectedSector} onChange={(e) => setSelectedSector(e.target.value)} className="filter-select">
+                  <option value="">Tous</option>
+                  {sectors.map((sector) => (
+                    <option key={sector.value} value={sector.value}>
+                      {sector.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="filter-block">
+                <label>Type de contrat :</label>
+                <select value={selectedContract} onChange={(e) => setSelectedContract(e.target.value)} className="filter-select">
+                  <option value="">Tous</option>
+                  {contracts.map((contract) => (
+                    <option key={contract.value} value={contract.value}>
+                      {contract.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
           <div className="filter-block">
             <label>Nom d'entreprise ou poste :</label>
             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="filter-select" placeholder="Recherche..." />

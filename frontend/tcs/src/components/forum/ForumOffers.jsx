@@ -5,7 +5,15 @@ import {
   FaLocationArrow,
   FaHeart,
   FaRegHeart,
+  FaBuilding,
+  FaUser,
+  FaCalendar,
+  FaGlobe,
+  FaPhone,
+  FaEnvelope,
+  FaUsers,
 } from 'react-icons/fa';
+import { MdBusiness, MdLocationOn, MdPerson, MdInfo } from 'react-icons/md';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 import SearchBarOffers from './SearchBarOffers';
@@ -17,12 +25,15 @@ const ForumOffers = ({ companies }) => {
       ...offer,
       companyName: company.name,
       logo: company.logo,
+      company: company, // Ajouter l'objet company complet
     }))
   );
 
   const [filteredOffers, setFilteredOffers] = useState(allOffers);
   const [favoriteOfferIds, setFavoriteOfferIds] = useState([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
 
   useEffect(() => {
     setFilteredOffers(allOffers);
@@ -64,10 +75,30 @@ const ForumOffers = ({ companies }) => {
     }
   };
 
+  const handleCompanyClick = (company) => {
+    setSelectedCompany(company);
+    setIsCompanyPopupOpen(true);
+  };
+
+  const handleCloseCompanyPopup = () => {
+    setIsCompanyPopupOpen(false);
+    setSelectedCompany(null);
+  };
+
   const getVisibleOffers = () => {
     return showOnlyFavorites
       ? filteredOffers.filter(offer => favoriteOfferIds.includes(offer.id))
       : filteredOffers;
+  };
+
+  // Fonction pour générer les initiales du recruteur
+  const getInitials = (name) => {
+    if (!name) return 'R';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
   };
 
   return (
@@ -93,25 +124,97 @@ const ForumOffers = ({ companies }) => {
         <div className="forum-offers-container">
           {getVisibleOffers().map(offer => (
             <div key={offer.id} className="forum-offer-card">
-              <img
-                src={offer.logo || LogoCompany}
-                alt={offer.companyName}
-                className="forum-offer-logo"
-              />
-              <div className="forum-offer-content">
-                <p className="forum-offer-recruiter">
-                  {offer.recruiter_name} @{offer.companyName}
-                </p>
-                <h3 className="forum-offer-title">{offer.title}</h3>
-                <div className="forum-offer-meta">
-                  <div className="forum-offer-meta-icon">
-                    <FaBriefcase /> {offer.contract_type}
-                  </div>
-                  <div className="forum-offer-meta-icon">
-                    <FaMapMarkerAlt /> {offer.location || 'Non précisé'}
+              {/* Section Logo et Entreprise */}
+              <div className="forum-offer-company-section">
+                <img
+                  src={offer.logo || LogoCompany}
+                  alt={offer.companyName}
+                  className="forum-offer-logo"
+                  onClick={() => handleCompanyClick(offer.company)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <div className="forum-offer-company-info">
+                  <h4 className="forum-offer-company-name" 
+                      onClick={() => handleCompanyClick(offer.company)}
+                      style={{ cursor: 'pointer' }}>
+                    {offer.companyName}
+                  </h4>
+                  <div className="forum-offer-company-meta">
+                    <MdBusiness className="forum-offer-meta-icon" />
+                    <span>{offer.sector || 'Secteur non précisé'}</span>
                   </div>
                 </div>
               </div>
+
+              {/* Section Contenu Principal */}
+              <div className="forum-offer-content">
+                <h3 className="forum-offer-title">{offer.title}</h3>
+                <p className="forum-offer-description">{offer.description}</p>
+                
+                {/* Métadonnées avec icônes */}
+                <div className="forum-offer-meta">
+                  {offer.location && (
+                    <div className="forum-offer-meta-item">
+                      <MdLocationOn className="forum-offer-meta-icon" />
+                      <span>{offer.location}</span>
+                    </div>
+                  )}
+                  {offer.contract_type && (
+                    <div className="forum-offer-meta-item">
+                      <FaBriefcase className="forum-offer-meta-icon" />
+                      <span>{offer.contract_type}</span>
+                    </div>
+                  )}
+                  {offer.created_at && (
+                    <div className="forum-offer-meta-item">
+                      <FaCalendar className="forum-offer-meta-icon" />
+                      <span>Postée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Section Recruteur */}
+                <div className="forum-offer-recruiter-section">
+                  {offer.recruiter_photo ? (
+                    <img 
+                      src={offer.recruiter_photo} 
+                      alt={`${offer.recruiter_name || 'Recruteur'}`}
+                      className="forum-offer-recruiter-avatar"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div 
+                    className="forum-offer-recruiter-initials"
+                    style={{ 
+                      display: offer.recruiter_photo ? 'none' : 'flex',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      backgroundColor: '#4f2cc6',
+                      color: 'white',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {getInitials(offer.recruiter_name)}
+                  </div>
+                  <div className="forum-offer-recruiter-info">
+                    <div className="forum-offer-recruiter-name">
+                      {offer.recruiter_name || 'Recruteur'}
+                    </div>
+                    <div className="forum-offer-recruiter-role">
+                      Recruteur • {offer.companyName}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
               <div className="forum-offer-actions">
                 <button
                   className="forum-offer-action-button"
@@ -120,12 +223,68 @@ const ForumOffers = ({ companies }) => {
                 >
                   {favoriteOfferIds.includes(offer.id) ? <FaHeart /> : <FaRegHeart />}
                 </button>
-                <button className="forum-offer-action-button">
+                <button className="forum-offer-action-button" title="Voir les détails">
                   <FaLocationArrow />
                 </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Popup pour les détails de l'entreprise */}
+      {isCompanyPopupOpen && selectedCompany && (
+        <div className="company-popup-overlay" onClick={handleCloseCompanyPopup}>
+          <div className="company-popup-content" onClick={(e) => e.stopPropagation()}>
+            <div className="company-popup-header">
+              <h2>Détails de l'entreprise</h2>
+              <button className="company-popup-close" onClick={handleCloseCompanyPopup}>
+                ×
+              </button>
+            </div>
+            
+            <div className="company-popup-body">
+              <div className="company-popup-logo-section">
+                <img
+                  src={selectedCompany.logo || LogoCompany}
+                  alt={selectedCompany.name}
+                  className="company-popup-logo"
+                />
+                <div className="company-popup-info">
+                  <h3 className="company-popup-name">{selectedCompany.name}</h3>
+                  {selectedCompany.sectors && (
+                    <div className="company-popup-sector">
+                      <FaBuilding className="company-popup-icon" />
+                      <span>{selectedCompany.sectors.join(', ')}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="company-popup-details">
+                {selectedCompany.website && (
+                  <div className="company-popup-detail-item">
+                    <FaGlobe className="company-popup-icon" />
+                    <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer">
+                      {selectedCompany.website}
+                    </a>
+                  </div>
+                )}
+                
+                <div className="company-popup-detail-item">
+                  <FaUsers className="company-popup-icon" />
+                  <span>{selectedCompany.recruiters.length} recruteur{selectedCompany.recruiters.length > 1 ? 's' : ''}</span>
+                </div>
+
+                {selectedCompany.description && (
+                  <div className="company-popup-description">
+                    <h4>Description</h4>
+                    <p>{selectedCompany.description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

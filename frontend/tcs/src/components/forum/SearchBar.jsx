@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SearchBar.css';
 import { FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
-
-const FIXED_CONTRACTS = ['CDI', 'CDD', 'Stage', 'Alternance'];
-const FIXED_SECTORS = ['IT', 'Finance', 'Marketing', 'RH', 'Autre'];
+import { getSectorsForSelect, getContractsForSelect } from '../../constants/choices';
 
 const SearchBar = ({ forums, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,14 +11,37 @@ const SearchBar = ({ forums, onSearch }) => {
   const [showSectorDropdown, setShowSectorDropdown] = useState(false);
   const [contractCounts, setContractCounts] = useState({});
   const [sectorCounts, setSectorCounts] = useState({});
+  const [contractOptions, setContractOptions] = useState([]);
+  const [sectorOptions, setSectorOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setLoading(true);
+        const [contractsData, sectorsData] = await Promise.all([
+          getContractsForSelect(),
+          getSectorsForSelect()
+        ]);
+        setContractOptions(contractsData);
+        setSectorOptions(sectorsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
 
   useEffect(() => {
     const contracts = {};
     const sectors = {};
 
-    // Initialiser à 0 toutes les options fixées
-    FIXED_CONTRACTS.forEach(c => contracts[c] = 0);
-    FIXED_SECTORS.forEach(s => sectors[s] = 0);
+    // Initialiser à 0 toutes les options
+    contractOptions.forEach(c => contracts[c.value] = 0);
+    sectorOptions.forEach(s => sectors[s.value] = 0);
 
     // Compter dans toutes les offres
     forums.forEach(forum => {
@@ -40,7 +61,7 @@ const SearchBar = ({ forums, onSearch }) => {
 
     setContractCounts(contracts);
     setSectorCounts(sectors);
-  }, [forums]);
+  }, [forums, contractOptions, sectorOptions]);
 
   const handleSearch = () => {
     const filtered = forums.filter(forum => {
@@ -106,17 +127,17 @@ const SearchBar = ({ forums, onSearch }) => {
           </button>
           {showContractDropdown && (
             <div className="dropdown-menu-search">
-              {FIXED_CONTRACTS.map(contract => (
-                <label key={contract} className="dropdown-item-search">
+              {contractOptions.map(contract => (
+                <label key={contract.value} className="dropdown-item-search">
                   <input
                     type="checkbox"
-                    checked={selectedContracts.includes(contract)}
+                    checked={selectedContracts.includes(contract.value)}
                     onChange={() =>
-                      toggleValue(selectedContracts, contract, setSelectedContracts)
+                      toggleValue(selectedContracts, contract.value, setSelectedContracts)
                     }
                   />
-                  {contract}
-                  <span className="count-search">{contractCounts[contract] || 0}</span>
+                  {contract.label}
+                  <span className="count-search">{contractCounts[contract.value] || 0}</span>
                 </label>
               ))}
             </div>
@@ -139,17 +160,17 @@ const SearchBar = ({ forums, onSearch }) => {
           </button>
           {showSectorDropdown && (
             <div className="dropdown-menu-search">
-              {FIXED_SECTORS.map(sector => (
-                <label key={sector} className="dropdown-item-search">
+              {sectorOptions.map(sector => (
+                <label key={sector.value} className="dropdown-item-search">
                   <input
                     type="checkbox"
-                    checked={selectedSectors.includes(sector)}
+                    checked={selectedSectors.includes(sector.value)}
                     onChange={() =>
-                      toggleValue(selectedSectors, sector, setSelectedSectors)
+                      toggleValue(selectedSectors, sector.value, setSelectedSectors)
                     }
                   />
-                  {sector}
-                  <span className="count-search">{sectorCounts[sector] || 0}</span>
+                  {sector.label}
+                  <span className="count-search">{sectorCounts[sector.value] || 0}</span>
                 </label>
               ))}
             </div>

@@ -3,6 +3,7 @@ import '../../pages/styles/forum/ForumInfos.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/Logo-FTT.png';
+import ProgrammeTimeline from './ProgrammeTimeline';
 
 const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
   const recruiterCount = forum.companies.reduce(
@@ -21,6 +22,11 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
         {forum.highlight && (
           <p className="forum-infos-highlight">{forum.highlight}</p>
         )}
+        
+        {/* Timeline des programmes intégrée directement sous la description */}
+        <div className="forum-programmes-section">
+          <ProgrammeTimeline programmes={forum.programmes} />
+        </div>
       </div>
 
       {/* Partie droite : bloc événement */}

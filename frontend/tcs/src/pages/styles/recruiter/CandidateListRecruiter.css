@@ -1,0 +1,314 @@
+/* Layout principal pour CVthèque avec filtres à gauche, candidats à droite */
+.candidates-list {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 2rem;
+  height: calc(100vh - 200px);
+  padding: 1rem;
+  width: 100%;
+}
+
+/* Section gauche : Filtres */
+.filters-section {
+  flex: 0 0 350px !important;
+  flex-shrink: 0 !important;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: 100%;
+  min-width: 350px;
+}
+
+.filters-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+/* Barre de recherche */
+.search-bar {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: #ffffff;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Filtres */
+.filters-container {
+  margin-bottom: 1.5rem;
+}
+
+.reset-filters-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.reset-filters-btn:hover {
+  background: #4b5563;
+}
+
+/* Section droite : Candidats */
+.candidates-section {
+  flex: 1 !important;
+  flex-grow: 1 !important;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.candidates-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.candidates-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Conteneur des cartes */
+.cards-container {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Cartes de candidats */
+.candidate-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.candidate-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.candidate-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 12px 12px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.candidate-card:hover::before {
+  opacity: 1;
+}
+
+.candidate-photo {
+  flex-shrink: 0;
+}
+
+.candidate-photo img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.default-avatar {
+  width: 60px;
+  height: 60px;
+  color: #9ca3af;
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+}
+
+.candidate-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.candidate-info p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.sectors-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.sector-badge {
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.sector-badge.empty {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.region {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.icon-location {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.cv-download {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cv-download:hover {
+  background: #059669;
+}
+
+/* Messages d'état */
+.no-candidates {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.clear-filters-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.clear-filters-btn:hover {
+  background: #2563eb;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .candidates-list {
+    flex-direction: column !important;
+    height: auto;
+  }
+  
+  .filters-section {
+    flex: none !important;
+    max-height: 400px;
+    min-width: auto;
+  }
+  
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .candidates-list {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  
+  .filters-section {
+    max-height: 300px;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .candidate-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cv-download {
+    position: static;
+    margin-top: 1rem;
+    align-self: center;
+  }
+} 

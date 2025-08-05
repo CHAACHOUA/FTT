@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus, FaMapMarkerAlt, FaBriefcase, FaIndustry } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import OfferModal from './OfferModal';
+import logoFTT from '../../../assets/Logo-FTT.png';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
@@ -111,11 +112,22 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           {offers.map((offer) => (
             <div key={offer.id} className="offer-card">
               <div className="logo-section">
+                {offer.company_logo ? (
+                  <img
+                    src={getFullUrl(offer.company_logo)}
+                    alt="Logo entreprise"
+                    className="company-logo-large"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : null}
                 <img
-                  src={getFullUrl(offer.company_logo) || '/default-company.png'}
-                  alt="Logo entreprise"
+                  src={logoFTT}
+                  alt="Logo FTT"
                   className="company-logo-large"
-                  onError={(e) => (e.target.src = '/default-company.png')}
+                  style={{ display: offer.company_logo ? 'none' : 'block' }}
                 />
               </div>
 

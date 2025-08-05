@@ -155,76 +155,237 @@
 }
 
 .matching-offers-section {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 8px 24px 8px;
+  padding: 32px 24px;
+  background: #fafbfc;
+  border-radius: 16px;
 }
+
 .matching-title {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #4f2cc6;
-  margin-bottom: 28px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 32px;
   text-align: center;
 }
+
 .matching-offers-list {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
 }
+
+/* Cartes de matching avec design soft */
 .matching-offer-card {
-  background: rgba(79, 44, 198, 0.08);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px 0 rgba(80, 0, 120, 0.10);
-  padding: 28px 24px 20px 24px;
+  display: flex;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 24px;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.matching-offer-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+}
+
+/* Section logo et entreprise */
+.matching-company-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 100px;
+}
+
+.matching-company-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+}
+
+.matching-company-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Section contenu principal */
+.matching-content-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border: 1.5px solid #e0e7ff;
-  transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
-  position: relative;
 }
-.matching-offer-card:hover {
-  box-shadow: 0 8px 32px 0 rgba(80, 0, 120, 0.18);
-  border: 1.5px solid #a855f7;
-  transform: translateY(-2px) scale(1.01);
-}
+
 .matching-offer-card .offer-title {
-  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  font-size: 1.3rem;
   font-weight: 600;
-  color: #233a7d;
-  margin-bottom: 6px;
+  color: #111827;
+  line-height: 1.4;
 }
+
 .matching-offer-card .offer-description {
-  color: #444;
-  margin-bottom: 8px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
-.btn-matching-offer {
-  background: linear-gradient(90deg, #7b2ff2 0%, #1e4fd7 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 22px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  align-self: flex-end;
-  margin-top: 10px;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(80, 0, 120, 0.10);
+
+/* Section recruteur */
+.matching-recruiter-section {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top: 8px;
 }
+
+.matching-recruiter-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.matching-recruiter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.matching-recruiter-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.matching-recruiter-role {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Métadonnées avec icônes */
+.matching-meta-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.matching-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.matching-meta-icon {
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+}
+
+/* Bouton Matching Candidat soft */
+.btn-matching-offer {
+  background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(123, 47, 242, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
 .btn-matching-offer:hover {
-  background: linear-gradient(90deg, #a855f7 0%, #4f8cff 100%);
-  box-shadow: 0 4px 16px 0 rgba(80, 0, 120, 0.18);
+  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+  box-shadow: 0 4px 8px rgba(123, 47, 242, 0.3);
+  transform: translateY(-1px);
 }
-@media (max-width: 600px) {
+
+.btn-matching-offer:active {
+  transform: translateY(0);
+}
+
+/* Responsive soft */
+@media (max-width: 768px) {
   .matching-offers-section {
-    padding: 18px 2vw 12px 2vw;
+    padding: 24px 16px;
+    border-radius: 12px;
   }
+  
+  .matching-title {
+    font-size: 1.5rem;
+  }
+  
   .matching-offer-card {
-    padding: 14px 6px 10px 6px;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .matching-company-section {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .matching-company-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .btn-matching-offer {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .matching-offers-section {
+    padding: 20px 12px;
+  }
+  
+  .matching-title {
+    font-size: 1.3rem;
+  }
+  
+  .matching-offer-card {
+    padding: 16px;
+  }
+  
+  .matching-offer-card .offer-title {
+    font-size: 1.1rem;
   }
 }
 
@@ -239,4 +400,128 @@
   justify-content: center;
   min-height: 100vh;
   width: 100vw;
+}
+
+/* Section Matching Score */
+.matching-score-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.matching-score-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.matching-trophy-icon {
+  color: #f59e0b;
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+.matching-score-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  flex: 1;
+}
+
+.matching-ranking {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ranking-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #f59e0b;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.ranking-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.matching-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.matching-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.matching-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.matching-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.matching-percentage {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #374151;
+  min-width: 45px;
+  text-align: right;
+}
+
+/* Responsive pour la section score */
+@media (max-width: 768px) {
+  .matching-score-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .matching-ranking {
+    align-self: flex-end;
+  }
+  
+  .matching-progress-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .matching-percentage {
+    text-align: center;
+  }
 }

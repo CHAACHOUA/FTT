@@ -10,6 +10,8 @@ import { useAuth } from '../../../context/AuthContext';
 import RencontresList from './RencontresList'
 import OffersList from './OffersList';
 import MatchingOffers from './MatchingOffers';
+import '../../styles/recruiter/RecruiterDashboard.css';
+
 const RecruiterDashboard = () => {
   // Récupère l'objet "forum" depuis l'état de la location (injecté par la navigation)
   const { state } = useLocation();
@@ -22,7 +24,7 @@ const RecruiterDashboard = () => {
   const { accessToken } = useAuth();
 
   return (
-    <div style={{ paddingTop: '120px' }}>
+    <div style={{ paddingTop: '100px' }}>
       <Navbar />
       <div className="recruiter-dashboard-container">
         {/* Passage de l'objet forum à SubMenu si besoin */}

@@ -6,13 +6,14 @@
   padding: 16px 0;
   border-bottom: 1px solid #e5e7eb;
   width: 100%;
+  background-color: #ffffff;
 }
 
 /* Premier niveau : Onglets Préparation/Jobdating */
 .submenu-tabs {
   display: flex;
   gap: 40px;
-  margin-bottom: 24px;
+  margin-bottom: 5px;
   justify-content: center;
   width: 100%;
   align-items: center;
@@ -20,8 +21,8 @@
 
 .submenu-section-title {
   font-weight: 600;
-  font-size: 1rem;
-  color: #607d8b;
+  font-size: 25px;
+  color: #2b3a5a;
   text-transform: uppercase;
   cursor: pointer;
   user-select: none;
@@ -35,9 +36,9 @@
 }
 
 .submenu-section-title.active-section {
-  color: #2196f3;
+  color: #2b3a5a;
   cursor: default;
-  border-bottom: 2px solid #2196f3;
+  border-bottom: 2px solid #2b3a5a;
   padding-bottom: 6px;
 }
 
@@ -58,7 +59,7 @@
   align-items: center;
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: #2b3a5a;
   font-size: 13px;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -68,11 +69,11 @@
 }
 
 .submenu-button:hover {
-  color: #1f2937;
+  color: #2b3a5a;
 }
 
 .submenu-button.active {
-  color: #000000;
+  color: #2b3a5a;
   font-weight: 600;
 }
 
@@ -84,12 +85,13 @@
   transform: translateX(-50%);
   width: 80%;
   height: 2px;
-  background-color: #000000;
+  background-color: #2b3a5a;
 }
 
 .submenu-icon {
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 0;
+  color: #2b3a5a;
 }
 
 .submenu-label {

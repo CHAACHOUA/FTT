@@ -32,6 +32,14 @@
 .forum-info-card {
   background: linear-gradient(135deg, #34d399 0%, #059669 100%);
 }
+
+.offers-card {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+}
+
+.programmes-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 .dashboard-action-card:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);

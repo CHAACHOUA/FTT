@@ -30,6 +30,9 @@ import ForumInfoEdit from './pages/organizer/ForumInfoEdit';
 import CompleteRecruiterSetup from './pages/recruiter/CompleteRecruiterSetup';
 import CompaniesList from './pages/organizer/Event/CompaniesList';
 import CandidatesList from './pages/organizer/Event/CandidatesList';
+import OffersList from './pages/organizer/Event/OffersList';
+import ForumProgrammeManagement from './pages/organizer/Event/ForumProgrammeManagement';
+import SpeakerManagementPage from './pages/organizer/Event/SpeakerManagementPage';
 
 function App() {
   return (
@@ -63,9 +66,12 @@ function App() {
           <Route path="/recruiter/profile" element={<RecruiterProfileView />} />
           <Route path="/organizer/companies" element={<CompaniesList />} />
           <Route path="/organizer/candidates" element={<CandidatesList />} />
+          <Route path="/organizer/offers" element={<OffersList />} />
           <Route path="/organizer/profile" element={<OrganizerProfileView />} />
           <Route path="/settings-organizer" element={<OrganizerProfileView />} />
           <Route path="/organizer/forum-info" element={<ForumInfoEdit />} />
+          <Route path="/organizer/forum/:forumId/programmes" element={<ForumProgrammeManagement />} />
+          <Route path="/organizer/speakers" element={<SpeakerManagementPage />} />
           <Route path="/complete-recruiter-setup/:token" element={<CompleteRecruiterSetup />} />
 
         </Routes>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase } from 'react-icons/fa';
+import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import Navbar from '../../common/NavBar';
 import './CandidatesList.css';
@@ -18,8 +18,8 @@ const CandidatesList = (props) => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filters, setFilters] = useState({});
   const [options, setOptions] = useState({
-    contract_type: ['CDD', 'CDI', 'Stage', 'Alternance'],
-    sector: ['Marketing', 'Informatique', 'RH'],
+    contract_type: [], // Sera rempli par l'API
+    sector: [], // Sera rempli par l'API
     experience: ['0', '1', '2', '3', '4', '5+'],
     region: ['Toulouse', 'Paris', 'Lyon'],
     education_level: ['Bac', 'Bac+2', 'Bac+3', 'Bac+5', 'Doctorat'],
@@ -53,6 +53,46 @@ const CandidatesList = (props) => {
       fetchCandidates();
     }
   }, [forumId, accessToken, apiBaseUrl]);
+
+  // Fonction pour télécharger la liste des candidats
+  const downloadCandidatesList = () => {
+    // Préparer les données pour le CSV
+    const csvData = candidates.map(({ candidate }) => {
+      const isActive = candidate.is_active !== false; // Considérer actif par défaut si pas spécifié
+      
+      return {
+        nom: candidate.last_name || '',
+        prenom: candidate.first_name || '',
+        email: isActive ? (candidate.email || '') : '***@***.***', // Email anonymisé si compte supprimé
+        telephone: candidate.phone || '',
+        statut: isActive ? 'Actif' : 'Compte supprimé'
+      };
+    });
+
+    // Créer le contenu CSV
+    const headers = ['Nom', 'Prénom', 'Email', 'Téléphone', 'Statut'];
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => [
+        `"${row.nom}"`,
+        `"${row.prenom}"`,
+        `"${row.email}"`,
+        `"${row.telephone}"`,
+        `"${row.statut}"`
+      ].join(','))
+    ].join('\n');
+
+    // Créer et télécharger le fichier
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `liste_candidats_forum_${forumId}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (!forumId || !accessToken || !apiBaseUrl) {
     return <div>Erreur : données manquantes pour afficher la liste des candidats.</div>;
@@ -127,13 +167,12 @@ const CandidatesList = (props) => {
   return (
     <div className="candidates-list">
       <Navbar />
-      <div className="candidates-wrapper">
-        
+      <div className="kpi-section">
         <div className="kpi-row">
           <div className="kpi-card kpi-candidates">
             <div className="kpi-label-row">
-              <span className="kpi-label">Candidats</span>
-              <span className="kpi-icon kpi-blue"><FaUserFriends /></span>
+              <span className="kpi-label">CANDIDATS</span>
+              <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
             </div>
             <span className="kpi-value">{total}</span>
           </div>
@@ -165,6 +204,34 @@ const CandidatesList = (props) => {
             </ul>
           </div>
         </div>
+        
+        {/* Bouton de téléchargement avant les filtres */}
+        <div className="download-section">
+          <button 
+            className="download-candidates-btn" 
+            onClick={downloadCandidatesList}
+            title="Télécharger la liste complète des candidats"
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '12px 20px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              minWidth: '180px',
+              justifyContent: 'center'
+            }}
+          >
+            <FaFileExport /> Exporter la liste des candidats
+          </button>
+        </div>
+      </div>
+      <div className="candidates-wrapper">
         <div className="candidates-flex-row">
             <aside className="candidates-filters">
             <CandidateFilters filters={filters} onChange={setFilters} options={options} />

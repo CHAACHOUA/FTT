@@ -1,15 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import './CandidatesFilters.css';
+import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
 
 export default function CandidateFilters({ filters, onChange, options }) {
   const [expandedSections, setExpandedSections] = useState({});
+  const [contractTypeOptions, setContractTypeOptions] = useState([]);
+  const [sectorOptions, setSectorOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Helpers pour react-select
   const mapOptions = arr => arr?.map(opt => ({ value: opt, label: opt })) || [];
   const getValue = (arr, opts) => opts.filter(o => arr?.includes(o.value));
+
+  // Charger les choix depuis l'API
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setLoading(true);
+        const [contractsData, sectorsData] = await Promise.all([
+          getContractsForSelect(),
+          getSectorsForSelect()
+        ]);
+        setContractTypeOptions(contractsData);
+        setSectorOptions(sectorsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+        // Fallback vers les options locales
+        setContractTypeOptions(mapOptions(options.contract_type));
+        setSectorOptions(mapOptions(options.sector));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, [options.contract_type, options.sector]);
 
   // Toggle section expansion
   const toggleSection = (sectionName) => {
@@ -25,9 +53,6 @@ export default function CandidateFilters({ filters, onChange, options }) {
     setExpandedSections({});
   };
 
-  // Prépare les options pour react-select
-  const contractTypeOptions = mapOptions(options.contract_type);
-  const sectorOptions = mapOptions(options.sector);
   const languagesOptions = mapOptions(options.languages);
 
   const filterSections = [

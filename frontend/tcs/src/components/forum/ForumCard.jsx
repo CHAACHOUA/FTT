@@ -95,6 +95,8 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
             <div>
               {forum.type?.toLowerCase() === 'virtuel' ? (
                 <Video size={16} />
+              ) : forum.type?.toLowerCase() === 'hybride' ? (
+                <Video size={16} />
               ) : (
                 <MapPin size={16} />
               )}

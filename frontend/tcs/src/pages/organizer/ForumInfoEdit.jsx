@@ -6,6 +6,7 @@ import { FaEdit, FaImage, FaCalendarAlt, FaFileAlt, FaTag } from 'react-icons/fa
 import Navbar from '../common/NavBar';
 import '../styles/candidate/Presentation.css';
 import './Event/Dashboard.css';
+import { getForumTypesForSelect } from '../../constants/choices';
 
 const ForumInfoEdit = () => {
   const location = useLocation();
@@ -24,12 +25,30 @@ const ForumInfoEdit = () => {
   });
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [forumTypes, setForumTypes] = useState([]);
+  const [choicesLoading, setChoicesLoading] = useState(true);
 
-  const forumTypes = [
-    { value: 'presentiel', label: 'Présentiel' },
-    { value: 'distance', label: 'À distance' },
-    { value: 'hybride', label: 'Hybride' }
-  ];
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setChoicesLoading(true);
+        const forumTypesData = await getForumTypesForSelect();
+        setForumTypes(forumTypesData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des types de forum:', error);
+        // Fallback vers les options par défaut
+        setForumTypes([
+          { value: 'presentiel', label: 'Présentiel' },
+          { value: 'virtuel', label: 'Virtuel' },
+          { value: 'hybride', label: 'Hybride' }
+        ]);
+      } finally {
+        setChoicesLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
 
   useEffect(() => {
     if (forum) {
@@ -89,7 +108,7 @@ const ForumInfoEdit = () => {
 
     try {
       // Validation du type de forum
-      const validTypes = ['presentiel', 'distance', 'hybride'];
+      const validTypes = forumTypes.map(ft => ft.value);
       if (!validTypes.includes(formData.type)) {
         toast.error('Type de forum invalide. Veuillez sélectionner un type valide.');
         setLoading(false);

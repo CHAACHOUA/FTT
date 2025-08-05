@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../../pages/styles/forum/ForumCompany.css';
 import logo from '../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,6 +6,20 @@ import { faTimes, faBuilding, faUsers, faEnvelope, faPhone, faGlobe } from '@for
 
 const CompanyCardPopup = ({ isOpen, onClose, company }) => {
   const API = process.env.REACT_APP_API_BASE_URL;
+
+  // Gérer l'effet blur sur toute la page
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('popup-open');
+    } else {
+      document.body.classList.remove('popup-open');
+    }
+
+    // Nettoyer lors du démontage
+    return () => {
+      document.body.classList.remove('popup-open');
+    };
+  }, [isOpen]);
 
   // Fonction pour construire l'URL du logo
   const getLogoURL = (logo) => {

@@ -82,33 +82,37 @@ export default function Home() {
       <section className="stats-section visible">
         <div className="stats-container">
           <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-icon" style={{background: 'linear-gradient(45deg, #a855f7, #ec4899)'}}>
+            <div className="home-kpi-card">
+              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
                 <FontAwesomeIcon icon={faHeart} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="stat-value">{mockStats.totalMatches.toLocaleString()}</div>
-              <div className="stat-label">Matches réalisés</div>
+              <div className="kpi-value">{mockStats.totalMatches.toLocaleString()}</div>
+              <div className="kpi-label">Matches réalisés</div>
+              <div className="kpi-trend">+12% ce mois</div>
             </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{background: 'linear-gradient(45deg, #a855f7, #ec4899)'}}>
+            <div className="home-kpi-card">
+              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}}>
                 <FontAwesomeIcon icon={faChartLine} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="stat-value">{mockStats.successRate}%</div>
-              <div className="stat-label">Taux de réussite</div>
+              <div className="kpi-value">{mockStats.successRate}%</div>
+              <div className="kpi-label">Taux de réussite</div>
+              <div className="kpi-trend">+5% ce mois</div>
             </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{background: 'linear-gradient(45deg, #a855f7, #ec4899)'}}>
+            <div className="home-kpi-card">
+              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'}}>
                 <FontAwesomeIcon icon={faUsers} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="stat-value">{mockStats.companiesActive}</div>
-              <div className="stat-label">Entreprises actives</div>
+              <div className="kpi-value">{mockStats.companiesActive}</div>
+              <div className="kpi-label">Entreprises actives</div>
+              <div className="kpi-trend">+8% ce mois</div>
             </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{background: 'linear-gradient(45deg, #a855f7, #ec4899)'}}>
+            <div className="home-kpi-card">
+              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'}}>
                 <FontAwesomeIcon icon={faBullseye} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="stat-value">{mockStats.candidatesActive.toLocaleString()}</div>
-              <div className="stat-label">Candidats actifs</div>
+              <div className="kpi-value">{mockStats.candidatesActive.toLocaleString()}</div>
+              <div className="kpi-label">Candidats actifs</div>
+              <div className="kpi-trend">+15% ce mois</div>
             </div>
           </div>
         </div>
