@@ -4,6 +4,7 @@ from users.models import User
 from company.models import Company
 from candidates.models import Candidate
 from forums.models import Forum
+from TCS.constants import SECTOR_CHOICES, CONTRACT_CHOICES
 
 
 class Recruiter(models.Model):
@@ -34,13 +35,6 @@ class RecruiterForumParticipation(models.Model):
         return f"{self.recruiter} in {self.forum}"
 
 class Offer(models.Model):
-    SECTOR_CHOICES = [
-        ('IT', 'Informatique'),
-        ('Marketing', 'Marketing'),
-        ('Commerce', 'Commerce'),
-        ('RH', 'Ressources Humaines'),
-        ('Finance', 'Finance'),
-    ]
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, related_name='offers')
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='offers')
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='offers')
@@ -49,16 +43,7 @@ class Offer(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=255, blank=True)
     sector = models.CharField(max_length=100, choices=SECTOR_CHOICES)
-    contract_type = models.CharField(
-        max_length=50,
-        choices=[
-            ('CDI', 'CDI'),
-            ('CDD', 'CDD'),
-            ('Stage', 'Stage'),
-            ('Alternance', 'Alternance'),
-            ('Freelance', 'Freelance'),
-        ]
-    )
+    contract_type = models.CharField(max_length=50, choices=CONTRACT_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

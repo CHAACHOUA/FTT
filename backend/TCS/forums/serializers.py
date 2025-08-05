@@ -1,11 +1,39 @@
 from rest_framework import serializers
-from .models import Forum, ForumRegistration, CandidateSearch
+from .models import Forum, ForumRegistration, CandidateSearch, Speaker, Programme
 from organizers.serializers import OrganizerSerializer
 from company.serializers import CompanyWithRecruitersSerializer
 
 
+class SpeakerSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = Speaker
+        fields = ['id', 'first_name', 'last_name', 'full_name', 'photo', 'position']
+
+
+class ProgrammeSerializer(serializers.ModelSerializer):
+    speakers = SpeakerSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Programme
+        fields = [
+            'id',
+            'title',
+            'description',
+            'photo',
+            'start_date',
+            'end_date',
+            'start_time',
+            'end_time',
+            'location',
+            'speakers',
+        ]
+
+
 class ForumSerializer(serializers.ModelSerializer):
     organizer = OrganizerSerializer(read_only=True)
+    programmes = ProgrammeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Forum
@@ -20,12 +48,14 @@ class ForumSerializer(serializers.ModelSerializer):
             'type',
             'description',
             'organizer',
+            'programmes',
         ]
 
 
 class ForumDetailSerializer(serializers.ModelSerializer):
     organizer = OrganizerSerializer(read_only=True)
     companies = serializers.SerializerMethodField()
+    programmes = ProgrammeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Forum
@@ -41,6 +71,7 @@ class ForumDetailSerializer(serializers.ModelSerializer):
             'description',
             'organizer',
             'companies',
+            'programmes',
         ]
 
     def get_companies(self, obj):

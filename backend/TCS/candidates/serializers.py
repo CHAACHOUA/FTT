@@ -78,6 +78,7 @@ class CandidateSerializer(serializers.ModelSerializer):
             'candidate_languages',
             'title',
             'email',
-            'profile_picture'
+            'profile_picture',
+            'public_token'
         ]
 

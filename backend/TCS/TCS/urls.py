@@ -18,9 +18,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/choices/', views.get_choices, name='get_choices'),
     path('api/users/',include('users.urls')),
     path('api/candidates/', include('candidates.urls')),
     path('api/forums/', include('forums.urls')),

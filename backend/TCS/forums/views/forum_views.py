@@ -209,3 +209,59 @@ def forum_kpis(request, forum_id):
         "candidates": candidates_count,
         "offers": offers_count
     }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def forum_offers(request, forum_id):
+    """
+    Récupère toutes les offres d'un forum avec les informations des recruteurs
+    """
+    try:
+        # Vérifier que l'utilisateur est un organizer
+        organizer = Organizer.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return Response({"error": "Accès non autorisé. Seuls les organizers peuvent accéder aux offres."}, 
+                       status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        # Récupérer le forum et vérifier qu'il appartient à l'organizer
+        forum = Forum.objects.get(id=forum_id, organizer=organizer)
+    except Forum.DoesNotExist:
+        return Response({"error": "Forum non trouvé ou vous n'êtes pas autorisé à y accéder."}, 
+                       status=status.HTTP_404_NOT_FOUND)
+
+    # Récupérer toutes les offres du forum avec les informations des recruteurs et entreprises
+    offers = Offer.objects.filter(
+        forum=forum
+    ).select_related(
+        'recruiter',
+        'company',
+        'recruiter__user'
+    ).order_by('-created_at')
+
+    # Préparer les données pour la réponse
+    offers_data = []
+    for offer in offers:
+        offers_data.append({
+            'id': offer.id,
+            'title': offer.title,
+            'description': offer.description,
+            'location': offer.location,
+            'sector': offer.sector,
+            'contract_type': offer.contract_type,
+            'created_at': offer.created_at,
+            'company': {
+                'id': offer.company.id,
+                'name': offer.company.name,
+                'website': offer.company.website
+            },
+            'recruiter': {
+                'id': offer.recruiter.id,
+                'first_name': offer.recruiter.first_name,
+                'last_name': offer.recruiter.last_name,
+                'email': offer.recruiter.user.email,
+                'phone': offer.recruiter.phone
+            }
+        })
+
+    return Response(offers_data, status=status.HTTP_200_OK)
