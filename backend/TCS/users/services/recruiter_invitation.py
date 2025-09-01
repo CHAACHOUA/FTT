@@ -215,7 +215,8 @@ def send_recruiter_invitation(request):
 
         # Déterminer si c'est un renvoi ou une nouvelle invitation
         is_resend = existing_user and existing_user.role == 'recruiter'
-        message = f'{"Renvoi d\'invitation" if is_resend else "Invitation"} envoyé avec succès à {email}'
+        invitation_type = "Renvoi d'invitation" if is_resend else "Invitation"
+        message = f'{invitation_type} envoyé avec succès à {email}'
         
         response_data = {
             'message': message,
