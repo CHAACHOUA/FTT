@@ -8,6 +8,7 @@ import '../styles/common/login.css';
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import logo from '../../assets/logo-digitalio.png';
 import Loading from '../../pages/common/Loading'; // ✅ import
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -46,15 +47,21 @@ export default function Login() {
         }
       );
 
-      const { access, refresh, role, email, message, name } = res.data;
-      login({ access, refresh }, { role, email, name });
+      const { access, refresh, email, message, name } = res.data;
+      login({ access, refresh }, { email, name });
+
+      // Extraire le rôle du token JWT pour être cohérent avec le reste de l'app
+      const decoded = jwtDecode(access);
+      const role = decoded.role;
 
       if (role === 'candidate') {
-        navigate('/');
-      } else if (role === 'company') {
-        navigate('/company-dashboard');
+        navigate('/forums');
+      } else if (role === 'recruiter') {
+        navigate('/recruiter/forums');
+      } else if (role === 'organizer') {
+        navigate('/organizer/forums');
       } else {
-        navigate('/');
+        navigate('/forums');
       }
     } catch (err) {
       const resData = err.response?.data || {};

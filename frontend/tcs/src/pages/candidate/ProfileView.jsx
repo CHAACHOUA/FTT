@@ -16,6 +16,9 @@ import ChangePassword from './ChangePassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../pages/common/Loading'; // ✅ Import du composant de chargement
+import Navbar from '../common/NavBar';
+import { validateEducationDates } from '../../utils/dateValidation';
+
 const ProfileView = () => {
 
 
@@ -61,6 +64,40 @@ const ProfileView = () => {
   };
 
   const handleSubmit = async () => {
+    // Validation des dates avant soumission
+    let hasErrors = false;
+    const allErrors = [];
+    
+    // Validation des éducations
+    if (Array.isArray(formData.educations)) {
+      formData.educations.forEach((education, index) => {
+        const validation = validateEducationDates(education);
+        if (!validation.isValid) {
+          hasErrors = true;
+          allErrors.push(`Éducation ${index + 1}: ${validation.errors.join(', ')}`);
+        }
+      });
+    }
+    
+    // Validation des expériences
+    if (Array.isArray(formData.experiences)) {
+      formData.experiences.forEach((experience, index) => {
+        const validation = validateEducationDates(experience);
+        if (!validation.isValid) {
+          hasErrors = true;
+          allErrors.push(`Expérience ${index + 1}: ${validation.errors.join(', ')}`);
+        }
+      });
+    }
+    
+    // Si il y a des erreurs, afficher et arrêter
+    if (hasErrors) {
+      const errorMessage = allErrors.join('\n');
+      toast.error(errorMessage);
+      alert('Erreurs de validation des dates :\n' + errorMessage);
+      return;
+    }
+    
     try {
       const form = new FormData();
 
@@ -136,9 +173,11 @@ const ProfileView = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="profile-container">
-      <SidebarMenu />
-      <div className="profile-content">
+    <div style={{ paddingTop: '80px' }}>
+      <Navbar />
+      <div className="profile-container">
+        <SidebarMenu />
+        <div className="profile-content">
         {!isSettingsPage ? (
           <>
             <section>
@@ -177,6 +216,7 @@ const ProfileView = () => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };

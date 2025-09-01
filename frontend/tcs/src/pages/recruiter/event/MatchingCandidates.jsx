@@ -157,7 +157,6 @@ const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
           onClose={() => setSelectedCandidate(null)}
         />
       )}
-
     </div>
   );
 };

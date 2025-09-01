@@ -12,7 +12,7 @@
 .recruiter-dashboard-content {
   flex: 1;
   padding: 2rem;
-  margin-left: 0;
+  margin-left: 120px; /* Ajout de marge pour compenser la sidebar (72px + 48px d'espace) */
   transition: margin-left 0.3s ease;
   background: #ffffff;
 }
@@ -315,7 +315,7 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .recruiter-dashboard-content {
-    margin-left: 0;
+    margin-left: 0; /* Suppression de la marge sur mobile */
     padding: 1rem;
   }
   

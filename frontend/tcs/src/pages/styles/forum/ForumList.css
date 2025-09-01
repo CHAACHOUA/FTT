@@ -270,10 +270,34 @@ html {
 .forum-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   font-size: 14px;
   color: #6b7280;
   margin-bottom: 16px;
+}
+
+.forum-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.forum-meta-icon {
+  color: #3b82f6;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.forum-meta-text {
+  flex: 1;
+  color: #374151;
+  font-weight: 400;
+}
+
+.forum-meta-text strong {
+  color: #1f2937;
+  font-weight: 600;
 }
 
 .forum-description {

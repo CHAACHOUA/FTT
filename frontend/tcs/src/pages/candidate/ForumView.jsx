@@ -61,7 +61,7 @@ const ForumView = () => {
   }
 
   return (
-    <div style={{ paddingTop: '70px' }}>
+    <div style={{ paddingTop: '80px' }}>
       <Navbar />
       <section className="forum-section">
         {error && <div className="error-message">{error}</div>}

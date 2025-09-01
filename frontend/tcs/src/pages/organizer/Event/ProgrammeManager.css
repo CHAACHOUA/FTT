@@ -209,6 +209,17 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+.save-btn.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.save-btn.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Liste des programmes */
 .programmes-list {
   display: grid;

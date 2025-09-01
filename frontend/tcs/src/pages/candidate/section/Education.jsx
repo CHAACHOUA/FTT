@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../styles/candidate/Education.css';
 import { FaUniversity, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
+import { validateEducationDates } from '../../../utils/dateValidation';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -29,6 +30,7 @@ const formatDate = (month, year) => {
 };
 
 const Education = ({ formData, onUpdate }) => {
+  const [dateErrors, setDateErrors] = useState([]);
   useEffect(() => {
     if (!formData.educations) return;
 
@@ -68,6 +70,17 @@ const Education = ({ formData, onUpdate }) => {
   const handleListChange = (index, field, value) => {
     const updatedList = [...(formData.educations || [])];
     updatedList[index] = { ...updatedList[index], [field]: value };
+    
+    // Validation des dates pour cette éducation
+    const education = updatedList[index];
+    const validation = validateEducationDates(education);
+    if (!validation.isValid) {
+      console.log('Erreurs de validation pour l\'éducation:', validation.errors);
+      setDateErrors(validation.errors);
+    } else {
+      setDateErrors([]);
+    }
+    
     updateDatesAndSend(updatedList);
   };
 
@@ -109,6 +122,25 @@ const Education = ({ formData, onUpdate }) => {
   return (
     <div className="section education-section">
       <h3 className="education-title">Éducation</h3>
+      
+      {/* Affichage des erreurs de validation */}
+      {dateErrors.length > 0 && (
+        <div style={{
+          background: '#fee',
+          color: '#c33',
+          padding: '10px',
+          borderRadius: '5px',
+          marginBottom: '15px',
+          border: '1px solid #fcc'
+        }}>
+          <strong>Erreurs de validation :</strong>
+          <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+            {dateErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {educations.map((edu, index) => (
         <div key={index} className="education-item-modern">
           <div className="input-modern">

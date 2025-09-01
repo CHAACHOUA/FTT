@@ -17,6 +17,7 @@ import { MdBusiness, MdLocationOn, MdPerson, MdInfo } from 'react-icons/md';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 import SearchBarOffers from './SearchBarOffers';
+import OfferDetailPopup from '../recruiter/OfferDetailPopup';
 import axios from 'axios';
 
 const ForumOffers = ({ companies }) => {
@@ -26,14 +27,20 @@ const ForumOffers = ({ companies }) => {
       companyName: company.name,
       logo: company.logo,
       company: company, // Ajouter l'objet company complet
+      // Ajouter temporairement un profil recherché pour tester
+      profile_recherche: offer.profile_recherche || "Nous recherchons un profil avec 3-5 ans d'expérience en développement web, maîtrise de React/Node.js, et une forte capacité d'adaptation."
     }))
   );
+
+  console.log('All offers:', allOffers);
 
   const [filteredOffers, setFilteredOffers] = useState(allOffers);
   const [favoriteOfferIds, setFavoriteOfferIds] = useState([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
 
   useEffect(() => {
     setFilteredOffers(allOffers);
@@ -85,6 +92,16 @@ const ForumOffers = ({ companies }) => {
     setSelectedCompany(null);
   };
 
+  const handleOfferClick = (offer) => {
+    setSelectedOffer(offer);
+    setIsOfferDetailPopupOpen(true);
+  };
+
+  const handleCloseOfferPopup = () => {
+    setIsOfferDetailPopupOpen(false);
+    setSelectedOffer(null);
+  };
+
   const getVisibleOffers = () => {
     return showOnlyFavorites
       ? filteredOffers.filter(offer => favoriteOfferIds.includes(offer.id))
@@ -105,16 +122,19 @@ const ForumOffers = ({ companies }) => {
     <div className="forum-offers-wrapper">
       <div className="forum-offers-header">
         <SearchBarOffers offers={allOffers} onFilter={setFilteredOffers} />
-        <div
-          className="favorites-label"
-          onClick={() => setShowOnlyFavorites(prev => !prev)}
-        >
-          <span className="favorites-icon">❤️</span>
-          <span className="favorites-text">
-            {showOnlyFavorites
-              ? 'Voir toutes les offres'
-              : `Mes favoris (${favoriteOfferIds.length})`}
-          </span>
+        <div className="favorites-toggle-container">
+          <button
+            className={`favorites-toggle-btn ${!showOnlyFavorites ? 'active' : ''}`}
+            onClick={() => setShowOnlyFavorites(false)}
+          >
+            Tous
+          </button>
+          <button
+            className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
+            onClick={() => setShowOnlyFavorites(true)}
+          >
+            Favoris
+          </button>
         </div>
       </div>
 
@@ -123,19 +143,30 @@ const ForumOffers = ({ companies }) => {
       ) : (
         <div className="forum-offers-container">
           {getVisibleOffers().map(offer => (
-            <div key={offer.id} className="forum-offer-card">
+            <div 
+              key={offer.id} 
+              className="forum-offer-card"
+              onClick={() => handleOfferClick(offer)}
+              style={{ cursor: 'pointer' }}
+            >
               {/* Section Logo et Entreprise */}
               <div className="forum-offer-company-section">
                 <img
                   src={offer.logo || LogoCompany}
                   alt={offer.companyName}
                   className="forum-offer-logo"
-                  onClick={() => handleCompanyClick(offer.company)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCompanyClick(offer.company);
+                  }}
                   style={{ cursor: 'pointer' }}
                 />
                 <div className="forum-offer-company-info">
                   <h4 className="forum-offer-company-name" 
-                      onClick={() => handleCompanyClick(offer.company)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCompanyClick(offer.company);
+                      }}
                       style={{ cursor: 'pointer' }}>
                     {offer.companyName}
                   </h4>
@@ -156,19 +187,27 @@ const ForumOffers = ({ companies }) => {
                   {offer.location && (
                     <div className="forum-offer-meta-item">
                       <MdLocationOn className="forum-offer-meta-icon" />
-                      <span>{offer.location}</span>
+                      <span className="forum-meta-text">{offer.location}</span>
                     </div>
                   )}
                   {offer.contract_type && (
                     <div className="forum-offer-meta-item">
                       <FaBriefcase className="forum-offer-meta-icon" />
-                      <span>{offer.contract_type}</span>
+                      <span className="forum-meta-text">
+                        <strong>Type :</strong> {offer.contract_type}
+                      </span>
                     </div>
                   )}
                   {offer.created_at && (
                     <div className="forum-offer-meta-item">
                       <FaCalendar className="forum-offer-meta-icon" />
-                      <span>Postée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}</span>
+                      <span className="forum-meta-text">
+                        Postée le {new Date(offer.created_at).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -218,18 +257,39 @@ const ForumOffers = ({ companies }) => {
               <div className="forum-offer-actions">
                 <button
                   className="forum-offer-action-button"
-                  onClick={() => toggleFavorite(offer.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(offer.id);
+                  }}
                   title="Ajouter aux favoris"
                 >
                   {favoriteOfferIds.includes(offer.id) ? <FaHeart /> : <FaRegHeart />}
                 </button>
-                <button className="forum-offer-action-button" title="Voir les détails">
+                <button 
+                  className="forum-offer-action-button" 
+                  title="Voir les détails"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOfferClick(offer);
+                  }}
+                >
                   <FaLocationArrow />
                 </button>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {/* Popup pour les détails de l'offre */}
+      {isOfferDetailPopupOpen && selectedOffer && (
+        <OfferDetailPopup
+          offer={selectedOffer}
+          onClose={() => {
+            setIsOfferDetailPopupOpen(false);
+            setSelectedOffer(null);
+          }}
+        />
       )}
 
       {/* Popup pour les détails de l'entreprise */}
@@ -278,8 +338,8 @@ const ForumOffers = ({ companies }) => {
 
                 {selectedCompany.description && (
                   <div className="company-popup-description">
-                    <h4>Description</h4>
-                    <p>{selectedCompany.description}</p>
+                    <h4 className="company-section-title">Description</h4>
+                    <p className="company-description">{selectedCompany.description}</p>
                   </div>
                 )}
               </div>

@@ -13,6 +13,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../context/AuthContext';
 import './ProgrammeManager.css';
+import { validateEventDates } from '../../../utils/dateValidation';
+import DateValidationError from '../../../components/common/DateValidationError';
 
 const ProgrammeManager = ({ forumId, forumName }) => {
   const [programmes, setProgrammes] = useState([]);
@@ -32,6 +34,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
     location: '',
     speakers: []
   });
+  const [dateErrors, setDateErrors] = useState([]);
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -42,14 +45,18 @@ const ProgrammeManager = ({ forumId, forumName }) => {
 
   const fetchProgrammes = async () => {
     try {
+      console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Début avec forumId:', forumId);
       setIsLoading(true);
-      const response = await axios.get(`${API}/api/forums/${forumId}/programmes/`, {
+      const url = `${API}/api/forums/${forumId}/programmes/`;
+      console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - URL:', url);
+      const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
+      console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Réponse reçue:', response.data);
       setProgrammes(response.data);
     } catch (err) {
+      console.error('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Erreur:', err);
       setError('Erreur lors du chargement des programmes');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -68,16 +75,26 @@ const ProgrammeManager = ({ forumId, forumName }) => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
+    let newFormData;
+    
     if (name === 'photo' && files) {
-      setFormData(prev => ({
-        ...prev,
+      newFormData = {
+        ...formData,
         [name]: files[0]
-      }));
+      };
     } else {
-      setFormData(prev => ({
-        ...prev,
+      newFormData = {
+        ...formData,
         [name]: value
-      }));
+      };
+    }
+    
+    setFormData(newFormData);
+    
+    // Validation en temps réel pour les dates
+    if (['start_date', 'end_date', 'start_time', 'end_time'].includes(name)) {
+      const validation = validateEventDates(newFormData);
+      setDateErrors(validation.errors);
     }
   };
 
@@ -107,6 +124,34 @@ const ProgrammeManager = ({ forumId, forumName }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log('Données du formulaire:', formData);
+    
+    // Validation des champs obligatoires
+    if (!formData.title || !formData.location) {
+      setError('Le titre et le lieu sont obligatoires');
+      return;
+    }
+    
+    // Validation des dates - FORCER LA VALIDATION
+    const dateValidation = validateEventDates(formData);
+    console.log('Validation des dates:', dateValidation);
+    
+    if (!dateValidation.isValid) {
+      const errorMessage = dateValidation.errors.join('\n');
+      console.log('Erreurs de validation:', errorMessage);
+      setError(errorMessage);
+      setDateErrors(dateValidation.errors);
+      alert('ERREUR: ' + errorMessage); // FORCER L'ALERTE
+      return;
+    }
+    
+    console.log('Validation OK, soumission en cours...');
+    
+    // Effacer les erreurs si validation OK
+    setDateErrors([]);
+    setError(null);
+    
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
@@ -140,6 +185,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
       }
       resetForm();
       fetchProgrammes();
+      setError(null); // Effacer les erreurs précédentes
     } catch (err) {
       setError('Erreur lors de la sauvegarde du programme');
       console.error(err);
@@ -328,6 +374,12 @@ const ProgrammeManager = ({ forumId, forumName }) => {
                 </div>
               </div>
 
+              {/* Affichage des erreurs de validation des dates */}
+              <DateValidationError 
+                errors={dateErrors} 
+                show={dateErrors.length > 0} 
+              />
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Speakers</label>
@@ -352,7 +404,17 @@ const ProgrammeManager = ({ forumId, forumName }) => {
                 <button type="button" className="cancel-btn" onClick={resetForm}>
                   Annuler
                 </button>
-                <button type="submit" className="save-btn">
+                <button 
+                  type="submit" 
+                  className={`save-btn ${dateErrors.length > 0 ? 'disabled' : ''}`}
+                  disabled={dateErrors.length > 0}
+                  onClick={(e) => {
+                    if (dateErrors.length > 0) {
+                      e.preventDefault();
+                      alert('Impossible de soumettre : ' + dateErrors.join('\n'));
+                    }
+                  }}
+                >
                   <FontAwesomeIcon icon={faSave} />
                   {editingProgramme ? 'Modifier' : 'Ajouter'}
                 </button>

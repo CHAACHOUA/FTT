@@ -10,6 +10,7 @@ import SkillProfile from './section/SkillProfile';
 import axios from 'axios';
 import Loading from '../common/Loading';
 import './ProfileView.css';
+import Navbar from '../common/NavBar';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -57,9 +58,11 @@ const PublicProfileView = () => {
       {!formData ? (
         <p className="public-error">Candidat introuvable.</p>
       ) : (
-        <div className="profile-container">
-          <SidebarMenu />
-          <div className="profile-content">
+        <div style={{ paddingTop: '80px' }}>
+          <Navbar />
+          <div className="profile-container">
+            <SidebarMenu />
+            <div className="profile-content">
             <section id="presentation">
               <Presentation formData={formData} readOnly />
             </section>
@@ -79,6 +82,7 @@ const PublicProfileView = () => {
               <SkillProfile formData={formData} readOnly />
             </section>
           </div>
+        </div>
         </div>
       )}
     </>

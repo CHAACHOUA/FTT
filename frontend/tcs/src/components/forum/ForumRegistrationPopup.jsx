@@ -18,6 +18,9 @@ import {
 // Les options seront chargées dynamiquement depuis l'API
 
 const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
+  // Debug: Log props
+  console.log('🔍 [FRONTEND] ForumRegistrationPopup - Props:', { isOpen, forumId });
+  
   const [step, setStep] = useState(1);
   const [sectors, setSectors] = useState([]);
   const [contracts, setContracts] = useState([]);
@@ -84,17 +87,21 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
     if (!validateStep()) return;
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/api/forums/${forumId}/register/`, form, {
+      console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - forumId:', forumId);
+      const url = `${API}/api/forums/${forumId}/register/`;
+      console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - URL:', url);
+      const response = await axios.post(url, form, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access')}`,
           'Content-Type': 'application/json',
         },
       });
+      console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - Réponse reçue');
       toast.success('Inscription réussie !');
       onSubmit?.(response.data);
       onClose();
     } catch (err) {
-      console.error(err);
+      console.error('🔍 [FRONTEND] ForumRegistrationPopup - finish - Erreur:', err);
       toast.error(err.response?.data?.detail || "Erreur lors de l'inscription.");
     } finally {
       setLoading(false);

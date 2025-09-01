@@ -10,6 +10,10 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
+  // Debug: Log forum data
+  console.log('🔍 [FRONTEND] ForumCard - forum:', forum);
+  console.log('🔍 [FRONTEND] ForumCard - forum.id:', forum?.id);
+  
   const [open, setOpen] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -80,27 +84,44 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
           <h2 className="forum-title">{forum.name}</h2>
 
           <div className="forum-meta">
-            <div>
-              <Calendar size={16} /> 
-              {forum.start_date && forum.end_date ? (
-                forum.start_date === forum.end_date ? (
-                  `${forum.start_date} ${forum.start_time} - ${forum.end_time}`
+            <div className="forum-meta-item">
+              <Calendar size={16} className="forum-meta-icon" />
+              <span className="forum-meta-text">
+                {forum.start_date && forum.end_date ? (
+                  forum.start_date === forum.end_date ? (
+                    `${new Date(forum.start_date).toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })} • ${forum.start_time} - ${forum.end_time}`
+                  ) : (
+                    `Du ${new Date(forum.start_date).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })} au ${new Date(forum.end_date).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}`
+                  )
                 ) : (
-                  `${forum.start_date} - ${forum.end_date}`
-                )
-              ) : (
-                'Date à définir'
-              )}
+                  'Date à définir'
+                )}
+              </span>
             </div>
-            <div>
+            <div className="forum-meta-item">
               {forum.type?.toLowerCase() === 'virtuel' ? (
-                <Video size={16} />
+                <Video size={16} className="forum-meta-icon" />
               ) : forum.type?.toLowerCase() === 'hybride' ? (
-                <Video size={16} />
+                <Video size={16} className="forum-meta-icon" />
               ) : (
-                <MapPin size={16} />
+                <MapPin size={16} className="forum-meta-icon" />
               )}
-              &nbsp;{forum.type}
+              <span className="forum-meta-text">
+                <strong>Format :</strong> {forum.type?.charAt(0).toUpperCase() + forum.type?.slice(1)}
+              </span>
             </div>
           </div>
 

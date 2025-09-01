@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../styles/candidate/Education.css';
 import { FaBriefcase, FaBuilding, FaRegStickyNote, FaTrash, FaPlusCircle } from 'react-icons/fa';
+import { validateEducationDates } from '../../../utils/dateValidation';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -28,6 +29,7 @@ const formatDate = (month, year) => {
 };
 
 const Experience = ({ formData, onUpdate }) => {
+  const [dateErrors, setDateErrors] = useState([]);
   useEffect(() => {
     if (!formData.experiences) return;
 
@@ -69,6 +71,17 @@ const Experience = ({ formData, onUpdate }) => {
   const handleListChange = (index, field, value) => {
     const updatedList = [...(formData.experiences || [])];
     updatedList[index] = { ...updatedList[index], [field]: value };
+    
+    // Validation des dates pour cette expérience
+    const experience = updatedList[index];
+    const validation = validateEducationDates(experience);
+    if (!validation.isValid) {
+      console.log('Erreurs de validation pour l\'expérience:', validation.errors);
+      setDateErrors(validation.errors);
+    } else {
+      setDateErrors([]);
+    }
+    
     updateDatesAndSend(updatedList);
   };
 
@@ -112,6 +125,25 @@ const Experience = ({ formData, onUpdate }) => {
   return (
     <div className="section education-section">
       <h3 className="experience-title">Expériences</h3>
+      
+      {/* Affichage des erreurs de validation */}
+      {dateErrors.length > 0 && (
+        <div style={{
+          background: '#fee',
+          color: '#c33',
+          padding: '10px',
+          borderRadius: '5px',
+          marginBottom: '15px',
+          border: '1px solid #fcc'
+        }}>
+          <strong>Erreurs de validation :</strong>
+          <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+            {dateErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {experiences.map((exp, index) => (
         <div key={index} className="experience-item-modern">
           <div className="input-modern">

@@ -16,8 +16,27 @@ const Navbar = () => {
   const toggleDropdown = () => setShowDropdown(!showDropdown);
   const user = getUserFromToken();
 
+  // Fermer le dropdown quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest('.dropdown')) {
+        setShowDropdown(false);
+      }
+    };
 
-  const getInitials = (name) => name ? name.slice(0, 2).toUpperCase() : '';
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showDropdown]);
+
+
+  const getInitials = (name) => {
+    if (!name) return '';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,14 +50,18 @@ const Navbar = () => {
       }
     };
 
-    // Récupération du prénom stocké
+    // Récupération du nom stocké
     const storedName = localStorage.getItem('name');
-    if (storedName) setName(storedName);
+    if (storedName) {
+      setName(storedName);
+    } else if (user && user.name) {
+      setName(user.name);
+    }
 
     // Ajout de l'écouteur scroll
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [user]);
 
   return (
     <nav className="navbar">
@@ -57,8 +80,8 @@ const Navbar = () => {
         ) :  (
           <div className="dropdown">
             <button className="navbar-user" onClick={toggleDropdown}>
-              <div className="user-circle">{getInitials(name)}</div>
-              <span className="user-name">{name}</span> ▾
+              <div className="user-circle">{getInitials(name || 'User')}</div>
+              <span className="user-name">{name || 'Utilisateur'}</span> ▾
             </button>
 
             {showDropdown && (

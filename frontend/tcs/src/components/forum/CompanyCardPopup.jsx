@@ -80,6 +80,12 @@ const CompanyCardPopup = ({ isOpen, onClose, company }) => {
 
           {/* Informations détaillées */}
           <div className="company-details">
+            {company.description && (
+              <div className="company-section">
+                <h4 className="company-section-title">Description</h4>
+                <p className="company-description">{company.description}</p>
+              </div>
+            )}
            
 
             {company.website && (

@@ -10,7 +10,7 @@ import {
 import '../../styles/candidate/SubMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
-  const showPhysicalFeatures = forumType === 'hybrid' || forumType === 'physique';
+  const showPhysicalFeatures = forumType === 'hybride' || forumType === 'physique';
 
   const menuItems = [
     { id: 'info', label: 'Informations générales', icon: <FaInfoCircle /> },

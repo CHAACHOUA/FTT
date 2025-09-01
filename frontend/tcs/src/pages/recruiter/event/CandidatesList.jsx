@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch } from 'react-icons/fa';
+import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CandidateFilters from '../../organizer/Event/CandidateFilters';
 import './CandidateListRecruiter.css';
@@ -140,126 +140,292 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl }) => {
     setFilters({});
   };
 
-  if (loading) return <div>Chargement des candidats...</div>;
-  if (error) return <div>Erreur : {error}</div>;
+  // KPIs (calculés sur tous les candidats)
+  const total = candidates.length;
+  const withCV = candidates.filter(item => item.candidate?.cv_file).length;
+  const rqth = candidates.filter(item => item.search?.rqth).length;
+  const contratCounts = {};
+  candidates.forEach(item => {
+    (item.search?.contract_type || []).forEach(type => {
+      contratCounts[type] = (contratCounts[type] || 0) + 1;
+    });
+  });
+
+  if (loading) {
+    return (
+      <div className="candidates-list">
+        <div className="candidates-header">
+          <h1>CVthèque</h1>
+          <p>Consultez les candidats disponibles pour votre forum</p>
+        </div>
+        <div className="kpi-section">
+          <div className="kpi-row">
+            <div className="kpi-card kpi-candidates">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CANDIDATS</span>
+                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-cv">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CV disponibles</span>
+                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-rqth">
+              <div className="kpi-label-row">
+                <span className="kpi-label">RQTH</span>
+                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-contrat">
+              <div className="kpi-label-row">
+                <span className="kpi-label">Contrats recherchés</span>
+                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+              </div>
+              <ul className="kpi-list">
+                <li>Chargement...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="candidates-wrapper">
+          <div className="candidates-flex-row">
+            <aside className="candidates-filters">
+              <CandidateFilters filters={filters} onChange={handleFiltersChange} options={filterOptions} />
+            </aside>
+            <div className="candidates-main">
+              <h2>Liste des candidats</h2>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+                Chargement des candidats...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="candidates-list">
+        <div className="candidates-header">
+          <h1>CVthèque</h1>
+          <p>Consultez les candidats disponibles pour votre forum</p>
+        </div>
+        <div className="kpi-section">
+          <div className="kpi-row">
+            <div className="kpi-card kpi-candidates">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CANDIDATS</span>
+                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-cv">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CV disponibles</span>
+                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-rqth">
+              <div className="kpi-label-row">
+                <span className="kpi-label">RQTH</span>
+                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-contrat">
+              <div className="kpi-label-row">
+                <span className="kpi-label">Contrats recherchés</span>
+                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+              </div>
+              <ul className="kpi-list">
+                <li>Erreur</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="candidates-wrapper">
+          <div className="candidates-flex-row">
+            <aside className="candidates-filters">
+              <CandidateFilters filters={filters} onChange={handleFiltersChange} options={filterOptions} />
+            </aside>
+            <div className="candidates-main">
+              <h2>Liste des candidats</h2>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#ef4444' }}>
+                Erreur : {error}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="candidates-list">
-      {/* Section gauche : Filtres */}
-      <div className="filters-section">
-        <h3>Filtres</h3>
-        
-        {/* Barre de recherche rapide */}
-        <div className="search-bar">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Rechercher par nom, prénom ou email..."
-            value={filters.text || ''}
-            onChange={(e) => handleFiltersChange({ ...filters, text: e.target.value })}
-            className="search-input"
-          />
-        </div>
-
-        {/* Filtres avancés */}
-        <div className="filters-container">
-          <CandidateFilters
-            filters={filters}
-            onChange={handleFiltersChange}
-            options={filterOptions}
-          />
-        </div>
-
-        {/* Bouton réinitialiser */}
-        {Object.keys(filters).length > 0 && (
-          <button className="reset-filters-btn" onClick={resetFilters}>
-            Réinitialiser tous les filtres
-          </button>
-        )}
+      <div className="candidates-header">
+        <h1>CVthèque</h1>
+        <p>Consultez les candidats disponibles pour votre forum</p>
       </div>
-
-      {/* Section droite : Candidats */}
-      <div className="candidates-section">
-        <div className="candidates-header">
-          <h2>CVthèque - {filteredCandidates.length} candidat{filteredCandidates.length > 1 ? 's' : ''}</h2>
-        </div>
-
-        {filteredCandidates.length === 0 ? (
-          <div className="no-candidates">
-            <p>Aucun candidat ne correspond aux critères de recherche.</p>
-            {Object.keys(filters).length > 0 && (
-              <button className="clear-filters-btn" onClick={resetFilters}>
-                Effacer tous les filtres
-              </button>
-            )}
+      <div className="kpi-section">
+        <div className="kpi-row">
+          <div className="kpi-card kpi-candidates">
+            <div className="kpi-label-row">
+              <span className="kpi-label">CANDIDATS</span>
+              <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+            </div>
+            <span className="kpi-value">{total}</span>
           </div>
-        ) : (
-          <div className="cards-container">
-            {filteredCandidates.map(({ candidate, search }, index) => (
-              <div className="candidate-card" key={index}>
-                <div className="candidate-photo">
-                  {candidate.profile_picture ? (
-                    <img
-                      src={
-                        candidate.profile_picture.startsWith('http')
-                          ? candidate.profile_picture
-                          : `${apiBaseUrl}${candidate.profile_picture}`
-                      }
-                      alt={`${candidate.first_name} ${candidate.last_name}`}
-                    />
-                  ) : (
-                    <FaUserCircle className="default-avatar" />
-                  )}
-                </div>
-                <div className="candidate-info" onClick={() => {
-                  console.log('Candidat sélectionné:', candidate);
-                  setSelectedCandidate(candidate);
-                }} style={{ cursor: 'pointer' }}>
-                  <h3>{candidate.first_name} {candidate.last_name}</h3>
-                  {candidate.email && <p>{candidate.email}</p>}
-
-                  <div className="sectors-container">
-                    {(search?.sector?.length ?? 0) > 0
-                      ? search.sector.map((sector, i) => (
-                          <span key={i} className="sector-badge">{sector}</span>
-                        ))
-                      : <span className="sector-badge empty">Non renseigné</span>
-                    }
-                  </div>
-
-                  <p className="region">
-                    <FaMapMarkerAlt className="icon-location" />
-                    {search?.region || 'Non renseignée'}
-                  </p>
-                </div>
-                {candidate.cv_file && (
-                  <a
-                    className="cv-download"
-                    href={
-                      candidate.cv_file.startsWith('http')
-                        ? candidate.cv_file
-                        : `${apiBaseUrl}${candidate.cv_file}`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Télécharger le CV"
-                    onClick={e => e.stopPropagation()} // pour éviter de déclencher l'ouverture popup
+          <div className="kpi-card kpi-cv">
+            <div className="kpi-label-row">
+              <span className="kpi-label">CV disponibles</span>
+              <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+            </div>
+            <span className="kpi-value">{withCV}</span>
+          </div>
+          <div className="kpi-card kpi-rqth">
+            <div className="kpi-label-row">
+              <span className="kpi-label">RQTH</span>
+              <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+            </div>
+            <span className="kpi-value">{rqth}</span>
+          </div>
+          <div className="kpi-card kpi-contrat">
+            <div className="kpi-label-row">
+              <span className="kpi-label">Contrats recherchés</span>
+              <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+            </div>
+            <ul className="kpi-list">
+              {Object.keys(contratCounts).length > 0 ? (
+                Object.entries(contratCounts)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([type, count]) => (
+                    <li key={type}>{type} : <b>{count}</b></li>
+                  ))
+              ) : (
+                <li>Aucun candidat</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="candidates-wrapper">
+        <div className="candidates-flex-row">
+          <aside className="candidates-filters">
+            <CandidateFilters filters={filters} onChange={handleFiltersChange} options={filterOptions} />
+          </aside>
+          <div className="candidates-main">
+            <h2>Liste des candidats</h2>
+            {filteredCandidates.length === 0 ? (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '3rem', 
+                color: '#6b7280',
+                background: '#f9fafb',
+                borderRadius: '12px',
+                border: '2px dashed #d1d5db',
+                margin: '2rem 0'
+              }}>
+                <h3 style={{ marginBottom: '1rem', color: '#374151' }}>
+                  {candidates.length === 0 ? 'Aucun candidat disponible pour ce forum' : 'Aucun candidat trouvé avec les filtres actuels'}
+                </h3>
+                <p style={{ fontSize: '1rem' }}>
+                  {candidates.length === 0 
+                    ? 'Les candidats apparaîtront ici une fois qu\'ils s\'inscriront au forum.'
+                    : 'Essayez de modifier vos critères de recherche.'
+                  }
+                </p>
+                {Object.keys(filters).length > 0 && (
+                  <button 
+                    onClick={resetFilters}
+                    style={{
+                      marginTop: '1rem',
+                      padding: '0.5rem 1rem',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
                   >
-                    <FaDownload />
-                  </a>
+                    Effacer tous les filtres
+                  </button>
                 )}
               </div>
-            ))}
+            ) : (
+              <div className="cards-container">
+                {filteredCandidates.map(({ candidate, search }, index) => (
+                  <div className="candidate-card" key={index}>
+                    <div className="candidate-photo">
+                      {candidate.profile_picture ? (
+                        <img
+                          src={
+                            candidate.profile_picture.startsWith('http')
+                              ? candidate.profile_picture
+                              : `${apiBaseUrl}${candidate.profile_picture}`
+                          }
+                          alt={`${candidate.first_name} ${candidate.last_name}`}
+                        />
+                      ) : (
+                        <FaUserCircle className="default-avatar" />
+                      )}
+                    </div>
+                    <div className="candidate-info" onClick={() => {
+                      console.log('Candidat sélectionné:', candidate);
+                      setSelectedCandidate(candidate);
+                    }} style={{ cursor: 'pointer' }}>
+                      <h3>{candidate.first_name} {candidate.last_name}</h3>
+                      {candidate.email && <p>{candidate.email}</p>}
+
+                      <div className="sectors-container">
+                        {(search?.sector?.length ?? 0) > 0
+                          ? search.sector.map((sector, i) => (
+                              <span key={i} className="sector-badge">{sector}</span>
+                            ))
+                          : <span className="sector-badge empty">Non renseigné</span>
+                        }
+                      </div>
+
+                      <p className="region">
+                        <FaMapMarkerAlt className="icon-location" />
+                        {search?.region || 'Non renseignée'}
+                      </p>
+                    </div>
+                    {candidate.cv_file && (
+                      <a
+                        className="cv-download"
+                        href={
+                          candidate.cv_file.startsWith('http')
+                            ? candidate.cv_file
+                            : `${apiBaseUrl}${candidate.cv_file}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Télécharger le CV"
+                        onClick={e => e.stopPropagation()} // pour éviter de déclencher l'ouverture popup
+                      >
+                        <FaDownload />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
+        {selectedCandidate && (
+          <CandidateProfile
+            candidateData={selectedCandidate}
+            onClose={() => setSelectedCandidate(null)}
+          />
         )}
       </div>
-
-      {selectedCandidate && (
-        <CandidateProfile
-          candidateData={selectedCandidate}
-          onClose={() => setSelectedCandidate(null)}
-        />
-      )}
     </div>
   );
 };

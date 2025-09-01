@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaBuilding, FaUser, FaBriefcase, FaMapMarkerAlt, FaIndustry, FaCalendar } from 'react-icons/fa';
+import { FaBuilding, FaUser, FaBriefcase, FaMapMarkerAlt, FaIndustry, FaCalendar, FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../../common/NavBar';
+import OfferDetailPopup from '../../../components/recruiter/OfferDetailPopup';
 import './OffersList.css';
 import defaultLogo from '../../../assets/Logo-FTT.png';
+import forumsBg from '../../../assets/forums-bg.png';
 
 const OffersList = () => {
   const location = useLocation();
@@ -40,6 +42,8 @@ const OffersList = () => {
   const [selectedCompany, setSelectedCompany] = useState('');
   const [selectedSector, setSelectedSector] = useState('');
   const [selectedContract, setSelectedContract] = useState('');
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
 
   // Initialiser les offres avec les données du forum
   useEffect(() => {
@@ -107,6 +111,36 @@ const OffersList = () => {
     setSelectedContract('');
   };
 
+  // Ouvre la popup de détails d'offre
+  const handleOfferClick = (offer) => {
+    setSelectedOffer(offer);
+    setIsOfferDetailPopupOpen(true);
+  };
+
+  const handleCloseOfferPopup = () => {
+    setIsOfferDetailPopupOpen(false);
+    setSelectedOffer(null);
+  };
+
+  const handleBack = () => {
+    navigate('/event/organizer/dashboard', { 
+      state: { 
+        forum: forum,
+        forumId: forumId,
+        accessToken: accessToken,
+        apiBaseUrl: API,
+        // S'assurer que toutes les données du forum sont passées
+        forumData: {
+          id: forumId,
+          name: forum?.name,
+          description: forum?.description,
+          start_date: forum?.start_date,
+          end_date: forum?.end_date
+        }
+      }
+    });
+  };
+
   if (!forum) {
     return (
       <div className="offers-list-container">
@@ -144,12 +178,17 @@ const OffersList = () => {
   }
 
   return (
-    <div className="offers-list-container">
+    <div className="offers-list-container" style={{ paddingTop: '80px' }}>
       <Navbar />
       <div className="offers-list-content">
         <div className="offers-list-header">
-          <h1>Liste des Offres</h1>
-          <p>Consultez toutes les offres postées par les recruteurs</p>
+          <button onClick={handleBack} className="back-button">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Offres</h1>
+            <p>Consultez toutes les offres postées par les recruteurs</p>
+          </div>
         </div>
 
         {/* Filtres */}
@@ -216,57 +255,65 @@ const OffersList = () => {
             <p>Aucune offre ne correspond à vos critères de recherche.</p>
           </div>
         ) : (
-          <div className="offers-grid">
-            {filteredOffers.map((offer) => (
-              <div key={offer.id} className="offer-card">
-                <div className="offer-header">
-                  <div className="offer-company">
-                    <img
-                      src={offer.company.logo ? (offer.company.logo.startsWith('http') ? offer.company.logo : `${API}${offer.company.logo}`) : defaultLogo}
-                      alt={offer.company.name}
-                      className="company-logo"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = defaultLogo;
-                      }}
-                    />
-                    <div className="company-info">
-                      <h3 className="company-name">{offer.company.name}</h3>
-                      <p className="recruiter-name">
-                        {offer.recruiter.first_name !== 'N/A' && offer.recruiter.last_name !== 'N/A' 
-                          ? `${offer.recruiter.first_name} ${offer.recruiter.last_name}`
-                          : 'Recruteur non spécifié'
-                        }
-                      </p>
+          <div className="offers-grid offers-list-horizontal">
+            {[...filteredOffers]
+              .sort((a, b) => {
+                const byCompany = a.company.name.localeCompare(b.company.name);
+                if (byCompany !== 0) return byCompany;
+                return new Date(b.created_at) - new Date(a.created_at);
+              })
+              .map((offer) => {
+                const bannerSrc = offer.company.banner
+                  ? (offer.company.banner.startsWith('http') ? offer.company.banner : `${API}${offer.company.banner}`)
+                  : forumsBg;
+                const recruiterFirst = offer.recruiter?.first_name || '';
+                const recruiterLast = offer.recruiter?.last_name || '';
+                const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
+                return (
+                  <div
+                    key={offer.id}
+                    className="offer-card horizontal"
+                    onClick={() => handleOfferClick(offer)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="offer-left-banner">
+                      <img src={bannerSrc} alt="Bannière entreprise" onError={(e)=>{e.target.src = forumsBg;}} />
+                      <div className="company-logo-badge">
+                        <img
+                          src={offer.company.logo ? (offer.company.logo.startsWith('http') ? offer.company.logo : `${API}${offer.company.logo}`) : defaultLogo}
+                          alt={offer.company.name}
+                          onError={(e)=>{e.target.src = defaultLogo;}}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="offer-right-content">
+                      <div className="offer-top-line">
+                        <div className="recruiter-avatar">{initials}</div>
+                        <div className="recruiter-block">
+                          <div className="recruiter-name-line">{recruiterFirst} {recruiterLast} @ {offer.company.name}</div>
+                        </div>
+                        <span className="offer-date">Publiée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}</span>
+                      </div>
+
+                      <h4 className="offer-title large">{offer.title}</h4>
+                      <div className="offer-location-line">
+                        <FaMapMarkerAlt />
+                        <span>{offer.location || 'Non précisé'}</span>
+                      </div>
                     </div>
                   </div>
-                  <span className="offer-date">
-                    Publiée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}
-                  </span>
-                </div>
-
-                <div className="offer-content">
-                  <h4 className="offer-title">{offer.title}</h4>
-                  <p className="offer-description">{offer.description}</p>
-                </div>
-
-                <div className="offer-details">
-                  <div className="detail-item">
-                    <FaMapMarkerAlt className="detail-icon" />
-                    <span>{offer.location || 'Non précisé'}</span>
-                  </div>
-                  <div className="detail-item">
-                    <FaIndustry className="detail-icon" />
-                    <span>{offer.sector}</span>
-                  </div>
-                  <div className="detail-item">
-                    <FaBriefcase className="detail-icon" />
-                    <span>{offer.contract_type}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
+        )}
+
+        {/* Popup pour les détails de l'offre */}
+        {isOfferDetailPopupOpen && selectedOffer && (
+          <OfferDetailPopup
+            offer={selectedOffer}
+            onClose={handleCloseOfferPopup}
+          />
         )}
       </div>
     </div>

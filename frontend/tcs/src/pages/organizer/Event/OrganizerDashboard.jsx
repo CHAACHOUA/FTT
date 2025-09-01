@@ -12,8 +12,16 @@ export default function OrganizerDashboard() {
   const { name, accessToken } = useAuth();
   const location = useLocation();
   const forum = location.state?.forum;
-  const forumId = forum?.id;
+  const forumId = forum?.id || location.state?.forumId;
   const API = process.env.REACT_APP_API_BASE_URL;
+  
+  // Debug: Log location state
+  console.log('🔍 [FRONTEND] OrganizerDashboard - location.state:', location.state);
+  console.log('🔍 [FRONTEND] OrganizerDashboard - forum:', forum);
+  console.log('🔍 [FRONTEND] OrganizerDashboard - forumId:', forumId);
+  
+  // Fallback pour récupérer les données du forum si elles ne sont pas disponibles
+  const [forumData, setForumData] = useState(forum);
   
   const [kpis, setKpis] = useState([
     {
@@ -40,6 +48,7 @@ export default function OrganizerDashboard() {
   useEffect(() => {
     const fetchKPIs = async () => {
       if (!forumId || !accessToken) {
+        console.log('Données manquantes pour les KPIs:', { forumId, accessToken });
         setLoading(false);
         return;
       }
@@ -81,6 +90,26 @@ export default function OrganizerDashboard() {
     fetchKPIs();
   }, [forumId, accessToken, API]);
 
+  // Récupérer les données du forum si elles ne sont pas disponibles
+  useEffect(() => {
+    const fetchForumData = async () => {
+      if (!forumId || !accessToken || forum) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API}/api/forums/${forumId}/`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        setForumData(response.data);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données du forum:', error);
+      }
+    };
+
+    fetchForumData();
+  }, [forumId, accessToken, API, forum]);
+
   return (
     <div className="dashboard-bg" style={{ paddingTop: '70px' }}>
       <Navbar />
@@ -106,7 +135,7 @@ export default function OrganizerDashboard() {
           </div>
         ))}
       </div>
-      <SubMenu forum={forum} forumId={forumId} accessToken={accessToken} API={API} />
+      <SubMenu forum={forumData || forum} forumId={forumId} accessToken={accessToken} API={API} />
     </div>
   );
 }

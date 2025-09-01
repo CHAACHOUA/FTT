@@ -5,10 +5,13 @@ import { FiLock, FiEye, FiEyeOff, FiUser, FiMail } from "react-icons/fi";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/candidate/Education.css';
+import { useAuth } from '../../context/AuthContext';
+import { jwtDecode } from "jwt-decode";
 
 const CompleteRecruiterSetup = () => {
   const navigate = useNavigate();
   const { token } = useParams();
+  const { login } = useAuth();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -51,14 +54,35 @@ const CompleteRecruiterSetup = () => {
       const msg = response.data.message || 'Compte activé avec succès !';
       toast.success(msg);
 
-      // Stocker les tokens d'authentification
+      console.log('Réponse API:', response.data); // Debug
+
+      // Stocker les tokens d'authentification et mettre à jour le contexte
       if (response.data.refresh && response.data.access) {
-        localStorage.setItem('refresh', response.data.refresh);
-        localStorage.setItem('access', response.data.access);
+        // Extraire l'email du token JWT si pas présent dans la réponse
+        let email = response.data.email;
+        if (!email) {
+          try {
+            const decoded = jwtDecode(response.data.access);
+            email = decoded.email || '';
+          } catch (e) {
+            console.error('Erreur décodage token:', e);
+            email = '';
+          }
+        }
+        
+        console.log('Tentative de login avec:', { email, name: response.data.name || '' }); // Debug
+        login(
+          { access: response.data.access, refresh: response.data.refresh },
+          { email: email, name: response.data.name || '' }
+        );
       }
 
-      // Redirection vers le dashboard recruteur
-      setTimeout(() => navigate('/recruiter/dashboard'), 2000);
+             // Redirection vers la page d'accueil recruteur
+       setTimeout(() => {
+         console.log('Redirection vers /recruiter');
+         console.log('Token stocké:', localStorage.getItem('access') ? 'Oui' : 'Non');
+         navigate('/recruiter');
+       }, 1000);
     } catch (err) {
       const msg = err.response?.data?.error || 'Une erreur est survenue lors de l\'activation du compte.';
       toast.error(msg);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport } from 'react-icons/fa';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import Navbar from '../../common/NavBar';
 import './CandidatesList.css';
@@ -8,9 +8,11 @@ import CandidateFilters from './CandidateFilters';
 
 const CandidatesList = (props) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const forumId = props.forumId || location.state?.forumId;
   const accessToken = props.accessToken || location.state?.accessToken;
   const apiBaseUrl = props.apiBaseUrl || location.state?.apiBaseUrl;
+  const forum = props.forum || location.state?.forum;
 
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,25 @@ const CandidatesList = (props) => {
   }, [forumId, accessToken, apiBaseUrl]);
 
   // Fonction pour télécharger la liste des candidats
+  const handleBack = () => {
+    navigate('/event/organizer/dashboard', { 
+      state: { 
+        forum: forum,
+        forumId: forumId,
+        accessToken: accessToken,
+        apiBaseUrl: apiBaseUrl,
+        // S'assurer que toutes les données du forum sont passées
+        forumData: {
+          id: forumId,
+          name: forum?.name,
+          description: forum?.description,
+          start_date: forum?.start_date,
+          end_date: forum?.end_date
+        }
+      }
+    });
+  };
+
   const downloadCandidatesList = () => {
     // Préparer les données pour le CSV
     const csvData = candidates.map(({ candidate }) => {
@@ -95,19 +116,204 @@ const CandidatesList = (props) => {
   };
 
   if (!forumId || !accessToken || !apiBaseUrl) {
-    return <div>Erreur : données manquantes pour afficher la liste des candidats.</div>;
+    return (
+      <div className="candidates-list">
+        <Navbar />
+        <div className="candidates-header">
+          <button onClick={handleBack} className="back-button">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Candidats</h1>
+            <p>Gérez les candidats participant à votre forum</p>
+          </div>
+        </div>
+        <div className="kpi-section">
+          <div className="kpi-row">
+            <div className="kpi-card kpi-candidates">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CANDIDATS</span>
+                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-cv">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CV disponibles</span>
+                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-rqth">
+              <div className="kpi-label-row">
+                <span className="kpi-label">RQTH</span>
+                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-contrat">
+              <div className="kpi-label-row">
+                <span className="kpi-label">Contrats recherchés</span>
+                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+              </div>
+              <ul className="kpi-list">
+                <li>Aucun candidat</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="candidates-wrapper">
+          <div className="candidates-flex-row">
+            <aside className="candidates-filters">
+              <CandidateFilters filters={filters} onChange={setFilters} options={options} />
+            </aside>
+            <div className="candidates-main">
+              <h2>Liste des candidats</h2>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+                Erreur : données manquantes pour afficher la liste des candidats.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (loading) return <div>Chargement des candidats...</div>;
-  if (error) return <div>Erreur : {error}</div>;
+  if (loading) {
+    return (
+      <div className="candidates-list">
+        <Navbar />
+        <div className="candidates-header">
+          <button onClick={handleBack} className="back-button">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Candidats</h1>
+            <p>Gérez les candidats participant à votre forum</p>
+          </div>
+        </div>
+        <div className="kpi-section">
+          <div className="kpi-row">
+            <div className="kpi-card kpi-candidates">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CANDIDATS</span>
+                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-cv">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CV disponibles</span>
+                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-rqth">
+              <div className="kpi-label-row">
+                <span className="kpi-label">RQTH</span>
+                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+              </div>
+              <span className="kpi-value">...</span>
+            </div>
+            <div className="kpi-card kpi-contrat">
+              <div className="kpi-label-row">
+                <span className="kpi-label">Contrats recherchés</span>
+                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+              </div>
+              <ul className="kpi-list">
+                <li>Chargement...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="candidates-wrapper">
+          <div className="candidates-flex-row">
+            <aside className="candidates-filters">
+              <CandidateFilters filters={filters} onChange={setFilters} options={options} />
+            </aside>
+            <div className="candidates-main">
+              <h2>Liste des candidats</h2>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+                Chargement des candidats...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="candidates-list">
+        <Navbar />
+        <div className="candidates-header">
+          <button onClick={handleBack} className="back-button">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Candidats</h1>
+            <p>Gérez les candidats participant à votre forum</p>
+          </div>
+        </div>
+        <div className="kpi-section">
+          <div className="kpi-row">
+            <div className="kpi-card kpi-candidates">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CANDIDATS</span>
+                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-cv">
+              <div className="kpi-label-row">
+                <span className="kpi-label">CV disponibles</span>
+                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-rqth">
+              <div className="kpi-label-row">
+                <span className="kpi-label">RQTH</span>
+                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
+              </div>
+              <span className="kpi-value">0</span>
+            </div>
+            <div className="kpi-card kpi-contrat">
+              <div className="kpi-label-row">
+                <span className="kpi-label">Contrats recherchés</span>
+                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+              </div>
+              <ul className="kpi-list">
+                <li>Erreur</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="candidates-wrapper">
+          <div className="candidates-flex-row">
+            <aside className="candidates-filters">
+              <CandidateFilters filters={filters} onChange={setFilters} options={options} />
+            </aside>
+            <div className="candidates-main">
+              <h2>Liste des candidats</h2>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#ef4444' }}>
+                Erreur : {error}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // KPIs (calculés sur tous les candidats)
   const total = candidates.length;
-  const withCV = candidates.filter(item => item.candidate.cv_file).length;
-  const rqth = candidates.filter(item => item.search.rqth).length;
+  const withCV = candidates.filter(item => item.candidate?.cv_file).length;
+  const rqth = candidates.filter(item => item.search?.rqth).length;
   const contratCounts = {};
   candidates.forEach(item => {
-    (item.search.contract_type || []).forEach(type => {
+    (item.search?.contract_type || []).forEach(type => {
       contratCounts[type] = (contratCounts[type] || 0) + 1;
     });
   });
@@ -167,6 +373,15 @@ const CandidatesList = (props) => {
   return (
     <div className="candidates-list">
       <Navbar />
+      <div className="candidates-header">
+        <button onClick={handleBack} className="back-button">
+          <FaArrowLeft /> Retour
+        </button>
+        <div className="header-content">
+          <h1>Liste des Candidats</h1>
+          <p>Gérez les candidats participant à votre forum</p>
+        </div>
+      </div>
       <div className="kpi-section">
         <div className="kpi-row">
           <div className="kpi-card kpi-candidates">
@@ -239,7 +454,25 @@ const CandidatesList = (props) => {
           <div className="candidates-main">
             <h2>Liste des candidats</h2>
             {filteredCandidates.length === 0 ? (
-              <p>Aucun candidat trouvé pour ce forum.</p>
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '3rem', 
+                color: '#6b7280',
+                background: '#f9fafb',
+                borderRadius: '12px',
+                border: '2px dashed #d1d5db',
+                margin: '2rem 0'
+              }}>
+                <h3 style={{ marginBottom: '1rem', color: '#374151' }}>
+                  {candidates.length === 0 ? 'Aucun candidat inscrit pour ce forum' : 'Aucun candidat trouvé avec les filtres actuels'}
+                </h3>
+                <p style={{ fontSize: '1rem' }}>
+                  {candidates.length === 0 
+                    ? 'Les candidats apparaîtront ici une fois qu\'ils s\'inscriront à votre forum.'
+                    : 'Essayez de modifier vos critères de recherche.'
+                  }
+                </p>
+              </div>
             ) : (
               <div className="cards-container">
                 {filteredCandidates.map(({ candidate, search }, index) => (

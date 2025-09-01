@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faUsers, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
@@ -14,25 +14,43 @@ const ForumProgrammeManagement = () => {
   const [forum, setForum] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { forumId } = useParams();
+  const { forumId: urlForumId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
+  
+  // Récupérer forumId depuis les paramètres d'URL ou location.state
+  const forumId = urlForumId || location.state?.forumId || location.state?.forum?.id;
+
+  // Debug: Log forumId sources
+  console.log('🔍 [FRONTEND] ForumProgrammeManagement - urlForumId:', urlForumId);
+  console.log('🔍 [FRONTEND] ForumProgrammeManagement - location.state:', location.state);
+  console.log('🔍 [FRONTEND] ForumProgrammeManagement - forumId final:', forumId);
 
   useEffect(() => {
-    fetchForumDetails();
+    if (forumId) {
+      console.log('🔍 [FRONTEND] ForumProgrammeManagement - Appel fetchForumDetails avec forumId:', forumId);
+      fetchForumDetails();
+    } else {
+      console.log('🔍 [FRONTEND] ForumProgrammeManagement - forumId est undefined, pas d\'appel fetchForumDetails');
+    }
   }, [forumId]);
 
   const fetchForumDetails = async () => {
     try {
+      console.log('🔍 [FRONTEND] fetchForumDetails - Début avec forumId:', forumId);
       setIsLoading(true);
-      const response = await axios.get(`${API}/api/forums/${forumId}/`, {
+      const url = `${API}/api/forums/${forumId}/`;
+      console.log('🔍 [FRONTEND] fetchForumDetails - URL:', url);
+      const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
+      console.log('🔍 [FRONTEND] fetchForumDetails - Réponse reçue:', response.data);
       setForum(response.data);
     } catch (err) {
+      console.error('🔍 [FRONTEND] fetchForumDetails - Erreur:', err);
       setError('Erreur lors du chargement des détails du forum');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +153,13 @@ const ForumProgrammeManagement = () => {
           {activeTab === 'speakers' && (
             <SpeakerManager />
           )}
+        </div>
+        
+        {/* Debug: Afficher les valeurs */}
+        <div style={{ display: 'none' }}>
+          <p>Debug - forumId: {forumId}</p>
+          <p>Debug - forum: {forum ? forum.name : 'null'}</p>
+          <p>Debug - activeTab: {activeTab}</p>
         </div>
       </div>
     </div>

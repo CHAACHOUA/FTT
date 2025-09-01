@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FaEdit, FaImage, FaCalendarAlt, FaFileAlt, FaTag } from 'react-icons/fa';
+import { FaEdit, FaImage, FaCalendarAlt, FaFileAlt, FaTag, FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../common/NavBar';
 import '../styles/candidate/Presentation.css';
 import './Event/Dashboard.css';
 import { getForumTypesForSelect } from '../../constants/choices';
+import { validateEventDates } from '../../utils/dateValidation';
+import DateValidationError from '../../components/common/DateValidationError';
 
 const ForumInfoEdit = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { forum, accessToken, apiBaseUrl: API } = location.state || {};
+  const { forum, accessToken, apiBaseUrl: API, forumId } = location.state || {};
   
   const [formData, setFormData] = useState({
     name: '',
@@ -27,6 +29,28 @@ const ForumInfoEdit = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [forumTypes, setForumTypes] = useState([]);
   const [choicesLoading, setChoicesLoading] = useState(true);
+  const [dateErrors, setDateErrors] = useState([]);
+  const [forumData, setForumData] = useState(forum);
+  const [error, setError] = useState(null);
+
+  const handleBack = () => {
+    navigate('/event/organizer/dashboard', { 
+      state: { 
+        accessToken: accessToken,
+        apiBaseUrl: API,
+        forumId: forumId || forumData?.id, // Ajouter le forumId
+        // S'assurer que toutes les données sont passées
+        forumData: forumData ? {
+          id: forumData.id,
+          name: forumData.name,
+          description: forumData.description,
+          start_date: forumData.start_date,
+          end_date: forumData.end_date,
+          type: forumData.type
+        } : null
+      }
+    });
+  };
 
   useEffect(() => {
     const loadChoices = async () => {
@@ -50,23 +74,67 @@ const ForumInfoEdit = () => {
     loadChoices();
   }, []);
 
+  // Récupérer les données du forum si elles ne sont pas disponibles
   useEffect(() => {
-    if (forum) {
-      console.log('Forum reçu:', forum);
-      console.log('Photo du forum:', forum.photo);
-      setFormData({
-        name: forum.name || '',
-        description: forum.description || '',
-        start_date: forum.start_date || '',
-        end_date: forum.end_date || '',
-        start_time: forum.start_time || '09:00',
-        end_time: forum.end_time || '17:00',
-        type: forum.type || 'presentiel',
-        photo: null // On ne met pas l'ancienne photo ici, elle sera affichée via getPhotoURL
-      });
-    }
-    setInitialLoading(false);
-  }, [forum]);
+    const fetchForumData = async () => {
+      if (!accessToken || !API) {
+        setError('Données d\'authentification manquantes');
+        setInitialLoading(false);
+        return;
+      }
+
+      // Si on a déjà les données du forum, les utiliser
+      if (forum) {
+        console.log('Forum reçu:', forum);
+        console.log('Photo du forum:', forum.photo);
+        setForumData(forum);
+        setFormData({
+          name: forum.name || '',
+          description: forum.description || '',
+          start_date: forum.start_date || '',
+          end_date: forum.end_date || '',
+          start_time: forum.start_time || '09:00',
+          end_time: forum.end_time || '17:00',
+          type: forum.type || 'presentiel',
+          photo: null
+        });
+        setInitialLoading(false);
+        return;
+      }
+
+      // Sinon, récupérer les données du forum via API
+      if (forumId) {
+        try {
+          const response = await axios.get(`${API}/api/forums/${forumId}/`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          const fetchedForum = response.data;
+          console.log('Forum récupéré via API:', fetchedForum);
+          setForumData(fetchedForum);
+          setFormData({
+            name: fetchedForum.name || '',
+            description: fetchedForum.description || '',
+            start_date: fetchedForum.start_date || '',
+            end_date: fetchedForum.end_date || '',
+            start_time: fetchedForum.start_time || '09:00',
+            end_time: fetchedForum.end_time || '17:00',
+            type: fetchedForum.type || 'presentiel',
+            photo: null
+          });
+        } catch (error) {
+          console.error('Erreur lors de la récupération du forum:', error);
+          setError('Impossible de récupérer les données du forum');
+        } finally {
+          setInitialLoading(false);
+        }
+      } else {
+        setError('ID du forum manquant');
+        setInitialLoading(false);
+      }
+    };
+
+    fetchForumData();
+  }, [forum, forumId, accessToken, API]);
 
   const getPhotoURL = (photo) => {
     console.log('getPhotoURL appelé avec:', photo);
@@ -90,7 +158,14 @@ const ForumInfoEdit = () => {
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const newFormData = { ...formData, [name]: value };
+    setFormData(newFormData);
+    
+    // Validation en temps réel pour les dates
+    if (['start_date', 'end_date', 'start_time', 'end_time'].includes(name)) {
+      const validation = validateEventDates(newFormData);
+      setDateErrors(validation.errors);
+    }
   };
 
   const handlePhotoChange = (e) => {
@@ -114,6 +189,20 @@ const ForumInfoEdit = () => {
         setLoading(false);
         return;
       }
+
+      // Validation des dates
+      const dateValidation = validateEventDates(formData);
+      if (!dateValidation.isValid) {
+        dateValidation.errors.forEach(error => {
+          toast.error(error);
+        });
+        setDateErrors(dateValidation.errors);
+        setLoading(false);
+        return;
+      }
+      
+      // Effacer les erreurs si validation OK
+      setDateErrors([]);
 
       const formPayload = new FormData();
       formPayload.append('name', formData.name);
@@ -153,9 +242,18 @@ const ForumInfoEdit = () => {
       setTimeout(() => {
         navigate('/event/organizer/dashboard/', { 
           state: { 
-            forum: { ...forum, ...response.data },
+            forum: { ...forumData, ...response.data },
             accessToken,
-            apiBaseUrl: API 
+            apiBaseUrl: API,
+            // S'assurer que toutes les données du forum sont passées
+            forumData: {
+              id: forumData.id,
+              name: response.data.name || forumData.name,
+              description: response.data.description || forumData.description,
+              start_date: response.data.start_date || forumData.start_date,
+              end_date: response.data.end_date || forumData.end_date,
+              type: response.data.type || forumData.type
+            }
           } 
         });
       }, 2000);
@@ -169,16 +267,63 @@ const ForumInfoEdit = () => {
   };
 
   if (initialLoading) {
-    return <div>Chargement...</div>;
+    return (
+      <div style={{ paddingTop: '70px' }}>
+        <Navbar />
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <div>Chargement des informations du forum...</div>
+        </div>
+      </div>
+    );
   }
 
-  if (!forum) {
+  if (error) {
+    return (
+      <div style={{ paddingTop: '70px' }}>
+        <Navbar />
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <h2>Erreur</h2>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.history.back()}
+            style={{
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginTop: '20px'
+            }}
+          >
+            Retour
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!forumData) {
     return (
       <div style={{ paddingTop: '70px' }}>
         <Navbar />
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <h2>Forum non trouvé</h2>
           <p>Impossible de charger les informations du forum.</p>
+          <button 
+            onClick={() => window.history.back()}
+            style={{
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginTop: '20px'
+            }}
+          >
+            Retour
+          </button>
         </div>
       </div>
     );
@@ -189,8 +334,28 @@ const ForumInfoEdit = () => {
       <Navbar />
       <div className="dashboard-bg">
         <div className="dashboard-header">
-          <h1>Gérer les informations du forum</h1>
-          <p>Modifiez les détails de votre forum</p>
+          <button onClick={handleBack} style={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '1rem 2rem',
+            borderRadius: '12px',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+            marginBottom: '2rem',
+            transition: 'all 0.3s ease'
+          }}>
+            <FaArrowLeft /> Retour aux forums
+          </button>
+          <div className="header-content">
+            <h1>Gérer les informations du forum</h1>
+            <p>Modifiez les détails de votre forum : {forumData?.name}</p>
+          </div>
         </div>
 
         <div className="presentation-section" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
@@ -199,7 +364,7 @@ const ForumInfoEdit = () => {
             <div className="profile-photo-container">
               {(() => {
                 console.log('Affichage photo - formData.photo:', formData.photo);
-                console.log('Affichage photo - forum.photo:', forum.photo);
+                console.log('Affichage photo - forumData.photo:', forumData?.photo);
                 
                 if (formData.photo) {
                   console.log('Affichage nouvelle photo');
@@ -211,11 +376,11 @@ const ForumInfoEdit = () => {
                       style={{ borderRadius: '8px', maxWidth: '300px', maxHeight: '200px' }}
                     />
                   );
-                } else if (forum.photo) {
+                } else if (forumData?.photo) {
                   console.log('Affichage ancienne photo');
                   return (
                     <img
-                      src={getPhotoURL(forum.photo)}
+                      src={getPhotoURL(forumData.photo)}
                       alt="Photo du forum"
                       className="profile-photo"
                       style={{ borderRadius: '8px', maxWidth: '300px', maxHeight: '200px' }}
@@ -224,7 +389,7 @@ const ForumInfoEdit = () => {
                                  } else {
                    console.log('Affichage placeholder');
                    return (
-                     <div 
+                     <div
                        className="profile-initials-circle" 
                        style={{ 
                          fontSize: 48, 
@@ -374,6 +539,12 @@ const ForumInfoEdit = () => {
               </div>
             </div>
 
+            {/* Affichage des erreurs de validation des dates */}
+            <DateValidationError 
+              errors={dateErrors} 
+              show={dateErrors.length > 0} 
+            />
+
             {/* Description */}
             <div className="input-modern">
               <span className="input-icon"><FaFileAlt /></span>
@@ -403,7 +574,20 @@ const ForumInfoEdit = () => {
               <button
                 type="button"
                 onClick={() => navigate('/event/organizer/dashboard/', { 
-                  state: { forum, accessToken, apiBaseUrl: API } 
+                  state: { 
+                    forum: forumData, 
+                    accessToken, 
+                    apiBaseUrl: API,
+                    // S'assurer que toutes les données du forum sont passées
+                    forumData: {
+                      id: forumData.id,
+                      name: forumData.name,
+                      description: forumData.description,
+                      start_date: forumData.start_date,
+                      end_date: forumData.end_date,
+                      type: forumData.type
+                    }
+                  } 
                 })}
                 style={{
                   backgroundColor: '#6c757d',

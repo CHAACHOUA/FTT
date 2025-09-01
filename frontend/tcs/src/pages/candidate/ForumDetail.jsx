@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ForumRegistrationPopup from '../../components/forum/ForumRegistrationPopup';
 import ForumInfos from '../../components/forum/ForumInfos';
 import ForumCompanies from '../../components/forum/ForumCompanies';
@@ -8,17 +8,27 @@ import Navbar from '../common/NavBar';
 import Logo from '../../assets/Logo-FTT.png';
 import Photo from '../../assets/forum-base.webp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle, faBuilding, faBriefcase } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faBuilding, faBriefcase, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const ForumDetail = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const forum = state?.forum;
   const API = process.env.REACT_APP_API_BASE_URL;
+
+  // Debug: Log forum data
+  console.log('🔍 [FRONTEND] ForumDetail - state:', state);
+  console.log('🔍 [FRONTEND] ForumDetail - forum:', forum);
+  console.log('🔍 [FRONTEND] ForumDetail - forum.id:', forum?.id);
 
   const [activeTab, setActiveTab] = useState('general');
   const [open, setOpen] = useState(false);
 
   if (!forum) return <p>Forum introuvable.</p>;
+
+  const handleBack = () => {
+    navigate('/forums');
+  };
 
   // Fonction pour construire l'URL du logo
   const getLogoURL = (logo) => {
@@ -54,6 +64,28 @@ const ForumDetail = () => {
         </div>
 
         <div className="card">
+          {/* Bouton retour */}
+          <button onClick={handleBack} style={{ 
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+            zIndex: 1000
+          }}>
+            <FontAwesomeIcon icon={faArrowLeft} /> Retour aux forums
+          </button>
+
           {/* En-tête */}
           <div className="forum-detail-header">
             <div className="forum-detail-logo">

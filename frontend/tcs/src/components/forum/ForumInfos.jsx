@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../pages/styles/forum/ForumInfos.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDays, faBuilding } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDays, faBuilding, faVideo, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/Logo-FTT.png';
 import ProgrammeTimeline from './ProgrammeTimeline';
 
@@ -38,14 +38,38 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
           <span>
             {forum.start_date && forum.end_date ? (
               forum.start_date === forum.end_date ? (
-                `Le ${forum.start_date} de ${forum.start_time} à ${forum.end_time}`
+                `Le ${new Date(forum.start_date).toLocaleDateString('fr-FR', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })} de ${forum.start_time} à ${forum.end_time}`
               ) : (
-                `Du ${forum.start_date} au ${forum.end_date}`
+                `Du ${new Date(forum.start_date).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })} au ${new Date(forum.end_date).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}`
               )
             ) : (
               'Date à définir'
             )}
           </span>
+        </div>
+
+        <div className="forum-detail-line">
+          {forum.type?.toLowerCase() === 'virtuel' ? (
+            <FontAwesomeIcon icon={faVideo} className="fa-icon" />
+          ) : forum.type?.toLowerCase() === 'hybride' ? (
+            <FontAwesomeIcon icon={faVideo} className="fa-icon" />
+          ) : (
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="fa-icon" />
+          )}
+          <span><strong>Format :</strong> {forum.type?.charAt(0).toUpperCase() + forum.type?.slice(1)}</span>
         </div>
 
         <div className="forum-detail-line">

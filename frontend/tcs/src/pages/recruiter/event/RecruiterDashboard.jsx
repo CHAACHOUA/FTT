@@ -4,7 +4,7 @@ import SubMenu from './SubMenu';
 import Navbar from '../../common/NavBar';
 import Members from './Members';
 import CompanyProfile from '../CompanyProfile';
-import ForumInfos from '../../../components/forum/ForumInfos';
+
 import CandidatesList from './CandidatesList'; // Exemple pour la section CVthèque
 import { useAuth } from '../../../context/AuthContext';
 import RencontresList from './RencontresList'
@@ -18,7 +18,7 @@ const RecruiterDashboard = () => {
   const forum = state?.forum;
   const forumId = forum?.id; // On extrait l'id du forum
 
-  const [active, setActive] = useState('infos');
+  const [active, setActive] = useState('offres');
   const [sectionActive, setSectionActive] = useState('preparation');
   const API = process.env.REACT_APP_API_BASE_URL;
   const { accessToken } = useAuth();
@@ -37,7 +37,7 @@ const RecruiterDashboard = () => {
         />
         <div className="recruiter-dashboard-content">
           <div className="dashboard-section">
-            {active === 'infos' && <ForumInfos forum={forum} />}
+
             {active === 'membres' && <Members accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'entreprise' && <CompanyProfile forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
             {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}

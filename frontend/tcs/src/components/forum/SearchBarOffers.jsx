@@ -104,16 +104,40 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           </button>
           {showContractDropdown && (
             <div className="dropdown-menu-search">
+              <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Types de contrats</strong>
+              </div>
               {contractOptions.map((contract) => (
                 <label key={contract.value} className="dropdown-item-search">
-                  <input
-                    type="checkbox"
-                    checked={selectedContracts.includes(contract.value)}
-                    onChange={() => toggleValue(contract.value, selectedContracts, setSelectedContracts)}
-                  />
-                  {contract.label} <span className="count-search">{contract.count || 0}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedContracts.includes(contract.value)}
+                      onChange={() => toggleValue(contract.value, selectedContracts, setSelectedContracts)}
+                      style={{ marginRight: '12px' }}
+                    />
+                    <span style={{ flex: 1 }}>{contract.label}</span>
+                  </div>
+                  <span className="count-search">{contract.count || 0}</span>
                 </label>
               ))}
+              {selectedContracts.length > 0 && (
+                <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                  <button
+                    onClick={() => setSelectedContracts([])}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Effacer la sélection
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -131,16 +155,40 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           </button>
           {showSectorDropdown && (
             <div className="dropdown-menu-search">
+              <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Secteurs d'activité</strong>
+              </div>
               {sectorOptions.map((sector) => (
                 <label key={sector.value} className="dropdown-item-search">
-                  <input
-                    type="checkbox"
-                    checked={selectedSectors.includes(sector.value)}
-                    onChange={() => toggleValue(sector.value, selectedSectors, setSelectedSectors)}
-                  />
-                  {sector.label} <span className="count-search">{sector.count || 0}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedSectors.includes(sector.value)}
+                      onChange={() => toggleValue(sector.value, selectedSectors, setSelectedSectors)}
+                      style={{ marginRight: '12px' }}
+                    />
+                    <span style={{ flex: 1 }}>{sector.label}</span>
+                  </div>
+                  <span className="count-search">{sector.count || 0}</span>
                 </label>
               ))}
+              {selectedSectors.length > 0 && (
+                <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                  <button
+                    onClick={() => setSelectedSectors([])}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Effacer la sélection
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

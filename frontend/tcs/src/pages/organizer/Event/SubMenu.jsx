@@ -59,7 +59,7 @@ export default function SubMenu({ forum, forumId, accessToken, API }) {
             if (action.key === "offers") {
               navigate(action.route, { state: { forum, forumId, accessToken, apiBaseUrl: API } });
             } else if (action.key === "forum-info") {
-              navigate(action.route, { state: { forum, accessToken, apiBaseUrl: API } });
+              navigate(action.route, { state: { forum, forumId, accessToken, apiBaseUrl: API } });
             } else if (action.key === "entreprises") {
               navigate(action.route, { state: { companies: forum?.companies, forum, accessToken, apiBaseUrl: API } });
             } else if (action.key === "candidats") {

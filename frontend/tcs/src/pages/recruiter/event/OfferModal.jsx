@@ -8,6 +8,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     sector: '',
     location: '',
     description: '',
+    profile_recherche: '',
   });
   const [sectors, setSectors] = useState([]);
   const [contracts, setContracts] = useState([]);
@@ -41,6 +42,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         sector: initialData.sector || '',
         location: initialData.location || '',
         description: initialData.description || '',
+        profile_recherche: initialData.profile_recherche || '',
       });
     } else {
       setFormData({
@@ -49,6 +51,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         sector: '',
         location: '',
         description: '',
+        profile_recherche: '',
       });
     }
   }, [initialData]);
@@ -150,6 +153,17 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               value={formData.description}
               onChange={handleChange}
               rows={4}
+            />
+          </label>
+
+          <label>
+            Profil recherché
+            <textarea
+              name="profile_recherche"
+              value={formData.profile_recherche}
+              onChange={handleChange}
+              rows={3}
+              placeholder="Décrivez le profil recherché (expérience, compétences, formation...)"
             />
           </label>
 

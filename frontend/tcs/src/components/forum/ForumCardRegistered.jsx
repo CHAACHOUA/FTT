@@ -16,7 +16,11 @@ const ForumCardRegistered = ({ forum, role }) => {
   const formatDate = (date) => {
     if (!date) return 'Date inconnue';
     const d = new Date(date);
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    return d.toLocaleDateString('fr-FR', { 
+      day: 'numeric', 
+      month: 'long',
+      year: 'numeric'
+    });
   };
 
   const formatDateTime = () => {
@@ -52,8 +56,8 @@ const dashboardPath =
       <div className="forum-card-content">
         <div className="forum-card-left">
           <div className="forum-card-date">
-            <Calendar size={16} />
-            <span>{formatDateTime()}</span>
+            <Calendar size={16} className="forum-meta-icon" />
+            <span className="forum-meta-text">{formatDateTime()}</span>
 
             {ongoing && (
               <span className="forum-badge">

@@ -33,14 +33,18 @@ const SpeakerManager = () => {
 
   const fetchSpeakers = async () => {
     try {
+      console.log('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - Début');
       setIsLoading(true);
-      const response = await axios.get(`${API}/api/forums/speakers/`, {
+      const url = `${API}/api/forums/speakers/`;
+      console.log('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - URL:', url);
+      const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
+      console.log('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - Réponse reçue:', response.data);
       setSpeakers(response.data);
     } catch (err) {
+      console.error('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - Erreur:', err);
       setError('Erreur lors du chargement des speakers');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }

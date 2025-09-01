@@ -25,11 +25,6 @@ const SidebarMenu = () => {
       <div className="sidebar-section">
         <h2 className="sidebar-title">{isSettings ? 'PARAMÈTRES' : 'ESPACE RECRUTEUR'}</h2>
         <ul className="sidebar-list">
-          <div className="logo-container">
-            <Link to="/">
-              <img src={logo} alt="Logo Digitalio" className="navbar-logo" />
-            </Link>
-          </div>
           {isSettings ? (
             <>
               <li>

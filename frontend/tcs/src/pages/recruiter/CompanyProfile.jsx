@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/candidate/Presentation.css';
-import { FaBuilding, FaImage, FaGlobe } from 'react-icons/fa';
+import { FaBuilding, FaImage, FaGlobe, FaFileAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Sectors from './Sectors';
 
@@ -11,6 +11,7 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
     logo: null,
     sectors: [''],  // Toujours au moins un secteur vide
     website: '',
+    description: '',
   });
   const [loading, setLoading] = useState(true);
   const API = process.env.REACT_APP_API_BASE_URL;
@@ -57,6 +58,7 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
           logo: data.logo || null,
           sectors: sectors.length > 0 ? sectors : [''],
           website: data.website || '',
+          description: data.description || '',
         });
       } catch (err) {
         toast.error(err.response?.data?.message || err.message);
@@ -95,6 +97,7 @@ const handleSectorsChange = (newSectors) => {
     const formPayload = new FormData();
     formPayload.append('name', formData.name);
     formPayload.append('website', formData.website);
+    formPayload.append('description', formData.description);
 
     // Déduplique et filtre les secteurs vides
     const uniqueSectors = [...new Set(formData.sectors.map(s => s.trim()))].filter(s => s !== '');
@@ -189,6 +192,29 @@ const handleSectorsChange = (newSectors) => {
             value={formData.website}
             onChange={handleFieldChange}
             disabled={readOnly}
+          />
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="input-modern">
+        <span className="input-icon"><FaFileAlt /></span>
+        <div className="input-wrapper-modern">
+          <label className={`floating-label ${formData.description ? 'filled' : ''}`}>
+            Description de l'entreprise
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleFieldChange}
+            disabled={readOnly}
+            rows={4}
+            style={{
+              resize: 'vertical',
+              minHeight: '100px',
+              fontFamily: 'inherit',
+              fontSize: 'inherit'
+            }}
           />
         </div>
       </div>

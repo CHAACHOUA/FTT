@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus, FaMapMarkerAlt, FaBriefcase, FaIndustry } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import OfferModal from './OfferModal';
+import OfferDetailPopup from '../../../components/recruiter/OfferDetailPopup';
 import logoFTT from '../../../assets/Logo-FTT.png';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
@@ -13,6 +14,8 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
 
   const forum_id = forum.id;
 
@@ -67,6 +70,17 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     }
   };
 
+  // Ouvre la popup de détails d'offre
+  const handleOfferClick = (offer) => {
+    setSelectedOffer(offer);
+    setIsOfferDetailPopupOpen(true);
+  };
+
+  const handleCloseOfferPopup = () => {
+    setIsOfferDetailPopupOpen(false);
+    setSelectedOffer(null);
+  };
+
   // Envoie les données du formulaire au backend (create ou update)
   const handleSubmit = async (formData) => {
     try {
@@ -110,7 +124,12 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
       ) : (
         <div className="offers-list-container">
           {offers.map((offer) => (
-            <div key={offer.id} className="offer-card">
+            <div 
+              key={offer.id} 
+              className="offer-card"
+              onClick={() => handleOfferClick(offer)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="logo-section">
                 {offer.company_logo ? (
                   <img
@@ -170,10 +189,22 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
               </div>
 
               <div className="offer-actions">
-                <button className="btn-action" onClick={() => onUpdateOffer(offer)}>
+                <button 
+                  className="btn-action" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUpdateOffer(offer);
+                  }}
+                >
                   <FaEdit />
                 </button>
-                <button className="btn-action" onClick={() => onDeleteOffer(offer.id)}>
+                <button 
+                  className="btn-action" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteOffer(offer.id);
+                  }}
+                >
                   <FaTrash />
                 </button>
               </div>
@@ -189,6 +220,14 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
         initialData={editingOffer}
         forumId={forum_id}
       />
+
+      {/* Popup pour les détails de l'offre */}
+      {isOfferDetailPopupOpen && selectedOffer && (
+        <OfferDetailPopup
+          offer={selectedOffer}
+          onClose={handleCloseOfferPopup}
+        />
+      )}
     </div>
   );
 };

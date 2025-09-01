@@ -16,6 +16,37 @@
   text-align: left;
   margin-bottom: 2rem;
   color: #111827;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  z-index: 10;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.header-content {
+  padding-top: 4rem;
 }
 
 .offers-list-header h1 {
@@ -135,6 +166,101 @@
   gap: 1.5rem;
 }
 
+/* Variante liste horizontale (une colonne avec cartes longues) */
+.offers-list-horizontal {
+  grid-template-columns: 1fr;
+}
+
+/* Groupes d'offres par entreprise */
+.offers-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.company-group {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.company-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.company-group-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 4px;
+}
+
+.company-group-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-group-name {
+  font-weight: 700;
+  color: #111827;
+}
+
+.company-group-website {
+  color: #3b82f6;
+  font-size: 0.9rem;
+}
+
+.company-offers-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-offer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid #eef2f7;
+  cursor: pointer;
+}
+
+.company-offer-item:hover {
+  background: #f8fafc;
+}
+
+.company-offer-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.company-offer-meta {
+  display: flex;
+  gap: 14px;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.company-offer-meta svg {
+  color: #7b2ff2;
+  margin-right: 6px;
+}
+
+.company-offer-date {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
 /* Cartes d'offres avec le style du dashboard */
 .offer-card {
   background: #ffffff;
@@ -164,6 +290,119 @@
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 8px 32px 0 rgba(80, 0, 120, 0.1);
   border-color: #7b2ff2;
+}
+
+/* Mise en page horizontale */
+.offer-card.horizontal {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 0;
+}
+
+.offer-left-banner {
+  position: relative;
+  height: 150px;
+  background: #eef2f7;
+  border-right: 1px solid #e5e7eb;
+}
+
+.offer-left-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+
+.company-logo-badge {
+  position: absolute;
+  right: -22px; /* chevauche la frontière à droite comme le design */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 120px;
+  height: 92px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 6px solid #f1f5f9; /* liseré clair comme carte */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.company-logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px 12px; /* respirations autour du logo */
+  border-radius: 8px;
+}
+
+.offer-right-content {
+  padding: 14px 16px;
+}
+
+.offer-top-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.recruiter-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: #7b2ff2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.recruiter-block {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.recruiter-name-line {
+  color: #374151;
+  font-weight: 600;
+}
+
+.offer-title.large {
+  margin: 8px 0 6px 0;
+  font-size: 1.25rem;
+}
+
+.offer-location-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+}
+
+.offer-location-line svg {
+  color: #7b2ff2;
+}
+
+/* Bannière entreprise en haut de la carte */
+.company-banner {
+  width: calc(100% + 3rem);
+  margin-left: -1.5rem;
+  margin-top: -1.5rem;
+  height: 90px;
+  overflow: hidden;
+  background: #eef2f7;
+}
+
+.company-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .offer-header {

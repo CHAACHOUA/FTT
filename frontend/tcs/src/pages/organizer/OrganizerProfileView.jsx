@@ -110,7 +110,7 @@ const OrganizerProfileView = () => {
   if (loading) return <Loading />;
 
   return (
-    <div style={{ paddingTop: '70px' }}>
+    <div style={{ paddingTop: '80px' }}>
       <Navbar />
       <div className="profile-container">
         <div className="profile-content">

@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import '../candidate/ProfileView.css';
 import DeleteAccount from '../candidate/DeleteAccount';
+import Navbar from '../common/NavBar';
 
 const RecruiterProfileView = () => {
   const [formData, setFormData] = useState({});
@@ -105,9 +106,11 @@ const RecruiterProfileView = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="profile-container">
-      <SidebarMenu />
-      <div className="profile-content">
+    <div style={{ paddingTop: '80px' }}>
+      <Navbar />
+      <div className="profile-container">
+        <SidebarMenu />
+        <div className="profile-content">
         {!isSettingsPage ? (
           <>
             <section id="profile">
@@ -134,6 +137,7 @@ const RecruiterProfileView = () => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };
