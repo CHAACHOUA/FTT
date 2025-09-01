@@ -249,6 +249,7 @@ def forum_offers(request, forum_id):
             'location': offer.location,
             'sector': offer.sector,
             'contract_type': offer.contract_type,
+            'profile_recherche': offer.profile_recherche,
             'created_at': offer.created_at,
             'company': {
                 'id': offer.company.id,

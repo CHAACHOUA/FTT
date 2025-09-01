@@ -8,6 +8,7 @@ class Company(models.Model):
     name = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True)
+    description = models.TextField(blank=True, help_text="Description de l'entreprise")
     sectors = models.JSONField(default=list, blank=True)
     
     def __str__(self):

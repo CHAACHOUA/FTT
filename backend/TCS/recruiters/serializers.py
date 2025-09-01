@@ -35,6 +35,7 @@ class OfferSerializer(serializers.ModelSerializer):
             'location',
             'sector',
             'contract_type',
+            'profile_recherche',
             'created_at',
             'company_name',
             'recruiter_name',
@@ -60,6 +61,7 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             'location',
             'sector',
             'contract_type',
+            'profile_recherche',
             'forum_id',  # ici forum_id au lieu de forum
         ]
 

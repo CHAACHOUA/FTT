@@ -44,6 +44,7 @@ class Offer(models.Model):
     location = models.CharField(max_length=255, blank=True)
     sector = models.CharField(max_length=100, choices=SECTOR_CHOICES)
     contract_type = models.CharField(max_length=50, choices=CONTRACT_CHOICES)
+    profile_recherche = models.TextField(blank=True, help_text="Profil recherché pour ce poste")
 
     created_at = models.DateTimeField(auto_now_add=True)
 

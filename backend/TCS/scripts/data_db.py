@@ -1,11 +1,5 @@
-import os
-import django
 import random
 from datetime import datetime, timedelta, time
-from django.contrib.auth.hashers import make_password
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TCS.settings')
-django.setup()
 
 from users.models import User
 from forums.models import Forum, ForumRegistration
@@ -14,7 +8,7 @@ from recruiters.models import Recruiter, RecruiterForumParticipation
 from organizers.models import Organizer
 from candidates.models import Candidate
 
-def create_forums_data():
+def run():
     print("🚀 Début de la création des données...")
     
     # --- 🔄 Reset de la base de données ---
@@ -62,7 +56,7 @@ def create_forums_data():
     print("🏢 Création des 3 forums...")
     forums = []
     forum_names = ["Forum Digital Innovation", "Forum Tech Careers", "Forum Startup Connect"]
-    forum_types = ['presentiel', 'virtuel', 'hybride']
+    forum_types = ['physique', 'virtuel', 'hybride']
     
     for i in range(3):
         # Date de début aléatoire entre 30 et 90 jours à partir d'aujourd'hui
@@ -110,10 +104,79 @@ def create_forums_data():
         "StartupCorp", "GrowthTech", "ScaleLab", "VentureCorp", "InnovationTech"
     ]
     
+    # Descriptions d'entreprises
+    company_descriptions = [
+        "Leader dans le développement de solutions technologiques innovantes pour les entreprises modernes.",
+        "Spécialiste en transformation digitale et optimisation des processus métier.",
+        "Expert en intelligence artificielle et machine learning pour l'industrie 4.0.",
+        "Pionnier dans les solutions cloud et l'infrastructure as-a-service.",
+        "Innovateur en cybersécurité et protection des données sensibles.",
+        "Expert en développement mobile et applications cross-platform.",
+        "Spécialiste en UX/UI design et expérience utilisateur optimale.",
+        "Leader en développement web et solutions e-commerce.",
+        "Expert en data science et analyse prédictive.",
+        "Innovateur en IoT et objets connectés intelligents.",
+        "Spécialiste en DevOps et automatisation des déploiements.",
+        "Expert en blockchain et technologies décentralisées.",
+        "Leader en réalité virtuelle et augmentée.",
+        "Spécialiste en marketing digital et growth hacking.",
+        "Expert en gestion de projet agile et méthodologies modernes.",
+        "Innovateur en fintech et solutions bancaires digitales.",
+        "Spécialiste en edtech et plateformes d'apprentissage.",
+        "Expert en healthtech et solutions médicales innovantes.",
+        "Leader en greentech et technologies durables.",
+        "Spécialiste en proptech et immobilier digital.",
+        "Expert en retailtech et commerce connecté.",
+        "Innovateur en mobility et transport intelligent.",
+        "Spécialiste en insuretech et assurance digitale.",
+        "Expert en legaltech et solutions juridiques automatisées.",
+        "Leader en regtech et conformité réglementaire.",
+        "Spécialiste en adtech et publicité programmatique.",
+        "Expert en martech et automation marketing.",
+        "Innovateur en hrtech et solutions RH digitales.",
+        "Spécialiste en supply chain et logistique intelligente.",
+        "Expert en manufacturing et industrie 4.0.",
+        "Leader en energytech et solutions énergétiques.",
+        "Spécialiste en agritech et agriculture connectée.",
+        "Expert en cleantech et technologies propres.",
+        "Innovateur en biotech et solutions biologiques.",
+        "Spécialiste en nanotech et nanotechnologies.",
+        "Expert en quantum computing et informatique quantique.",
+        "Leader en space tech et technologies spatiales.",
+        "Spécialiste en defense tech et cybersécurité militaire.",
+        "Expert en gaming et développement de jeux vidéo.",
+        "Innovateur en streaming et plateformes de contenu.",
+        "Spécialiste en social media et réseaux sociaux.",
+        "Expert en content creation et production multimédia.",
+        "Leader en influencer marketing et partenariats digitaux.",
+        "Spécialiste en SEO et optimisation pour les moteurs de recherche.",
+        "Expert en PPC et publicité payante.",
+        "Innovateur en email marketing et automation.",
+        "Spécialiste en affiliate marketing et programmes partenaires.",
+        "Expert en conversion optimization et CRO.",
+        "Leader en customer experience et satisfaction client.",
+        "Spécialiste en customer success et rétention client.",
+        "Expert en sales automation et CRM.",
+        "Innovateur en lead generation et prospection B2B.",
+        "Spécialiste en account-based marketing et ABM.",
+        "Expert en demand generation et génération de demande.",
+        "Leader en revenue operations et RevOps.",
+        "Spécialiste en sales enablement et formation commerciale.",
+        "Expert en sales intelligence et données commerciales.",
+        "Innovateur en sales engagement et engagement commercial.",
+        "Spécialiste en sales performance et optimisation commerciale.",
+        "Expert en sales analytics et analytics commerciales.",
+        "Leader en sales coaching et coaching commercial.",
+        "Spécialiste en sales training et formation vente.",
+        "Expert en sales consulting et conseil commercial.",
+        "Innovateur en sales technology et technologie commerciale."
+    ]
+    
     for i, name in enumerate(company_names):
         company = Company.objects.create(
             name=name,
             website=f"https://{name.lower().replace(' ', '').replace('.', '').replace(',', '')}.com",
+            description=company_descriptions[i % len(company_descriptions)],
             sectors=random.sample(['IT', 'Marketing', 'Commerce', 'RH', 'Finance', 'Santé', 'Éducation', 'BTP', 'Logistique', 'Technologie'], k=random.randint(1, 3))
         )
         companies.append(company)
@@ -188,7 +251,4 @@ def create_forums_data():
     print(f"   - 60 Entreprises créées (20 par forum)")
     print(f"   - {recruiter_count} Recruteurs créés (3-5 par entreprise)")
     print(f"   - Compte organisateur principal : organizer@gmail.com / Digitalio123456")
-    print(f"   - Tous les mots de passe sont hashés automatiquement par Django")
-
-if __name__ == "__main__":
-    create_forums_data() 
+    print(f"   - Tous les mots de passe sont hashés automatiquement par Django") 
