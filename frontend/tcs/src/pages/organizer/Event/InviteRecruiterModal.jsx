@@ -20,7 +20,7 @@ const MailInputIcon = () => (
   <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="none"/><path d="M4 8.5V16a2 2 0 002 2h12a2 2 0 002-2V8.5m-16 0A2 2 0 016 6.5h12a2 2 0 012 2v0m-16 0l8 5 8-5" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
 );
 
-const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, accessToken, apiBaseUrl, onRecruiterAdded }) => {
+const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, accessToken, apiBaseUrl }) => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,21 +76,10 @@ const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, accessT
       if (response.ok) {
         setStatus({ type: 'success', msg: data.message || "Invitation envoyée avec succès !" });
         setEmail('');
-        
         // Appeler le callback si fourni
         if (onInvite) {
           onInvite(email, company, forum);
         }
-        
-        // Rafraîchir les données après invitation
-        if (onRecruiterAdded) {
-          onRecruiterAdded();
-        }
-        
-        // Fermer le modal après 2 secondes
-        setTimeout(() => {
-          onClose();
-        }, 2000);
       } else {
         setStatus({ 
           type: 'error', 

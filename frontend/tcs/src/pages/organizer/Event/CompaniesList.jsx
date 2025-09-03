@@ -39,7 +39,6 @@ const CompaniesList = (props) => {
   const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
   const [filter, setFilter] = useState('all'); // all, approved, pending
 
   if (!companies || !accessToken || !apiBaseUrl) {
@@ -115,48 +114,19 @@ const CompaniesList = (props) => {
       setCompanyName('');
       setError(null);
       
-      // Rafraîchir automatiquement les données
-      await refreshCompaniesData();
+      // Ajouter la nouvelle entreprise à l'état local
+      if (result.company) {
+        setCompanies(prevCompanies => [...prevCompanies, result.company]);
+      }
       
-      // Afficher un message de succès temporaire
-      setSuccessMessage("Entreprise ajoutée avec succès !");
-      setTimeout(() => setSuccessMessage(null), 3000);
-      
+      // Optionnel: rafraîchir les données
+      if (props.onCompanyAdded) {
+        props.onCompanyAdded();
+      }
     } catch (err) {
       setError("Erreur lors de l'ajout de l'entreprise: " + err.message);
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Fonction pour rafraîchir les données des entreprises
-  const refreshCompaniesData = async () => {
-    try {
-      console.log('🔄 Rafraîchissement des données des entreprises...');
-      
-      // Appel API pour récupérer les données du forum mises à jour (incluant les entreprises)
-      const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-
-      if (response.ok) {
-        const forumData = await response.json();
-        console.log('✅ Données du forum mises à jour:', forumData);
-        
-        // Extraire les entreprises du forum
-        if (forumData.companies) {
-          setCompanies(forumData.companies);
-          console.log('✅ Entreprises mises à jour:', forumData.companies);
-        } else {
-          console.warn('⚠️ Aucune entreprise trouvée dans les données du forum');
-        }
-      } else {
-        console.error('❌ Erreur lors du rafraîchissement des données');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors du rafraîchissement:', error);
     }
   };
 
@@ -199,11 +169,6 @@ const CompaniesList = (props) => {
       const data = await response.json();
       
       if (response.ok) {
-        // Rafraîchir les données après renvoi d'invitation
-        await refreshCompaniesData();
-      }
-      
-      if (response.ok) {
         console.log('Invitation relancée avec succès');
         // Optionnel: afficher un message de succès
       } else if (response.status === 409) {
@@ -239,12 +204,19 @@ const CompaniesList = (props) => {
       if (response.ok) {
         console.log(`Entreprise ${newApprovedStatus ? 'approuvée' : 'désapprouvée'} avec succès`);
         
-        // Rafraîchir automatiquement les données
-        await refreshCompaniesData();
+        // Mettre à jour l'état local pour déclencher un re-render
+        setCompanies(prevCompanies => 
+          prevCompanies.map(c => 
+            c.id === company.id 
+              ? { ...c, approved: newApprovedStatus }
+              : c
+          )
+        );
         
-        // Afficher un message de succès temporaire
-        setSuccessMessage(`Entreprise ${newApprovedStatus ? 'approuvée' : 'désapprouvée'} avec succès !`);
-        setTimeout(() => setSuccessMessage(null), 3000);
+        // Optionnel: rafraîchir les données
+        if (props.onCompanyUpdated) {
+          props.onCompanyUpdated();
+        }
       } else {
         console.error('Erreur lors du changement de statut:', data);
         setError(data.message || 'Erreur lors du changement de statut de l\'entreprise');
@@ -277,12 +249,15 @@ const CompaniesList = (props) => {
       if (response.ok) {
         console.log('Entreprise refusée avec succès');
         
-        // Rafraîchir automatiquement les données
-        await refreshCompaniesData();
+        // Supprimer l'entreprise de l'état local
+        setCompanies(prevCompanies => 
+          prevCompanies.filter(c => c.id !== company.id)
+        );
         
-        // Afficher un message de succès temporaire
-        setSuccessMessage("Entreprise supprimée avec succès !");
-        setTimeout(() => setSuccessMessage(null), 3000);
+        // Optionnel: rafraîchir les données
+        if (props.onCompanyUpdated) {
+          props.onCompanyUpdated();
+        }
       } else {
         const data = await response.json();
         console.error('Erreur lors du refus:', data);
@@ -387,19 +362,6 @@ const CompaniesList = (props) => {
         {error && (
           <div className="error-message">
             {error}
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="success-message" style={{
-            backgroundColor: '#d4edda',
-            color: '#155724',
-            padding: '10px 15px',
-            borderRadius: '4px',
-            marginBottom: '15px',
-            border: '1px solid #c3e6cb'
-          }}>
-            ✅ {successMessage}
           </div>
         )}
 
@@ -514,7 +476,6 @@ const CompaniesList = (props) => {
           forum={forum}
           accessToken={accessToken}
           apiBaseUrl={apiBaseUrl}
-          onRecruiterAdded={refreshCompaniesData}
         />
 
         {/* Modal pour ajouter une entreprise */}
