@@ -47,10 +47,21 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
             placeholder="Nom du secteur"
             style={{
               flex: 1,
-              padding: 8,
+              padding: 12,
               fontSize: 16,
-              borderRadius: 4,
-              border: '1px solid #ccc'
+              borderRadius: 9,
+              border: '1.2px solid #b5c6d6',
+              background: '#f9fbfd',
+              transition: 'border-color 0.2s',
+              outline: 'none'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#18386c';
+              e.target.style.background = '#fff';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#b5c6d6';
+              e.target.style.background = '#f9fbfd';
             }}
           />
           {!readOnly && (
@@ -78,7 +89,7 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
           onClick={handleAdd}
           style={{
             marginTop: 10,
-            backgroundColor: '#007bff',
+            background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
             color: 'white',
             padding: '6px 12px',
             border: 'none',
@@ -87,6 +98,18 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
             display: 'flex',
             alignItems: 'center',
             fontWeight: 'bold',
+            transition: 'all 0.2s',
+            boxShadow: '0 2px 8px rgba(24, 56, 108, 0.1)',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #06b6d4 0%, #18386c 100%)';
+            e.target.style.transform = 'translateY(-1px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(24, 56, 108, 0.18)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(24, 56, 108, 0.1)';
           }}
         >
           <FaPlus style={{ marginRight: 6 }} /> Ajouter un secteur

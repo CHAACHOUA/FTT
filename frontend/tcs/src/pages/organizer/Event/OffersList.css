@@ -1,13 +1,13 @@
 /* Container principal avec le même style que le dashboard */
-.offers-list-container {
+.organizer-offers-container {
   min-height: 100vh;
   background: #ffffff;
   padding-top: 70px;
   color: #111827;
 }
 
-.offers-list-content {
-  max-width: 1200px;
+.organizer-offers-content {
+  max-width: 1300px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -19,31 +19,7 @@
   position: relative;
 }
 
-.back-button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  z-index: 10;
-}
-
-.back-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-}
+/* Bouton retour stylé via organizer-btn-back */
 
 .header-content {
   padding-top: 4rem;
@@ -62,7 +38,7 @@
 }
 
 /* Filtres avec le style du dashboard */
-.offers-filters {
+.organizer-offers-filters {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 16px;
   padding: 1.5rem;
@@ -72,7 +48,7 @@
   gap: 1rem;
   align-items: center;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.05);
+  box-shadow: 0 2px 12px 0 rgba(24, 56, 108, 0.05);
 }
 
 .filter-group {
@@ -80,8 +56,8 @@
   min-width: 200px;
 }
 
-.search-input,
-.filter-select {
+.organizer-search-input,
+.organizer-filter-select {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
@@ -92,26 +68,26 @@
   transition: all 0.3s ease;
 }
 
-.search-input::placeholder {
+.organizer-search-input::placeholder {
   color: #9ca3af;
 }
 
-.search-input:focus,
-.filter-select:focus {
+.organizer-search-input:focus,
+.organizer-filter-select:focus {
   outline: none;
-  border-color: #7b2ff2;
-  box-shadow: 0 0 0 3px rgba(123, 47, 242, 0.1);
+  border-color: #18386c;
+  box-shadow: 0 0 0 3px rgba(24, 56, 108, 0.1);
   background: #ffffff;
 }
 
-.filter-select option {
+.organizer-filter-select option {
   background: #ffffff;
   color: #374151;
 }
 
-.clear-filters-btn {
+.organizer-clear-filters-btn {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border: none;
   border-radius: 12px;
   color: white;
@@ -119,12 +95,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(24, 56, 108, 0.1);
 }
 
-.clear-filters-btn:hover {
+.organizer-clear-filters-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);
+  box-shadow: 0 6px 24px 0 rgba(24, 56, 108, 0.18);
 }
 
 /* Statistiques avec le style KPI du dashboard */
@@ -156,19 +132,14 @@
 
 .stat-icon {
   font-size: 1.2rem;
-  color: #7b2ff2;
+  color: #18386c;
 }
 
 /* Grille des offres */
-.offers-grid {
+.organizer-offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Variante liste horizontale (une colonne avec cartes longues) */
-.offers-list-horizontal {
   grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
 /* Groupes d'offres par entreprise */
@@ -252,7 +223,7 @@
 }
 
 .company-offer-meta svg {
-  color: #7b2ff2;
+  color: #18386c;
   margin-right: 6px;
 }
 
@@ -262,11 +233,11 @@
 }
 
 /* Cartes d'offres avec le style du dashboard */
-.offer-card {
+.organizer-offer-card {
   background: #ffffff;
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.05);
+  box-shadow: 0 2px 12px 0 rgba(24, 56, 108, 0.05);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
   position: relative;
@@ -276,24 +247,24 @@
   height: 100%;
 }
 
-.offer-card::before {
+.organizer-offer-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
 }
 
-.offer-card:hover {
+.organizer-offer-card:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 32px 0 rgba(80, 0, 120, 0.1);
-  border-color: #7b2ff2;
+  box-shadow: 0 8px 32px 0 rgba(24, 56, 108, 0.1);
+  border-color: #18386c;
 }
 
 /* Mise en page horizontale */
-.offer-card.horizontal {
+.organizer-offer-card.horizontal {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 16px;
@@ -355,7 +326,7 @@
   width: 40px;
   height: 40px;
   border-radius: 9999px;
-  background: #7b2ff2;
+  background: #18386c;
   color: #fff;
   display: flex;
   align-items: center;
@@ -386,7 +357,7 @@
 }
 
 .offer-location-line svg {
-  color: #7b2ff2;
+  color: #18386c;
 }
 
 /* Bannière entreprise en haut de la carte */
@@ -433,7 +404,7 @@
 }
 
 .offer-card:hover .company-logo {
-  border-color: #7b2ff2;
+  border-color: #18386c;
   transform: scale(1.05);
 }
 
@@ -509,7 +480,7 @@
 }
 
 .detail-icon {
-  color: #7b2ff2;
+  color: #18386c;
   font-size: 0.9rem;
 }
 
@@ -582,7 +553,7 @@
 .retry-button {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border: none;
   border-radius: 12px;
   color: white;
@@ -621,11 +592,11 @@
     gap: 1rem;
   }
   
-  .offers-grid {
+  .organizer-offers-grid {
     grid-template-columns: 1fr;
   }
   
-  .offer-card {
+  .organizer-offer-card {
     padding: 1rem;
   }
 }

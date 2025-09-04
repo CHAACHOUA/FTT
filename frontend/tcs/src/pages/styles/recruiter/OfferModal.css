@@ -65,7 +65,7 @@
 .modal-content input:focus,
 .modal-content textarea:focus {
   border: 1.5px solid #4f8cff;
-  box-shadow: 0 0 0 2px #a855f7aa;
+  box-shadow: 0 0 0 2px rgba(24, 56, 108, 0.3);
 }
 
 .modal-row {
@@ -94,7 +94,7 @@
 }
 .modal-content select:focus {
   border: 1.5px solid #4f8cff;
-  box-shadow: 0 0 0 2px #a855f7aa;
+  box-shadow: 0 0 0 2px rgba(24, 56, 108, 0.3);
 }
 
 .modal-actions {
@@ -105,7 +105,7 @@
 }
 
 .btn-save {
-  background: linear-gradient(90deg, #7b2ff2 0%, #1e4fd7 100%);
+  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -114,11 +114,11 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(80, 0, 120, 0.10);
+  box-shadow: 0 2px 8px 0 rgba(24, 56, 108, 0.10);
 }
 .btn-save:hover {
-  background: linear-gradient(90deg, #a855f7 0%, #4f8cff 100%);
-  box-shadow: 0 4px 16px 0 rgba(80, 0, 120, 0.18);
+  background: linear-gradient(90deg, #06b6d4 0%, #18386c 100%);
+  box-shadow: 0 4px 16px 0 rgba(24, 56, 108, 0.18);
 }
 
 .btn-cancel {
@@ -134,7 +134,7 @@
 }
 .btn-cancel:hover {
   background: #d1d5fa;
-  color: #a855f7;
+  color: #18386c;
 }
 
 @media (max-width: 600px) {

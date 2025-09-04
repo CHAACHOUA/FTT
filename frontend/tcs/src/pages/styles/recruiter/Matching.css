@@ -1,67 +1,73 @@
-.matching-container {
-  padding: 1rem;
+/* ===== CORRECTIONS POUR BANNIÈRE MATCHING ===== */
+
+/* Fixer la hauteur de la bannière */
+.offer-card.horizontal .offer-left-banner {
+  height: 200px !important;
+  min-height: 200px;
+  max-height: 200px;
 }
 
-.offer-card {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  background-color: #fefefe;
+/* S'assurer que l'image de la bannière prend toute la hauteur */
+.offer-card.horizontal .offer-left-banner img {
+  height: 100% !important;
+  object-fit: cover;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
 }
 
-.btn-matching {
-  background-color: #1d72b8;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-close {
-  background-color: #999;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.modal {
-  background-color: white;
-  padding: 2rem;
-  max-width: 600px;
-  margin: auto;
-  border-radius: 8px;
-  outline: none;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.matched-candidate-card {
+/* Positionner le badge correctement */
+.offer-card.horizontal .company-logo-badge {
+  position: absolute;
+  right: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100px;
+  height: 76px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 5px solid #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid #ddd;
+  justify-content: center;
+  z-index: 2;
 }
 
-.default-avatar {
-  font-size: 40px;
-  color: gray;
+/* S'assurer que le contenu de la carte prend la même hauteur */
+.offer-card.horizontal .offer-right-content {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+/* Bouton matching avec style spécifique */
+.btn-matching-offer {
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 20px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.3) !important;
+  font-size: 0.95rem !important;
+  white-space: nowrap !important;
+}
+
+.btn-matching-offer:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4) !important;
+  background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%) !important;
+}
+
+.btn-matching-offer:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
 }

@@ -233,22 +233,24 @@ const ProgrammeManager = ({ forumId, forumName }) => {
     return date.toLocaleDateString('fr-FR');
   };
 
+
+
   if (isLoading) {
     return <div className="programme-manager-loading">Chargement...</div>;
   }
 
-  return (
-    <div className="programme-manager">
-      <div className="programme-manager-header">
-        <h2>Gestion des programmes - {forumName}</h2>
-        <button 
-          className="add-programme-btn"
-          onClick={() => setShowAddForm(true)}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          Ajouter un programme
-        </button>
-      </div>
+     return (
+     <div className="programme-manager">
+
+        <div className="programme-manager-header">
+          <button 
+            className="add-programme-btn"
+            onClick={() => setShowAddForm(true)}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            Ajouter un programme
+          </button>
+        </div>
 
       {error && (
         <div className="error-message">

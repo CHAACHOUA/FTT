@@ -6,29 +6,75 @@
 }
 
 .candidates-header {
-  text-align: left;
-  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin: 0 auto 32px auto;
-  padding: 0 32px;
+  padding: 2rem;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  width: 100%;
 }
 
-.candidates-header h1 {
-  font-size: 2.7rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #111827;
+.header-left h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
-.candidates-header p {
-  font-size: 1.2rem;
-  color: #6b7280;
+.header-left p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.export-candidates-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.2);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.export-candidates-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
+  background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%);
+}
+
+.export-candidates-btn:active {
+  transform: translateY(0);
+}
+
+.export-candidates-btn svg {
+  font-size: 1.1rem;
 }
 
 .kpi-section {
-  max-width: 1200px;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 1rem auto;
   padding: 0 32px;
+  width: 100%;
 }
 
 .kpi-row {
@@ -57,7 +103,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
 }
 
 .kpi-label-row {
@@ -93,33 +139,8 @@
   color: white;
 }
 
-.kpi-card:nth-child(1) .kpi-icon {
-  background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
-}
 
-.kpi-card:nth-child(2) .kpi-icon {
-  background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
-}
 
-.kpi-card:nth-child(3) .kpi-icon {
-  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-}
-
-.kpi-card:nth-child(4) .kpi-icon {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
-
-.kpi-blue {
-  background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
-}
-
-.kpi-pink {
-  background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
-}
-
-.kpi-green {
-  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-}
 
 .kpi-list {
   list-style: none;
@@ -134,23 +155,24 @@
 }
 
 .candidates-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0;
+  padding: 1.5rem;
+  width: 100%;
 }
 
 .candidates-flex-row {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: flex-start;
+  width: 100%;
 }
 
 .candidates-filters {
-  flex: 0 0 300px;
+  flex: 0 0 250px;
   background: #f9fafb;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1rem;
   border: 1px solid #e5e7eb;
   height: fit-content;
   position: sticky;
@@ -162,6 +184,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .candidates-main h2 {
@@ -173,34 +196,34 @@
 
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
   .cards-container {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .candidate-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.05);
   transition: all 0.3s ease;
   cursor: pointer;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  position: relative;
+  max-width: 400px;
 }
 
 .candidate-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(24, 56, 108, 0.1);
+  border-color: #18386c;
 }
 
 .candidate-photo {
@@ -209,7 +232,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 3px solid #e5e7eb;
+  border: 3px solid #e2e8f0;
   background: #f3f4f6;
   display: flex;
   align-items: center;
@@ -229,8 +252,7 @@
 }
 
 .candidate-info {
-  flex: 1;
-  min-width: 0;
+  margin-bottom: 1rem;
 }
 
 .candidate-info h3 {
@@ -243,7 +265,7 @@
 .candidate-info p {
   color: #6b7280;
   font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
+  margin: 0;
 }
 
 .sectors-container {
@@ -329,7 +351,7 @@
   }
   
   .cards-container {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .candidates-main, .candidates-filters {
@@ -366,6 +388,10 @@
   
   .candidates-filters {
     padding: 1rem;
+  }
+  
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -503,7 +529,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -691,7 +717,7 @@
   right: 0.75rem;
   width: 35px;
   height: 35px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   border-radius: 50%;
@@ -724,12 +750,12 @@
 }
 
 .meeting-card {
-  border-left: 4px solid #10b981;
+  border-left: 4px solid #18386c;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
 }
 
 .meeting-card::before {
-  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
 }
 
 .meeting-actions {

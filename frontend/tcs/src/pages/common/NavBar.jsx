@@ -74,8 +74,8 @@ const Navbar = () => {
       <div className="navbar-right">
         {!isAuthenticated ? (
           <>
-            <Link to="/signup-candidate" className="navbar-btn btn-outline">S'inscrire</Link>
-            <Link to="/login" className="navbar-btn btn-primary">Se connecter</Link>
+            <Link to="/signup-candidate" className="navbar-signup-btn">S'inscrire</Link>
+            <Link to="/login" className="navbar-login-btn">Se connecter</Link>
           </>
         ) :  (
           <div className="dropdown">

@@ -57,7 +57,7 @@ const Dashboard = () => {
   if (!forum) return <p className="px-6">Forum introuvable.</p>;
 
   return (
-    <div className="dashboard-container" style={{ paddingTop: '120px' }}>
+    <div className="dashboard-container" style={{ paddingTop: '120px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
       <SubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
       <div className="dashboard-content">

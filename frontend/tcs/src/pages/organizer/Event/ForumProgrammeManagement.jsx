@@ -3,11 +3,13 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faUsers, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
 import ProgrammeManager from './ProgrammeManager';
 import SpeakerManager from './SpeakerManager';
 import Navbar from '../../common/NavBar';
 import './ForumProgrammeManagement.css';
+import '../../../pages/styles/organizer/organizer-buttons.css';
 
 const ForumProgrammeManagement = () => {
   const [activeTab, setActiveTab] = useState('programmes');
@@ -56,6 +58,11 @@ const ForumProgrammeManagement = () => {
     }
   };
 
+  const handleBack = () => {
+    // Retour vers la page précédente
+    window.history.back();
+  };
+
   if (isLoading) {
     return (
       <div style={{ paddingTop: '70px' }}>
@@ -92,55 +99,48 @@ const ForumProgrammeManagement = () => {
     <div style={{ paddingTop: '70px' }}>
       <Navbar />
       
-      <div className="forum-programme-container">
+      <div className="forum-programme-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
         {/* Header avec navigation */}
-        <div className="forum-programme-header">
-          <div className="header-left">
-            <button 
-              className="back-btn"
-              onClick={() => window.history.back()}
-            >
-              <FontAwesomeIcon icon={faArrowLeft} />
-              Retour
+        <div className="organizer-header-block">
+          <div className="organizer-header-with-forum">
+            <button onClick={handleBack} className="organizer-btn-back">
+              <FaArrowLeft /> Retour
             </button>
-            <div className="forum-info">
-              <h1>{forum.name}</h1>
-              <p className="forum-dates">
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                {forum.start_date} - {forum.end_date}
-              </p>
+            <div className="forum-details">
+              <h2 className="forum-title">{forum.name}</h2>
+              <div className="forum-date-range">
+                <FaCalendarAlt className="calendar-icon" />
+                <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Onglets */}
-        <div className="tabs-container">
-          <div className="tabs">
-            <button
-              className={`tab ${activeTab === 'programmes' ? 'active' : ''}`}
-              onClick={() => setActiveTab('programmes')}
-            >
-              <FontAwesomeIcon icon={faCalendarAlt} />
-              Programmes
-            </button>
-            <button
-              className={`tab ${activeTab === 'speakers' ? 'active' : ''}`}
-              onClick={() => setActiveTab('speakers')}
-            >
-              <FontAwesomeIcon icon={faUsers} />
-              Speakers
-            </button>
-          </div>
-          {activeTab === 'speakers' && (
-            <button
-              className="external-speakers-btn"
-              onClick={() => navigate('/organizer/speakers')}
-            >
-              <FontAwesomeIcon icon={faExternalLinkAlt} />
-              Gestion complète des speakers
-            </button>
-          )}
-        </div>
+                 {/* Onglets */}
+         <div className="tabs-container">
+           <div className="tabs">
+             <button
+               className={`tab ${activeTab === 'programmes' ? 'active' : ''}`}
+               onClick={() => setActiveTab('programmes')}
+             >
+               <FontAwesomeIcon icon={faCalendarAlt} />
+               Programmes
+             </button>
+             <button
+               className={`tab ${activeTab === 'speakers' ? 'active' : ''}`}
+               onClick={() => setActiveTab('speakers')}
+             >
+               <FontAwesomeIcon icon={faUsers} />
+               Speakers
+             </button>
+           </div>
+         </div>
+
+         {/* Section titre de page */}
+         <div className="page-title-section" style={{ margin: '32px 0' }}>
+           <h1 style={{ marginBottom: '0.5rem' }}>Gestion des programmes</h1>
+           <p style={{ margin: '0' }}>Gérez les programmes de votre forum</p>
+         </div>
 
         {/* Contenu des onglets */}
         <div className="tab-content">

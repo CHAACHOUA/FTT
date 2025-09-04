@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/candidate/Presentation.css';
+import '../styles/recruiter/CompanyProfile.css';
 import { FaBuilding, FaImage, FaGlobe, FaFileAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Sectors from './Sectors';
@@ -130,25 +130,26 @@ const handleSectorsChange = (newSectors) => {
   if (loading) return <div>Chargement...</div>;
 
   return (
-    <div className="presentation-section">
-      <h3 className="presentation-title">Profil de l'entreprise</h3>
+    <div className="offers-list-wrapper">
+      <div className="offers-list-content">
+        <h3 className="company-profile-title">Profil de l'entreprise</h3>
 
       {/* Logo */}
-      <div className="profile-photo-container">
+      <div className="company-logo-container">
         {formData.logo ? (
           <img
             src={getLogoURL(formData.logo)}
             alt="Logo"
-            className="profile-photo"
+            className="company-logo"
             style={{ borderRadius: '50%' }}
           />
         ) : (
-          <div className="profile-initials-circle" style={{ fontSize: 24 }}>
+          <div className="company-initials-circle" style={{ fontSize: 24 }}>
             {formData.name ? formData.name.charAt(0).toUpperCase() : '??'}
           </div>
         )}
         {!readOnly && (
-          <label htmlFor="logo" className="upload-photo-btn">
+          <label htmlFor="logo" className="upload-logo-btn">
             <FaImage /> Importer un logo
             <input
               type="file"
@@ -163,9 +164,9 @@ const handleSectorsChange = (newSectors) => {
       </div>
 
       {/* Nom */}
-      <div className="input-modern">
-        <span className="input-icon"><FaBuilding /></span>
-        <div className="input-wrapper-modern">
+      <div className="company-input-modern">
+        <span className="company-input-icon"><FaBuilding /></span>
+        <div className="company-input-wrapper-modern">
           <label className={`floating-label ${formData.name ? 'filled' : ''}`}>
             Nom de l'entreprise <span className="required">*</span>
           </label>
@@ -180,9 +181,9 @@ const handleSectorsChange = (newSectors) => {
       </div>
 
       {/* Site web */}
-      <div className="input-modern">
-        <span className="input-icon"><FaGlobe /></span>
-        <div className="input-wrapper-modern">
+      <div className="company-input-modern">
+        <span className="company-input-icon"><FaGlobe /></span>
+        <div className="company-input-wrapper-modern">
           <label className={`floating-label ${formData.website ? 'filled' : ''}`}>
             Site web
           </label>
@@ -197,9 +198,9 @@ const handleSectorsChange = (newSectors) => {
       </div>
 
       {/* Description */}
-      <div className="input-modern">
-        <span className="input-icon"><FaFileAlt /></span>
-        <div className="input-wrapper-modern">
+      <div className="company-input-modern">
+        <span className="company-input-icon"><FaFileAlt /></span>
+        <div className="company-input-wrapper-modern">
           <label className={`floating-label ${formData.description ? 'filled' : ''}`}>
             Description de l'entreprise
           </label>
@@ -231,7 +232,7 @@ const handleSectorsChange = (newSectors) => {
           <button
             onClick={handleSubmit}
             style={{
-              backgroundColor: '#28a745',
+              background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
               color: 'white',
               padding: '10px 20px',
               border: 'none',
@@ -239,12 +240,25 @@ const handleSectorsChange = (newSectors) => {
               cursor: 'pointer',
               fontWeight: 'bold',
               fontSize: 16,
+              transition: 'all 0.2s',
+              boxShadow: '0 2px 8px rgba(24, 56, 108, 0.1)',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, #06b6d4 0%, #18386c 100%)';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 12px rgba(24, 56, 108, 0.18)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 8px rgba(24, 56, 108, 0.1)';
             }}
           >
             Enregistrer
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 };

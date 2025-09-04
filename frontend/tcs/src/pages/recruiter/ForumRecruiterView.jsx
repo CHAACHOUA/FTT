@@ -61,7 +61,7 @@ const ForumRecruiterView = () => {
   }
 
   return (
-    <div style={{ paddingTop: '80px' }}>
+    <div style={{ paddingTop: '80px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
       
 

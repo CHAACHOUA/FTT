@@ -17,7 +17,7 @@
 }
 
 .forum-programme-error button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -30,7 +30,7 @@
 
 .forum-programme-error button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
 }
 
 .forum-programme-header {
@@ -81,7 +81,7 @@
 }
 
 .forum-dates svg {
-  color: #667eea;
+  color: #18386c;
 }
 
 /* Onglets */
@@ -98,25 +98,6 @@
   border-bottom: 2px solid #e0e0e0;
 }
 
-.external-speakers-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.external-speakers-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
 
 .tab {
   background: none;
@@ -135,13 +116,13 @@
 }
 
 .tab:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  color: #18386c;
+  background: rgba(24, 56, 108, 0.05);
 }
 
 .tab.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #18386c;
+  border-bottom-color: #18386c;
 }
 
 .tab svg {
@@ -179,8 +160,8 @@
   }
   
   .tab.active {
-    border-bottom-color: #667eea;
-    background: rgba(102, 126, 234, 0.05);
+    border-bottom-color: #18386c;
+    background: rgba(24, 56, 108, 0.05);
   }
 }
 

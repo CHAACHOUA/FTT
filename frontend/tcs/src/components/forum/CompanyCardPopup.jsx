@@ -11,13 +11,18 @@ const CompanyCardPopup = ({ isOpen, onClose, company }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('popup-open');
+      // Empêcher le scroll de la page
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.classList.remove('popup-open');
+      // Restaurer le scroll de la page
+      document.body.style.overflow = '';
     }
 
     // Nettoyer lors du démontage
     return () => {
       document.body.classList.remove('popup-open');
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -34,7 +39,7 @@ const CompanyCardPopup = ({ isOpen, onClose, company }) => {
   if (!isOpen || !company) return null;
 
   return (
-    <div className="popup-overlay" onClick={onClose}>
+    <div className="company-card-popup-overlay" onClick={onClose}>
       <div className="company-card-popup" onClick={(e) => e.stopPropagation()}>
         <div className="popup-header">
           <h2>Détails de l'entreprise</h2>

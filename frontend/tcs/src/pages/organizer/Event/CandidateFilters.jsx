@@ -210,8 +210,7 @@ export default function CandidateFilters({ filters, onChange, options }) {
     <div className="candidate-filters-dropdown">
       {/* Header */}
       <div className="filters-header">
-        <h3 className="filters-title">+ DE FILTRES</h3>
-        <button className="reset-link" onClick={handleReset}>
+        <button className="organizer-btn-clear-filters" onClick={handleReset}>
           Réinitialiser
         </button>
       </div>

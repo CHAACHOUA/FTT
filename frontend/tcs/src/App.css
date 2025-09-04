@@ -1,3 +1,19 @@
+/* Couleur de fond globale pour tout le site */
+body, html, #root {
+  background-color: #f8fafc !important; /* Gris très clair/beige - forcé */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Force la couleur sur tous les conteneurs */
+.App,
+.forum-section,
+.dashboard-bg,
+body > div {
+  background-color: #f8fafc !important;
+}
+
 .App {
   text-align: center;
 }

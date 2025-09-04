@@ -1,14 +1,10 @@
 .submenu-wrapper {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Poppins';
   padding: 16px 0;
   border-bottom: 1px solid #e5e7eb;
-  gap: 24px;
-  flex-wrap: wrap;
-  width: 100%;
 }
 
 .submenu-tabs {
@@ -40,33 +36,25 @@
 }
 
 .submenu-button {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: #083d56;
   font-size: 13px;
   cursor: pointer;
   transition: color 0.2s ease;
   position: relative;
-  padding: 8px 16px;
-  gap: 6px;
-  min-width: auto;
-  width: auto;
+  padding-bottom: 8px;
 }
 
 .submenu-button:hover {
-  color: #1f2937;
+  color: #083d56;
 }
 
 .submenu-button.active {
-  color: #000000;
-  font-weight: 600;
-}
-
-.submenu-button.active {
-  color: #000000;
+  color: #083d56;
   font-weight: 600;
 }
 
@@ -74,24 +62,20 @@
   content: '';
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 24px;
   height: 2px;
-  background-color: #000000;
+  background-color: #083d56;
+  border-radius: 1px;
 }
 
 .submenu-icon {
   font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: 6px;
 }
 
 .submenu-label {
   text-align: center;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

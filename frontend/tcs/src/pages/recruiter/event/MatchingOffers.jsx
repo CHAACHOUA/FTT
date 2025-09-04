@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaUsers, FaMapMarkerAlt, FaBuilding, FaUser, FaCalendar, FaBriefcase } from 'react-icons/fa';
 import { MdBusiness, MdLocationOn, MdPerson } from 'react-icons/md';
 import '../../styles/recruiter/OffersList.css';
+import '../../styles/recruiter/Matching.css';
 import Loading from '../../common/Loading';
 import { useNavigate } from 'react-router-dom';
 import MatchingCandidates from './MatchingCandidates';
@@ -74,7 +75,8 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   }
 
   return (
-    <div className="matching-offers-section">
+    <div className="offers-list-wrapper">
+      <div className="offers-list-content">
       <h2 className="matching-title">Offres pour le forum : {forum.name}</h2>
 
       {loadingOffers && <Loading />}
@@ -88,110 +90,92 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
         </div>
       )}
 
-      <div className="matching-offers-list">
-        {offers.map((offer) => (
-          <div key={offer.id} className="matching-offer-card">
-            {/* Section Logo et Entreprise */}
-            <div className="matching-company-section">
-              <img 
-                src={offer.company_logo || logoFTT} 
-                alt={`Logo ${offer.company_name || 'Entreprise'}`}
-                className="matching-company-logo"
-                onError={(e) => {
-                  e.target.src = '/logo-digitalio.png';
-                }}
-              />
-              <div className="matching-company-name">
-                {offer.company_name || 'Entreprise non spécifiée'}
-              </div>
-            </div>
-
-            {/* Section Contenu Principal */}
-            <div className="matching-content-section">
-              <h3 className="offer-title">{offer.title}</h3>
-              <p className="offer-description">{offer.description}</p>
-              
-              {/* Métadonnées avec icônes */}
-              <div className="matching-meta-section">
-                {offer.location && (
-                  <div className="matching-meta-item">
-                    <MdLocationOn className="matching-meta-icon" />
-                    <span>{offer.location}</span>
-                  </div>
-                )}
-                {offer.sector && (
-                  <div className="matching-meta-item">
-                    <FaBriefcase className="matching-meta-icon" />
-                    <span>{offer.sector}</span>
-                  </div>
-                )}
-                {offer.contract_type && (
-                  <div className="matching-meta-item">
-                    <MdBusiness className="matching-meta-icon" />
-                    <span>{offer.contract_type}</span>
-                  </div>
-                )}
-                {offer.created_at && (
-                  <div className="matching-meta-item">
-                    <FaCalendar className="matching-meta-icon" />
-                    <span>Postée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Section Recruteur */}
-              <div className="matching-recruiter-section">
-                {offer.recruiter_photo ? (
-                  <img 
-                    src={offer.recruiter_photo} 
-                    alt={`${offer.recruiter_name || 'Recruteur'}`}
-                    className="matching-recruiter-avatar"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
+      <div className="offers-grid offers-list-horizontal">
+        {offers.map((offer) => {
+          const recruiterFirst = offer.recruiter_name?.split(' ')[0] || '';
+          const recruiterLast = offer.recruiter_name?.split(' ')[1] || '';
+          const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
+          const bannerSrc = offer.company_logo || logoFTT;
+          
+          return (
+            <div key={offer.id} className="offer-card horizontal">
+              <div className="offer-left-banner">
+                <img src={bannerSrc} alt="Bannière entreprise" onError={(e) => {e.target.src = logoFTT;}} />
+                <div className="company-logo-badge">
+                  <img
+                    src={offer.company_logo || logoFTT}
+                    alt={offer.company_name}
+                    onError={(e) => {e.target.src = logoFTT;}}
                   />
-                ) : null}
-                <div 
-                  className="matching-recruiter-initials"
-                  style={{ 
-                    display: offer.recruiter_photo ? 'none' : 'flex',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: '#4f2cc6',
+                </div>
+              </div>
+
+              <div className="offer-right-content">
+                <div className="offer-top-line">
+                  <div className="recruiter-avatar">{initials}</div>
+                  <div className="recruiter-block">
+                    <div className="recruiter-name-line">{offer.recruiter_name} @ {offer.company_name}</div>
+                  </div>
+                </div>
+
+                <h4 className="offer-title large">{offer.title}</h4>
+                
+                <div className="offer-location-line">
+                  <FaMapMarkerAlt />
+                  <span>{offer.location || 'Non précisé'}</span>
+                </div>
+                
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '8px', marginBottom: '8px' }}>
+                  {offer.sector && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.85rem', background: '#f8fafc', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                      <FaBriefcase />
+                      <span>{offer.sector}</span>
+                    </div>
+                  )}
+                  {offer.contract_type && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.85rem', background: '#f8fafc', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                      <MdBusiness />
+                      <span>{offer.contract_type}</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div style={{ textAlign: 'right', marginTop: 'auto' }}>
+                  <span className="offer-date">Publiée le {new Date(offer.created_at || Date.now()).toLocaleDateString('fr-FR')}</span>
+                </div>
+              </div>
+
+              <div className="offer-actions">
+                <button
+                  onClick={() => handleStartMatching(offer.id)}
+                  disabled={matchingInProgressForOffer !== null}
+                  className="btn-matching-offer"
+                  style={{
+                    background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
                     color: 'white',
+                    border: 'none',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '14px',
-                    fontWeight: 'bold'
+                    gap: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(24, 56, 108, 0.3)',
+                    fontSize: '0.95rem',
+                    whiteSpace: 'nowrap'
                   }}
                 >
-                  {getInitials(offer.recruiter_name)}
-                </div>
-                <div className="matching-recruiter-info">
-                  <div className="matching-recruiter-name">
-                    {offer.recruiter_name || 'Recruteur'}
-                  </div>
-                  <div className="matching-recruiter-role">
-                    Recruteur • {offer.company_name || 'Entreprise'}
-                  </div>
-                </div>
+                  {matchingInProgressForOffer === offer.id
+                    ? <Loading />
+                    : <><FaUsers /> Matching candidat</>}
+                </button>
               </div>
             </div>
-
-            {/* Bouton Matching */}
-            <button
-              onClick={() => handleStartMatching(offer.id)}
-              disabled={matchingInProgressForOffer !== null}
-              className="btn-matching-offer"
-            >
-              {matchingInProgressForOffer === offer.id
-                ? <Loading />
-                : <><FaUsers /> Matching candidat</>}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {showCandidatesModal && (
@@ -202,6 +186,7 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

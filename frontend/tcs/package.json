@@ -14,6 +14,7 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
+    "flaticon": "^0.1.0",
     "jspdf": "^3.0.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.509.0",
@@ -25,14 +26,14 @@
     "react-modal": "^3.16.3",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^7.5.3",
-    "react-scripts": "^0.0.0",
+    "react-scripts": "5.0.1",
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "NODE_OPTIONS='--max-old-space-size=8192' react-scripts start",
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -112,106 +112,94 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
 
   return (
     <div className="offers-list-wrapper">
-      <div className="offers-list-header">
-        <h2>Liste des Offres</h2>
-        <button className="btn-add-offer" onClick={onAddOffer}>
-          <FaPlus /> Ajouter
-        </button>
-      </div>
-
-      {offers.length === 0 ? (
-        <p>Aucune offre trouvée.</p>
-      ) : (
-        <div className="offers-list-container">
-          {offers.map((offer) => (
-            <div 
-              key={offer.id} 
-              className="offer-card"
-              onClick={() => handleOfferClick(offer)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="logo-section">
-                {offer.company_logo ? (
-                  <img
-                    src={getFullUrl(offer.company_logo)}
-                    alt="Logo entreprise"
-                    className="company-logo-large"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'block';
-                    }}
-                  />
-                ) : null}
-                <img
-                  src={logoFTT}
-                  alt="Logo FTT"
-                  className="company-logo-large"
-                  style={{ display: offer.company_logo ? 'none' : 'block' }}
-                />
-              </div>
-
-              <div className="offer-main-content">
-                <div className="recruiter-info">
-                  {offer.recruiter_photo ? (
-                    <img
-                      src={getFullUrl(offer.recruiter_photo)}
-                      alt="Recruteur"
-                      className="recruiter-avatar"
-                      onError={(e) => (e.target.src = '/default-avatar.png')}
-                    />
-                  ) : (
-                    <div className="recruiter-initials">
-                      {offer.recruiter_name?.split(' ').map((n) => n[0]).join('') || '??'}
-                    </div>
-                  )}
-                  <p className="recruiter-name">
-                    {offer.recruiter_name}{' '}
-                    <span className="company-handle">@{offer.company_name}</span>
-                  </p>
-                </div>
-
-                <h3 className="offer-title">{offer.title}</h3>
-                <p className="offer-description">{offer.description}</p>
-
-                <div className="offer-meta-row">
-                  <span>
-                    <FaBriefcase /> {offer.contract_type || 'Contrat non précisé'}
-                  </span>
-                  <span>
-                    <FaIndustry /> {offer.sector || 'Secteur non précisé'}
-                  </span>
-                  {offer.location?.split(',').map((city, idx) => (
-                    <span key={idx} className="location-item">
-                      <FaMapMarkerAlt /> {city.trim()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="offer-actions">
-                <button 
-                  className="btn-action" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onUpdateOffer(offer);
-                  }}
-                >
-                  <FaEdit />
-                </button>
-                <button 
-                  className="btn-action" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteOffer(offer.id);
-                  }}
-                >
-                  <FaTrash />
-                </button>
-              </div>
+      <div className="offers-list-content">
+        <div className="page-title-section">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div>
+              <h1>Liste des Offres</h1>
+              <p>Gérez toutes vos offres d'emploi</p>
             </div>
-          ))}
+            <button className="btn-add-offer" onClick={onAddOffer}>
+              <FaPlus /> Ajouter une offre
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Liste des offres */}
+        {offers.length === 0 ? (
+          <div className="no-offers">
+            <p>Aucune offre trouvée.</p>
+          </div>
+        ) : (
+          <div className="offers-grid offers-list-horizontal">
+            {offers.map((offer) => {
+              const recruiterFirst = offer.recruiter_name?.split(' ')[0] || '';
+              const recruiterLast = offer.recruiter_name?.split(' ')[1] || '';
+              const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
+              const bannerSrc = offer.company_logo ? getFullUrl(offer.company_logo) : logoFTT;
+              
+              return (
+                <div
+                  key={offer.id}
+                  className="offer-card horizontal"
+                  onClick={() => handleOfferClick(offer)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="offer-left-banner">
+                    <img src={bannerSrc} alt="Bannière entreprise" onError={(e) => {e.target.src = logoFTT;}} />
+                    <div className="company-logo-badge">
+                      <img
+                        src={offer.company_logo ? getFullUrl(offer.company_logo) : logoFTT}
+                        alt={offer.company_name}
+                        onError={(e) => {e.target.src = logoFTT;}}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="offer-right-content">
+                    <div className="offer-top-line">
+                      <div className="recruiter-avatar">{initials}</div>
+                      <div className="recruiter-block">
+                        <div className="recruiter-name-line">{offer.recruiter_name} @ {offer.company_name}</div>
+                      </div>
+                      <span className="offer-date">Publiée le {new Date(offer.created_at || Date.now()).toLocaleDateString('fr-FR')}</span>
+                    </div>
+
+                    <h4 className="offer-title large">{offer.title}</h4>
+                    <div className="offer-location-line">
+                      <FaMapMarkerAlt />
+                      <span>{offer.location || 'Non précisé'}</span>
+                    </div>
+                  </div>
+
+                  {/* Boutons d'action */}
+                  <div className="offer-actions">
+                    <button 
+                      className="btn-action" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUpdateOffer(offer);
+                      }}
+                    >
+                      <FaEdit />
+                    </button>
+                    <button 
+                      className="btn-action" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteOffer(offer.id);
+                      }}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
 
       <OfferModal
         isOpen={modalOpen}

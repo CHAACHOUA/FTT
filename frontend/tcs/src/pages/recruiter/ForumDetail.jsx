@@ -44,7 +44,7 @@ const ForumDetail = () => {
   const logo = getLogoURL(forum.organizer?.logo);
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
       <div className="forum-detail-card">
         <div className="banner">

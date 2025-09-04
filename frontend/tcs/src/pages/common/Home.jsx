@@ -1,13 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from './NavBar.jsx';
-import Loading from './Loading';
-import '../../pages/styles/common/home.css';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faChartLine, faBuilding, faUser, faBolt, faCalendarAlt, faAward, faUsers, faCheckCircle, faBullseye, faStar } from '@fortawesome/free-solid-svg-icons';
-
+import { faHeart, faChartLine, faUsers, faBullseye, faBolt, faCalendarAlt, faUser, faAward, faStar, faHandshake, faCamera } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import Navbar from './NavBar';
+import Loading from './Loading';
+import { useAuth } from '../../context/AuthContext';
+import { jwtDecode } from 'jwt-decode';
+import '../styles/common/home.css';
+import recrutement from '../../assets/recrutement.jpg';
+import photo from '../../assets/photo.jpg';
+import conference from '../../assets/conference.jpg';
+import coaching from '../../assets/coaching.jpg';
+import immersion from '../../assets/vr.jpg';
+import parcours from '../../assets/parcours.jpg';
 const mockStats = {
-  totalMatches: 1247,
-  successRate: 78,
+  totalOffers: 1247,
+  successRate: 6,
   companiesActive: 156,
   candidatesActive: 2340
 };
@@ -42,6 +50,66 @@ const testimonials = [
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const navigate = useNavigate();
+  const { accessToken } = useAuth();
+  
+  // Récupérer le rôle depuis le token JWT
+  const getUserRole = () => {
+    if (!accessToken) return null;
+    try {
+      const decoded = jwtDecode(accessToken);
+      return decoded.role;
+    } catch (error) {
+      console.error('Erreur lors du décodage du token:', error);
+      return null;
+    }
+  };
+  
+  const userRole = getUserRole();
+  
+  // Debug: afficher le rôle récupéré
+  console.log('Token:', accessToken);
+  console.log('Rôle utilisateur:', userRole);
+
+  const handleJobSearch = () => {
+    if (userRole) {
+      switch (userRole) {
+        case 'organizer':
+          navigate('/organizer/forums');
+          break;
+        case 'candidate':
+          navigate('/candidate/forums');
+          break;
+        case 'recruiter':
+          navigate('/recruiter/forums');
+          break;
+        default:
+          navigate('/forums');
+      }
+    } else {
+      navigate('/forums');
+    }
+  };
+
+  const handleViewEvents = () => {
+    if (userRole) {
+      switch (userRole) {
+        case 'organizer':
+          navigate('/organizer/forums');
+          break;
+        case 'candidate':
+          navigate('/candidate/forums');
+          break;
+        case 'recruiter':
+          navigate('/recruiter/forums');
+          break;
+        default:
+          navigate('/forums');
+      }
+    } else {
+      navigate('/forums');
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
@@ -58,173 +126,217 @@ export default function Home() {
   if (loading) return <Loading />;
 
   return (
-    <div className="landing-container">
+    <div className="landing-container-white">
       <Navbar />
       {/* Hero Section */}
-      <section className="hero-section">
+      <section className="hero-section-white">
         <div className="hero-container">
           <div className="hero-content">
-            <h1 className="hero-title">
-              Trouvez votre <span className="hero-title-gradient">job parfait</span> en 5 minutes
-            </h1>
-            <p className="hero-subtitle">
-              Révolutionnez votre recherche d'emploi avec notre système de matching intelligent.<br />
-              Rencontrez des recruteurs en speed-dating professionnel.
+                         <h1 className="hero-title-white">
+                         Connectez-vous <span className="hero-title-gradient-blue">aux entreprises</span> qui recrutent
+             </h1>
+            <p className="hero-subtitle-white">
+              Rencontrez directement les recruteurs lors de nos forums hybrides ou virtuels.<br />
+              Découvrez les opportunités qui vous correspondent.
             </p>
-            <div className="hero-buttons">
-              <button className="hero-button-primary">Je cherche un emploi</button>
+                                     <div className="hero-buttons">
+              <button className="hero-button-primary-blue" onClick={handleJobSearch}>Je cherche un emploi</button>
               <button className="hero-button-secondary">Je recrute</button>
             </div>
           </div>
         </div>
       </section>
       {/* Stats Section */}
-      <section className="stats-section visible">
+      <section className="stats-section-white visible">
         <div className="stats-container">
           <div className="stats-grid">
-            <div className="home-kpi-card">
-              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
+            <div className="home-kpi-card-white">
+              <div className="kpi-icon-wrapper" style={{background: '#3b82f6'}}>
                 <FontAwesomeIcon icon={faHeart} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="kpi-value">{mockStats.totalMatches.toLocaleString()}</div>
-              <div className="kpi-label">Matches réalisés</div>
-              <div className="kpi-trend">+12% ce mois</div>
+              <div className="kpi-value-white">{mockStats.totalOffers}</div>
+              <div className="kpi-label-white">Offres disponibles</div>
             </div>
-            <div className="home-kpi-card">
-              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}}>
+            <div className="home-kpi-card-white">
+              <div className="kpi-icon-wrapper" style={{background: '#3b82f6'}}>
                 <FontAwesomeIcon icon={faChartLine} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="kpi-value">{mockStats.successRate}%</div>
-              <div className="kpi-label">Taux de réussite</div>
-              <div className="kpi-trend">+5% ce mois</div>
+              <div className="kpi-value-white">{mockStats.successRate}</div>
+              <div className="kpi-label-white">Événements </div>
             </div>
-            <div className="home-kpi-card">
-              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'}}>
+            <div className="home-kpi-card-white">
+              <div className="kpi-icon-wrapper" style={{background: '#3b82f6'}}>
                 <FontAwesomeIcon icon={faUsers} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="kpi-value">{mockStats.companiesActive}</div>
-              <div className="kpi-label">Entreprises actives</div>
-              <div className="kpi-trend">+8% ce mois</div>
+              <div className="kpi-value-white">{mockStats.companiesActive}</div>
+              <div className="kpi-label-white">Entreprises actives</div>
             </div>
-            <div className="home-kpi-card">
-              <div className="kpi-icon-wrapper" style={{background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'}}>
+            <div className="home-kpi-card-white">
+              <div className="kpi-icon-wrapper" style={{background: '#3b82f6'}}>
                 <FontAwesomeIcon icon={faBullseye} style={{fontSize: '2.2rem', color: '#fff'}} />
               </div>
-              <div className="kpi-value">{mockStats.candidatesActive.toLocaleString()}</div>
-              <div className="kpi-label">Candidats actifs</div>
-              <div className="kpi-trend">+15% ce mois</div>
+              <div className="kpi-value-white">{mockStats.candidatesActive.toLocaleString()}</div>
+              <div className="kpi-label-white">Candidats actifs</div>
             </div>
           </div>
         </div>
       </section>
-      {/* Features Section */}
-      <section className="features-section visible">
-        <div className="features-container">
-          <div className="features-header">
-            <h2 className="features-title">Pourquoi JobDating ?</h2>
-            <p className="features-subtitle">
-              Découvrez les fonctionnalités qui font de JobDating la plateforme de recrutement la plus innovante.
-            </p>
+           {/* Services Section */}
+           <section className="services-section-white visible">
+        <div className="services-container-white">
+          <div className="services-header-white">
+            <h2 className="services-title-white">Nos Services</h2>
+            <p className="services-subtitle-white">Découvrez comment JobDating peut vous aider dans votre carrière</p>
           </div>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon" style={{background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)'}}>
-                <FontAwesomeIcon icon={faBolt} style={{fontSize: '2.2rem', color: '#fff'}} />
-              </div>
-              <div className="feature-title">Matching Intelligent</div>
-              <div className="feature-description">Notre IA analyse vos compétences et vos préférences pour vous proposer les meilleurs matches.</div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon" style={{background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)'}}>
-                <FontAwesomeIcon icon={faCalendarAlt} style={{fontSize: '2.2rem', color: '#fff'}} />
-              </div>
-              <div className="feature-title">Événements Live</div>
-              <div className="feature-description">Participez à des sessions de job dating en présentiel ou en ligne avec plusieurs recruteurs.</div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon" style={{background: 'linear-gradient(135deg, #22d3ee 0%, #22c55e 100%)'}}>
-                <FontAwesomeIcon icon={faUser} style={{fontSize: '2.2rem', color: '#fff'}} />
-              </div>
-              <div className="feature-title">Profils Vérifiés</div>
-              <div className="feature-description">Tous les profils sont vérifiés pour garantir des rencontres authentiques et professionnelles.</div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon" style={{background: 'linear-gradient(135deg, #f59e42 0%, #f43f5e 100%)'}}>
-                <FontAwesomeIcon icon={faAward} style={{fontSize: '2.2rem', color: '#fff'}} />
-              </div>
-              <div className="feature-title">Suivi Personnalisé</div>
-              <div className="feature-description">Bénéficiez d'un accompagnement personnalisé pour optimiser votre recherche d'emploi.</div>
-            </div>
-          </div>
+                     <div className="services-grid-white">
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={recrutement} alt="Recrutement" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faHandshake} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Recrutement</h3>
+               <p className="service-description-white">
+                 Les candidats ont l'opportunité de présenter leurs CV directement aux entreprises, stimulant des interactions efficaces pour le recrutement.
+               </p>
+             </div>
+             
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={photo} alt="Photos Professionnelles" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faCamera} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Photos Professionnelles</h3>
+               <p className="service-description-white">
+                 Photos professionnelles gratuites pour améliorer votre image et mettre en avant votre CV.
+               </p>
+             </div>
+             
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={conference} alt="Conférences Et Ateliers" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faUsers} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Conférences Et Ateliers</h3>
+               <p className="service-description-white">
+                 Participez à des ateliers pratiques pour optimiser votre CV, préparer vos entretiens, et assister à des conférences inspirantes animées par des experts.
+               </p>
+             </div>
+
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={coaching} alt="Coaching Individuel" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faUser} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Coaching Individuel</h3>
+               <p className="service-description-white">
+                 Bénéficiez d'un accompagnement personnalisé avec des coachs experts pour optimiser votre CV, préparer vos entretiens et développer votre carrière.
+               </p>
+             </div>
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={parcours} alt="Coaching Individuel" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faUser} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Parcours Adapté</h3>
+               <p className="service-description-white">
+               Un parcours personnalisé est proposé selon le CV de chaque candidat, permettant de découvrir les offres et entreprises correspondant le mieux à son profil et à ses centres d’intérêt.               </p>
+             </div>
+             <div className="service-card-white">
+               <div className="service-image-container-white">
+                 <img src={immersion} alt="Coaching Individuel" className="service-image-white" />
+                                   <div className="service-icon-white">
+                    <FontAwesomeIcon icon={faUser} style={{fontSize: '1.2rem', color: '#ffffff'}} />
+                  </div>
+               </div>
+               <h3 className="service-title-white">Immersions Métiers</h3>
+               <p className="service-description-white">
+               Avec des casques de réalité virtuelle pour découvrir les métiers de demain et les innovations technologiques.               </p>
+             </div>
+           </div>
         </div>
       </section>
+   
       {/* How it works */}
-      <section className="how-it-works-section visible">
+      <section className="how-it-works-section-white visible">
         <div className="how-it-works-container">
           <div className="how-it-works-header">
-            <h2 className="how-it-works-title">Comment ça marche ?</h2>
-            <p className="how-it-works-subtitle">
+            <h2 className="how-it-works-title-white">Comment ça marche ?</h2>
+            <p className="how-it-works-subtitle-white">
               3 étapes simples pour révolutionner votre recherche d'emploi
             </p>
           </div>
           <div className="how-it-works-grid">
-            <div className="how-it-works-item">
+            <div className="how-it-works-item-white">
               <div className="how-it-works-icon-container">
-                <div className="how-it-works-icon" style={{background: 'linear-gradient(45deg, #a855f7, #ec4899)'}}>
+                <div className="how-it-works-icon" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'}}>
                   <FontAwesomeIcon icon={faUsers} style={{fontSize: '2.2rem', color: '#fff'}} />
                 </div>
-                <div className="how-it-works-step">01</div>
+                <div className="how-it-works-step-white">01</div>
               </div>
-              <div className="how-it-works-item-title">Créez votre profil</div>
-              <div className="how-it-works-item-description">Complétez votre profil avec vos compétences, expériences et préférences de poste.</div>
+              <div className="how-it-works-item-title-white">Créez votre profil</div>
+              <div className="how-it-works-item-description-white">Inscris-toi et télécharge ton CV pour générer ton profil automatiquement.</div>
             </div>
-            <div className="how-it-works-item">
+            <div className="how-it-works-item-white">
               <div className="how-it-works-icon-container">
                 <div className="how-it-works-icon" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'}}>
                   <FontAwesomeIcon icon={faHeart} style={{fontSize: '2.2rem', color: '#fff'}} />
                 </div>
-                <div className="how-it-works-step">02</div>
+                <div className="how-it-works-step-white">02</div>
               </div>
-              <div className="how-it-works-item-title">Swipez et matchez</div>
-              <div className="how-it-works-item-description">Découvrez des opportunités qui vous correspondent et swipez pour matcher avec les recruteurs.</div>
+              <div className="how-it-works-item-title-white">Explore les offres</div>
+              <div className="how-it-works-item-description-white">Accède aux JobDating et offres qui correspondent à tes recherches</div>
             </div>
-            <div className="how-it-works-item">
+            <div className="how-it-works-item-white">
               <div className="how-it-works-icon-container">
                 <div className="how-it-works-icon" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'}}>
                   <FontAwesomeIcon icon={faCalendarAlt} style={{fontSize: '2.2rem', color: '#fff'}} />
                 </div>
-                <div className="how-it-works-step">03</div>
+                <div className="how-it-works-step-white">03</div>
               </div>
-              <div className="how-it-works-item-title">Rencontrez-vous</div>
-              <div className="how-it-works-item-description">Participez à des sessions de job dating en ligne ou en présentiel avec vos matches.</div>
+              <div className="how-it-works-item-title-white">Parcours Personnalisé</div>
+              <div className="how-it-works-item-description-white">La plateforme te guide vers les entreprises adaptées à ton profil.</div>
             </div>
+            
           </div>
         </div>
       </section>
+
+ 
+
       {/* Testimonials */}
-      <section className="testimonials-section visible">
+      <section className="testimonials-section-white visible">
         <div className="testimonials-container">
           <div className="testimonials-header">
-            <h2 className="testimonials-title">Ils nous font confiance</h2>
-            <p className="testimonials-subtitle">
+            <h2 className="testimonials-title-white">Ils nous font confiance</h2>
+            <p className="testimonials-subtitle-white">
               Découvrez les témoignages de nos utilisateurs satisfaits
             </p>
           </div>
-          <div className="testimonial-card">
+          <div className="testimonial-card-white">
             <div className="testimonial-stars">
               {Array.from({ length: testimonials[currentTestimonial].rating }).map((_, i) => (
                 <FontAwesomeIcon icon={faStar} key={i} className="testimonial-star" />
               ))}
             </div>
-            <blockquote className="testimonial-quote">
+            <blockquote className="testimonial-quote-white">
               "{testimonials[currentTestimonial].text}"
             </blockquote>
             <div className="testimonial-author">
               <img src={testimonials[currentTestimonial].photo} alt={testimonials[currentTestimonial].name} className="testimonial-photo" />
               <div className="testimonial-author-info">
-                <div className="testimonial-author-name">{testimonials[currentTestimonial].name}</div>
-                <div className="testimonial-author-role">{testimonials[currentTestimonial].role}</div>
-                <div className="testimonial-author-company">{testimonials[currentTestimonial].company}</div>
+                <div className="testimonial-author-name-white">{testimonials[currentTestimonial].name}</div>
+                <div className="testimonial-author-role-white">{testimonials[currentTestimonial].role}</div>
+                <div className="testimonial-author-company-white">{testimonials[currentTestimonial].company}</div>
               </div>
             </div>
             <div className="testimonial-indicators">
@@ -240,13 +352,13 @@ export default function Home() {
         </div>
       </section>
       {/* CTA Section */}
-      <section className="cta-section">
+      <section className="cta-section-white visible">
         <div className="cta-container">
-          <h2 className="cta-title">Prêt à changer votre carrière ?</h2>
-          <p className="cta-subtitle">Rejoignez des milliers de professionnels qui ont déjà trouvé leur job parfait grâce à JobDating.</p>
-          <div className="cta-buttons">
-            <button className="cta-button-primary">Commencer maintenant</button>
-            <button className="cta-button-secondary">Voir les événements</button>
+          <h2 className="cta-title-white">Prêt à changer votre carrière ?</h2>
+          <p className="cta-subtitle-white">Rejoignez des milliers de professionnels qui ont déjà trouvé leur job parfait grâce à JobDating.</p>
+          <div className="cta-buttons-white">
+            <button className="cta-button-primary-white" onClick={handleJobSearch}>Commencer maintenant</button>
+            <button className="cta-button-secondary-white" onClick={handleViewEvents}>Voir les événements</button>
           </div>
         </div>
       </section>

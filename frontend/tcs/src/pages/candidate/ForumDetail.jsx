@@ -17,9 +17,9 @@ const ForumDetail = () => {
   const API = process.env.REACT_APP_API_BASE_URL;
 
   // Debug: Log forum data
-  console.log('🔍 [FRONTEND] ForumDetail - state:', state);
-  console.log('🔍 [FRONTEND] ForumDetail - forum:', forum);
-  console.log('🔍 [FRONTEND] ForumDetail - forum.id:', forum?.id);
+  console.log(' [FRONTEND] ForumDetail - state:', state);
+  console.log(' [FRONTEND] ForumDetail - forum:', forum);
+  console.log(' [FRONTEND] ForumDetail - forum.id:', forum?.id);
 
   const [activeTab, setActiveTab] = useState('general');
   const [open, setOpen] = useState(false);
@@ -52,9 +52,9 @@ const ForumDetail = () => {
   const logo = getLogoURL(forum.organizer?.logo);
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
-      <div className="forum-detail-card">
+      <div className="forum-detail-card" style={{ marginTop: '100px' }}>
         <div className="banner">
           <img
             src={forumPhoto}
@@ -93,7 +93,9 @@ const ForumDetail = () => {
             </div>
             <div>
               <h1 className="forum-detail-title">{forum.name}</h1>
-              <p className="forum-detail-organizer">Organisé par {forum.organizer?.name}</p>
+              <p className="forum-detail-organizer">
+                Organisé par <strong>{forum.organizer?.name}</strong>
+              </p>
             </div>
           </div>
 
@@ -137,8 +139,22 @@ const ForumDetail = () => {
 
           {activeTab === 'offers' && (
             <div className="forum-detail-offers">
-              <p>Veuillez vous inscrire au forum pour accéder aux offres disponibles.</p>
-              <button className="btn-seekube btn-filled" onClick={() => setOpen(true)}>S'inscrire</button>
+           
+              <div className="forum-offers-encouragement">
+                <div className="forum-offers-encouragement-content">
+                  <div className="forum-offers-encouragement-title">
+                     Prêt à découvrir les meilleures opportunités ?
+                  </div>
+                  <div className="forum-offers-encouragement-text">
+                    Inscrivez-vous maintenant et accédez à toutes les offres d'emploi disponibles !
+                  </div>
+                </div>
+                
+                {/* Bouton d'inscription dans la bannière */}
+                <button className="btn-seekube" onClick={() => setOpen(true)}>
+                  S'inscrire
+                </button>
+              </div>
             </div>
           )}
 

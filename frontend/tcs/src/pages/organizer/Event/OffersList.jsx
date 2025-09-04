@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaBuilding, FaUser, FaBriefcase, FaMapMarkerAlt, FaIndustry, FaCalendar, FaArrowLeft } from 'react-icons/fa';
+import { FaBuilding, FaUser, FaBriefcase, FaMapMarkerAlt, FaIndustry, FaCalendar, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import Navbar from '../../common/NavBar';
 import OfferDetailPopup from '../../../components/recruiter/OfferDetailPopup';
 import './OffersList.css';
+import '../../../pages/styles/organizer/organizer-buttons.css';
 import defaultLogo from '../../../assets/Logo-FTT.png';
 import forumsBg from '../../../assets/forums-bg.png';
 
@@ -178,28 +179,51 @@ const OffersList = () => {
   }
 
   return (
-    <div className="offers-list-container" style={{ paddingTop: '80px' }}>
+    <div className="organizer-offers-container" style={{ paddingTop: '80px' }}>
       <Navbar />
-      <div className="offers-list-content">
-        <div className="offers-list-header">
-          <button onClick={handleBack} className="back-button">
-            <FaArrowLeft /> Retour
-          </button>
-          <div className="header-content">
-            <h1>Liste des Offres</h1>
-            <p>Consultez toutes les offres postées par les recruteurs</p>
+      <div className="organizer-offers-content">
+        <div className="organizer-header-block">
+          <div className="organizer-header-with-forum">
+            <button onClick={handleBack} className="organizer-btn-back">
+              <FaArrowLeft /> Retour
+            </button>
+            {forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">{forum.name}</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
+                </div>
+              </div>
+            )}
+            {!forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">Forum non défini</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>Dates non disponibles</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+        
+        <div className="page-title-section">
+          <h1>Liste des Offres</h1>
+          <p>Consultez toutes les offres postées par les recruteurs</p>
+        </div>
+        
+
 
         {/* Filtres */}
-        <div className="offers-filters">
+        <div className="organizer-offers-filters">
           <div className="filter-group">
             <input
               type="text"
               placeholder="Rechercher une offre..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
+              className="organizer-search-input"
             />
           </div>
 
@@ -207,7 +231,7 @@ const OffersList = () => {
             <select
               value={selectedCompany}
               onChange={(e) => setSelectedCompany(e.target.value)}
-              className="filter-select"
+              className="organizer-filter-select"
             >
               <option value="">Toutes les entreprises</option>
               {companies.map(company => (
@@ -220,7 +244,7 @@ const OffersList = () => {
             <select
               value={selectedSector}
               onChange={(e) => setSelectedSector(e.target.value)}
-              className="filter-select"
+              className="organizer-filter-select"
             >
               <option value="">Tous les secteurs</option>
               {sectors.map(sector => (
@@ -233,7 +257,7 @@ const OffersList = () => {
             <select
               value={selectedContract}
               onChange={(e) => setSelectedContract(e.target.value)}
-              className="filter-select"
+              className="organizer-filter-select"
             >
               <option value="">Tous les contrats</option>
               {contracts.map(contract => (
@@ -242,9 +266,11 @@ const OffersList = () => {
             </select>
           </div>
 
-          <button onClick={clearFilters} className="clear-filters-btn">
-            Effacer les filtres
-          </button>
+          <div className="filter-group">
+            <button onClick={clearFilters} className="organizer-btn-clear-filters">
+              Effacer les filtres
+            </button>
+          </div>
         </div>
 
 
@@ -255,7 +281,7 @@ const OffersList = () => {
             <p>Aucune offre ne correspond à vos critères de recherche.</p>
           </div>
         ) : (
-          <div className="offers-grid offers-list-horizontal">
+          <div className="organizer-offers-grid">
             {[...filteredOffers]
               .sort((a, b) => {
                 const byCompany = a.company.name.localeCompare(b.company.name);
@@ -272,7 +298,7 @@ const OffersList = () => {
                 return (
                   <div
                     key={offer.id}
-                    className="offer-card horizontal"
+                    className="organizer-offer-card horizontal"
                     onClick={() => handleOfferClick(offer)}
                     style={{ cursor: 'pointer' }}
                   >

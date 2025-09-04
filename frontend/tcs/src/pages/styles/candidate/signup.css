@@ -5,7 +5,7 @@ body {
 }
 
 .auth-container {
-  max-width: 500px;
+  max-width: 700px;
   margin: 5% auto;
   padding: 20px 26px;
   background-color: #fff;
@@ -89,7 +89,7 @@ body {
 /* Password Wrapper for Toggle */
 .password-wrapper {
   position: relative;
-  width: 100%;
+  width: 70%;
 }
 
 .password-wrapper input {
@@ -107,7 +107,7 @@ body {
 
 /* Submit Button */
 .auth-button {
-  width: 100%;
+  width: 60%;
   padding: 10px;
   background-color: #2196f3;
   color: #fff;
@@ -118,6 +118,8 @@ body {
   cursor: pointer;
   transition: background 0.2s;
   box-shadow: 0 2px 8px rgba(33, 150, 243, 0.07);
+  margin: 0 auto;
+  display: block;
 }
 
 .auth-button:hover {

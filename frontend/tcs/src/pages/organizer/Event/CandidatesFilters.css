@@ -55,9 +55,9 @@
 }
 
 .candidate-filters {
-  background: rgba(60, 40, 120, 0.18);
+  background: rgba(24, 56, 108, 0.18);
   border-radius: 18px;
-  box-shadow: 0 4px 24px 0 rgba(80, 0, 120, 0.10);
+  box-shadow: 0 4px 24px 0 rgba(24, 56, 108, 0.10);
   padding: 24px 18px 18px 18px;
   backdrop-filter: blur(8px);
   display: flex;
@@ -93,8 +93,8 @@
 }
 .candidate-filters input[type="text"]:focus,
 .candidate-filters select:focus {
-  border: 1.5px solid #a855f7;
-  box-shadow: 0 0 0 2px #a855f7aa;
+  border: 1.5px solid #18386c;
+  box-shadow: 0 0 0 2px rgba(24, 56, 108, 0.3);
 }
 
 .candidate-filters select[multiple] {
@@ -127,23 +127,7 @@
   background: #e6e6fa;
 }
 
-.reset-filters-btn {
-  background: linear-gradient(90deg, #7b2ff2 0%, #1e4fd7 100%);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 18px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(80, 0, 120, 0.10);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-.reset-filters-btn:hover {
-  background: linear-gradient(90deg, #a855f7 0%, #4f8cff 100%);
-  box-shadow: 0 4px 16px 0 rgba(80, 0, 120, 0.18);
-}
+/* Bouton réinitialiser stylé via organizer-btn-clear-filters */
 
 /* Candidate Filters Dropdown Design */
 .candidate-filters-dropdown {
@@ -160,7 +144,7 @@
 /* Header */
 .filters-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;

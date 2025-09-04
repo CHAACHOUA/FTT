@@ -333,32 +333,39 @@ const ForumInfoEdit = () => {
     <div style={{ paddingTop: '70px' }}>
       <Navbar />
       <div className="dashboard-bg">
-        <div className="dashboard-header">
-          <button onClick={handleBack} style={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            border: 'none',
-            padding: '1rem 2rem',
-            borderRadius: '12px',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
-            marginBottom: '2rem',
-            transition: 'all 0.3s ease'
-          }}>
-            <FaArrowLeft /> Retour aux forums
-          </button>
-          <div className="header-content">
-            <h1>Gérer les informations du forum</h1>
-            <p>Modifiez les détails de votre forum : {forumData?.name}</p>
+        <div className="forum-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+          <div className="organizer-header-block">
+          <div className="organizer-header-with-forum">
+                         <button onClick={handleBack} className="organizer-btn-back">
+               <FaArrowLeft /> Retour
+             </button>
+            {forumData && (
+              <div className="forum-details">
+                <h2 className="forum-title">{forumData.name}</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>{forumData.start_date && forumData.end_date ? `${forumData.start_date} - ${forumData.end_date}` : 'Dates non définies'}</span>
+                </div>
+              </div>
+            )}
+            {!forumData && (
+              <div className="forum-details">
+                <h2 className="forum-title">Forum non défini</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>Dates non disponibles</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="presentation-section" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+        <div className="page-title-section">
+          <h1>Gérer les informations du forum</h1>
+          <p>Modifiez les détails de votre forum : {forumData?.name}</p>
+        </div>
+
+        <div className="presentation-section" style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
           <form onSubmit={handleSubmit}>
             {/* Photo du forum */}
             <div className="profile-photo-container">
@@ -569,62 +576,26 @@ const ForumInfoEdit = () => {
               </div>
             </div>
 
-            {/* Boutons d'action */}
-            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '30px' }}>
-              <button
-                type="button"
-                onClick={() => navigate('/event/organizer/dashboard/', { 
-                  state: { 
-                    forum: forumData, 
-                    accessToken, 
-                    apiBaseUrl: API,
-                    // S'assurer que toutes les données du forum sont passées
-                    forumData: {
-                      id: forumData.id,
-                      name: forumData.name,
-                      description: forumData.description,
-                      start_date: forumData.start_date,
-                      end_date: forumData.end_date,
-                      type: forumData.type
-                    }
-                  } 
-                })}
-                style={{
-                  backgroundColor: '#6c757d',
-                  color: 'white',
-                  padding: '12px 24px',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                }}
-              >
-                Annuler
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  padding: '12px 24px',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  opacity: loading ? 0.7 : 1,
-                }}
-              >
-                {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}
-              </button>
-            </div>
+                         {/* Bouton d'action */}
+             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+               <button
+                 type="submit"
+                 disabled={loading}
+                 className="organizer-btn-back"
+                 style={{
+                   cursor: loading ? 'not-allowed' : 'pointer',
+                   opacity: loading ? 0.7 : 1,
+                 }}
+               >
+                 {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}
+               </button>
+             </div>
           </form>
+                  </div>
         </div>
       </div>
     </div>
   );
 };
-
+  
 export default ForumInfoEdit; 

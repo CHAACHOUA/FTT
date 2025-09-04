@@ -34,7 +34,7 @@ body{
 }
 
 .navbar-logo {
-  height: 40px;
+  height: 60px;
   width: auto;
   object-fit: contain;
 }
@@ -55,11 +55,11 @@ body{
   margin-right: 2rem;
 }
 
-.navbar-btn,
-.btn-outline {
+/* Bouton S'inscrire */
+.navbar-signup-btn {
   background: transparent;
-  color: #1f2937;
-  border: 1.5px solid #1f2937;
+  color: #083d56;
+  border: 1.5px solid #083d56;
   border-radius: 8px;
   padding: 8px 28px;
   font-weight: 600;
@@ -70,10 +70,29 @@ body{
   text-decoration: none;
 }
 
-.navbar-btn:hover,
-.btn-outline:hover {
-  background: rgba(31, 41, 55, 0.1);
-  color: #1f2937;
+.navbar-signup-btn:hover {
+  color: #083d56;
+}
+
+/* Bouton Se connecter */
+.navbar-login-btn {
+  background: #1167b8;
+  color: white;
+  border: 1.5px solid 1167b8;
+  border-radius: 8px;
+  padding: 8px 28px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+  text-decoration: none;
+}
+
+.navbar-login-btn:hover {
+  background: #1976d2;
+  border-color: #1976d2;
+  color: white;
 }
 
 /* Dropdown utilisateur */
@@ -99,7 +118,7 @@ body{
 .user-circle {
   width: 40px;
   height: 40px;
-  background: linear-gradient(45deg, #7b2ff2, #1e4fd7);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -120,9 +139,9 @@ body{
   right: 0;
   background: #ffffff;
   border-radius: 0.75rem;
-  box-shadow: 0 8px 32px 0 rgba(80, 0, 120, 0.18);
+  box-shadow: none;
   padding: 0.5rem 0;
-  min-width: 200px;
+  min-width: 240px;
   z-index: 1001;
   border: 1px solid #e5e7eb;
   margin-top: 0.5rem;
@@ -144,8 +163,8 @@ body{
 }
 
 .dropdown-item:hover {
-  background: rgba(123, 47, 242, 0.1);
-  color: #7b2ff2;
+  background: rgba(24, 56, 108, 0.1);
+  color: #18386c;
 }
 
 .dropdown-icon {

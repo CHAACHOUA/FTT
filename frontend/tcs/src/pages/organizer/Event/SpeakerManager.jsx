@@ -239,10 +239,10 @@ const SpeakerManager = () => {
         {speakers.length === 0 ? (
           <div className="no-speakers">
             <p>Aucun speaker ajouté pour le moment.</p>
-            <button onClick={() => setShowAddForm(true)}>
-              <FontAwesomeIcon icon={faPlus} />
-              Ajouter le premier speaker
-            </button>
+                         <button onClick={() => setShowAddForm(true)}>
+               <FontAwesomeIcon icon={faPlus} />
+               Ajouter le premier speaker
+             </button>
           </div>
         ) : (
           <div className="speakers-grid">
@@ -259,9 +259,9 @@ const SpeakerManager = () => {
                       }}
                     />
                   ) : null}
-                  <div className="speaker-photo-placeholder" style={{ display: speaker.photo ? 'none' : 'flex' }}>
-                    <FontAwesomeIcon icon={faUser} />
-                  </div>
+                                     <div className="speaker-photo-placeholder" style={{ display: speaker.photo ? 'none' : 'flex' }}>
+                     <FontAwesomeIcon icon={faUser} />
+                   </div>
                 </div>
 
                 <div className="speaker-info">

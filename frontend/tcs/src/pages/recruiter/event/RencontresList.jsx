@@ -84,17 +84,45 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
     setIsSearching(true);
     const term = searchTerm.toLowerCase();
     
+    console.log('Recherche en cours:', {
+      searchTerm: term,
+      allCandidatesCount: allCandidates.length,
+      meetingsCount: meetings.length,
+      meetings: meetings.map(m => ({ id: m.id, public_token: m.public_token, name: `${m.first_name} ${m.last_name}` }))
+    });
+    
     // Filtrer les candidats qui ne sont pas déjà dans les rencontres
     const availableCandidates = allCandidates.filter(({ candidate }) => {
-      const isAlreadyInMeetings = meetings.some(meeting => meeting.id === candidate.id);
+      // Vérifier si le candidat est déjà dans les rencontres
+      const isAlreadyInMeetings = meetings.some(meeting => {
+        // Comparer uniquement par public_token car les IDs sont undefined
+        const isMatch = meeting.public_token === candidate.public_token;
+        
+        if (isMatch) {
+          console.log('Candidat déjà dans les rencontres:', {
+            candidate: `${candidate.first_name} ${candidate.last_name}`,
+            candidateToken: candidate.public_token,
+            meetingToken: meeting.public_token
+          });
+        }
+        
+        return isMatch;
+      });
+      
       if (isAlreadyInMeetings) return false;
 
       const fullName = `${candidate.first_name} ${candidate.last_name}`.toLowerCase();
       const email = candidate.email?.toLowerCase() || '';
       
-      return fullName.includes(term) || email.includes(term);
+      const matches = fullName.includes(term) || email.includes(term);
+      if (matches) {
+        console.log('Candidat trouvé dans la recherche:', `${candidate.first_name} ${candidate.last_name}`);
+      }
+      
+      return matches;
     });
 
+    console.log('Résultats de recherche:', availableCandidates.length);
     setSearchResults(availableCandidates);
     setIsSearching(false);
   }, [searchTerm, allCandidates, meetings]);
@@ -159,13 +187,21 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
       console.log('Réponse de succès:', responseData);
 
       // Ajouter aux rencontres locales immédiatement
-      setMeetings(prev => [...prev, candidate]);
+      setMeetings(prev => {
+        const newMeetings = [...prev, candidate];
+        console.log('Nouvelle liste des rencontres:', newMeetings.map(m => ({ id: m.id, public_token: m.public_token, name: `${m.first_name} ${m.last_name}` })));
+        return newMeetings;
+      });
+      
+      // Vider la recherche pour forcer la mise à jour
+      setSearchTerm('');
       
       // Retirer des résultats de recherche
-      setSearchResults(prev => prev.filter(item => item.candidate.public_token !== candidate.public_token));
-      
-      // Vider la recherche
-      setSearchTerm('');
+      setSearchResults(prev => {
+        const filtered = prev.filter(item => item.candidate.public_token !== candidate.public_token);
+        console.log('Résultats de recherche après ajout:', filtered.length);
+        return filtered;
+      });
       
       // Feedback visuel silencieux (optionnel)
       console.log('Candidat ajouté aux rencontres avec succès');
@@ -196,6 +232,23 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
         setMeetings(prev => [...prev, candidate]);
         throw new Error(errorData.error || errorData.detail || 'Erreur lors de la suppression de la rencontre');
       }
+      
+      // Forcer la mise à jour de la recherche si elle est active
+      if (searchTerm.trim()) {
+        const term = searchTerm.toLowerCase();
+        const availableCandidates = allCandidates.filter(({ candidate: cand }) => {
+          const isAlreadyInMeetings = meetings.some(meeting => 
+            meeting.public_token === cand.public_token
+          );
+          if (isAlreadyInMeetings) return false;
+
+          const fullName = `${cand.first_name} ${cand.last_name}`.toLowerCase();
+          const email = cand.email?.toLowerCase() || '';
+          
+          return fullName.includes(term) || email.includes(term);
+        });
+        setSearchResults(availableCandidates);
+      }
 
       // Feedback visuel silencieux (optionnel)
       console.log('Candidat retiré des rencontres avec succès');
@@ -209,7 +262,8 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
   if (error) return <div>Erreur : {error}</div>;
 
   return (
-    <div className="candidates-list">
+    <div className="offers-list-wrapper">
+      <div className="offers-list-content">
       <div className="candidates-header">
         <h2>Mes rencontres - {meetings.length} candidat{meetings.length > 1 ? 's' : ''}</h2>
       </div>
@@ -371,6 +425,7 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
           onClose={() => setSelectedCandidate(null)}
         />
       )}
+      </div>
     </div>
   );
 };

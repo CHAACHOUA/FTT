@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft } from 'react-icons/fa';
+import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import Navbar from '../../common/NavBar';
 import './CandidatesList.css';
+import '../../../pages/styles/organizer/organizer-buttons.css';
 import CandidateFilters from './CandidateFilters';
 
 const CandidatesList = (props) => {
@@ -119,8 +120,8 @@ const CandidatesList = (props) => {
     return (
       <div className="candidates-list">
         <Navbar />
-        <div className="candidates-header">
-          <button onClick={handleBack} className="back-button">
+        <div className="organizer-header-block">
+          <button onClick={handleBack} className="organizer-btn-back">
             <FaArrowLeft /> Retour
           </button>
           <div className="header-content">
@@ -183,8 +184,8 @@ const CandidatesList = (props) => {
     return (
       <div className="candidates-list">
         <Navbar />
-        <div className="candidates-header">
-          <button onClick={handleBack} className="back-button">
+        <div className="organizer-header-block">
+          <button onClick={handleBack} className="organizer-btn-back">
             <FaArrowLeft /> Retour
           </button>
           <div className="header-content">
@@ -247,8 +248,8 @@ const CandidatesList = (props) => {
     return (
       <div className="candidates-list">
         <Navbar />
-        <div className="candidates-header">
-          <button onClick={handleBack} className="back-button">
+        <div className="organizer-header-block">
+          <button onClick={handleBack} className="organizer-btn-back">
             <FaArrowLeft /> Retour
           </button>
           <div className="header-content">
@@ -373,15 +374,48 @@ const CandidatesList = (props) => {
   return (
     <div className="candidates-list">
       <Navbar />
-      <div className="candidates-header">
-        <button onClick={handleBack} className="back-button">
-          <FaArrowLeft /> Retour
-        </button>
-        <div className="header-content">
-          <h1>Liste des Candidats</h1>
-          <p>Gérez les candidats participant à votre forum</p>
+      <div className="candidates-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+              <div className="organizer-header-block">
+          <div className="organizer-header-with-forum">
+            <button onClick={handleBack} className="organizer-btn-back">
+              <FaArrowLeft /> Retour
+            </button>
+            {forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">{forum.name}</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
+                </div>
+              </div>
+            )}
+            {!forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">Forum non défini</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>Dates non disponibles</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        <div className="page-title-section">
+          <div className="page-title-header">
+            <div>
+              <h1>Liste des Candidats</h1>
+              <p>Gérez les candidats participant à votre forum</p>
+            </div>
+            <button 
+              className="download-candidates-btn" 
+              onClick={downloadCandidatesList}
+              title="Télécharger la liste complète des candidats"
+            >
+              <FaFileExport /> Exporter la liste des candidats
+            </button>
+          </div>
+        </div>
       <div className="kpi-section">
         <div className="kpi-row">
           <div className="kpi-card kpi-candidates">
@@ -418,32 +452,6 @@ const CandidatesList = (props) => {
                 ))}
             </ul>
           </div>
-        </div>
-        
-        {/* Bouton de téléchargement avant les filtres */}
-        <div className="download-section">
-          <button 
-            className="download-candidates-btn" 
-            onClick={downloadCandidatesList}
-            title="Télécharger la liste complète des candidats"
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              padding: '12px 20px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              minWidth: '180px',
-              justifyContent: 'center'
-            }}
-          >
-            <FaFileExport /> Exporter la liste des candidats
-          </button>
         </div>
       </div>
       <div className="candidates-wrapper">
@@ -538,9 +546,10 @@ const CandidatesList = (props) => {
             onClose={() => setSelectedCandidate(null)}
           />
         )}
+              </div>
       </div>
-    </div>
-  );
-};
-
-export default CandidatesList;
+      </div>
+    );
+  };
+  
+  export default CandidatesList;

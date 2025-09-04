@@ -27,7 +27,7 @@
 }
 
 .add-speaker-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -43,7 +43,7 @@
 
 .add-speaker-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
 }
 
 .error-message {
@@ -155,8 +155,8 @@
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #18386c;
+  box-shadow: 0 0 0 3px rgba(24, 56, 108, 0.1);
 }
 
 .form-group small {
@@ -190,7 +190,7 @@
 }
 
 .save-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -206,7 +206,7 @@
 
 .save-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
 }
 
 /* Liste des speakers */
@@ -229,7 +229,7 @@
 }
 
 .no-speakers button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -245,7 +245,7 @@
 
 .no-speakers button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
 }
 
 .speakers-grid {
@@ -259,7 +259,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #18386c;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -288,7 +288,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -334,11 +334,11 @@
 }
 
 .edit-btn {
-  color: #667eea;
+  color: #18386c;
 }
 
 .edit-btn:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(24, 56, 108, 0.1);
 }
 
 .delete-btn {

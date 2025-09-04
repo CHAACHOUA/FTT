@@ -11,19 +11,23 @@
 
 .recruiter-dashboard-content {
   flex: 1;
-  padding: 2rem;
   margin-left: 120px; /* Ajout de marge pour compenser la sidebar (72px + 48px d'espace) */
   transition: margin-left 0.3s ease;
   background: #ffffff;
+  min-height: calc(100vh - 70px);
 }
 
 .dashboard-section {
   background: #ffffff;
   border-radius: 0;
-  padding: 2.5rem;
+  padding: 0;
   box-shadow: none;
   border: none;
   animation: fadeInUp 0.6s ease-out;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-height: calc(100vh - 70px);
 }
 
 @keyframes fadeInUp {
@@ -140,15 +144,15 @@
 }
 
 .submenu-item:hover {
-  background: rgba(123, 47, 242, 0.08);
-  color: #7b2ff2;
+  background: rgba(24, 56, 108, 0.08);
+  color: #18386c;
   transform: translateX(8px);
 }
 
 .submenu-item.active {
-  background: linear-gradient(135deg, #7b2ff2 0%, #1e4fd7 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
-  box-shadow: 0 4px 12px rgba(123, 47, 242, 0.3);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
   transform: translateX(12px);
   animation: slideInActive 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -175,7 +179,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #7b2ff2;
+  background: #18386c;
   border-radius: 0 2px 2px 0;
   animation: slideInBorder 0.3s ease-out;
 }
@@ -286,7 +290,7 @@
 .stat-number {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #7b2ff2;
+  color: #18386c;
   margin-bottom: 0.5rem;
 }
 
@@ -308,15 +312,14 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  background: rgba(123, 47, 242, 0.1);
-  color: #7b2ff2;
+  background: rgba(24, 56, 108, 0.1);
+  color: #18386c;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .recruiter-dashboard-content {
     margin-left: 0; /* Suppression de la marge sur mobile */
-    padding: 1rem;
   }
   
   .submenu-container {
@@ -330,45 +333,13 @@
 
 @media (max-width: 768px) {
   .dashboard-section {
-    padding: 1.5rem;
+    padding: 0;
     border-radius: 0;
-  }
-  
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .dashboard-title {
-    font-size: 1.5rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .stat-card {
-    padding: 1rem;
-  }
-  
-  .stat-number {
-    font-size: 1.5rem;
   }
 }
 
 @media (max-width: 480px) {
-  .recruiter-dashboard-content {
-    padding: 0.5rem;
-  }
-  
   .dashboard-section {
-    padding: 1rem;
-    border-radius: 0;
-  }
-  
-  .dashboard-title {
-    font-size: 1.25rem;
+    padding: 0;
   }
 } 

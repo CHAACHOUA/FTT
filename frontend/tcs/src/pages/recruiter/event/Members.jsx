@@ -57,8 +57,9 @@ function Members({ accessToken, apiBaseUrl }) {
   };
 
   return (
-    <div className="company-recruiters-section">
-      <div className="company-recruiters-header">
+    <div className="offers-list-wrapper">
+      <div className="offers-list-content">
+        <div className="company-recruiters-header">
         <h2 className="company-recruiters-title">Vos recruteurs</h2>
         <button 
           className="invite-recruiter-btn"
@@ -78,16 +79,37 @@ function Members({ accessToken, apiBaseUrl }) {
       <div className="recruiters-grid">
         {recruiters.map((r) => (
           <div key={r.id} className="recruiter-card">
-         <img
-  src={r.profile_picture ? `${apiBaseUrl}${r.profile_picture}` : recruiter_photo}
-  alt={`${r.first_name} ${r.last_name}`}
-  className="recruiter-photo"
-/>
-            <p className="recruiter-name">
-              {r.first_name} {r.last_name}
-            </p>
+            <img
+              src={r.profile_picture ? `${apiBaseUrl}${r.profile_picture}` : recruiter_photo}
+              alt={`${r.first_name} ${r.last_name}`}
+              className="recruiter-photo"
+            />
+            <div className="recruiter-info">
+              <p className="recruiter-name">
+                {r.first_name} {r.last_name}
+              </p>
+              <p className="recruiter-email">
+                {r.email || 'Email non disponible'}
+              </p>
+              <p className="recruiter-company">
+                {company?.name || 'Entreprise non définie'}
+              </p>
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Bloc informatif */}
+      <div className="members-info-block">
+        <div className="info-card">
+          <h3>Statistiques</h3>
+          <p>Total des recruteurs : <strong>{recruiters.length}</strong></p>
+          <p>Entreprise : <strong>{company?.name || 'Non définie'}</strong></p>
+        </div>
+        <div className="info-card">
+          <h3>Conseils</h3>
+          <p>Invitez vos collègues pour collaborer efficacement sur les forums et gérer les candidatures ensemble.</p>
+        </div>
       </div>
 
       <InviteRecruiterModal
@@ -99,6 +121,7 @@ function Members({ accessToken, apiBaseUrl }) {
         company={company}
         forum={forum}
       />
+      </div>
     </div>
   );
 }

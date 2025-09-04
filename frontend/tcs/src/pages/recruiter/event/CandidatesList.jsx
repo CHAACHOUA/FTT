@@ -140,6 +140,33 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl }) => {
     setFilters({});
   };
 
+  const handleExportCandidates = () => {
+    // Créer un CSV avec les données des candidats
+    const csvContent = [
+      ['Nom', 'Prénom', 'Email', 'Téléphone', 'Localisation', 'CV disponible', 'RQTH'],
+      ...filteredCandidates.map(item => [
+        item.candidate?.last_name || '',
+        item.candidate?.first_name || '',
+        item.candidate?.email || '',
+        item.candidate?.phone || '',
+        item.candidate?.location || '',
+        item.candidate?.cv_file ? 'Oui' : 'Non',
+        item.search?.rqth ? 'Oui' : 'Non'
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    // Créer et télécharger le fichier
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `candidats_forum_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // KPIs (calculés sur tous les candidats)
   const total = candidates.length;
   const withCV = candidates.filter(item => item.candidate?.cv_file).length;
@@ -268,10 +295,28 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl }) => {
   }
 
   return (
-    <div className="candidates-list">
+    <div className="offers-list-wrapper">
+      <div className="offers-list-content">
       <div className="candidates-header">
-        <h1>CVthèque</h1>
-        <p>Consultez les candidats disponibles pour votre forum</p>
+        <div className="header-left">
+          <h1>CVthèque</h1>
+          <p>Consultez les candidats disponibles pour votre forum</p>
+        </div>
+        <div className="header-actions">
+          <button 
+            className="export-candidates-btn"
+            onClick={handleExportCandidates}
+          >
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="14,2 14,8 20,8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <polyline points="10,9 9,9 8,9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Exporter la liste des candidats
+          </button>
+        </div>
       </div>
       <div className="kpi-section">
         <div className="kpi-row">
@@ -426,6 +471,7 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl }) => {
           />
         )}
       </div>
+    </div>
     </div>
   );
 };

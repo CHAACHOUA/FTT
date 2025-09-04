@@ -9,11 +9,11 @@
 .forum-infos-left {
   flex: 1;
   min-width: 300px;
-  max-width: calc(100% - 382px); /* 350px + 32px gap */
+  max-width: calc(100% - 432px); /* 400px + 32px gap */
 }
 
 .forum-infos-right {
-  width: 350px;
+  width: 400px; /* Augmenté de 350px à 400px */
   flex-shrink: 0;
   background: #f9fafb;
   border: 1px solid #e5e7eb;

@@ -5,6 +5,7 @@ import './CompaniesList.css';
 import defaultLogo from '../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faCheck, faXmark, faToggleOn, faToggleOff, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import InviteRecruiterModal from './InviteRecruiterModal';
 
 const CompaniesList = (props) => {
@@ -306,15 +307,36 @@ const CompaniesList = (props) => {
   return (
     <div style={{ paddingTop: '80px' }}>
       <Navbar />
-      <div className="companies-container">
-        <div className="companies-header">
-          <button onClick={handleBack} className="back-button">
-            <FontAwesomeIcon icon={faArrowLeft} /> Retour
-          </button>
-          <div className="header-content">
-            <h1>Entreprises participantes</h1>
-            <p>Gérez les entreprises participant à votre forum</p>
+      <div className="companies-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+        <div className="organizer-header-block">
+          <div className="organizer-header-with-forum">
+            <button onClick={handleBack} className="organizer-btn-back">
+              <FaArrowLeft /> Retour
+            </button>
+            {forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">{forum.name}</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
+                </div>
+              </div>
+            )}
+            {!forum && (
+              <div className="forum-details">
+                <h2 className="forum-title">Forum non défini</h2>
+                <div className="forum-date-range">
+                  <FaCalendarAlt className="calendar-icon" />
+                  <span>Dates non disponibles</span>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+
+        <div className="page-title-section">
+          <h1>Entreprises participantes</h1>
+          <p>Gérez les entreprises participant à votre forum</p>
         </div>
 
         <div className="companies-filters">

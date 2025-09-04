@@ -24,28 +24,28 @@ const RecruiterDashboard = () => {
   const { accessToken } = useAuth();
 
   return (
-    <div style={{ paddingTop: '100px' }}>
+    <div className="recruiter-dashboard-container">
       <Navbar />
-      <div className="recruiter-dashboard-container">
-        {/* Passage de l'objet forum à SubMenu si besoin */}
-        <SubMenu
-          active={active}
-          setActive={setActive}
-          sectionActive={sectionActive}
-          setSectionActive={setSectionActive}
-          forum={forum}
-        />
-        <div className="recruiter-dashboard-content">
-          <div className="dashboard-section">
-
-            {active === 'membres' && <Members accessToken={accessToken} apiBaseUrl={API} />}
-            {active === 'entreprise' && <CompanyProfile forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
-            {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
-            {active === 'rencontres' && <RencontresList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
-            {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
-            {active === 'matching' && <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
-
-          </div>
+      <div className="recruiter-dashboard-layout">
+        {/* SubMenu à gauche */}
+        <div className="recruiter-sidebar">
+          <SubMenu
+            active={active}
+            setActive={setActive}
+            sectionActive={sectionActive}
+            setSectionActive={setSectionActive}
+            forum={forum}
+          />
+        </div>
+        
+        {/* Contenu principal à droite */}
+        <div className="recruiter-main-content">
+          {active === 'membres' && <Members accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'entreprise' && <CompanyProfile forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'rencontres' && <RencontresList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
+          {active === 'matching' && <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
         </div>
       </div>
     </div>

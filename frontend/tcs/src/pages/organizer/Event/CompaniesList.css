@@ -22,31 +22,7 @@
   position: relative;
 }
 
-.back-button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  z-index: 10;
-}
-
-.back-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-}
+/* Bouton retour stylé via organizer-btn-back */
 
 .header-content {
   padding-top: 4rem;
@@ -94,10 +70,10 @@
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #4f8cff 0%, #38e8ff 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
 }
 
 /* Messages d'erreur */
@@ -150,17 +126,19 @@
   border-radius: 18px;
   padding: 18px 26px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-width: 340px;
+  min-width: 400px;
+  width: 100%;
+  max-width: 500px;
   transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border 0.3s;
   position: relative;
 }
 .companies-dashboard-search:hover, .companies-dashboard-search:focus-within {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border: 1.5px solid #4f8cff;
+  box-shadow: 0 4px 16px rgba(24, 56, 108, 0.15);
+  border: 1px solid #18386c;
 }
 .search-icon {
   margin-right: 16px;
-  color: #4f8cff;
+  color: #18386c;
   font-size: 20px;
   transition: color 0.3s ease;
   opacity: 0.85;
@@ -193,7 +171,7 @@
 }
 
 .add-company-button {
-  background: linear-gradient(135deg, #4f8cff 0%, #38e8ff 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
   padding: 14px 28px;
@@ -287,7 +265,7 @@
 }
 .status-badge {
   background: #f3e8ff;
-  color: #7c3aed;
+  color: #18386c;
   text-transform: capitalize;
   border-color: #e9d5ff;
 }

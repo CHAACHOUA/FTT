@@ -1,0 +1,216 @@
+/* Styles des boutons pour l'espace organisateur */
+/* Basé sur le style du bouton "Je cherche un emploi" de la page d'accueil */
+
+/* Bouton principal avec le style du bouton "Je cherche un emploi" */
+.organizer-btn-primary {
+  background: linear-gradient(135deg, #3872cf 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  padding: 18px 48px;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+  
+}
+
+.organizer-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Bouton retour avec style personnalisé */
+.organizer-btn-back {
+  background: linear-gradient(135deg, #3872cf 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+}
+
+.organizer-btn-back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Bouton effacer les filtres avec style personnalisé */
+.organizer-btn-clear-filters {
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
+}
+
+.organizer-btn-clear-filters:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
+}
+
+/* Bouton secondaire pour les actions moins importantes */
+.organizer-btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+}
+
+.organizer-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+}
+
+/* Bouton d'action pour les opérations importantes */
+.organizer-btn-action {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.organizer-btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Bouton d'alerte pour les actions dangereuses */
+.organizer-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.organizer-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Bloc d'en-tête avec fond blanc et bouton stylé */
+.organizer-header-block {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.organizer-header-block h1 {
+  color: #1f2937;
+  font-size: 2.7rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.organizer-header-block p {
+  color: #6b7280;
+  font-size: 1.2rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Positionnement du bouton retour */
+.organizer-header-block .organizer-btn-back {
+  position: static; /* Plus de position absolue */
+  margin: 0; /* Pas de marge */
+}
+
+/* Style pour l'en-tête avec nom et date du forum à côté du bouton retour */
+.organizer-header-with-forum {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.forum-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 0; /* Pas de marge à gauche */
+}
+
+.forum-title {
+  color: #1f2937;
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.forum-date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.forum-date-range .calendar-icon {
+  color: #3b82f6;
+  font-size: 1rem;
+}
+
+/* Style pour la section du titre de la page */
+.page-title-section {
+  margin: 32px 0;
+  text-align: left;
+}
+
+.page-title-section h1 {
+  color: #1f2937;
+  font-size: 2.7rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.page-title-section p {
+  color: #6b7280;
+  font-size: 1.2rem;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
