@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from forums.services.forum_services import get_all_forums, get_forum_detail
 from rest_framework.response import Response
 from forums.services.forum_services import get_candidate_search_by_forum_and_candidate
@@ -20,6 +20,7 @@ from recruiters.models import Offer
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def forum_list(request):
     return get_all_forums()
 
