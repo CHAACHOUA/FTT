@@ -14,7 +14,8 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
   const LogoCompany = logo;
   const baseURL=process.env.REACT_APP_API_BASE_URL;
   return (
-    <div className="forum-infos-container">
+    <div className="forum-infos-wrapper">
+      <div className="forum-infos-container">
       {/* Partie gauche : description */}
       <div className="forum-infos-left">
         <h2 className="forum-infos-title">Bienvenue !</h2>
@@ -102,6 +103,7 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
             S'inscrire
           </button>
         )}
+      </div>
       </div>
     </div>
   );

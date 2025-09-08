@@ -61,7 +61,7 @@ html {
 /* Icône */
 .sidebar-icon {
   font-size: 22px;
-  color:#7e0b37;
+  color:#18386c;
 }
 
 /* Le label est caché mais utilisé comme tooltip */
@@ -71,7 +71,7 @@ html {
   top: 50%;
   transform: translateY(-50%);
   background-color: #ffffff;
-  color: #7e0b37;
+  color: #18386c;
   white-space: nowrap;
   padding: 6px 10px;
   font-size: 14px;

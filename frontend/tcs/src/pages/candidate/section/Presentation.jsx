@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../styles/candidate/Presentation.css';
-import { FaUser, FaVenusMars, FaCamera } from 'react-icons/fa';
+import { FaUser, FaVenusMars, FaCamera, FaFileAlt } from 'react-icons/fa';
 
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -125,6 +125,26 @@ const Presentation = ({ formData, onUpdate = () => {}, readOnly = false }) => {
             onChange={handleFieldChange}
             autoComplete="family-name"
             disabled={readOnly}
+          />
+        </div>
+      </div>
+
+      {/* Biographie */}
+      <div className="input-modern">
+        <span className="input-icon"><FaFileAlt /></span>
+        <div className="input-wrapper-modern">
+          <label className={`floating-label ${formData.bio ? 'filled' : ''}`}>
+          
+          </label>
+          <textarea
+            id="bio"
+            name="bio"
+            value={formData.bio || ''}
+            onChange={handleFieldChange}
+            disabled={readOnly}
+            rows={4}
+            placeholder="Parlez-nous de vous, de vos passions, de vos objectifs professionnels..."
+            className="modern-textarea"
           />
         </div>
       </div>

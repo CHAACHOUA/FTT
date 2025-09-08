@@ -53,3 +53,46 @@
   margin-bottom: 1rem;
   color: #111827;
 }
+
+/* Layout avec sidebar */
+.candidate-dashboard-layout {
+  display: flex;
+  min-height: calc(100vh - 120px);
+}
+
+.candidate-sidebar {
+  position: fixed;
+  left: 0;
+  top: 120px;
+  width: 72px;
+  height: calc(100vh - 120px);
+  background: #ffffff;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 2px 0 12px rgba(24, 56, 108, 0.08);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.candidate-main-content {
+  flex: 1;
+  margin-left: 72px;
+  min-height: calc(100vh - 120px);
+  background: #f8fafc;
+  padding: 24px;
+}
+
+/* Header de page - MÊME DESIGN QUE L'IMAGE */
+.page-header {
+  background: #ffffff;
+  color: #18386c;
+  padding: 8px 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.05);
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+}

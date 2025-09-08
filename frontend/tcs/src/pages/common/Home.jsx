@@ -293,7 +293,7 @@ export default function Home() {
                 </div>
                 <div className="how-it-works-step-white">02</div>
               </div>
-              <div className="how-it-works-item-title-white">Explore les offres</div>
+              <div className="how-it-works-item-title-white">Explorez les offres</div>
               <div className="how-it-works-item-description-white">Accède aux JobDating et offres qui correspondent à tes recherches</div>
             </div>
             <div className="how-it-works-item-white">

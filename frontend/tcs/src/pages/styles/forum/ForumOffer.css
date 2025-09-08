@@ -196,13 +196,15 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .forum-offers-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 2rem;
   padding: 1rem;
   background: transparent;
@@ -212,7 +214,7 @@
 .favorites-toggle-container {
   display: flex;
   align-items: center;
-  background: #f1f5f9;
+  background: transparent;
   border-radius: 25px;
   padding: 4px;
   gap: 0;
@@ -283,7 +285,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -291,7 +293,7 @@
 .forum-offer-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border-color: rgba(102, 126, 234, 0.3);
+  border-color: rgba(24, 56, 108, 0.3);
 }
 
 .forum-offer-card:hover::before {
@@ -323,8 +325,8 @@
 
 .forum-offer-logo:hover {
   transform: scale(1.05);
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  border-color: #18386c;
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
 }
 
 .forum-offer-company-info {
@@ -344,7 +346,7 @@
 }
 
 .forum-offer-company-name:hover {
-  color: #667eea;
+  color: #18386c;
 }
 
 .forum-offer-company-meta {
@@ -356,7 +358,7 @@
 }
 
 .forum-offer-meta-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 1rem;
 }
 
@@ -413,7 +415,7 @@
 }
 
 .forum-offer-meta-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 0.9rem;
 }
 
@@ -434,8 +436,8 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #667eea;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  border: 3px solid #18386c;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.3);
   flex-shrink: 0;
 }
 
@@ -443,14 +445,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.3);
   flex-shrink: 0;
 }
 
@@ -487,9 +489,9 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #18386c;
   background: #ffffff;
-  color: #6b7280;
+  color: #18386c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -499,11 +501,11 @@
 }
 
 .forum-offer-action-button:hover {
-  border-color: #667eea;
-  color: #667eea;
-  background: #f8fafc;
+  border-color: #06b6d4;
+  color: #06b6d4;
+  background: rgba(24, 56, 108, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
 }
 
 .forum-offer-action-button:active {
@@ -555,7 +557,7 @@
   align-items: center;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border-radius: 20px 20px 0 0;
 }
@@ -631,7 +633,7 @@
 }
 
 .company-popup-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 1.1rem;
 }
 
@@ -654,12 +656,12 @@
 
 .company-popup-detail-item:hover {
   background: #f1f5f9;
-  border-color: #667eea;
+  border-color: #18386c;
   transform: translateX(4px);
 }
 
 .company-popup-detail-item a {
-  color: #667eea;
+  color: #18386c;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
@@ -734,8 +736,8 @@
 
 .company-logo-large:hover {
   transform: scale(1.05);
-  border-color: #667eea;
-  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.2);
+  border-color: #18386c;
+  box-shadow: 0 12px 35px rgba(24, 56, 108, 0.2);
 }
 
 .company-name-large {
@@ -761,9 +763,9 @@
 
 .offer-detail-section:hover {
   background: #f1f5f9;
-  border-color: #667eea;
+  border-color: #18386c;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 8px 25px rgba(24, 56, 108, 0.1);
 }
 
 .section-title {
@@ -777,7 +779,7 @@
 }
 
 .section-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 1.2rem;
 }
 
@@ -821,12 +823,12 @@
 
 .offer-meta-item:hover {
   background: #f8fafc;
-  border-color: #667eea;
+  border-color: #18386c;
   transform: translateX(5px);
 }
 
 .offer-meta-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 1.1rem;
   width: 20px;
 }
@@ -846,7 +848,7 @@
   background: #ffffff;
   border-radius: 12px;
   padding: 20px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #18386c;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -889,7 +891,7 @@
 }
 
 .recruiter-contact a {
-  color: #667eea;
+  color: #18386c;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -901,7 +903,7 @@
 }
 
 .contact-icon {
-  color: #667eea;
+  color: #18386c;
   font-size: 1rem;
 }
 
@@ -960,7 +962,7 @@
 .forum-offer-card-new:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-  border-color: rgba(102, 126, 234, 0.3);
+  border-color: rgba(24, 56, 108, 0.3);
 }
 
 /* Section Logo et Entreprise */

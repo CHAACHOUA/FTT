@@ -310,7 +310,6 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
                     </div>
                     <div className="candidate-info">
                       <h3>{candidate.first_name} {candidate.last_name}</h3>
-                      {candidate.email && <p>{candidate.email}</p>}
 
                       <div className="sectors-container">
                         {(search?.sector?.length ?? 0) > 0
@@ -326,6 +325,19 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
                         {search?.region || 'Non renseignée'}
                       </p>
                     </div>
+                    
+                    {candidate.cv_file && (
+                      <a
+                        href={`${apiBaseUrl}${candidate.cv_file}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cv-download"
+                        title="Télécharger le CV"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaDownload />
+                      </a>
+                    )}
                     <button
                       className="add-meeting-btn"
                       onClick={() => addToMeetings(candidate)}
@@ -372,7 +384,6 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
                   style={{ cursor: 'pointer' }}
                 >
                   <h3>{candidate.first_name} {candidate.last_name}</h3>
-                  {candidate.email && <p>{candidate.email}</p>}
 
                   <div className="sectors-container">
                     {(candidate.search?.sector?.length ?? 0) > 0

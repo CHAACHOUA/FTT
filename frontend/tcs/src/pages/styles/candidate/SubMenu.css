@@ -1,81 +1,143 @@
+/* Conteneur sidebar - MÊME DESIGN QUE RECRUITER */
 .submenu-wrapper {
+  width: 72px;
+  height: calc(100vh - 120px);
+  position: fixed;
+  left: 0;
+  top: 120px;
+  background-color: #ffffff;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 2px 0 12px rgba(24, 56, 108, 0.08);
+  padding: 24px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Poppins';
-  padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+  z-index: 1000;
+  animation: slideInSidebar 0.4s ease-out;
+  font-family: 'Poppins', sans-serif;
 }
 
-.submenu-tabs {
+/* Section */
+.submenu-section {
+  width: 100%;
+}
+
+/* Liste des éléments */
+.submenu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* Élément de la liste */
+.submenu-list li {
+  margin: 20px 0;
+  position: relative;
+}
+
+/* Lien dans la sidebar */
+.submenu-list li .submenu-link {
   display: flex;
-  gap: 40px;
-  margin-bottom: 16px;
-}
-
-.submenu-section-title {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #607d8b;
-  text-transform: uppercase;
-  cursor: pointer;
-  user-select: none;
-}
-
-.submenu-section-title.active-section {
-  color: #2196f3;
-  cursor: default;
-  border-bottom: 2px solid #2196f3;
-  padding-bottom: 4px;
-}
-
-.submenu-buttons-container {
-  display: flex;
-  gap: 24px;
   justify-content: center;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  padding: 10px;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 12px;
+  position: relative;
 }
 
+/* Hover sur le lien */
+.submenu-list li .submenu-link:hover {
+  background: rgba(24, 56, 108, 0.1);
+  color: #18386c;
+}
+
+/* Lien actif */
+.submenu-list li .submenu-link.active {
+  background: transparent;
+  color: #18386c;
+  box-shadow: none;
+}
+
+/* Icône dans la sidebar */
+.submenu-list li .submenu-link .submenu-icon {
+  font-size: 20px;
+  display: block;
+}
+
+/* Texte dans la sidebar */
+.submenu-list li .submenu-link .submenu-label {
+  display: none;
+}
+
+/* Animation d'entrée de la sidebar */
+@keyframes slideInSidebar {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .submenu-wrapper {
+    width: 60px;
+    padding: 16px 0;
+  }
+  
+  .submenu-list li .submenu-link .submenu-icon {
+    font-size: 18px;
+  }
+}
+
+/* Styles pour les boutons (compatibilité avec l'ancien système) */
 .submenu-button {
   display: flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
   border: none;
-  color: #083d56;
+  color: #18386c;
   font-size: 13px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
-  padding-bottom: 8px;
+  padding: 5px;
+  border-radius: 12px;
+  width: 100%;
+  margin: 20px 0;
+  text-decoration: none;
 }
 
 .submenu-button:hover {
-  color: #083d56;
+  color: #18386c;
+  background: rgba(24, 56, 108, 0.1);
 }
 
 .submenu-button.active {
-  color: #083d56;
+  color: #18386c;
   font-weight: 600;
+  background: transparent;
+  box-shadow: none;
 }
 
 .submenu-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 24px;
-  height: 2px;
-  background-color: #083d56;
-  border-radius: 1px;
+  display: none;
 }
 
 .submenu-icon {
-  font-size: 18px;
-  margin-bottom: 6px;
+  font-size: 20px;
+  margin-bottom: 0;
 }
 
 .submenu-label {
-  text-align: center;
+  display: none;
 }

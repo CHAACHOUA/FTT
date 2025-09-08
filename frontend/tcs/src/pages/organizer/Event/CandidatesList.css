@@ -352,23 +352,36 @@
 }
 
 .cv-download {
-  background: #3b82f6;
-  color: white;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  color: #18386c;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .cv-download:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
+  color: #06b6d4;
+  transform: scale(1.1);
+}
+
+.cv-download svg {
+  font-size: 1.2rem;
+}
+
+.cv-no-file {
+  color: #9ca3af !important;
+  cursor: not-allowed;
+}
+
+.cv-no-file:hover {
+  color: #9ca3af !important;
+  transform: none;
 }
 
 .candidates-filters {

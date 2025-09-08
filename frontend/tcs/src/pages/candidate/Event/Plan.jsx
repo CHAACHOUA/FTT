@@ -4,7 +4,7 @@ import '../../styles/forum/Plan.css';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
 import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
-import { FaMapMarkerAlt, FaBuilding, FaBriefcase, FaClock, FaRoute, FaDownload } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBuilding, FaBriefcase, FaClock, FaRoute, FaDownload, FaUsers, FaFileAlt, FaCheckCircle, FaCircle, FaStar, FaEdit } from 'react-icons/fa';
 import LogoFTT from '../../../assets/Logo-FTT.png';
 
 const Plan = ({ companies, forumId }) => {
@@ -16,50 +16,96 @@ const Plan = ({ companies, forumId }) => {
   const [sectors, setSectors] = useState([]);
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const [visitedCompanies, setVisitedCompanies] = useState(new Set());
+  const [companyNotes, setCompanyNotes] = useState({});
+  const [editingNote, setEditingNote] = useState(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applyMessage, setApplyMessage] = useState('');
+  const [isInitialized, setIsInitialized] = useState(false);
   const { accessToken } = useAuth();
 
+  // Initialisation complète du composant
   useEffect(() => {
-    const loadChoices = async () => {
+    const initializeComponent = async () => {
       try {
         setLoading(true);
+        console.log('🚀 Initializing Plan component...');
+        
+        // 1. Charger les choix (secteurs, contrats)
         const [sectorsData, contractsData] = await Promise.all([
           getSectorsForSelect(),
           getContractsForSelect()
         ]);
         setSectors(sectorsData);
         setContracts(contractsData);
+        console.log('✅ Choices loaded');
+        
+        // 2. Charger les critères sauvegardés en priorité
+        const savedCriteria = localStorage.getItem(`search-criteria-${forumId}`);
+        if (savedCriteria) {
+          try {
+            const criteria = JSON.parse(savedCriteria);
+            console.log('📁 Loading saved criteria:', criteria);
+            setSelectedSector(criteria.selectedSector || '');
+            setSelectedContract(criteria.selectedContract || '');
+            setSearchTerm(criteria.searchTerm || '');
+            setLocationTerm(criteria.locationTerm || '');
+            console.log('✅ Saved criteria applied');
+          } catch (error) {
+            console.error('❌ Error loading saved criteria:', error);
+          }
+        }
+        
+        // 3. Charger les données du candidat depuis l'API (seulement si pas de critères sauvegardés)
+        if (accessToken && !savedCriteria) {
+          try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/forums/candidate/${forumId}/search`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setCandidateSearch(response.data);
+            console.log('📡 API data loaded:', response.data);
+            
+            // Utiliser les critères de l'API seulement si aucun critère n'est défini
+            if (!selectedSector && !selectedContract && !locationTerm && !searchTerm) {
+              setSelectedSector(response.data.sector || '');
+              setSelectedContract(response.data.contract_type || '');
+              setLocationTerm(response.data.region || '');
+              console.log('✅ API criteria applied');
+            }
+          } catch (error) {
+            console.error('❌ Error loading API data:', error);
+          }
+        }
+        
+        setIsInitialized(true);
+        console.log('🎉 Component initialization complete');
+        
       } catch (error) {
-        console.error('Erreur lors du chargement des choix:', error);
+        console.error('❌ Error during initialization:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadChoices();
-  }, []);
-
-  useEffect(() => {
-    const fetchCandidateSearch = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/forums/candidate/${forumId}/search`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setCandidateSearch(response.data);
-        setSelectedSector(response.data.sector || '');
-        setSelectedContract(response.data.contract_type || '');
-        setLocationTerm(response.data.region || '');
-      } catch (error) {
-        console.error('Erreur lors de la récupération des filtres du candidat:', error);
-      }
-    };
-
-    if (accessToken) {
-      fetchCandidateSearch();
-    }
+    initializeComponent();
   }, [accessToken, forumId]);
+
+  // Sauvegarder automatiquement les critères quand ils changent (après initialisation)
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    const criteria = {
+      selectedSector,
+      selectedContract,
+      searchTerm,
+      locationTerm
+    };
+    localStorage.setItem(`search-criteria-${forumId}`, JSON.stringify(criteria));
+    console.log('💾 Auto-saved criteria:', criteria);
+  }, [selectedSector, selectedContract, searchTerm, locationTerm, forumId, isInitialized]);
 
   // Utiliser les secteurs et contrats standardisés au lieu des données des entreprises
   const allSectors = sectors.map(s => s.value);
@@ -78,30 +124,301 @@ const Plan = ({ companies, forumId }) => {
 
   const timeEstimate = filteredCompanies.length * 10;
 
-  // Fonction pour sauvegarder la nouvelle recherche
-  const saveSearch = async () => {
+  // Fonction pour formater le temps en heures et minutes
+  const formatTime = (minutes) => {
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (remainingMinutes === 0) {
+      return `${hours}h`;
+    }
+    return `${hours}h ${remainingMinutes}min`;
+  };
+
+  // Charger les données de gamification depuis l'API
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        
+        const data = response.data;
+        setVisitedCompanies(new Set(data.visited_companies));
+        setCompanyNotes(data.company_notes);
+        console.log('Loaded progress from API:', data);
+      } catch (error) {
+        console.error('Error loading progress:', error);
+        // Fallback vers localStorage si l'API échoue
+        const visitedKey = `visited-companies-${forumId}`;
+        const notesKey = `company-notes-${forumId}`;
+        
+        const savedVisited = localStorage.getItem(visitedKey);
+        const savedNotes = localStorage.getItem(notesKey);
+        
+        if (savedVisited) {
+          try {
+            const visitedArray = JSON.parse(savedVisited);
+            setVisitedCompanies(new Set(visitedArray));
+          } catch (error) {
+            console.error('Error parsing visited companies:', error);
+          }
+        }
+        if (savedNotes) {
+          try {
+            const notes = JSON.parse(savedNotes);
+            setCompanyNotes(notes);
+          } catch (error) {
+            console.error('Error parsing notes:', error);
+          }
+        }
+      }
+    };
+
+    if (accessToken && forumId) {
+      loadProgress();
+    }
+  }, [forumId, accessToken]);
+
+  // Charger les critères sauvegardés depuis localStorage (PRIORITÉ)
+  useEffect(() => {
+    const filtersKey = `forum-filters-${forumId}`;
+    const savedFilters = localStorage.getItem(filtersKey);
+    
+    if (savedFilters) {
+      try {
+        const filters = JSON.parse(savedFilters);
+        console.log('Loading saved filters (PRIORITY):', filters);
+        setSelectedSector(filters.sector || '');
+        setSelectedContract(filters.contract || '');
+        setLocationTerm(filters.location || '');
+        setSearchTerm(filters.search || '');
+      } catch (error) {
+        console.error('Error parsing saved filters:', error);
+      }
+    }
+  }, [forumId]);
+
+  // Sauvegarder les critères dans localStorage quand ils changent
+  useEffect(() => {
+    const filtersKey = `forum-filters-${forumId}`;
+    const filters = {
+      sector: selectedSector,
+      contract: selectedContract,
+      location: locationTerm,
+      search: searchTerm
+    };
+    
+    localStorage.setItem(filtersKey, JSON.stringify(filters));
+    console.log('Saved filters to localStorage:', filters);
+  }, [selectedSector, selectedContract, locationTerm, searchTerm, forumId]);
+
+  // Sauvegarder les entreprises visitées via API
+  const toggleCompanyVisited = async (companyId) => {
     try {
-      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/forums/candidate/${forumId}/search`, {
-        sector: selectedSector,
-        contract_type: selectedContract,
-        region: locationTerm
-      }, {
+      console.log('Toggle company visited:', companyId, 'Forum ID:', forumId);
+      
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/toggle-visited/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      
+      const data = response.data;
+      setVisitedCompanies(new Set(data.visited_companies));
+      console.log('Updated visited companies via API:', data);
+      
+      // Sauvegarder aussi en localStorage comme backup
+      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify(data.visited_companies));
+      
+    } catch (error) {
+      console.error('Error toggling company visited:', error);
+      // Fallback vers localStorage si l'API échoue
+      const newVisited = new Set(visitedCompanies);
+      if (newVisited.has(companyId)) {
+        newVisited.delete(companyId);
+      } else {
+        newVisited.add(companyId);
+      }
+      setVisitedCompanies(newVisited);
+      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify([...newVisited]));
+    }
+  };
+
+  // Sauvegarder les notes via API
+  const saveCompanyNote = async (companyId, note) => {
+    try {
+      console.log('Saving note for company:', companyId, 'Note:', note);
+      
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/note/`,
+        { note },
+        {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      });
-      setShowFilters(false);
+        }
+      );
+      
+      const data = response.data;
+      setCompanyNotes(data.company_notes);
+      console.log('Updated notes via API:', data);
+      
+      // Sauvegarder aussi en localStorage comme backup
+      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(data.company_notes));
+      
+      setEditingNote(null);
+      
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde de la recherche:', error);
+      console.error('Error saving note:', error);
+      // Fallback vers localStorage si l'API échoue
+      const newNotes = { ...companyNotes, [companyId]: note };
+      setCompanyNotes(newNotes);
+      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(newNotes));
+      setEditingNote(null);
+    }
+  };
+
+  // Calculer la progression (avec protection contre les pourcentages > 100%)
+  const progressPercentage = filteredCompanies.length > 0 
+    ? Math.min(100, Math.round((visitedCompanies.size / filteredCompanies.length) * 100))
+    : 0;
+
+
+  // Fonction pour appliquer les nouveaux critères et nettoyer la progression
+  const applyFilters = async () => {
+    setIsApplying(true);
+    console.log('🔄 Applying filters...');
+    console.log('📊 Current visited companies:', [...visitedCompanies]);
+    console.log('🏢 Current filtered companies:', filteredCompanies.length);
+    
+    try {
+      // Utiliser directement filteredCompanies qui est déjà calculé
+      const validCompanyIds = new Set(filteredCompanies.map(company => company.id));
+      console.log('✅ Valid company IDs:', [...validCompanyIds]);
+      
+      // Garder seulement les entreprises visitées qui correspondent aux nouveaux critères
+      const newVisitedCompanies = new Set();
+      const newCompanyNotes = {};
+      
+      visitedCompanies.forEach(companyId => {
+        if (validCompanyIds.has(companyId)) {
+          newVisitedCompanies.add(companyId);
+          if (companyNotes[companyId]) {
+            newCompanyNotes[companyId] = companyNotes[companyId];
+          }
+        }
+      });
+      
+      console.log('🎯 New visited companies after filter:', [...newVisitedCompanies]);
+      console.log('📝 New company notes after filter:', Object.keys(newCompanyNotes).length, 'notes');
+      
+      // Mettre à jour les états
+      setVisitedCompanies(newVisitedCompanies);
+      setCompanyNotes(newCompanyNotes);
+      setEditingNote(null);
+      
+      // Sauvegarder en localStorage
+      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify([...newVisitedCompanies]));
+      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(newCompanyNotes));
+      
+      // Sauvegarder les critères de filtrage actuels
+      const criteria = {
+        selectedSector,
+        selectedContract,
+        searchTerm,
+        locationTerm
+      };
+      localStorage.setItem(`search-criteria-${forumId}`, JSON.stringify(criteria));
+      console.log('💾 Saved criteria:', criteria);
+      
+      // Sauvegarder en base de données via l'API
+      try {
+        await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`,
+          {
+            visited_companies: [...newVisitedCompanies],
+            company_notes: newCompanyNotes
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log('✅ Applied filters and updated progression in database');
+      } catch (error) {
+        console.error('❌ Error applying filters in database:', error);
+      }
+      
+      // Afficher un message de confirmation
+      const keptCount = newVisitedCompanies.size;
+      const totalCount = visitedCompanies.size;
+      setApplyMessage(`Critères appliqués ! ${keptCount} entreprise${keptCount > 1 ? 's' : ''} visitée${keptCount > 1 ? 's' : ''} conservée${keptCount > 1 ? 's' : ''} sur ${totalCount}.`);
+      
+      // Effacer le message après 3 secondes
+      setTimeout(() => setApplyMessage(''), 3000);
+      
+      console.log('🎉 Applied filters - kept', keptCount, 'visited companies out of', totalCount);
+      
+    } catch (error) {
+      console.error('❌ Error applying filters:', error);
+      setApplyMessage('Erreur lors de l\'application des critères.');
+      setTimeout(() => setApplyMessage(''), 3000);
+    } finally {
+      setIsApplying(false);
     }
   };
 
   // Fonction pour réinitialiser les filtres
-  const resetFilters = () => {
+  const resetFilters = async () => {
     setSelectedSector('');
     setSelectedContract('');
     setSearchTerm('');
     setLocationTerm('');
+    
+    // Nettoyer aussi le localStorage
+    const filtersKey = `forum-filters-${forumId}`;
+    localStorage.removeItem(filtersKey);
+    
+    // Réinitialiser aussi la progression de gamification
+    setVisitedCompanies(new Set());
+    setCompanyNotes({});
+    setEditingNote(null);
+    
+    // Nettoyer le localStorage de la gamification
+    localStorage.removeItem(`visited-companies-${forumId}`);
+    localStorage.removeItem(`company-notes-${forumId}`);
+    localStorage.removeItem(`search-criteria-${forumId}`);
+    
+    // Réinitialiser aussi en base de données via l'API
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`,
+        {
+          visited_companies: [],
+          company_notes: {}
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log('Reset progression in database via API');
+    } catch (error) {
+      console.error('Error resetting progression in database:', error);
+    }
+    
+    console.log('Reset filters, progression and cleared all localStorage');
   };
 
   // Fonction pour télécharger le plan en PDF
@@ -172,7 +489,7 @@ const Plan = ({ companies, forumId }) => {
       doc.setFont('helvetica', 'normal');
       doc.text(`• Nombre d'entreprises : ${filteredCompanies.length}`, 25, yPosition);
       yPosition += 7;
-      doc.text(`• Temps estimé : ${timeEstimate} minutes`, 25, yPosition);
+      doc.text(`• Temps estimé : ${formatTime(timeEstimate)}`, 25, yPosition);
       yPosition += 7;
       doc.text(`• Nombre total d'offres : ${filteredCompanies.reduce((total, company) => total + (company.offers?.length || 0), 0)}`, 25, yPosition);
       
@@ -324,7 +641,7 @@ const Plan = ({ companies, forumId }) => {
     
     content += `STATISTIQUES :\n`;
     content += `• Nombre d'entreprises : ${filteredCompanies.length}\n`;
-    content += `• Temps estimé : ${timeEstimate} minutes\n`;
+    content += `• Temps estimé : ${formatTime(timeEstimate)}\n`;
     content += `• Nombre total d'offres : ${filteredCompanies.reduce((total, company) => total + (company.offers?.length || 0), 0)}\n\n`;
     
     content += `PARCOURS RECOMMANDÉ :\n`;
@@ -377,23 +694,6 @@ const Plan = ({ companies, forumId }) => {
             <p className="plan-subtitle">
               Basé sur votre recherche : {selectedSector || 'Tous secteurs'} • {selectedContract || 'Tous contrats'} • {locationTerm || 'Toutes localisations'}
             </p>
-          </div>
-
-                     <div className="plan-stats">
-             <div className="stat-item">
-               <span className="stat-number">{filteredCompanies.length}</span>
-               <span className="stat-label">Entreprises</span>
-             </div>
-             <div className="stat-item">
-               <span className="stat-number">{timeEstimate}</span>
-               <span className="stat-label">Minutes</span>
-             </div>
-             <div className="stat-item">
-               <span className="stat-number">
-                 {filteredCompanies.reduce((total, company) => total + (company.offers?.length || 0), 0)}
-               </span>
-               <span className="stat-label">Offres</span>
-             </div>
            </div>
         </div>
 
@@ -407,20 +707,13 @@ const Plan = ({ companies, forumId }) => {
               <FaDownload className="download-icon" />
               Télécharger le plan (PDF)
             </button>
-            <button 
-              className="modify-search-btn"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              {showFilters ? 'Fermer' : 'Modifier ma recherche'}
-            </button>
           </div>
         </div>
       </div>
 
       {/* Filtres modifiables */}
-      {showFilters && (
         <div className="filters-panel">
-          <h3 className="filters-title">Modifier votre recherche</h3>
+        <h3 className="filters-title">Critères de recherche</h3>
           <div className="filters-grid">
             <div className="filter-block">
               <label>Secteur :</label>
@@ -469,115 +762,153 @@ const Plan = ({ companies, forumId }) => {
             <button className="btn-secondary" onClick={resetFilters}>
               Réinitialiser
             </button>
-            <button className="btn-primary" onClick={saveSearch}>
-              Sauvegarder et appliquer
+            <button 
+              className="btn-primary" 
+              onClick={applyFilters}
+              disabled={isApplying}
+            >
+              {isApplying ? 'Application...' : 'Appliquer'}
             </button>
           </div>
+          {applyMessage && (
+            <div className="apply-message">
+              {applyMessage}
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Grille des entreprises */}
-      <div className="companies-grid-section">
-        <h3 className="section-title">Entreprises participantes ({filteredCompanies.length})</h3>
-        
-        {filteredCompanies.length === 0 ? (
-          <div className="no-companies">
-            <FaBuilding className="no-companies-icon" />
-            <p>Aucune entreprise ne correspond à vos critères</p>
-            <button className="btn-primary" onClick={() => setShowFilters(true)}>
-              Modifier mes critères
-            </button>
+        {/* Statistiques après les filtres */}
+        <div className="plan-stats">
+          <div className="stat-item">
+            <div className="stat-content">
+              <span className="stat-number">{filteredCompanies.length}</span>
+              <FaBuilding className="stat-icon" />
+            </div>
+            <span className="stat-label">Entreprises</span>
           </div>
-        ) : (
-          <div className="companies-grid">
-            {filteredCompanies.map((company, idx) => (
-              <div key={company.id || idx} className="company-card">
-                                 <div className="company-card-header">
-                   <div className="company-logo">
-                     {company.logo ? (
-                       <img 
-                         src={`${process.env.REACT_APP_API_BASE_URL}${company.logo}`} 
-                         alt={company.name}
-                         onError={(e) => {
-                           e.target.style.display = 'none';
-                           e.target.nextSibling.style.display = 'block';
-                         }}
-                       />
-                     ) : null}
-                     <img 
-                       src={LogoFTT} 
-                       alt="Logo FTT"
-                       className="company-logo-default"
-                       style={{ display: company.logo ? 'none' : 'block' }}
-                       onError={(e) => {
-                         e.target.style.display = 'none';
-                         e.target.nextSibling.style.display = 'flex';
-                       }}
-                     />
-                     <div className="company-logo-placeholder" style={{ display: 'none' }}>
-                       {company.name.charAt(0).toUpperCase()}
+          <div className="stat-item">
+            <div className="stat-content">
+              <span className="stat-number">{formatTime(timeEstimate)}</span>
+              <FaClock className="stat-icon" />
                      </div>
+            <span className="stat-label">Temps estimé</span>
                    </div>
-                  <div className="company-info">
-                    <h4 className="company-name">{company.name}</h4>
-                    <div className="company-meta">
-                      <span className="stand-number">Stand {company.stand}</span>
-                      <span className="step-number">Étape {idx + 1}</span>
+          <div className="stat-item">
+            <div className="stat-content">
+              <span className="stat-number">
+                {filteredCompanies.reduce((total, company) => total + (company.offers?.length || 0), 0)}
+              </span>
+              <FaFileAlt className="stat-icon" />
                     </div>
+            <span className="stat-label">Offres</span>
                   </div>
                 </div>
                 
-                <div className="company-details">
-                  {company.sectors && company.sectors.length > 0 && (
-                    <div className="company-sectors">
-                      {company.sectors.slice(0, 2).map((sector, sectorIdx) => (
-                        <span key={sectorIdx} className="sector-tag">
-                          {sector}
-                        </span>
-                      ))}
-                      {company.sectors.length > 2 && (
-                        <span className="sector-tag more">+{company.sectors.length - 2}</span>
-                      )}
+        {/* Barre de progression */}
+        {filteredCompanies.length > 0 && (
+          <div className="progress-section">
+            <div className="progress-header">
+              <h3 className="progress-title">Votre progression</h3>
+              <span className="progress-percentage">{progressPercentage}%</span>
                     </div>
-                  )}
-                  
-                  {company.offers && company.offers.length > 0 && (
-                    <div className="company-offers">
-                      <span className="offers-count">
-                        {company.offers.length} offre{company.offers.length > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="company-actions">
-                  <button className="btn-visit-stand">
-                    Visiter le stand
-                  </button>
-                </div>
+            <div className="progress-bar-container">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
               </div>
-            ))}
+            </div>
+            <div className="progress-stats">
+              <span className="progress-text">
+                {visitedCompanies.size} sur {filteredCompanies.length} entreprises visitées
+              </span>
+            </div>
           </div>
         )}
-      </div>
+
 
       {/* Parcours détaillé */}
       <div className="route-details">
         <h3 className="section-title">Votre itinéraire recommandé</h3>
         <div className="route-steps">
           {filteredCompanies.map((company, idx) => (
-            <div key={company.id || idx} className="route-step">
+            <div key={company.id || idx} className={`route-step ${visitedCompanies.has(company.id) ? 'visited' : ''}`}>
               <div className="step-indicator">
                 <div className="step-number-large">{idx + 1}</div>
                 {idx < filteredCompanies.length - 1 && <div className="step-connector"></div>}
               </div>
               <div className="step-content">
+                <div className="step-header">
                 <h4>{company.name}</h4>
+                  <div className="step-actions">
+                    <button 
+                      className={`visit-toggle ${visitedCompanies.has(company.id) ? 'visited' : ''}`}
+                      onClick={() => toggleCompanyVisited(company.id)}
+                      title={visitedCompanies.has(company.id) ? 'Marquer comme non visitée' : 'Marquer comme visitée'}
+                    >
+                      {visitedCompanies.has(company.id) ? <FaCheckCircle /> : <FaCircle />}
+                    </button>
+                    <button 
+                      className="note-toggle"
+                      onClick={() => setEditingNote(editingNote === company.id ? null : company.id)}
+                      title="Ajouter une note"
+                    >
+                      <FaEdit />
+                    </button>
+                  </div>
+                </div>
                 <p className="step-location">
                   <FaMapMarkerAlt className="location-icon" />
                   Stand {company.stand}
                 </p>
+                {company.sectors && company.sectors.length > 0 && (
+                  <div className="step-sectors">
+                    {company.sectors.map((sector, sectorIdx) => (
+                      <span key={sectorIdx} className="sector-tag">
+                        {sector}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p className="step-duration">~10 minutes</p>
+                
+                {/* Zone de note */}
+                {editingNote === company.id && (
+                  <div className="note-section">
+                    <textarea
+                      className="note-input"
+                      placeholder="Ajoutez vos notes sur cette entreprise..."
+                      value={companyNotes[company.id] || ''}
+                      onChange={(e) => setCompanyNotes({...companyNotes, [company.id]: e.target.value})}
+                      rows={3}
+                    />
+                    <div className="note-actions">
+                      <button 
+                        className="btn-save-note"
+                        onClick={() => saveCompanyNote(company.id, companyNotes[company.id] || '')}
+                      >
+                        Sauvegarder
+                      </button>
+                      <button 
+                        className="btn-cancel-note"
+                        onClick={() => setEditingNote(null)}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Affichage de la note existante */}
+                {companyNotes[company.id] && editingNote !== company.id && (
+                  <div className="note-display">
+                    <div className="note-content">
+                      <FaStar className="note-icon" />
+                      <span>{companyNotes[company.id]}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}

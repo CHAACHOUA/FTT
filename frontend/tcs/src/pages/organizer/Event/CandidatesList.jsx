@@ -501,7 +501,6 @@ const CandidatesList = (props) => {
                     </div>
                     <div className="candidate-info" onClick={() => setSelectedCandidate(candidate)} style={{ cursor: 'pointer' }}>
                       <h3>{candidate.first_name} {candidate.last_name}</h3>
-                      {candidate.email && <p>{candidate.email}</p>}
 
                       <div className="sectors-container">
                         {(search?.sector?.length ?? 0) > 0
@@ -517,21 +516,26 @@ const CandidatesList = (props) => {
                         {search?.region || 'Non renseignée'}
                       </p>
                     </div>
-                    {candidate.cv_file && (
+                    
+                    {candidate.cv_file ? (
                       <a
-                        className="cv-download"
-                        href={
-                          candidate.cv_file.startsWith('http')
-                            ? candidate.cv_file
-                            : `${apiBaseUrl}${candidate.cv_file}`
-                        }
+                        href={`${apiBaseUrl}${candidate.cv_file}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="cv-download"
                         title="Télécharger le CV"
-                        onClick={e => e.stopPropagation()} // pour éviter de déclencher l'ouverture popup
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <FaDownload />
                       </a>
+                    ) : (
+                      <div
+                        className="cv-download cv-no-file"
+                        title="Aucun CV disponible"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaDownload />
+                      </div>
                     )}
                   </div>
                 ))}

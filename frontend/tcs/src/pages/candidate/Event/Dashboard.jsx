@@ -59,32 +59,44 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container" style={{ paddingTop: '120px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
-      <SubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
-      <div className="dashboard-content">
-        <div className="dashboard-section">
-          {activeTab === 'info' && <ForumInfos forum={forum} />}
-          {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} />}
-          {activeTab === 'offres' && <ForumOffers companies={forum.companies} />}
-          {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
-          {activeTab === 'partager' && (
-            <PopupQRCode
-              isOpen={isQRCodeOpen}
-              onClose={() => {
-                setIsQRCodeOpen(false);
-                setActiveTab('info'); // Redirection automatique vers l'onglet info
-              }}
-              token={token}
-              forum={forum}
-            />
-          )}
-          {activeTab === 'cv' && (
-            <>
-              <p className="dashboard-title">Clique pour imprimer ton CV :</p>
-              <button onClick={() => window.print()} className="dashboard-button">
-                Imprimer mon CV
-              </button>
-            </>
-          )}
+      <div className="candidate-dashboard-layout">
+        <div className="candidate-sidebar">
+          <SubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
+        </div>
+        <div className="candidate-main-content">
+          <div className="page-header">
+            {activeTab === 'info' && <span>Informations générales</span>}
+            {activeTab === 'entreprises' && <span>Entreprises</span>}
+            {activeTab === 'offres' && <span>Offres d'emploi</span>}
+            {activeTab === 'plan' && <span>Plan du Forum</span>}
+            {activeTab === 'partager' && <span>Partager mon profil</span>}
+            {activeTab === 'cv' && <span>Imprimer mon CV</span>}
+          </div>
+          <div className="dashboard-section">
+            {activeTab === 'info' && <ForumInfos forum={forum} />}
+            {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} />}
+            {activeTab === 'offres' && <ForumOffers companies={forum.companies} />}
+            {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
+            {activeTab === 'partager' && (
+              <PopupQRCode
+                isOpen={isQRCodeOpen}
+                onClose={() => {
+                  setIsQRCodeOpen(false);
+                  setActiveTab('info'); // Redirection automatique vers l'onglet info
+                }}
+                token={token}
+                forum={forum}
+              />
+            )}
+            {activeTab === 'cv' && (
+              <>
+                <p className="dashboard-title">Clique pour imprimer ton CV :</p>
+                <button onClick={() => window.print()} className="dashboard-button">
+                  Imprimer mon CV
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

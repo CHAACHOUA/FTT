@@ -84,7 +84,6 @@ const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
 
               <div className="candidate-info">
                 <h3>{candidate.first_name} {candidate.last_name}</h3>
-                {candidate.email && <p>{candidate.email}</p>}
 
                 <div className="sectors-container">
                   {(candidate.search?.sector?.length ?? 0) > 0
@@ -99,7 +98,22 @@ const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
                   <FaMapMarkerAlt className="icon-location" />
                   {candidate.search?.region || 'Non renseignée'}
                 </p>
+              </div>
+              
+              {candidate.cv_file && (
+                <a
+                  href={`${process.env.REACT_APP_API_BASE_URL}${candidate.cv_file}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cv-download"
+                  title="Télécharger le CV"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <FaDownload />
+                </a>
+              )}
 
+              <div className="candidate-matching-info">
                 {/* Section Score de matching améliorée */}
                 {score !== null && ranking && (
                   <div className="matching-score-section">

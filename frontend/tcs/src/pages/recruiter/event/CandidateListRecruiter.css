@@ -306,22 +306,18 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+
+
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .cv-download:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 /* Responsive design */
@@ -633,26 +629,35 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 40px;
-  height: 40px;
-  background: #f8fafc;
-  border: 2px solid #e5e7eb;
-  border-radius: 50%;
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: #18386c;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
+  font-size: 1.2rem;
 }
 
 .cv-download:hover {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
+  color: #06b6d4;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.cv-download svg {
+  font-size: 1.2rem;
+}
+
+.cv-no-file {
+  color: #9ca3af !important;
+  cursor: not-allowed;
+}
+
+.cv-no-file:hover {
+  color: #9ca3af !important;
+  transform: none;
 }
 
 /* ===== NOUVEAUX STYLES POUR LES RENCONTRES ===== */

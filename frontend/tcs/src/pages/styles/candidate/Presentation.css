@@ -205,3 +205,23 @@
   background: #fff;
   padding: 0 4px;
 }
+
+/* Style spécifique pour le textarea de biographie */
+.modern-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  font-size: 1em;
+  font-family: inherit;
+  color: #2b3a5a;
+  outline: none;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.modern-textarea::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}

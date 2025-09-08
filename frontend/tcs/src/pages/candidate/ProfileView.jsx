@@ -121,6 +121,7 @@ const ProfileView = () => {
       appendIfExists('email', formData.email);
       appendIfExists('education_level', formData.education_level);
       appendIfExists('preferred_contract_type', formData.preferred_contract_type);
+      appendIfExists('bio', formData.bio);
 
       if (Array.isArray(formData.educations)) {
         form.append('educations', JSON.stringify(formData.educations));
