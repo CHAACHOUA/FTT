@@ -72,6 +72,7 @@ class CandidateSerializer(serializers.ModelSerializer):
             'education_level',
             'preferred_contract_type',
             'cv_file',
+            'bio',
             'experiences',
             'educations',
             'skills',

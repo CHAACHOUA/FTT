@@ -31,8 +31,8 @@ def add_company_to_forum_service(user, name, forum_id):
         # Créer l'entreprise
         company = Company.objects.create(name=name)
         
-        # Ajouter l'entreprise au forum via ForumCompany
-        ForumCompany.objects.create(company=company, forum=forum)
+        # Ajouter l'entreprise au forum via ForumCompany (directement approuvée)
+        ForumCompany.objects.create(company=company, forum=forum, approved=True)
         
         return {
             'success': True,

@@ -31,24 +31,48 @@ def public_candidate_view(request, token):
         forum_id = request.query_params.get('forum')
         user = request.user
 
-        if user and user.is_authenticated and hasattr(user, 'recruiter_profile') and forum_id:
+        # Vérifier si l'utilisateur est un recruteur authentifié
+        if user and user.is_authenticated and hasattr(user, 'recruiter_profile'):
+            if not forum_id:
+                return Response({'detail': 'ID du forum requis pour les recruteurs.'}, status=400)
+            
             try:
                 recruiter = user.recruiter_profile
                 forum = Forum.objects.get(id=forum_id)
 
-                # Crée le meeting s’il n’existe pas déjà
-                Meeting.objects.get_or_create(
+                # Vérifier si le recruteur a déjà une relation (meeting) avec ce candidat
+                existing_meeting = Meeting.objects.filter(
                     candidate=candidate,
                     recruiter=recruiter,
-                    forum=forum,
-                    company=recruiter.company
-                )
-            except Exception as e:
-                # Log en silence si meeting échoue, mais ne bloque jamais
-                print("Erreur lors de la création du meeting :", e)
+                    forum=forum
+                ).first()
 
-        serializer = CandidateSerializer(candidate)
-        return Response(serializer.data)
+                if not existing_meeting:
+                    return Response({
+                        'detail': 'Accès refusé. Vous devez d\'abord établir une relation avec ce candidat.'
+                    }, status=403)
+
+                # Si la relation existe, on peut afficher le profil
+                serializer = CandidateSerializer(candidate)
+                return Response(serializer.data)
+
+            except Forum.DoesNotExist:
+                return Response({'detail': 'Forum introuvable.'}, status=404)
+            except Exception as e:
+                print("Erreur lors de la vérification du meeting :", e)
+                return Response({'detail': 'Erreur lors de la vérification des permissions.'}, status=500)
+        
+        # Si l'utilisateur n'est pas un recruteur authentifié, accès refusé
+        elif user and user.is_authenticated:
+            return Response({
+                'detail': 'Accès refusé. Seuls les recruteurs peuvent accéder aux profils candidats.'
+            }, status=403)
+        
+        # Si l'utilisateur n'est pas authentifié, accès refusé
+        else:
+            return Response({
+                'detail': 'Authentification requise pour accéder aux profils candidats.'
+            }, status=401)
 
     except ObjectDoesNotExist:
         return Response({'detail': 'Candidat introuvable.'}, status=404)
@@ -56,4 +80,4 @@ def public_candidate_view(request, token):
     except Exception as e:
         # Catch général pour garantir réponse même si erreur inattendue
         print("Erreur serveur :", e)
-        return Response({'detail': 'Erreur interne.'}, status=200)  # Important : ne jamais renvoyer 403/500
+        return Response({'detail': 'Erreur interne.'}, status=500)

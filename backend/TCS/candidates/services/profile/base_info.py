@@ -14,6 +14,7 @@ def update_base_info(candidate, data):
     candidate.linkedin = data.get('linkedin', candidate.linkedin)
     candidate.education_level = data.get('education_level', candidate.education_level)
     candidate.preferred_contract_type = data.get('preferred_contract_type', candidate.preferred_contract_type)
+    candidate.bio = data.get('bio', candidate.bio)
     candidate.profile_picture = data.get('profile_picture', candidate.profile_picture)
 
     candidate.save()

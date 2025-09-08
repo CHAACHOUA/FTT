@@ -76,7 +76,7 @@ def register_recruiter_to_forum(user, forum_id, data=None):
         forum_company, company_created = ForumCompany.objects.get_or_create(
             company=company,
             forum=forum,
-            defaults={'approved': False}  # Non approuvé par défaut
+            defaults={'approved': True}  # Directement approuvé par défaut
         )
         
         # Vérifier si le recruteur est déjà inscrit au forum
@@ -93,7 +93,7 @@ def register_recruiter_to_forum(user, forum_id, data=None):
         )
         
         return Response({
-            "detail": "Inscription réussie ! Votre entreprise a été ajoutée au forum en attente d'approbation.",
+            "detail": "Inscription réussie ! Votre entreprise a été ajoutée au forum et est directement approuvée.",
             "company_id": company.id,
             "forum_id": forum.id,
             "recruiter_id": recruiter.id,
