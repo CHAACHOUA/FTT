@@ -96,3 +96,36 @@
   align-items: center;
   border: 1px solid #e2e8f0;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .candidate-dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .candidate-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .candidate-main-content {
+    margin-left: 0;
+    margin-top: 80px; /* Espace pour le sous-menu horizontal avec labels */
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .candidate-main-content {
+    padding: 12px;
+    margin-top: 70px; /* Espace pour le sous-menu horizontal compact */
+  }
+  
+  .page-header {
+    padding: 6px 12px;
+    font-size: 1rem;
+  }
+}

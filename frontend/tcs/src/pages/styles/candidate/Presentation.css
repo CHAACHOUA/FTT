@@ -10,6 +10,148 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* ===== RESPONSIVE DESIGN POUR SECTION PRESENTATION ===== */
+@media (max-width: 1024px) {
+  .presentation-section {
+    width: 95%;
+    padding: 32px 28px 24px 28px;
+  }
+  
+  .presentation-title {
+    font-size: 1.8rem;
+    margin-bottom: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .presentation-section {
+    width: 100%;
+    margin: 16px 0;
+    padding: 24px 20px 20px 20px;
+    border-radius: 12px;
+  }
+  
+  .presentation-title {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+  
+  .input-modern {
+    margin-bottom: 18px;
+    min-height: 52px;
+  }
+  
+  .input-wrapper-modern input,
+  .input-wrapper-modern select {
+    font-size: 1.05em;
+    padding: 20px 14px 6px 14px;
+  }
+  
+  .floating-label {
+    font-size: 0.95em;
+    left: 14px;
+  }
+  
+  .filled,
+  .input-wrapper-modern input:focus + .floating-label,
+  .input-wrapper-modern input:not(:placeholder-shown) + .floating-label {
+    font-size: 0.88em;
+    left: 12px;
+  }
+  
+  .input-icon {
+    font-size: 1.1em;
+    padding: 0 12px 0 10px;
+  }
+  
+  .profile-photo-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-photo,
+  .profile-initials-circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .upload-photo-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  
+  .save-button-modern {
+    padding: 12px 32px;
+    font-size: 1.05em;
+    width: 100%;
+  }
+  
+  /* Bouton d'enregistrement responsive */
+  div[style*="textAlign: 'right'"] {
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .presentation-section {
+    padding: 20px 16px 16px 16px;
+    margin: 12px 0;
+  }
+  
+  .presentation-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  
+  .input-modern {
+    margin-bottom: 16px;
+    min-height: 48px;
+  }
+  
+  .input-wrapper-modern input,
+  .input-wrapper-modern select {
+    font-size: 1em;
+    padding: 18px 12px 4px 12px;
+  }
+  
+  .floating-label {
+    font-size: 0.9em;
+    left: 12px;
+  }
+  
+  .filled,
+  .input-wrapper-modern input:focus + .floating-label,
+  .input-wrapper-modern input:not(:placeholder-shown) + .floating-label {
+    font-size: 0.85em;
+    left: 10px;
+  }
+  
+  .input-icon {
+    font-size: 1em;
+    padding: 0 10px 0 8px;
+  }
+  
+  .profile-photo,
+  .profile-initials-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .upload-photo-btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+  
+  .save-button-modern {
+    padding: 10px 24px;
+    font-size: 1em;
+  }
+  
+  /* Bouton d'enregistrement responsive */
+  div[style*="textAlign: 'right'"] {
+    text-align: center !important;
+  }
+}
+
 .presentation-title {
   font-size: 2rem;
   font-weight: 700;

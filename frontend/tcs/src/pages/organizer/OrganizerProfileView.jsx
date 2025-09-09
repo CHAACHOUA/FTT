@@ -198,15 +198,18 @@ const OrganizerProfileView = () => {
                   <div style={{ textAlign: 'right', marginTop: 20 }}>
                     <button
                       onClick={handleSubmit}
+                      className="save-button-modern"
                       style={{
                         backgroundColor: '#28a745',
                         color: 'white',
                         padding: '10px 20px',
                         border: 'none',
-                        borderRadius: 4,
+                        borderRadius: 7,
                         cursor: 'pointer',
-                        fontWeight: 'bold',
+                        fontWeight: 600,
                         fontSize: 16,
+                        transition: 'background 0.18s',
+                        boxShadow: '0 2px 8px rgba(40, 167, 69, 0.07)',
                       }}
                     >
                       Enregistrer

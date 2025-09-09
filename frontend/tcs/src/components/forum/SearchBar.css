@@ -141,19 +141,125 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .search-bar-wrapper-search {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .search-bar-search {
+    max-width: 100%;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .dropdown-toggle-search {
+    min-width: 100px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .dropdown-menu-search {
+    width: 250px;
+  }
+}
+
 @media (max-width: 768px) {
+  .search-bar-wrapper-search {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
   .search-bar-search {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+    width: 100%;
+    max-width: 100%;
   }
-
+  
+  .search-input-search {
+    margin-right: 0;
+    margin-bottom: 8px;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .dropdown-wrapper-search {
+    margin-right: 0;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  
   .dropdown-toggle-search {
     width: 100%;
     justify-content: space-between;
+    padding: 12px 16px;
+    font-size: 1rem;
+    min-width: auto;
   }
-
+  
+  .dropdown-menu-search {
+    width: 100%;
+    max-width: none;
+    left: 0;
+    right: 0;
+  }
+  
   .search-btn-search {
     width: 100%;
-    margin-top: 8px;
+    margin-top: 0;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar-wrapper-search {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .search-bar-search {
+    padding: 12px;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .search-input-search {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  
+  .dropdown-wrapper-search {
+    width: 100%;
+  }
+  
+  .dropdown-toggle-search {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  
+  .dropdown-menu-search {
+    max-height: 250px;
+  }
+  
+  .dropdown-item-search {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .search-btn-search {
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 }

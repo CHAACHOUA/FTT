@@ -485,6 +485,28 @@ const CandidatesList = (props) => {
               <div className="cards-container">
                 {filteredCandidates.map(({ candidate, search }, index) => (
                   <div className="candidate-card" key={index}>
+                    {/* Icône de téléchargement en premier pour le positionnement */}
+                    {candidate.cv_file ? (
+                      <a
+                        href={`${apiBaseUrl}${candidate.cv_file}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cv-download"
+                        title="Télécharger le CV"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaDownload />
+                      </a>
+                    ) : (
+                      <div
+                        className="cv-download cv-no-file"
+                        title="Aucun CV disponible"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaDownload />
+                      </div>
+                    )}
+                    
                     <div className="candidate-photo">
                       {candidate.profile_picture ? (
                         <img
@@ -516,27 +538,6 @@ const CandidatesList = (props) => {
                         {search?.region || 'Non renseignée'}
                       </p>
                     </div>
-                    
-                    {candidate.cv_file ? (
-                      <a
-                        href={`${apiBaseUrl}${candidate.cv_file}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cv-download"
-                        title="Télécharger le CV"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaDownload />
-                      </a>
-                    ) : (
-                      <div
-                        className="cv-download cv-no-file"
-                        title="Aucun CV disponible"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaDownload />
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>

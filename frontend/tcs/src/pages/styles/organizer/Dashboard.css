@@ -97,15 +97,187 @@
     box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);
   }
   
-  @media (max-width: 900px) {
-    .dashboard-kpis, .dashboard-submenu {
-      flex-direction: column;
-      gap: 24px;
-      align-items: center;
-    }
-    .dashboard-header {
-      padding: 0 12px;
-    }
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .dashboard-bg {
+    padding: 30px 0 0 0;
   }
+  
+  .dashboard-header {
+    padding: 0 24px;
+    margin-bottom: 24px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2.3rem;
+    line-height: 1.2;
+  }
+  
+  .dashboard-header p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+  
+  .dashboard-kpis {
+    gap: 24px;
+    margin: 24px auto 32px auto;
+    padding: 0 24px;
+  }
+  
+  .dashboard-kpi-card {
+    padding: 20px 20px 12px 20px;
+    min-width: 180px;
+  }
+  
+  .kpi-value {
+    font-size: 2rem;
+  }
+  
+  .kpi-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+  
+  .dashboard-submenu {
+    gap: 24px;
+    margin: 32px auto 0 auto;
+    padding: 0 24px;
+  }
+  
+  .submenu-btn {
+    min-width: 220px;
+    padding: 40px 0 32px 0;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-bg {
+    padding: 20px 0 0 0;
+  }
+  
+  .dashboard-header {
+    padding: 0 16px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+  
+  .dashboard-header p {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .dashboard-kpis {
+    flex-direction: column;
+    gap: 16px;
+    margin: 20px auto 24px auto;
+    padding: 0 16px;
+  }
+  
+  .dashboard-kpi-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 18px 18px 12px 18px;
+    min-width: auto;
+  }
+  
+  .kpi-label {
+    font-size: 0.9rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.8rem;
+  }
+  
+  .kpi-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+  }
+  
+  .dashboard-submenu {
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px auto 0 auto;
+    padding: 0 16px;
+  }
+  
+  .submenu-btn {
+    width: 100%;
+    max-width: 400px;
+    min-width: auto;
+    padding: 32px 0 24px 0;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-bg {
+    padding: 16px 0 0 0;
+  }
+  
+  .dashboard-header {
+    padding: 0 12px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.7rem;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+  
+  .dashboard-header p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .dashboard-kpis {
+    gap: 12px;
+    margin: 16px auto 20px auto;
+    padding: 0 12px;
+  }
+  
+  .dashboard-kpi-card {
+    padding: 16px 16px 10px 16px;
+    border-radius: 12px;
+  }
+  
+  .kpi-label {
+    font-size: 0.85rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.6rem;
+  }
+  
+  .kpi-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    top: 12px;
+    right: 12px;
+  }
+  
+  .dashboard-submenu {
+    gap: 12px;
+    margin: 20px auto 0 auto;
+    padding: 0 12px;
+  }
+  
+  .submenu-btn {
+    padding: 28px 0 20px 0;
+    font-size: 1.1rem;
+    border-radius: 12px;
+  }
+}
   
 /* Styles des boutons importés depuis organizer-buttons.css */

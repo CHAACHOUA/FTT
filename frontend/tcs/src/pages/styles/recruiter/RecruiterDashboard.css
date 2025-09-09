@@ -317,21 +317,25 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .recruiter-dashboard-content {
-    margin-left: 0; /* Suppression de la marge sur mobile */
-  }
-  
-  .submenu-container {
-    transform: translateX(-100%);
-  }
-  
-  .submenu-container.open {
-    transform: translateX(0);
-  }
-}
-
 @media (max-width: 768px) {
+  .recruiter-dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .recruiter-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .recruiter-main-content {
+    margin-left: 0;
+    margin-top: 80px; /* Espace pour le sous-menu horizontal avec labels */
+    padding: 16px;
+  }
+  
   .dashboard-section {
     padding: 0;
     border-radius: 0;
@@ -339,6 +343,11 @@
 }
 
 @media (max-width: 480px) {
+  .recruiter-main-content {
+    padding: 12px;
+    margin-top: 70px; /* Espace pour le sous-menu horizontal compact */
+  }
+  
   .dashboard-section {
     padding: 0;
   }

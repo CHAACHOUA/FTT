@@ -563,49 +563,17 @@ const Plan = ({ companies, forumId }) => {
         yPosition += 8;
       });
       
-      // Conseils pour le forum
-      if (yPosition > 220) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      doc.setFontSize(subtitleFontSize);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(31, 41, 55);
-      doc.text('CONSEILS POUR LE FORUM', 20, yPosition);
-      
-      yPosition += 10;
-      
-      doc.setFontSize(normalFontSize);
-      doc.setFont('helvetica', 'normal');
-      const conseils = [
-        '• Arrivez 15 minutes avant l\'ouverture',
-        '• Préparez votre CV et lettre de motivation',
-        '• Notez les questions importantes pour chaque entreprise',
-        '• Gardez un stylo et un carnet pour prendre des notes',
-        '• N\'oubliez pas de demander les coordonnées des recruteurs'
-      ];
-      
-      conseils.forEach(conseil => {
-        if (yPosition > 250) {
-          doc.addPage();
-          yPosition = 20;
-        }
-        doc.text(conseil, 25, yPosition);
-        yPosition += 7;
-      });
-      
       // Message de fin
       if (yPosition > 240) {
         doc.addPage();
         yPosition = 20;
       }
       
-             yPosition += 10;
-       doc.setFontSize(subtitleFontSize);
-       doc.setFont('helvetica', 'bold');
-       doc.setTextColor(16, 185, 129); // Vert
-       doc.text('BONNE CHANCE POUR VOTRE FORUM !', 105, yPosition, { align: 'center' });
+      yPosition += 10;
+      doc.setFontSize(subtitleFontSize);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(16, 185, 129); // Vert
+      doc.text('BONNE CHANCE POUR VOTRE FORUM !', 105, yPosition, { align: 'center' });
       
       // Sauvegarder le PDF
       doc.save(`plan-forum-${new Date().toISOString().split('T')[0]}.pdf`);
@@ -669,14 +637,7 @@ const Plan = ({ companies, forumId }) => {
        content += `\n`;
      });
     
-    content += `CONSEILS POUR LE FORUM :\n`;
-    content += `• Arrivez 15 minutes avant l'ouverture\n`;
-    content += `• Préparez votre CV et lettre de motivation\n`;
-    content += `• Notez les questions importantes pour chaque entreprise\n`;
-    content += `• Gardez un stylo et un carnet pour prendre des notes\n`;
-    content += `• N'oubliez pas de demander les coordonnées des recruteurs\n\n`;
-    
-         content += `BONNE CHANCE POUR VOTRE FORUM !\n`;
+    content += `BONNE CHANCE POUR VOTRE FORUM !\n`;
     
     return content;
   };
@@ -782,27 +743,24 @@ const Plan = ({ companies, forumId }) => {
           <div className="stat-item">
             <div className="stat-content">
               <span className="stat-number">{filteredCompanies.length}</span>
-              <FaBuilding className="stat-icon" />
             </div>
             <span className="stat-label">Entreprises</span>
           </div>
           <div className="stat-item">
             <div className="stat-content">
               <span className="stat-number">{formatTime(timeEstimate)}</span>
-              <FaClock className="stat-icon" />
-                     </div>
+            </div>
             <span className="stat-label">Temps estimé</span>
-                   </div>
+          </div>
           <div className="stat-item">
             <div className="stat-content">
               <span className="stat-number">
                 {filteredCompanies.reduce((total, company) => total + (company.offers?.length || 0), 0)}
               </span>
-              <FaFileAlt className="stat-icon" />
-                    </div>
+            </div>
             <span className="stat-label">Offres</span>
-                  </div>
-                </div>
+          </div>
+        </div>
                 
         {/* Barre de progression */}
         {filteredCompanies.length > 0 && (

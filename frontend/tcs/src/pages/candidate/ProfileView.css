@@ -23,3 +23,35 @@
 .validate-button:hover {
   background-color: #3498db;
 }
+
+/* ===== RESPONSIVE DESIGN POUR PROFIL ORGANIZATEUR ===== */
+@media (max-width: 1024px) {
+  .profile-content {
+    margin-left: 0;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  
+  .profile-content {
+    margin-left: 0;
+    margin-top: 80px; /* Espace pour le sous-menu horizontal avec labels */
+    padding: 20px 16px;
+  }
+  
+  .validate-button {
+    margin: 20px 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-content {
+    padding: 16px 12px;
+    margin-top: 70px; /* Espace pour le sous-menu horizontal compact */
+  }
+}

@@ -265,6 +265,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative !important;
 }
 
 .candidate-card:hover {
@@ -352,9 +353,9 @@
 }
 
 .cv-download {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
   border: none;
   display: flex;
   align-items: center;
@@ -363,6 +364,10 @@
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
+  z-index: 999 !important;
+  width: 24px;
+  height: 24px;
+  background: transparent;
 }
 
 .cv-download:hover {
@@ -372,6 +377,8 @@
 
 .cv-download svg {
   font-size: 1.2rem;
+  width: 100%;
+  height: 100%;
 }
 
 .cv-no-file {
@@ -385,7 +392,8 @@
 }
 
 .candidates-filters {
-  flex: 0 0 350px;
+  flex: 1 !important;
+  width: 100% !important;
   background: #f9fafb;
   border-radius: 12px;
   padding: 1.5rem;
@@ -412,47 +420,36 @@
   padding: 2rem;
 }
 
-/* Responsive design */
-@media (max-width: 1100px) {
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
   .candidates-wrapper {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
   .kpi-row {
-    flex-direction: column;
-    gap: 16px;
+    gap: 20px;
+    padding: 0 20px;
   }
   
   .kpi-card {
-    min-width: auto;
+    padding: 20px;
   }
   
-  .candidates-content {
-    flex-direction: column;
+  .kpi-value {
+    font-size: 2rem;
   }
   
-  .candidates-filters {
-    position: static;
-    min-width: auto;
-    order: -1;
-  }
-  
-  .cards-container {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  .kpi-label {
+    font-size: 0.9rem;
   }
   
   .candidates-flex-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .candidates-main, .candidates-filters {
-    flex: 1;
+    gap: 1.5rem;
   }
   
   .candidates-filters {
-    flex-basis: 100%;
-    position: static;
+    flex: 1 !important;
+    width: 100% !important;
   }
 }
 
@@ -461,8 +458,41 @@
     padding: 1rem;
   }
   
-  .candidates-list {
-    padding-top: 60px;
+  .kpi-row {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  
+  .kpi-card {
+    min-width: auto;
+    padding: 16px;
+  }
+  
+  .kpi-value {
+    font-size: 1.8rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.85rem;
+  }
+  
+  .candidates-flex-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .candidates-filters {
+    position: static;
+    flex: 1;
+    order: -1;
+    max-height: none;
+    padding: 1rem;
+  }
+  
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
   }
   
   .candidate-card {
@@ -474,13 +504,76 @@
     height: 60px;
   }
   
-  .cv-download {
-    width: 100%;
-    justify-content: center;
+  .candidate-info h3 {
+    font-size: 1.1rem;
+  }
+  
+  .sector-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .candidates-wrapper {
+    padding: 0.8rem;
+  }
+  
+  .candidates-list {
+    padding-top: 60px;
+  }
+  
+  .kpi-row {
+    padding: 0 12px;
+    gap: 12px;
+  }
+  
+  .kpi-card {
+    padding: 12px;
+  }
+  
+  .kpi-value {
+    font-size: 1.6rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.8rem;
+  }
+  
+  .candidates-flex-row {
+    gap: 0.8rem;
   }
   
   .candidates-filters {
-    padding: 1rem;
+    padding: 0.8rem;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .candidate-card {
+    padding: 0.8rem;
+  }
+  
+  .candidate-photo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .candidate-info h3 {
+    font-size: 1rem;
+  }
+  
+  .sector-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+  }
+  
+  .cv-download {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -536,21 +629,56 @@
   font-size: 1.1rem;
 }
 
-/* Responsive pour l'en-tête */
+/* ===== RESPONSIVE POUR L'EN-TÊTE ===== */
+@media (max-width: 1024px) {
+  .candidates-header {
+    padding: 12px 16px;
+  }
+  
+  .candidates-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .download-candidates-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    min-width: 160px;
+  }
+}
+
 @media (max-width: 768px) {
   .candidates-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
+    padding: 12px 14px;
   }
   
   .candidates-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
   
   .download-candidates-btn {
     width: 100%;
     justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .candidates-header {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+  
+  .candidates-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .download-candidates-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
   }
 }
 
@@ -617,33 +745,81 @@
   font-size: 1.1rem;
 }
 
-/* Responsive pour la section de titre */
+/* ===== RESPONSIVE POUR LES SECTIONS DE TITRE ET TÉLÉCHARGEMENT ===== */
+@media (max-width: 1024px) {
+  .page-title-header {
+    padding: 0 20px;
+  }
+  
+  .page-title-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-title-header p {
+    font-size: 1rem;
+  }
+  
+  .download-section {
+    padding: 0 20px;
+  }
+  
+  .download-candidates-btn {
+    min-width: 180px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 768px) {
   .page-title-header {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
-    padding: 0 1rem;
+    padding: 0 16px;
   }
   
   .page-title-header h1 {
     font-size: 1.5rem;
   }
   
-  .download-candidates-btn {
-    width: 100%;
-    max-width: 300px;
+  .page-title-header p {
+    font-size: 0.95rem;
   }
-}
-
-/* Responsive pour la section de téléchargement */
-@media (max-width: 768px) {
+  
   .download-section {
-    padding: 0 20px;
+    padding: 0 16px;
   }
   
   .download-candidates-btn {
     width: 100%;
     max-width: 300px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
   }
 }
+
+@media (max-width: 480px) {
+  .page-title-header {
+    padding: 0 12px;
+    gap: 0.8rem;
+  }
+  
+  .page-title-header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .page-title-header p {
+    font-size: 0.9rem;
+  }
+  
+  .download-section {
+    padding: 0 12px;
+  }
+  
+  .download-candidates-btn {
+    max-width: 100%;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+}
+

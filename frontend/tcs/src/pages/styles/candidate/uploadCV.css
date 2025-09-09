@@ -18,6 +18,122 @@
   align-items: center;
 }
 
+/* ===== RESPONSIVE DESIGN POUR SECTION UPLOAD CV ===== */
+@media (max-width: 1024px) {
+  .upload-cv-container {
+    width: 95% !important;
+    padding: 32px 28px 24px 28px;
+  }
+  
+  .upload-title {
+    font-size: 1.8rem;
+    margin-bottom: 28px;
+  }
+  
+  .drop-zone {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .upload-cv-container {
+    width: 100% !important;
+    margin: 16px 0;
+    padding: 24px 20px 20px 20px;
+    border-radius: 12px;
+  }
+  
+  .upload-title {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+  
+  .drop-zone {
+    height: 160px;
+    margin-bottom: 16px;
+  }
+  
+  .drop-zone-content {
+    text-align: center;
+  }
+  
+  .drop-zone-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .drop-zone-content p {
+    font-size: 0.9rem;
+  }
+  
+  .upload-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .file-info {
+    padding: 12px;
+  }
+  
+  .file-info h4 {
+    font-size: 1rem;
+  }
+  
+  .file-info p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-cv-container {
+    padding: 20px 16px 16px 16px;
+    margin: 12px 0;
+  }
+  
+  .upload-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  
+  .drop-zone {
+    height: 140px;
+    margin-bottom: 14px;
+  }
+  
+  .drop-zone-content h3 {
+    font-size: 1rem;
+  }
+  
+  .drop-zone-content p {
+    font-size: 0.85rem;
+  }
+  
+  .upload-button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .file-info {
+    padding: 10px;
+  }
+  
+  .file-info h4 {
+    font-size: 0.95rem;
+  }
+  
+  .file-info p {
+    font-size: 0.8rem;
+  }
+  
+  .action-buttons {
+    gap: 8px;
+  }
+  
+  .action-buttons button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
 .upload-title {
   font-size: 2rem;
   margin-bottom: 32px;

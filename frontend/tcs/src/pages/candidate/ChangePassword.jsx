@@ -128,7 +128,7 @@ const ChangePassword = () => {
           <p className={passwordValidations.match ? 'valid' : 'invalid'}>• Les deux mots de passe sont identiques</p>
         </div>
 
-        <button type="submit" className="validate-button" disabled={loading}>
+        <button type="submit" className="save-button-modern" disabled={loading}>
           {loading ? 'Chargement...' : 'Changer le mot de passe'}
         </button>
       </form>

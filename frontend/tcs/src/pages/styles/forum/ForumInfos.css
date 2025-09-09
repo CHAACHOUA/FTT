@@ -21,83 +21,130 @@
 }
 
 .forum-infos-right {
-  width: 400px; /* Augmenté de 350px à 400px */
+  width: 400px;
   flex-shrink: 0;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 12px #0000000f;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.forum-infos-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
 }
 
 .forum-infos-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: #1d3557;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #1e293b;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .forum-infos-description {
-  font-size: 1rem;
-  color: #3a4a61;
+  font-size: 1.05rem;
+  color: #475569;
   line-height: 1.7;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  font-weight: 500;
 }
 
 .forum-infos-highlight {
   font-size: 1rem;
-  color: #3a4a61;
+  color: #3b82f6;
   font-style: italic;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
 }
 
 .forum-infos-right-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #2e4269;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1e293b;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .forum-detail-line {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: #334155;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: #475569;
   flex-wrap: wrap;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.forum-detail-line:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
 .fa-icon {
-  color: #008291;
+  color: #3b82f6;
+  font-size: 1.1rem;
 }
 
 .forum-recruiters-logo-list {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 12px;
   flex-wrap: wrap;
   align-items: center;
 }
 
 .forum-recruiter-logo {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
-  border-radius: 6px;
-  background: white;
-  padding: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.forum-recruiter-logo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
 }
 
 .forum-more-recruiters {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7280;
-  background: #f3f4f6;
-  padding: 6px 10px;
-  border-radius: 8px;
+  color: #3b82f6;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  padding: 8px 12px;
+  border-radius: 10px;
   display: inline-block;
+  border: 1px solid #93c5fd;
+  transition: all 0.3s ease;
+}
+
+.forum-more-recruiters:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .forum-register-button {
@@ -145,10 +192,28 @@
 }
 
 /* Responsive design */
+@media (max-width: 1024px) {
+  .forum-infos-wrapper {
+    padding: 20px;
+  }
+  
+  .forum-infos-container {
+    gap: 24px;
+  }
+  
+  .forum-infos-right {
+    width: 350px;
+  }
+}
+
 @media (max-width: 768px) {
+  .forum-infos-wrapper {
+    padding: 16px;
+  }
+  
   .forum-infos-container {
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
   
   .forum-infos-left {
@@ -159,6 +224,33 @@
   .forum-infos-right {
     width: 100%;
     order: 1;
+    padding: 20px;
+  }
+  
+  .forum-infos-title {
+    font-size: 1.5rem;
+  }
+  
+  .forum-infos-description {
+    font-size: 1rem;
+  }
+  
+  .forum-infos-right-title {
+    font-size: 1.2rem;
+  }
+  
+  .forum-detail-line {
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  
+  .forum-recruiters-logo-list {
+    gap: 8px;
+  }
+  
+  .forum-recruiter-logo {
+    width: 36px;
+    height: 36px;
   }
   
   .forum-programmes-section {
@@ -167,12 +259,58 @@
 }
 
 @media (max-width: 480px) {
+  .forum-infos-wrapper {
+    padding: 12px;
+  }
+  
   .forum-infos-container {
     gap: 16px;
   }
   
   .forum-infos-right {
     padding: 16px;
+  }
+  
+  .forum-infos-title {
+    font-size: 1.3rem;
+  }
+  
+  .forum-infos-description {
+    font-size: 0.95rem;
+  }
+  
+  .forum-infos-highlight {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .forum-infos-right-title {
+    font-size: 1.1rem;
+  }
+  
+  .forum-detail-line {
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  
+  .fa-icon {
+    font-size: 1rem;
+  }
+  
+  .forum-recruiters-logo-list {
+    gap: 6px;
+  }
+  
+  .forum-recruiter-logo {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+  }
+  
+  .forum-more-recruiters {
+    padding: 6px 10px;
+    font-size: 0.8rem;
   }
   
   .forum-programmes-section .programme-timeline-container {

@@ -13,6 +13,652 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.06);
   font-family: 'Poppins', sans-serif;
 }
+
+/* ===== STYLES POUR CHANGE PASSWORD ET DELETE ACCOUNT ===== */
+.password-rules {
+  margin: 20px 0;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #e53935;
+}
+
+.password-rules p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.password-rules p.valid {
+  color: #16a34a;
+}
+
+.password-rules p.invalid {
+  color: #e53935;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1.2em;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: #374151;
+}
+
+/* ===== STYLES POUR DELETE ACCOUNT ===== */
+.account-settings-section {
+  background: #fff;
+  border-radius: 16px;
+  margin: 20px auto;
+  padding: 40px 36px 32px 36px;
+  width: 90%;
+  max-width: 1200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Assurer que les cartes ont exactement la même largeur */
+.education-section,
+.account-settings-section {
+  width: 90% !important;
+  max-width: 1200px !important;
+  margin: 20px auto !important;
+}
+
+.account-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2b3a5a;
+  margin-bottom: 20px;
+}
+
+.account-description {
+  margin-bottom: 20px;
+  color: #2b3a5a;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.delete-account-button {
+  background: #e53935 !important;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.delete-account-button:hover {
+  background: #c62828 !important;
+  transform: translateY(-1px);
+}
+
+.delete-account-button:active {
+  transform: translateY(0);
+}
+
+.custom-reason-textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+
+.custom-reason-textarea:focus {
+  outline: none;
+  border-color: #e53935;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+}
+
+.custom-reason-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e5e7eb;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #374151;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.radio-group label:hover {
+  background: #f3f4f6;
+}
+
+.radio-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #e53935;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.delete-confirm-btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.delete-confirm-btn:hover:not(:disabled) {
+  background: #c62828;
+  transform: translateY(-1px);
+}
+
+.delete-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+/* ===== RESPONSIVE DESIGN POUR SECTIONS EDUCATION/CHANGE PASSWORD/DELETE ACCOUNT ===== */
+@media (max-width: 1024px) {
+  .education-section,
+  .experience-section,
+  .account-settings-section {
+    width: 95% !important;
+    padding: 32px 28px 24px 28px;
+  }
+  
+  .education-title,
+  .experience-title {
+    font-size: 1.8rem;
+    margin-bottom: 28px;
+  }
+  
+  .account-title {
+    font-size: 1.6rem;
+  }
+  
+  .account-description {
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+  }
+  
+  .delete-account-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    max-width: 450px;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .education-section,
+  .experience-section,
+  .account-settings-section {
+    width: 100% !important;
+    margin: 16px 0;
+    padding: 24px 20px 20px 20px;
+    border-radius: 12px;
+  }
+  
+  .education-title,
+  .experience-title {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+  
+  .account-title {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+  
+  .account-description {
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+  
+  .delete-account-button {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+  }
+  
+  .custom-reason-textarea {
+    padding: 10px;
+    font-size: 0.9rem;
+    min-height: 70px;
+  }
+  
+  .modal-overlay {
+    padding: 16px;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .radio-group {
+    gap: 10px;
+  }
+  
+  .radio-group label {
+    font-size: 0.95rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .delete-confirm-btn,
+  .cancel-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .input-modern {
+    margin-bottom: 18px;
+    min-height: 52px;
+  }
+  
+  .input-wrapper-modern input,
+  .input-wrapper-modern select {
+    font-size: 1.05em;
+    padding: 20px 14px 6px 14px;
+  }
+  
+  .floating-label {
+    font-size: 0.95em;
+    left: 14px;
+  }
+  
+  .filled,
+  .input-wrapper-modern input:focus + .floating-label,
+  .input-wrapper-modern input:not(:placeholder-shown) + .floating-label {
+    font-size: 0.88em;
+    left: 12px;
+  }
+  
+  .input-icon {
+    font-size: 1.1em;
+    padding: 0 12px 0 10px;
+  }
+  
+  .modern-textarea {
+    font-size: 1.05em;
+    padding: 20px 14px 6px 14px;
+    min-height: 52px;
+  }
+  
+  .save-button-modern {
+    padding: 12px 32px;
+    font-size: 1.05em;
+    width: 100%;
+  }
+  
+  .remove-btn-modern {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .education-section,
+  .experience-section,
+  .account-settings-section {
+    width: 100% !important;
+    padding: 20px 16px 16px 16px;
+    margin: 12px 0;
+  }
+  
+  .education-title,
+  .experience-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  
+  .account-title {
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+  }
+  
+  .account-description {
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+  
+  .delete-account-button {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .custom-reason-textarea {
+    padding: 8px;
+    font-size: 0.85rem;
+    min-height: 60px;
+  }
+  
+  .modal-overlay {
+    padding: 12px;
+  }
+  
+  .modal-content {
+    padding: 1.2rem;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .radio-group {
+    gap: 8px;
+  }
+  
+  .radio-group label {
+    font-size: 0.9rem;
+  }
+  
+  .radio-group input[type="radio"] {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .modal-actions {
+    gap: 8px;
+  }
+  
+  .delete-confirm-btn,
+  .cancel-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .input-modern {
+    margin-bottom: 16px;
+    min-height: 48px;
+  }
+  
+  .input-wrapper-modern input,
+  .input-wrapper-modern select {
+    font-size: 1em;
+    padding: 18px 12px 4px 12px;
+  }
+  
+  .floating-label {
+    font-size: 0.9em;
+    left: 12px;
+  }
+  
+  .filled,
+  .input-wrapper-modern input:focus + .floating-label,
+  .input-wrapper-modern input:not(:placeholder-shown) + .floating-label {
+    font-size: 0.85em;
+    left: 10px;
+  }
+  
+  .input-icon {
+    font-size: 1em;
+    padding: 0 10px 0 8px;
+  }
+  
+  .modern-textarea {
+    font-size: 1em;
+    padding: 18px 12px 4px 12px;
+    min-height: 48px;
+  }
+  
+  .save-button-modern {
+    padding: 10px 24px;
+    font-size: 1em;
+  }
+  
+  .remove-btn-modern {
+    font-size: 0.9em;
+  }
+  
+  /* ===== RESPONSIVE POUR CHANGE PASSWORD ===== */
+  .password-rules {
+    margin: 16px 0;
+  }
+  
+  .password-rules p {
+    font-size: 0.9em;
+    margin: 6px 0;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 1.1em;
+  }
+  
+  /* ===== RESPONSIVE POUR DELETE ACCOUNT ===== */
+  .account-settings-section {
+    background: #fff;
+    border-radius: 16px;
+    margin: 20px auto;
+    padding: 40px 36px 32px 36px;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .account-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2b3a5a;
+    margin-bottom: 20px;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    border: 1px solid #e5e7eb;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+  }
+  
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #374151;
+    cursor: pointer;
+  }
+  
+  .radio-group input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #e53935;
+  }
+  
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+  
+  .delete-confirm-btn {
+    background: #e53935;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1;
+  }
+  
+  .delete-confirm-btn:hover:not(:disabled) {
+    background: #c62828;
+  }
+  
+  .delete-confirm-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .cancel-btn {
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1;
+  }
+  
+  .cancel-btn:hover:not(:disabled) {
+    background: #4b5563;
+  }
+}
 .education-title {
   font-size: 2rem;
   font-weight: 700;

@@ -323,6 +323,14 @@ const OffersList = () => {
                       </div>
 
                       <h4 className="offer-title large">{offer.title}</h4>
+                      
+                      {offer.sector && (
+                        <div className="offer-sector-line">
+                          <FaIndustry />
+                          <span>{offer.sector}</span>
+                        </div>
+                      )}
+                      
                       <div className="offer-location-line">
                         <FaMapMarkerAlt />
                         <span>{offer.location || 'Non précisé'}</span>

@@ -54,14 +54,13 @@ const DeleteAccount = () => {
     <div className="account-settings-section">
       <h2 className="account-title">Supprimer le compte</h2>
 
-      <p style={{ marginBottom: '20px', color: '#2b3a5a' }}>
+      <p className="account-description">
         Cette action supprimera définitivement votre compte.
       </p>
 
       <button
         onClick={() => setShowModal(true)}
-        className="save-button-modern"
-        style={{ backgroundColor: '#e53935' }}
+        className="delete-account-button"
       >
         Supprimer mon compte
       </button>
@@ -87,11 +86,11 @@ const DeleteAccount = () => {
 
             {selectedReason === 'Autre' && (
               <textarea
+                className="custom-reason-textarea"
                 placeholder="Veuillez préciser..."
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 rows={3}
-                style={{ width: '100%', marginTop: '10px' }}
               />
             )}
 
