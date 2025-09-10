@@ -7,7 +7,7 @@ import {
   FaPrint,
   FaMap
 } from 'react-icons/fa';
-import '../../styles/candidate/SubMenu.css';
+import '../../candidate/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
   const showPhysicalFeatures = forumType === 'hybride' || forumType === 'physique';
@@ -24,18 +24,21 @@ const SubMenu = ({ active, setActive, forumType }) => {
   ];
 
   return (
-    <div className="submenu-wrapper">
-      {menuItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => setActive(item.id)}
-          className={`submenu-button ${active === item.id ? 'active' : ''}`}
-        >
-          <div className="submenu-icon">{item.icon}</div>
-          <div className="submenu-label">{item.label}</div>
-        </button>
-      ))}
-    </div>
+    <aside className="sidebar-menu modern-sidebar">
+      <ul className="sidebar-list">
+        {menuItems.map((item) => (
+          <li key={item.id}>
+            <button
+              onClick={() => setActive(item.id)}
+              className="sidebar-link"
+            >
+              <div className="sidebar-icon">{item.icon}</div>
+              <span className="sidebar-label">{item.label}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 };
 

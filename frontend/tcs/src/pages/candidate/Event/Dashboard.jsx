@@ -13,7 +13,7 @@ import '../../styles/candidate/Dashboard.css';
 const Dashboard = () => {
   const { state } = useLocation();
   const forum = state?.forum;
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState(state?.activeTab || 'info');
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
@@ -74,7 +74,7 @@ const Dashboard = () => {
           </div>
           <div className="dashboard-section">
             {activeTab === 'info' && <ForumInfos forum={forum} />}
-            {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} />}
+            {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} forum={forum} usePage={true} />}
             {activeTab === 'offres' && <ForumOffers companies={forum.companies} />}
             {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
             {activeTab === 'partager' && (

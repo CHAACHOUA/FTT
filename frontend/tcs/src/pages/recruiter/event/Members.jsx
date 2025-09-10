@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/recruiter/CompanyRecruiter.css';
+import './CandidateListRecruiter.css';
 import recruiter_photo from '../../../assets/recruiter.jpg';
 import InviteRecruiterModal from '../../organizer/Event/InviteRecruiterModal';
+import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 
 function Members({ accessToken, apiBaseUrl }) {
   const [recruiters, setRecruiters] = useState([]);
@@ -57,37 +59,42 @@ function Members({ accessToken, apiBaseUrl }) {
   };
 
   return (
-    <div className="offers-list-wrapper">
-      <div className="offers-list-content">
-        <div className="company-recruiters-header">
-        <h2 className="company-recruiters-title">Vos recruteurs</h2>
-        <button 
-          className="invite-recruiter-btn"
-          onClick={() => setIsInviteModalOpen(true)}
-        >
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-          Inviter un recruteur
-        </button>
-      </div>
+    <CompanyApprovalCheck 
+      forumId={forum?.id} 
+      accessToken={accessToken} 
+      apiBaseUrl={apiBaseUrl}
+      fallbackMessage="L'accès à la gestion des membres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
+    >
+      <div className="offers-list-wrapper">
+        <div className="offers-list-content">
+          <div className="company-recruiters-header">
+          <h2 className="company-recruiters-title">Vos recruteurs ({recruiters.length} membre{recruiters.length > 1 ? 's' : ''})</h2>
+          <button 
+            className="invite-recruiter-btn"
+            onClick={() => setIsInviteModalOpen(true)}
+          >
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            Inviter un recruteur
+          </button>
+        </div>
 
       {loading && <p>Chargement...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {!loading && !error && !recruiters.length && <p>Aucun recruteur trouvé.</p>}
 
-      <div className="recruiters-grid">
+      <div className="cards-container">
         {recruiters.map((r) => (
-          <div key={r.id} className="recruiter-card">
-            <img
-              src={r.profile_picture ? `${apiBaseUrl}${r.profile_picture}` : recruiter_photo}
-              alt={`${r.first_name} ${r.last_name}`}
-              className="recruiter-photo"
-            />
-            <div className="recruiter-info">
-              <p className="recruiter-name">
-                {r.first_name} {r.last_name}
-              </p>
+          <div key={r.id} className="candidate-card">
+            <div className="candidate-photo">
+              <img
+                src={r.profile_picture ? `${apiBaseUrl}${r.profile_picture}` : recruiter_photo}
+                alt={`${r.first_name} ${r.last_name}`}
+              />
+            </div>
+            <div className="candidate-info">
+              <h3>{r.first_name} {r.last_name}</h3>
               <p className="recruiter-email">
                 {r.email || 'Email non disponible'}
               </p>
@@ -123,6 +130,7 @@ function Members({ accessToken, apiBaseUrl }) {
       />
       </div>
     </div>
+    </CompanyApprovalCheck>
   );
 }
 

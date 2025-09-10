@@ -19,6 +19,7 @@ import ForumDetail from './pages/candidate/ForumDetail';
 import ProfileView from './pages/candidate/ProfileView';
 import PublicProfileView from './pages/candidate/PublicProfileView';
 import Dashboard from './pages/candidate/Event/Dashboard';
+import CompanyDetail from './pages/candidate/Event/CompanyDetail';
 import ForumRecruiterView from './pages/recruiter/ForumRecruiterView';
 import ForumOrganizerView from './pages/organizer/ForumOrganizerView';
 import RecruiterProfileView from './pages/recruiter/RecruiterProfileView';
@@ -58,6 +59,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/forums/event" element={<ForumDetail />} />
           <Route path="/event/candidate/dashboard/" element={<Dashboard />} />
+          <Route path="/candidate/event/company/:companyId" element={<CompanyDetail />} />
           <Route path="/event/recruiter/dashboard/" element={<RecruiterDashboard />} />
           <Route path="/event/organizer/dashboard/" element={<OrganizerDashboard />} />
           <Route path="/candidate/profile" element={<ProfileView />} />

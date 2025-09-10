@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../../pages/styles/forum/ForumCompany.css';
 import logo from '../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,11 +7,13 @@ import { faSearch, faChevronLeft, faChevronRight } from '@fortawesome/free-solid
 import CompanyCardPopup from './CompanyCardPopup';
 import { FaTimes } from 'react-icons/fa';
 
-const ForumCompanies = ({ companies }) => {
+const ForumCompanies = ({ companies, forum, usePage = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
   const LogoCompany = logo;
 
   const ITEMS_PER_PAGE = 9;
@@ -28,8 +31,19 @@ const ForumCompanies = ({ companies }) => {
   const currentCompanies = filteredCompanies.slice(startIndex, endIndex);
 
   const handleCompanyClick = (company) => {
-    setSelectedCompany(company);
-    setIsPopupOpen(true);
+    if (usePage && forum) {
+      // Rediriger vers la page de détails de l'entreprise (espace candidat)
+      navigate(`/candidate/event/company/${company.id}`, {
+        state: { 
+          company: company,
+          forum: forum
+        }
+      });
+    } else {
+      // Afficher le popup (page de détails du forum)
+      setSelectedCompany(company);
+      setIsPopupOpen(true);
+    }
   };
 
   const handleClosePopup = () => {

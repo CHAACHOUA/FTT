@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/recruiter/CompanyProfile.css';
-import { FaBuilding, FaImage, FaGlobe, FaFileAlt } from 'react-icons/fa';
+import { FaBuilding, FaImage, FaGlobe, FaFileAlt, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Sectors from './Sectors';
 
@@ -9,6 +9,7 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const [formData, setFormData] = useState({
     name: '',
     logo: null,
+    banner: null,
     sectors: [''],  // Toujours au moins un secteur vide
     website: '',
     description: '',
@@ -22,6 +23,14 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
       return logo.startsWith('http') ? logo : `${API}${logo}`;
     }
     return URL.createObjectURL(logo);
+  };
+
+  const getBannerURL = (banner) => {
+    if (!banner) return null;
+    if (typeof banner === 'string') {
+      return banner.startsWith('http') ? banner : `${API}${banner}`;
+    }
+    return URL.createObjectURL(banner);
   };
 
   useEffect(() => {
@@ -56,6 +65,7 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
         setFormData({
           name: data.name || '',
           logo: data.logo || null,
+          banner: data.banner || null,
           sectors: sectors.length > 0 ? sectors : [''],
           website: data.website || '',
           description: data.description || '',
@@ -86,6 +96,16 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
     }
   };
 
+  const handleBannerChange = (e) => {
+    if (readOnly) return;
+    const file = e.target.files[0];
+    if (file && file.size <= 5 * 1024 * 1024) { // 5Mo max pour la bannière
+      setFormData((prev) => ({ ...prev, banner: file }));
+    } else {
+      alert('Fichier trop volumineux (max 5Mo)');
+    }
+  };
+
 const handleSectorsChange = (newSectors) => {
   setFormData((prev) => ({ ...prev, sectors: newSectors }));
 };
@@ -105,6 +125,10 @@ const handleSectorsChange = (newSectors) => {
 
     if (formData.logo instanceof File) {
       formPayload.append('logo', formData.logo);
+    }
+
+    if (formData.banner instanceof File) {
+      formPayload.append('banner', formData.banner);
     }
 
     const res = await axios.put(
@@ -157,6 +181,51 @@ const handleSectorsChange = (newSectors) => {
               name="logo"
               accept="image/png, image/jpeg"
               onChange={handleLogoChange}
+              style={{ display: 'none' }}
+            />
+          </label>
+        )}
+      </div>
+
+      {/* Photo de couverture */}
+      <div className="company-banner-container">
+        <h4 style={{ marginBottom: '10px', color: '#374151' }}>Photo de couverture</h4>
+        <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '15px' }}>
+          Ajoutez une photo de couverture pour votre entreprise
+        </p>
+        {formData.banner ? (
+          <div className="banner-preview">
+            <img
+              src={getBannerURL(formData.banner)}
+              alt="Bannière"
+              className="company-banner"
+            />
+            {!readOnly && (
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, banner: null }))}
+                className="remove-banner-btn"
+                title="Supprimer la photo de couverture"
+              >
+                <FaTrash />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="banner-placeholder">
+            <FaImage style={{ fontSize: '2rem', color: '#9ca3af', marginBottom: '10px' }} />
+            <p style={{ color: '#6b7280', marginBottom: '15px' }}>Aucune photo de couverture</p>
+          </div>
+        )}
+        {!readOnly && (
+          <label htmlFor="banner" className="upload-banner-btn">
+            <FaImage /> {formData.banner ? 'Changer la photo de couverture' : 'Ajouter une photo de couverture'}
+            <input
+              type="file"
+              id="banner"
+              name="banner"
+              accept="image/png, image/jpeg"
+              onChange={handleBannerChange}
               style={{ display: 'none' }}
             />
           </label>

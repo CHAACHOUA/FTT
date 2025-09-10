@@ -6,7 +6,7 @@ import {
   FaFolderOpen,
   FaUserCheck
 } from 'react-icons/fa';
-import '../../styles/recruiter/SubMenu.css';
+import '../../candidate/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive }) => {
   const allItems = [
@@ -21,22 +21,20 @@ const SubMenu = ({ active, setActive }) => {
   ];
 
   return (
-    <aside className="submenu-wrapper">
-      <div className="submenu-section">
-        <ul className="submenu-list">
-          {allItems.map((item) => (
-            <li key={item.id}>
-              <button
-                onClick={() => setActive(item.id)}
-                className="submenu-link"
-              >
-                <div className="submenu-icon">{item.icon}</div>
-                <span className="submenu-label">{item.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <aside className="sidebar-menu modern-sidebar">
+      <ul className="sidebar-list">
+        {allItems.map((item) => (
+          <li key={item.id}>
+            <button
+              onClick={() => setActive(item.id)}
+              className="sidebar-link"
+            >
+              <div className="sidebar-icon">{item.icon}</div>
+              <span className="sidebar-label">{item.label}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </aside>
   );
 };

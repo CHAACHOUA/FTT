@@ -216,15 +216,13 @@ const CandidatesList = (props) => {
               </div>
               <span className="kpi-value">...</span>
             </div>
-            <div className="kpi-card kpi-contrat">
-              <div className="kpi-label-row">
-                <span className="kpi-label">Contrats recherchés</span>
-                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
-              </div>
-              <ul className="kpi-list">
-                <li>Chargement...</li>
-              </ul>
-            </div>
+                <div className="kpi-card kpi-top-contrat">
+                  <div className="kpi-label-row">
+                    <span className="kpi-label">TOP CONTRAT</span>
+                    <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+                  </div>
+                  <span className="kpi-value">...</span>
+                </div>
           </div>
         </div>
         <div className="candidates-wrapper">
@@ -233,7 +231,7 @@ const CandidatesList = (props) => {
               <CandidateFilters filters={filters} onChange={setFilters} options={options} />
             </aside>
             <div className="candidates-main">
-              <h2>Liste des candidats</h2>
+              <h2>Liste des candidats (chargement...)</h2>
               <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
                 Chargement des candidats...
               </div>
@@ -280,15 +278,13 @@ const CandidatesList = (props) => {
               </div>
               <span className="kpi-value">0</span>
             </div>
-            <div className="kpi-card kpi-contrat">
-              <div className="kpi-label-row">
-                <span className="kpi-label">Contrats recherchés</span>
-                <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
-              </div>
-              <ul className="kpi-list">
-                <li>Erreur</li>
-              </ul>
-            </div>
+                <div className="kpi-card kpi-top-contrat">
+                  <div className="kpi-label-row">
+                    <span className="kpi-label">TOP CONTRAT</span>
+                    <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
+                  </div>
+                  <span className="kpi-value">Aucun</span>
+                </div>
           </div>
         </div>
         <div className="candidates-wrapper">
@@ -297,7 +293,7 @@ const CandidatesList = (props) => {
               <CandidateFilters filters={filters} onChange={setFilters} options={options} />
             </aside>
             <div className="candidates-main">
-              <h2>Liste des candidats</h2>
+              <h2>Liste des candidats (0 candidat trouvé!)</h2>
               <div style={{ textAlign: 'center', padding: '3rem', color: '#ef4444' }}>
                 Erreur : {error}
               </div>
@@ -439,18 +435,18 @@ const CandidatesList = (props) => {
             </div>
             <span className="kpi-value">{rqth}</span>
           </div>
-          <div className="kpi-card kpi-contrat">
+          <div className="kpi-card kpi-top-contrat">
             <div className="kpi-label-row">
-              <span className="kpi-label">Contrats recherchés</span>
+              <span className="kpi-label">TOP CONTRAT</span>
               <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
             </div>
-            <ul className="kpi-list">
-              {Object.entries(contratCounts)
-                .sort((a, b) => b[1] - a[1])
-                .map(([type, count]) => (
-                  <li key={type}>{type} : <b>{count}</b></li>
-                ))}
-            </ul>
+            <span className="kpi-value">
+              {Object.keys(contratCounts).length > 0 ? 
+                Object.entries(contratCounts)
+                  .sort((a, b) => b[1] - a[1])[0][0] 
+                : 'Aucun'
+              }
+            </span>
           </div>
         </div>
       </div>
@@ -460,7 +456,7 @@ const CandidatesList = (props) => {
             <CandidateFilters filters={filters} onChange={setFilters} options={options} />
           </aside>
           <div className="candidates-main">
-            <h2>Liste des candidats</h2>
+            <h2>Liste des candidats ({filteredCandidates.length} candidat{filteredCandidates.length > 1 ? 's' : ''} trouvé{filteredCandidates.length > 1 ? 's' : ''})</h2>
             {filteredCandidates.length === 0 ? (
               <div style={{ 
                 textAlign: 'center', 
@@ -491,7 +487,7 @@ const CandidatesList = (props) => {
                         href={`${apiBaseUrl}${candidate.cv_file}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="cv-download"
+                        className="organizer-cv-icon"
                         title="Télécharger le CV"
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -499,7 +495,7 @@ const CandidatesList = (props) => {
                       </a>
                     ) : (
                       <div
-                        className="cv-download cv-no-file"
+                        className="organizer-cv-icon cv-no-file"
                         title="Aucun CV disponible"
                         onClick={(e) => e.stopPropagation()}
                       >

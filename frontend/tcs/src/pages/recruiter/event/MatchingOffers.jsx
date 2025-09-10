@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUsers, FaMapMarkerAlt, FaBuilding, FaUser, FaCalendar, FaBriefcase } from 'react-icons/fa';
+import { FaUsers, FaMapMarkerAlt, FaBuilding, FaUser, FaCalendar, FaBriefcase, FaIndustry } from 'react-icons/fa';
 import { MdBusiness, MdLocationOn, MdPerson } from 'react-icons/md';
 import '../../styles/recruiter/OffersList.css';
 import '../../styles/recruiter/Matching.css';
 import Loading from '../../common/Loading';
 import { useNavigate } from 'react-router-dom';
 import MatchingCandidates from './MatchingCandidates';
+import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 import logoFTT from '../../../assets/Logo-FTT.png';
 
 const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
@@ -75,9 +76,15 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   }
 
   return (
-    <div className="offers-list-wrapper">
-      <div className="offers-list-content">
-      <h2 className="matching-title">Offres pour le forum : {forum.name}</h2>
+    <CompanyApprovalCheck 
+      forumId={forum.id} 
+      accessToken={accessToken} 
+      apiBaseUrl={apiBaseUrl}
+      fallbackMessage="L'accès au matching n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
+    >
+      <div className="offers-list-wrapper">
+        <div className="offers-list-content">
+        <h2 className="matching-title">Offres pour le forum : {forum.name}</h2>
 
       {loadingOffers && <Loading />}
       {errorOffers && <div className="error">{errorOffers}</div>}
@@ -95,7 +102,9 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
           const recruiterFirst = offer.recruiter_name?.split(' ')[0] || '';
           const recruiterLast = offer.recruiter_name?.split(' ')[1] || '';
           const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
-          const bannerSrc = offer.company_logo || logoFTT;
+          const bannerSrc = offer.company_banner 
+            ? (offer.company_banner.startsWith('http') ? offer.company_banner : `${apiBaseUrl}${offer.company_banner}`)
+            : (offer.company_logo ? (offer.company_logo.startsWith('http') ? offer.company_logo : `${apiBaseUrl}${offer.company_logo}`) : logoFTT);
           
           return (
             <div key={offer.id} className="offer-card horizontal">
@@ -120,24 +129,24 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
 
                 <h4 className="offer-title large">{offer.title}</h4>
                 
-                <div className="offer-location-line">
-                  <FaMapMarkerAlt />
-                  <span>{offer.location || 'Non précisé'}</span>
-                </div>
-                
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '8px', marginBottom: '8px' }}>
+                <div className="offer-meta-tags">
                   {offer.sector && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.85rem', background: '#f8fafc', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                      <FaBriefcase />
+                    <div className="offer-meta-tag sector">
+                      <FaIndustry />
                       <span>{offer.sector}</span>
                     </div>
                   )}
                   {offer.contract_type && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.85rem', background: '#f8fafc', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                      <MdBusiness />
+                    <div className="offer-meta-tag contract">
+                      <FaBriefcase />
                       <span>{offer.contract_type}</span>
                     </div>
                   )}
+                </div>
+                
+                <div className="offer-location-line">
+                  <FaMapMarkerAlt />
+                  <span>{offer.location || 'Non précisé'}</span>
                 </div>
                 
                 <div style={{ textAlign: 'right', marginTop: 'auto' }}>
@@ -188,6 +197,7 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
       )}
       </div>
     </div>
+    </CompanyApprovalCheck>
   );
 };
 

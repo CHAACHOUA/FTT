@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
+import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 import './CandidateListRecruiter.css';
 
 const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
@@ -262,9 +263,15 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
   if (error) return <div>Erreur : {error}</div>;
 
   return (
-    <div className="offers-list-wrapper">
-      <div className="offers-list-content">
-      <div className="candidates-header">
+    <CompanyApprovalCheck 
+      forumId={forumId} 
+      accessToken={accessToken} 
+      apiBaseUrl={apiBaseUrl}
+      fallbackMessage="L'accès aux rencontres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
+    >
+      <div className="offers-list-wrapper">
+        <div className="offers-list-content">
+        <div className="candidates-header">
         <h2>Mes rencontres - {meetings.length} candidat{meetings.length > 1 ? 's' : ''}</h2>
       </div>
 
@@ -438,6 +445,7 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
       )}
       </div>
     </div>
+    </CompanyApprovalCheck>
   );
 };
 

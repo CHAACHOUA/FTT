@@ -9,14 +9,16 @@ import {
   faMapMarkerAlt, 
   faUser,
   faSave,
-  faTimes
+  faTimes,
+  faCalendarDays,
+  faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../context/AuthContext';
 import './ProgrammeManager.css';
 import { validateEventDates } from '../../../utils/dateValidation';
 import DateValidationError from '../../../components/common/DateValidationError';
 
-const ProgrammeManager = ({ forumId, forumName }) => {
+const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
   const [programmes, setProgrammes] = useState([]);
   const [speakers, setSpeakers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,7 +95,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
     
     // Validation en temps réel pour les dates
     if (['start_date', 'end_date', 'start_time', 'end_time'].includes(name)) {
-      const validation = validateEventDates(newFormData);
+      const validation = validateEventDates(newFormData, forumDates);
       setDateErrors(validation.errors);
     }
   };
@@ -134,7 +136,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
     }
     
     // Validation des dates - FORCER LA VALIDATION
-    const dateValidation = validateEventDates(formData);
+    const dateValidation = validateEventDates(formData, forumDates);
     console.log('Validation des dates:', dateValidation);
     
     if (!dateValidation.isValid) {
@@ -312,7 +314,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
                       <img 
                         src={editingProgramme.photo.startsWith('http') ? editingProgramme.photo : `${API}${editingProgramme.photo}`}
                         alt="Photo actuelle"
-                        style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                        className="current-photo-img"
                       />
                     </div>
                   )}
@@ -427,7 +429,7 @@ const ProgrammeManager = ({ forumId, forumName }) => {
       )}
 
       {/* Liste des programmes */}
-      <div className="programmes-list">
+      <div className="programme-cards-container">
         {programmes.length === 0 ? (
           <div className="no-programmes">
             <p>Aucun programme ajouté pour le moment.</p>
@@ -438,27 +440,10 @@ const ProgrammeManager = ({ forumId, forumName }) => {
           </div>
         ) : (
           programmes.map(programme => (
-            <div key={programme.id} className="programme-card">
-              <div className="programme-header">
-                <h4>{programme.title}</h4>
-                <div className="programme-actions">
-                  <button 
-                    className="edit-btn"
-                    onClick={() => handleEdit(programme)}
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button 
-                    className="delete-btn"
-                    onClick={() => handleDelete(programme.id)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              </div>
-
-              {programme.photo && (
-                <div className="programme-photo">
+            <div key={programme.id} className="programme-item-card">
+              {/* Image du programme */}
+              <div className="programme-item-image">
+                {programme.photo ? (
                   <img 
                     src={programme.photo.startsWith('http') ? programme.photo : `${API}${programme.photo}`}
                     alt={programme.title}
@@ -466,38 +451,77 @@ const ProgrammeManager = ({ forumId, forumName }) => {
                       e.target.style.display = 'none';
                     }}
                   />
+                ) : (
+                  <div className="programme-item-placeholder">
+                    <FontAwesomeIcon icon={faCalendarDays} />
+                  </div>
+                )}
+              </div>
+              
+              <div className="programme-item-details">
+                {/* Badge de temps en haut à droite */}
+                <div className="programme-item-time-badge">
+                  {formatTime(programme.start_time)}
                 </div>
-              )}
-
-              {programme.description && (
-                <p className="programme-description">{programme.description}</p>
-              )}
-
-              <div className="programme-details">
-                <div className="detail-item">
-                  <FontAwesomeIcon icon={faClock} />
-                  <span>
-                    {formatDate(programme.start_date)} - {formatDate(programme.end_date)}
-                    {programme.start_time && programme.end_time && (
-                      <span> • {formatTime(programme.start_time)} - {formatTime(programme.end_time)}</span>
-                    )}
-                  </span>
+                
+                {/* Actions edit/delete en haut à gauche */}
+                <div className="programme-item-actions">
+                  <button 
+                    className="programme-edit-btn"
+                    onClick={() => handleEdit(programme)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                  <button 
+                    className="programme-delete-btn"
+                    onClick={() => handleDelete(programme.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
                 </div>
-
-                <div className="detail-item">
-                  <FontAwesomeIcon icon={faMapMarkerAlt} />
-                  <span>{programme.location}</span>
+                
+                <div className="programme-item-content">
+                  {/* Titre */}
+                  <h4 className="programme-item-title">{programme.title}</h4>
+                  
+                  {/* Date */}
+                  <div className="programme-item-date">
+                    <FontAwesomeIcon icon={faCalendarAlt} className="programme-item-icon" />
+                    <span>{formatDate(programme.start_date)}</span>
+                  </div>
+                  
+                  {/* Localisation */}
+                  <div className="programme-item-venue">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="programme-item-icon" />
+                    <span>{programme.location}</span>
+                  </div>
+                  
+                  {/* Description */}
+                  {programme.description && (
+                    <p className="programme-item-summary">{programme.description}</p>
+                  )}
                 </div>
-
+                
+                {/* Speaker principal en bas à droite */}
                 {programme.speakers && programme.speakers.length > 0 && (
-                  <div className="detail-item">
-                    <FontAwesomeIcon icon={faUser} />
-                    <div className="speakers-list">
-                      {programme.speakers.map(speaker => (
-                        <span key={speaker.id} className="speaker-tag">
-                          {speaker.full_name}
-                        </span>
-                      ))}
+                  <div className="programme-item-main-speaker">
+                    <div className="programme-item-speaker-info">
+                      {programme.speakers[0].photo && (
+                        <img 
+                          src={programme.speakers[0].photo.startsWith('http') ? programme.speakers[0].photo : `${API}${programme.speakers[0].photo}`}
+                          alt={programme.speakers[0].full_name}
+                          className="programme-item-speaker-photo"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      )}
+                      <div className="programme-item-speaker-details">
+                        <span className="programme-item-speaker-name">{programme.speakers[0].full_name}</span>
+                        {programme.speakers[0].position && (
+                          <span className="programme-item-speaker-role">{programme.speakers[0].position}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}

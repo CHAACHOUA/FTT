@@ -352,7 +352,7 @@
   color: #3b82f6;
 }
 
-.cv-download {
+.organizer-cv-icon {
   position: absolute !important;
   top: 12px !important;
   right: 12px !important;
@@ -370,12 +370,12 @@
   background: transparent;
 }
 
-.cv-download:hover {
+.organizer-cv-icon:hover {
   color: #06b6d4;
   transform: scale(1.1);
 }
 
-.cv-download svg {
+.organizer-cv-icon svg {
   font-size: 1.2rem;
   width: 100%;
   height: 100%;
@@ -571,8 +571,12 @@
     padding: 0.15rem 0.5rem;
   }
   
-  .cv-download {
-    width: 100%;
+  .organizer-cv-icon {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 24px;
+    height: 24px;
     justify-content: center;
   }
 }

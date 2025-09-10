@@ -148,6 +148,10 @@ const ForumProgrammeManagement = () => {
             <ProgrammeManager 
               forumId={forumId} 
               forumName={forum.name}
+              forumDates={{
+                start_date: forum.start_date,
+                end_date: forum.end_date
+              }}
             />
           )}
           {activeTab === 'speakers' && (

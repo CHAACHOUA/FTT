@@ -5,6 +5,13 @@
   padding-top: 70px;
 }
 
+/* Contrôle spécifique du header pour l'espace recruteur */
+.recruiter-header-block {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
 .candidates-header {
   display: flex;
   justify-content: space-between;
@@ -195,17 +202,19 @@
 }
 
 .cards-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 @media (min-width: 768px) {
   .cards-container {
-    grid-template-columns: repeat(2, 1fr);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 
@@ -217,6 +226,8 @@
   box-shadow: 0 2px 8px rgba(24, 56, 108, 0.05);
   transition: all 0.3s ease;
   cursor: pointer;
+  flex: 1;
+  min-width: 300px;
   max-width: 400px;
 }
 
@@ -262,10 +273,44 @@
   margin: 0 0 0.5rem 0;
 }
 
+/* Style amélioré pour le nom des recruteurs */
+.candidate-card .candidate-info h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.8rem 0;
+  letter-spacing: -0.025em;
+}
+
 .candidate-info p {
   color: #6b7280;
   font-size: 0.9rem;
   margin: 0;
+}
+
+/* Styles spécifiques pour les cartes de membres */
+.recruiter-email {
+  background: #f8fafc;
+  color: #475569;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0.5rem 0;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+}
+
+.recruiter-company {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0 0;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
 }
 
 .sectors-container {

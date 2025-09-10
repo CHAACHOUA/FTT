@@ -219,4 +219,95 @@
     background: #fff;
     padding: 0 4px;
   }
+
+  /* Styles pour la photo de couverture */
+  .company-banner-container {
+    margin-bottom: 2rem;
+  }
+
+  .banner-preview {
+    position: relative;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    height: 500px;
+  }
+
+  .company-banner {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .company-banner:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .banner-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    margin-bottom: 1rem;
+    width: 500px;
+    height: 500px;
+  }
+
+  .upload-banner-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #18386c;
+    border-radius: 6px;
+    color: #18386c;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+  }
+
+  .upload-banner-btn:hover {
+    background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-1px);
+  }
+
+  .remove-banner-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    color: #dc2626;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+
+  .remove-banner-btn:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #b91c1c;
+    transform: scale(1.1);
+  }
   

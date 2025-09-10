@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faMapMarkerAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faMapMarkerAlt, faUser, faCalendarDays, faCalendarAlt, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import './ProgrammeTimeline.css';
 
 const ProgrammeTimeline = ({ programmes }) => {
@@ -39,70 +39,74 @@ const ProgrammeTimeline = ({ programmes }) => {
   return (
     <div className="programme-timeline-container">
       <h3 className="programme-timeline-title">Programme</h3>
-      <div className="programme-timeline">
-        {sortedProgrammes.map((programme, index) => (
-          <div key={programme.id} className="programme-item">
-            <div className="programme-timeline-line">
-              <div className="programme-timeline-dot"></div>
-              {index < sortedProgrammes.length - 1 && (
-                <div className="programme-timeline-connector"></div>
+      <div className="programme-cards-container">
+        {sortedProgrammes.map((programme) => (
+          <div key={programme.id} className="programme-item-card">
+            {/* Photo du programme */}
+            <div className="programme-item-image">
+              {programme.photo ? (
+                <img 
+                  src={programme.photo.startsWith('http') ? programme.photo : `${process.env.REACT_APP_API_BASE_URL}${programme.photo}`}
+                  alt={programme.title}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <div className="programme-item-placeholder">
+                  <FontAwesomeIcon icon={faCalendarDays} />
+                </div>
               )}
             </div>
             
-            <div className="programme-content">
-              <div className="programme-header">
-                <h4 className="programme-title">{programme.title}</h4>
-                <div className="programme-time">
-                  <FontAwesomeIcon icon={faClock} className="programme-icon" />
-                  <span>
-                    {formatTime(programme.start_time)} - {formatTime(programme.end_time)}
-                  </span>
-                </div>
+            <div className="programme-item-details">
+              {/* Badge de temps en haut à droite */}
+              <div className="programme-item-time-badge">
+                {formatTime(programme.start_time)}
               </div>
               
-              {programme.photo && (
-                <div className="programme-photo">
-                  <img 
-                    src={programme.photo.startsWith('http') ? programme.photo : `${process.env.REACT_APP_API_BASE_URL}${programme.photo}`}
-                    alt={programme.title}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
+              <div className="programme-item-content">
+                {/* Titre */}
+                <h4 className="programme-item-title">{programme.title}</h4>
+                
+                {/* Date */}
+                <div className="programme-item-date">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="programme-item-icon" />
+                  <span>{formatDate(programme.start_date)}</span>
                 </div>
-              )}
-              
-              {programme.description && (
-                <p className="programme-description">{programme.description}</p>
-              )}
-              
-              <div className="programme-location">
-                <FontAwesomeIcon icon={faMapMarkerAlt} className="programme-icon" />
-                <span>{programme.location}</span>
+                
+                {/* Localisation */}
+                <div className="programme-item-venue">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="programme-item-icon" />
+                  <span>{programme.location}</span>
+                </div>
+                
+                {/* Description */}
+                {programme.description && (
+                  <p className="programme-item-summary">{programme.description}</p>
+                )}
               </div>
               
+              {/* Speaker principal en bas à droite */}
               {programme.speakers && programme.speakers.length > 0 && (
-                <div className="programme-speakers">
-                  <FontAwesomeIcon icon={faUser} className="programme-icon" />
-                  <div className="speakers-list">
-                    {programme.speakers.map((speaker, speakerIndex) => (
-                      <div key={speaker.id} className="speaker-item">
-                        <div className="speaker-info">
-                          <span className="speaker-name">{speaker.full_name}</span>
-                          <span className="speaker-position">{speaker.position}</span>
-                        </div>
-                        {speaker.photo && (
-                          <img 
-                            src={speaker.photo.startsWith('http') ? speaker.photo : `${process.env.REACT_APP_API_BASE_URL}${speaker.photo}`}
-                            alt={speaker.full_name}
-                            className="speaker-photo"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                            }}
-                          />
-                        )}
-                      </div>
-                    ))}
+                <div className="programme-item-main-speaker">
+                  <div className="programme-item-speaker-info">
+                    {programme.speakers[0].photo && (
+                      <img 
+                        src={programme.speakers[0].photo.startsWith('http') ? programme.speakers[0].photo : `${process.env.REACT_APP_API_BASE_URL}${programme.speakers[0].photo}`}
+                        alt={programme.speakers[0].full_name}
+                        className="programme-item-speaker-photo"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    )}
+                    <div className="programme-item-speaker-details">
+                      <span className="programme-item-speaker-name">{programme.speakers[0].full_name}</span>
+                      {programme.speakers[0].position && (
+                        <span className="programme-item-speaker-role">{programme.speakers[0].position}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

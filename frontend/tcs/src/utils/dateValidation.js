@@ -48,11 +48,15 @@ export const validateTimeRange = (startTime, endTime, startDate, endDate) => {
     return true;
   }
   
-  const start = new Date(`${startDate}T${startTime}`);
-  const end = new Date(`${endDate}T${endTime}`);
+  // Normaliser les heures si nécessaire
+  const normalizedStartTime = startTime.length === 4 ? '0' + startTime : startTime;
+  const normalizedEndTime = endTime.length === 4 ? '0' + endTime : endTime;
+  
+  const start = new Date(`${startDate}T${normalizedStartTime}`);
+  const end = new Date(`${endDate}T${normalizedEndTime}`);
   
   const isValid = start < end;
-  console.log('validateTimeRange:', startTime, 'vs', endTime, '=', isValid);
+  console.log('validateTimeRange:', normalizedStartTime, 'vs', normalizedEndTime, '=', isValid);
   console.log('Heures converties:', start, 'vs', end);
   
   return isValid;
@@ -61,12 +65,14 @@ export const validateTimeRange = (startTime, endTime, startDate, endDate) => {
 /**
  * Valide les dates et heures pour un événement
  * @param {Object} formData - Données du formulaire
+ * @param {Object} forumDates - Dates du forum { start_date, end_date }
  * @returns {Object} - { isValid: boolean, errors: Array }
  */
-export const validateEventDates = (formData) => {
+export const validateEventDates = (formData, forumDates = null) => {
   const errors = [];
   
   console.log('Validation des dates - Données reçues:', formData);
+  console.log('Dates du forum:', forumDates);
   
   // Validation des champs obligatoires
   if (!formData.start_date) {
@@ -94,22 +100,85 @@ export const validateEventDates = (formData) => {
       if (!validateDateRange(formData.start_date, formData.end_date)) {
         errors.push("La date de début doit être antérieure ou égale à la date de fin");
       }
+      
+      // Validation par rapport aux dates du forum
+      if (forumDates && forumDates.start_date && forumDates.end_date) {
+        const eventStart = new Date(formData.start_date);
+        const eventEnd = new Date(formData.end_date);
+        const forumStart = new Date(forumDates.start_date);
+        const forumEnd = new Date(forumDates.end_date);
+        
+        if (eventStart < forumStart) {
+          errors.push(`La date de début doit être dans la plage du forum (${forumDates.start_date} - ${forumDates.end_date})`);
+        }
+        if (eventEnd > forumEnd) {
+          errors.push(`La date de fin doit être dans la plage du forum (${forumDates.start_date} - ${forumDates.end_date})`);
+        }
+      }
     }
   }
   
   // Validation des heures seulement si toutes les données sont présentes
   if (formData.start_date && formData.end_date && formData.start_time && formData.end_time) {
-    console.log('Validation des heures:', formData.start_time, 'vs', formData.end_time);
+    console.log('=== DEBUG VALIDATION HEURES ===');
+    console.log('start_time brut:', JSON.stringify(formData.start_time));
+    console.log('end_time brut:', JSON.stringify(formData.end_time));
+    console.log('start_time type:', typeof formData.start_time);
+    console.log('end_time type:', typeof formData.end_time);
     
-    // Vérifier le format des heures
-    const timeRegex = /^\d{2}:\d{2}$/;
-    if (!timeRegex.test(formData.start_time) || !timeRegex.test(formData.end_time)) {
-      errors.push("Format d'heure invalide (utilisez HH:MM)");
+    // Vérifier que les heures ne sont pas vides ou juste des espaces
+    const startTimeTrimmed = formData.start_time.trim();
+    const endTimeTrimmed = formData.end_time.trim();
+    
+    console.log('start_time trimmed:', JSON.stringify(startTimeTrimmed));
+    console.log('end_time trimmed:', JSON.stringify(endTimeTrimmed));
+    
+    if (!startTimeTrimmed || !endTimeTrimmed) {
+      console.log('Heures vides détectées');
+      errors.push("Les heures de début et de fin sont obligatoires");
     } else {
-      if (!validateTimeRange(formData.start_time, formData.end_time, formData.start_date, formData.end_date)) {
-        errors.push("L'heure de début doit être antérieure à l'heure de fin");
+      // Vérifier le format des heures - plus flexible
+      // Accepter différents formats : HH:MM, H:MM, HH:MM:SS, H:MM:SS
+      const timeRegex = /^\d{1,2}:\d{2}(:\d{2})?$/;
+      const startTimeValid = timeRegex.test(startTimeTrimmed);
+      const endTimeValid = timeRegex.test(endTimeTrimmed);
+      
+      console.log('start_time valid:', startTimeValid);
+      console.log('end_time valid:', endTimeValid);
+      
+      if (!startTimeValid || !endTimeValid) {
+        console.log('Format invalide détecté');
+        errors.push("Format d'heure invalide (utilisez HH:MM)");
+      } else {
+        // Normaliser les heures pour la validation
+        // Supprimer les secondes si présentes et ajouter un 0 si nécessaire
+        let normalizedStartTime = startTimeTrimmed;
+        let normalizedEndTime = endTimeTrimmed;
+        
+        // Supprimer les secondes si présentes (HH:MM:SS -> HH:MM)
+        if (normalizedStartTime.length === 8) {
+          normalizedStartTime = normalizedStartTime.substring(0, 5);
+        }
+        if (normalizedEndTime.length === 8) {
+          normalizedEndTime = normalizedEndTime.substring(0, 5);
+        }
+        
+        // Ajouter un 0 si nécessaire (H:MM -> HH:MM)
+        if (normalizedStartTime.length === 4) {
+          normalizedStartTime = '0' + normalizedStartTime;
+        }
+        if (normalizedEndTime.length === 4) {
+          normalizedEndTime = '0' + normalizedEndTime;
+        }
+        
+        console.log('Heures normalisées:', normalizedStartTime, 'vs', normalizedEndTime);
+        
+        if (!validateTimeRange(normalizedStartTime, normalizedEndTime, formData.start_date, formData.end_date)) {
+          errors.push("L'heure de début doit être antérieure à l'heure de fin");
+        }
       }
     }
+    console.log('=== FIN DEBUG ===');
   }
   
   console.log('Erreurs de validation:', errors);

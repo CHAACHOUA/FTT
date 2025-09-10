@@ -21,6 +21,36 @@ html {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Titre de la page active - affiché au hover sur la sidebar */
+.sidebar-page-title {
+  position: absolute;
+  left: 100%;
+  top: 24px;
+  background-color: #ffffff;
+  color: #18386c;
+  white-space: nowrap;
+  font-weight: 700;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(24, 56, 108, 0.15);
+  border: 1px solid rgba(24, 56, 108, 0.1);
+  margin-left: 12px;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.page-title-text {
+  display: block;
+}
+
+/* Affichage du titre au hover sur la sidebar */
+.sidebar-menu.modern-sidebar:hover .sidebar-page-title {
+  opacity: 1;
+}
+
 /* Titre masqué */
 .sidebar-title {
   display: none;
@@ -42,7 +72,8 @@ html {
 }
 
 /* Lien dans la sidebar */
-.sidebar-list li a {
+.sidebar-list li a,
+.sidebar-list li button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -52,9 +83,14 @@ html {
   transition: background 0.3s, color 0.3s;
   border-radius: 12px;
   position: relative;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
 }
 
-.sidebar-list li a:hover {
+.sidebar-list li a:hover,
+.sidebar-list li button:hover {
   background-color: #f0f0f0;
 }
 
@@ -85,7 +121,8 @@ html {
 }
 
 /* Affichage du label au survol */
-.sidebar-list li a:hover .sidebar-label {
+.sidebar-list li a:hover .sidebar-label,
+.sidebar-list li button:hover .sidebar-label {
   opacity: 1;
 }
 
@@ -177,6 +214,11 @@ html {
   
   .sidebar-list li a:hover .sidebar-label {
     color: #18386c;
+  }
+  
+  /* Masquer le titre de la page en responsive */
+  .sidebar-page-title {
+    display: none;
   }
 }
 
