@@ -20,7 +20,7 @@ class CompanyWithRecruitersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ['id','name', 'logo','sectors','website', 'description', 'recruiters', 'offers', 'stand', 'approved']
+        fields = ['id','name', 'logo', 'banner', 'sectors','website', 'description', 'recruiters', 'offers', 'stand', 'approved']
 
     def get_recruiters(self, obj):
         from recruiters.serializers import RecruiterSerializer

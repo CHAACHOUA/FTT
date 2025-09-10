@@ -13,6 +13,27 @@ class RecruiterSerializer(serializers.ModelSerializer):
         model = Recruiter
         fields = ['first_name', 'last_name','profile_picture', 'company','title','phone','email']
 
+class CompanyApprovalSerializer(serializers.ModelSerializer):
+    approved = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Recruiter
+        fields = ['approved']
+    
+    def get_approved(self, obj):
+        # Récupérer le forum depuis le contexte
+        forum = self.context.get('forum')
+        if not forum:
+            return False
+        
+        # Vérifier si l'entreprise est approuvée pour ce forum
+        from company.models import ForumCompany
+        try:
+            forum_company = ForumCompany.objects.get(company=obj.company, forum=forum)
+            return forum_company.approved
+        except ForumCompany.DoesNotExist:
+            return False
+
 class RecruiterForumParticipationSerializer(serializers.ModelSerializer):
     forum = ForumSerializer(read_only=True)
 
@@ -24,6 +45,7 @@ class RecruiterForumParticipationSerializer(serializers.ModelSerializer):
 class OfferSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(source='company.name', read_only=True)
     company_logo = serializers.ImageField(source='company.logo', read_only=True)
+    company_banner = serializers.ImageField(source='company.banner', read_only=True)
     recruiter_photo = serializers.ImageField(source='recruiter.profile_picture', read_only=True)
     recruiter_name = serializers.SerializerMethodField()
     class Meta:
@@ -40,6 +62,7 @@ class OfferSerializer(serializers.ModelSerializer):
             'company_name',
             'recruiter_name',
             'company_logo',
+            'company_banner',
             'recruiter_photo'
         ]
 

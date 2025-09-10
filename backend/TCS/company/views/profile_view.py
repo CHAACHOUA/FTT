@@ -26,13 +26,15 @@ def update_company_profile_view(request):
 
     data = request.data.copy()
 
-    # Récupérer le logo si présent
+    # Récupérer le logo et banner si présents
     logo = request.FILES.get('logo', None)
+    banner = request.FILES.get('banner', None)
 
     result = update_company_profile(
         company=recruiter.company,
         data=data,
-        logo=logo
+        logo=logo,
+        banner=banner
     )
 
     return Response(result["data"], status=result["status"])

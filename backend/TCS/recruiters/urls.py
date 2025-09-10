@@ -1,13 +1,14 @@
 from django.urls import path
 from recruiters.views.offers_view import toggle_favorite_offer_view
 from recruiters.views.offers_view import get_favorite_offers_view,create_offer, update_offer, delete_offer,company_offers_list
-from recruiters.views.profile_view import update_recruiter_profile_view,company_recruiters_view, recruiter_profile
+from recruiters.views.profile_view import update_recruiter_profile_view,company_recruiters_view, recruiter_profile, company_approval_status_view
 from recruiters.views.meeting import forum_meeting_candidates_view, add_meeting_candidate_view, remove_meeting_candidate_view, test_meeting_view, test_add_meeting_view
 
 urlpatterns = [
     #profile
     path('profile/me/', recruiter_profile, name='recruiter_profile'),
     path('profile/', update_recruiter_profile_view, name='update_recruiter_profile'),
+    path('company-profile/', company_approval_status_view, name='company_approval_status'),
     #Recruiters of company
     path('company-recruiters/', company_recruiters_view, name='my-company-recruiters'),
     #offers

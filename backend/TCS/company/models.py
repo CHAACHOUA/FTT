@@ -7,6 +7,7 @@ from forums.models import Forum
 class Company(models.Model):
     name = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    banner = models.ImageField(upload_to='company_banners/', blank=True, null=True, help_text="Photo de couverture de l'entreprise")
     website = models.URLField(blank=True)
     description = models.TextField(blank=True, help_text="Description de l'entreprise")
     sectors = models.JSONField(default=list, blank=True)
