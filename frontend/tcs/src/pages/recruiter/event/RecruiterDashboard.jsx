@@ -42,8 +42,8 @@ const RecruiterDashboard = () => {
         <div className="recruiter-main-content">
           {active === 'membres' && <Members accessToken={accessToken} apiBaseUrl={API} />}
           {active === 'entreprise' && <CompanyProfile forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
-          {active === 'cvtheque' && <CandidatesList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
-          {active === 'rencontres' && <RencontresList forumId={forumId} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'cvtheque' && <CandidatesList forumId={forumId} apiBaseUrl={API} />}
+          {active === 'rencontres' && <RencontresList forumId={forumId} apiBaseUrl={API} />}
           {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
           {active === 'matching' && <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
         </div>

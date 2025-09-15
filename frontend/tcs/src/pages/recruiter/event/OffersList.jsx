@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrash, FaPlus, FaMapMarkerAlt, FaBriefcase, FaIndustry, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import OfferModal from './OfferModal';
-import OfferDetailPopup from '../../../components/recruiter/OfferDetailPopup';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
-import logoFTT from '../../../assets/Logo-FTT.png';
+import Offer from '../../../components/Offer';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
@@ -22,8 +21,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
 
   const forum_id = forum.id;
 
@@ -155,15 +152,9 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     }
   };
 
-  // Ouvre la popup de détails d'offre
+  // Gestion du clic sur une offre (navigation gérée par le composant Offer)
   const handleOfferClick = (offer) => {
-    setSelectedOffer(offer);
-    setIsOfferDetailPopupOpen(true);
-  };
-
-  const handleCloseOfferPopup = () => {
-    setIsOfferDetailPopupOpen(false);
-    setSelectedOffer(null);
+    console.log('Offer clicked:', offer);
   };
 
   // Envoie les données du formulaire au backend (create ou update)
@@ -198,7 +189,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   return (
     <CompanyApprovalCheck 
       forumId={forum.id} 
-      accessToken={accessToken} 
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'ajout d'offres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
@@ -308,88 +298,18 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           </div>
         ) : (
           <div className="offers-grid offers-list-horizontal">
-            {filteredOffers.map((offer) => {
-              const recruiterFirst = offer.recruiter_name?.split(' ')[0] || '';
-              const recruiterLast = offer.recruiter_name?.split(' ')[1] || '';
-              const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
-              const bannerSrc = offer.company_banner 
-                ? getFullUrl(offer.company_banner) 
-                : (offer.company_logo ? getFullUrl(offer.company_logo) : logoFTT);
-              
-              return (
-                <div
+            {filteredOffers.map((offer) => (
+              <Offer
                   key={offer.id}
-                  className="offer-card horizontal"
-                  onClick={() => handleOfferClick(offer)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="offer-left-banner">
-                    <img src={bannerSrc} alt="Bannière entreprise" onError={(e) => {e.target.src = logoFTT;}} />
-                    <div className="company-logo-badge">
-                      <img
-                        src={offer.company_logo ? getFullUrl(offer.company_logo) : logoFTT}
-                        alt={offer.company_name}
-                        onError={(e) => {e.target.src = logoFTT;}}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="offer-right-content">
-                    <div className="offer-top-line">
-                      <div className="recruiter-avatar">{initials}</div>
-                      <div className="recruiter-block">
-                        <div className="recruiter-name-line">{offer.recruiter_name} @ {offer.company_name}</div>
-                      </div>
-                      <span className="offer-date">Publiée le {new Date(offer.created_at || Date.now()).toLocaleDateString('fr-FR')}</span>
-                    </div>
-
-                    <h4 className="offer-title large">{offer.title}</h4>
-                    
-                    <div className="offer-meta-tags">
-                      {offer.sector && (
-                        <div className="offer-meta-tag sector">
-                          <FaIndustry />
-                          <span>{offer.sector}</span>
-                        </div>
-                      )}
-                      {offer.contract_type && (
-                        <div className="offer-meta-tag contract">
-                          <FaBriefcase />
-                          <span>{offer.contract_type}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="offer-location-line">
-                      <FaMapMarkerAlt />
-                      <span>{offer.location || 'Non précisé'}</span>
-                    </div>
-                  </div>
-
-                  {/* Boutons d'action */}
-                  <div className="offer-actions">
-                    <button 
-                      className="btn-action" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onUpdateOffer(offer);
-                      }}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button 
-                      className="btn-action" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteOffer(offer.id);
-                      }}
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                offer={offer}
+                onClick={handleOfferClick}
+                onEdit={onUpdateOffer}
+                onDelete={onDeleteOffer}
+                space="recruiter"
+                forum={forum}
+                activeTab="offres"
+              />
+            ))}
           </div>
         )}
 
@@ -403,13 +323,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
         forumId={forum_id}
       />
 
-      {/* Popup pour les détails de l'offre */}
-      {isOfferDetailPopupOpen && selectedOffer && (
-        <OfferDetailPopup
-          offer={selectedOffer}
-          onClose={handleCloseOfferPopup}
-        />
-      )}
     </div>
     </CompanyApprovalCheck>
   );

@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../pages/styles/candidate/Education.css';
-import { getUserFromToken } from '../../context/decoder-jwt'
+import { useAuth } from '../../context/AuthContext';
+// import { getUserFromToken } from '../../context/decoder-jwt' // Fichier supprimé
 const DeleteAccount = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -12,7 +13,7 @@ const DeleteAccount = () => {
   const [customReason, setCustomReason] = useState('');
   const navigate = useNavigate();
   const API = process.env.REACT_APP_API_BASE_URL;
-  const role = getUserFromToken(); // 👈 ici tu récupères le rôle
+  const { role } = useAuth(); // 👈 récupère le rôle depuis AuthContext
 
   const handleDelete = async () => {
     const reasonToSend = selectedReason === 'Autre' ? customReason.trim() : selectedReason;
@@ -24,14 +25,12 @@ const DeleteAccount = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('access');
       const response = await axios.delete(`${API}/api/users/auth/delete-account/`, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
         data: { reason: reasonToSend },
       });
 
       toast.success(response.data.message || 'Compte supprimé avec succès.');
-      localStorage.removeItem('access');
 
       setTimeout(() => {
         navigate('/login');

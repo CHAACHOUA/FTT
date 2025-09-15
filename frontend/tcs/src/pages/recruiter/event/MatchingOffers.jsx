@@ -1,34 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUsers, FaMapMarkerAlt, FaBuilding, FaUser, FaCalendar, FaBriefcase, FaIndustry } from 'react-icons/fa';
-import { MdBusiness, MdLocationOn, MdPerson } from 'react-icons/md';
+import { FaUsers, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import '../../styles/recruiter/Matching.css';
 import Loading from '../../common/Loading';
 import { useNavigate } from 'react-router-dom';
-import MatchingCandidates from './MatchingCandidates';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
-import logoFTT from '../../../assets/Logo-FTT.png';
+import Offer from '../../../components/Offer';
 
 const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
+  const [filteredOffers, setFilteredOffers] = useState([]);
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [errorOffers, setErrorOffers] = useState(null);
   const [matchingInProgressForOffer, setMatchingInProgressForOffer] = useState(null);
-  const [showCandidatesModal, setShowCandidatesModal] = useState(false);
-  const [candidatesData, setCandidatesData] = useState([]);
+
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSector, setSelectedSector] = useState('');
+  const [selectedContractType, setSelectedContractType] = useState('');
+  const [selectedRecruiter, setSelectedRecruiter] = useState('');
 
   const navigate = useNavigate();
   const forum_id = forum.id;
 
-  // Fonction pour générer les initiales du recruteur
-  const getInitials = (name) => {
-    if (!name) return 'R';
-    const names = name.split(' ');
-    if (names.length >= 2) {
-      return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
-    }
-    return name.charAt(0).toUpperCase();
+
+  // Obtenir les options uniques pour les filtres
+  const getUniqueSectors = () => {
+    const sectors = new Set();
+    offers.forEach(offer => {
+      if (offer.sectors) {
+        offer.sectors.forEach(sector => sectors.add(sector));
+      }
+    });
+    return Array.from(sectors).sort();
+  };
+
+  const getUniqueContractTypes = () => {
+    const contractTypes = new Set();
+    offers.forEach(offer => {
+      if (offer.contract_type) {
+        contractTypes.add(offer.contract_type);
+      }
+    });
+    return Array.from(contractTypes).sort();
+  };
+
+  const getUniqueRecruiters = () => {
+    const recruiters = new Set();
+    offers.forEach(offer => {
+      if (offer.recruiter_name) {
+        recruiters.add(offer.recruiter_name);
+      }
+    });
+    return Array.from(recruiters).sort();
+  };
+
+  // Réinitialiser les filtres
+  const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedSector('');
+    setSelectedContractType('');
+    setSelectedRecruiter('');
   };
 
   useEffect(() => {
@@ -41,6 +74,7 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
         });
         console.log('Offers data:', response.data); // Debug pour voir la structure
         setOffers(response.data);
+        setFilteredOffers(response.data);
         setErrorOffers(null);
       } catch (err) {
         setErrorOffers(err.response?.data?.detail || 'Erreur lors du chargement des offres');
@@ -50,6 +84,43 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
     };
     fetchOffers();
   }, [accessToken, apiBaseUrl, forum_id]);
+
+  // Filtrage des offres
+  useEffect(() => {
+    let filtered = offers;
+
+    // Filtre par terme de recherche
+    if (searchTerm) {
+      filtered = filtered.filter(offer =>
+        offer.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.company_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtre par secteur
+    if (selectedSector) {
+      filtered = filtered.filter(offer =>
+        offer.sectors?.some(sector => sector === selectedSector)
+      );
+    }
+
+    // Filtre par type de contrat
+    if (selectedContractType) {
+      filtered = filtered.filter(offer =>
+        offer.contract_type === selectedContractType
+      );
+    }
+
+    // Filtre par recruteur
+    if (selectedRecruiter) {
+      filtered = filtered.filter(offer =>
+        offer.recruiter_name === selectedRecruiter
+      );
+    }
+
+    setFilteredOffers(filtered);
+  }, [offers, searchTerm, selectedSector, selectedContractType, selectedRecruiter]);
 
   const handleStartMatching = async (offerId) => {
     setMatchingInProgressForOffer(offerId);
@@ -61,8 +132,19 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      setCandidatesData(res.data.candidates || []);
-      setShowCandidatesModal(true);
+      const candidates = res.data.candidates || [];
+      const offer = offers.find(o => o.id === offerId);
+      
+      // Navigation vers la page de détails de matching
+      navigate('/matching/detail', {
+        state: {
+          offer: offer,
+          candidates: candidates,
+          forum: forum,
+          activeTab: 'matching',
+          space: 'recruiter'
+        }
+      });
 
     } catch (err) {
       alert(err.response?.data?.detail || 'Erreur lors du matching');
@@ -78,123 +160,127 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   return (
     <CompanyApprovalCheck 
       forumId={forum.id} 
-      accessToken={accessToken} 
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'accès au matching n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
       <div className="offers-list-wrapper">
         <div className="offers-list-content">
-        <h2 className="matching-title">Offres pour le forum : {forum.name}</h2>
+        {loadingOffers && <Loading />}
+        {errorOffers && <div className="error">{errorOffers}</div>}
+        {!loadingOffers && offers.length === 0 && <p>Aucune offre disponible.</p>}
 
-      {loadingOffers && <Loading />}
-      {errorOffers && <div className="error">{errorOffers}</div>}
-      {!loadingOffers && offers.length === 0 && <p>Aucune offre disponible.</p>}
-
-      {/* Loader global pendant matching (optionnel) */}
-      {matchingInProgressForOffer && (
-        <div className="global-loading-overlay">
-          <Loading />
-        </div>
-      )}
-
-      <div className="offers-grid offers-list-horizontal">
-        {offers.map((offer) => {
-          const recruiterFirst = offer.recruiter_name?.split(' ')[0] || '';
-          const recruiterLast = offer.recruiter_name?.split(' ')[1] || '';
-          const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
-          const bannerSrc = offer.company_banner 
-            ? (offer.company_banner.startsWith('http') ? offer.company_banner : `${apiBaseUrl}${offer.company_banner}`)
-            : (offer.company_logo ? (offer.company_logo.startsWith('http') ? offer.company_logo : `${apiBaseUrl}${offer.company_logo}`) : logoFTT);
-          
-          return (
-            <div key={offer.id} className="offer-card horizontal">
-              <div className="offer-left-banner">
-                <img src={bannerSrc} alt="Bannière entreprise" onError={(e) => {e.target.src = logoFTT;}} />
-                <div className="company-logo-badge">
-                  <img
-                    src={offer.company_logo || logoFTT}
-                    alt={offer.company_name}
-                    onError={(e) => {e.target.src = logoFTT;}}
-                  />
-                </div>
-              </div>
-
-              <div className="offer-right-content">
-                <div className="offer-top-line">
-                  <div className="recruiter-avatar">{initials}</div>
-                  <div className="recruiter-block">
-                    <div className="recruiter-name-line">{offer.recruiter_name} @ {offer.company_name}</div>
-                  </div>
-                </div>
-
-                <h4 className="offer-title large">{offer.title}</h4>
-                
-                <div className="offer-meta-tags">
-                  {offer.sector && (
-                    <div className="offer-meta-tag sector">
-                      <FaIndustry />
-                      <span>{offer.sector}</span>
-                    </div>
-                  )}
-                  {offer.contract_type && (
-                    <div className="offer-meta-tag contract">
-                      <FaBriefcase />
-                      <span>{offer.contract_type}</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="offer-location-line">
-                  <FaMapMarkerAlt />
-                  <span>{offer.location || 'Non précisé'}</span>
-                </div>
-                
-                <div style={{ textAlign: 'right', marginTop: 'auto' }}>
-                  <span className="offer-date">Publiée le {new Date(offer.created_at || Date.now()).toLocaleDateString('fr-FR')}</span>
-                </div>
-              </div>
-
-              <div className="offer-actions">
+        {/* Filtres et recherche */}
+        <div className="filters-section">
+          <div className="search-bar">
+            <div className="search-input-container">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Rechercher par titre, description ou entreprise..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+              {searchTerm && (
                 <button
-                  onClick={() => handleStartMatching(offer.id)}
-                  disabled={matchingInProgressForOffer !== null}
-                  className="btn-matching-offer"
-                  style={{
-                    background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 20px',
-                    borderRadius: '8px',
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(24, 56, 108, 0.3)',
-                    fontSize: '0.95rem',
-                    whiteSpace: 'nowrap'
-                  }}
+                  onClick={() => setSearchTerm('')}
+                  className="clear-search-btn"
+                  title="Effacer la recherche"
                 >
-                  {matchingInProgressForOffer === offer.id
-                    ? <Loading />
-                    : <><FaUsers /> Matching candidat</>}
+                  <FaTimes />
                 </button>
-              </div>
+              )}
             </div>
-          );
-        })}
-      </div>
+          </div>
 
-      {showCandidatesModal && (
-        <div className="modal-backdrop" onClick={() => setShowCandidatesModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '900px', width: '95vw', minHeight: '60vh'}}>
-            <button style={{float: 'right', fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#4f2cc6'}} onClick={() => setShowCandidatesModal(false)}>&times;</button>
-            <MatchingCandidates candidates={candidatesData} onClose={() => setShowCandidatesModal(false)} />
+          <div className="filters-row">
+            <div className="filter-group">
+              <label>Secteur</label>
+              <select
+                value={selectedSector}
+                onChange={(e) => setSelectedSector(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">Tous les secteurs</option>
+                {getUniqueSectors().map(sector => (
+                  <option key={sector} value={sector}>{sector}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Type de contrat</label>
+              <select
+                value={selectedContractType}
+                onChange={(e) => setSelectedContractType(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">Tous les types</option>
+                {getUniqueContractTypes().map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Recruteur</label>
+              <select
+                value={selectedRecruiter}
+                onChange={(e) => setSelectedRecruiter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">Tous les recruteurs</option>
+                {getUniqueRecruiters().map(recruiter => (
+                  <option key={recruiter} value={recruiter}>{recruiter}</option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={resetFilters}
+              className="reset-filters-btn"
+              title="Réinitialiser tous les filtres"
+            >
+              <FaFilter /> Réinitialiser
+            </button>
+          </div>
+
+          {/* Compteur de résultats */}
+          <div className="results-count">
+            <span>
+              {filteredOffers.length} offre{filteredOffers.length !== 1 ? 's' : ''} trouvée{filteredOffers.length !== 1 ? 's' : ''}
+              {offers.length !== filteredOffers.length && ` sur ${offers.length}`}
+            </span>
           </div>
         </div>
-      )}
+
+        {/* Loader global pendant matching (optionnel) */}
+        {matchingInProgressForOffer && (
+          <div className="global-loading-overlay">
+            <Loading />
+          </div>
+        )}
+
+        {/* Liste des offres */}
+        {filteredOffers.length === 0 ? (
+          <div className="no-offers">
+            <p>{offers.length === 0 ? 'Aucune offre trouvée.' : 'Aucune offre ne correspond aux critères de recherche.'}</p>
+          </div>
+        ) : (
+          <div className="offers-grid offers-list-horizontal">
+            {filteredOffers.map((offer) => (
+              <Offer
+                key={offer.id}
+                offer={offer}
+                onClick={() => {}} // Pas de popup de détails dans matching
+                onMatching={() => handleStartMatching(offer.id)}
+                space="matching"
+                isMatchingInProgress={matchingInProgressForOffer === offer.id}
+              />
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
     </CompanyApprovalCheck>

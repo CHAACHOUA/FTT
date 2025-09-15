@@ -34,14 +34,11 @@ const ChangePassword = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('access');
       const response = await axios.post(`${API}/api/users/auth/change-password/`, {
         old_password: oldPassword,
         new_password: newPassword
       }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        withCredentials: true
       });
 
       const msg = response.data.message || 'Mot de passe changé avec succès.';

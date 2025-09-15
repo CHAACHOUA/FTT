@@ -16,7 +16,7 @@ import Navbar from '../common/NavBar';
 const RecruiterProfileView = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { accessToken } = useAuth();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -28,7 +28,7 @@ const RecruiterProfileView = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${API}/api/recruiters/profile/me/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          withCredentials: true,
         });
         if (isMounted) {
           setFormData(response.data);
@@ -52,7 +52,7 @@ const RecruiterProfileView = () => {
     return () => {
       isMounted = false;
     };
-  }, [API, accessToken]);
+  }, [API, isAuthenticated]);
 
   const handleUpdate = (updatedData) => {
     setFormData((prev) => ({ ...prev, ...updatedData }));
@@ -80,8 +80,8 @@ const RecruiterProfileView = () => {
       }
 
       const res = await axios.put(`${API}/api/recruiters/profile/`, formDataToSend, {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -90,7 +90,7 @@ const RecruiterProfileView = () => {
 
       setLoading(true);
       const response = await axios.get(`${API}/api/recruiters/profile/me/`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
       });
       setFormData(response.data);
       setLoading(false);

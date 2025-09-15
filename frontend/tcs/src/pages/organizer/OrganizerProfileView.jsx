@@ -20,9 +20,16 @@ const OrganizerProfileView = () => {
     email: '',
   });
   const [loading, setLoading] = useState(true);
-  const { accessToken } = useAuth();
+  const { isAuthenticated, name, role } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
+
+  // Debug: Vérifier l'état de l'authentification
+  console.log("🔍 OrganizerProfileView - État auth:", {
+    isAuthenticated,
+    name,
+    role
+  });
 
   const isSettingsPage = location.pathname === '/settings-organizer';
 
@@ -37,10 +44,14 @@ const OrganizerProfileView = () => {
   useEffect(() => {
     const fetchOrganizerProfile = async () => {
       try {
+        console.log("🔄 Tentative de récupération du profil organisateur...");
+        
+        // Utiliser les cookies HttpOnly pour l'authentification
         const res = await axios.get(`${API}/api/organizers/profile/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          withCredentials: true, // Important pour les cookies HttpOnly
         });
 
+        console.log("✅ Profil organisateur récupéré:", res.data);
         const data = res.data;
         setFormData({
           name: data.name || '',
@@ -49,18 +60,26 @@ const OrganizerProfileView = () => {
           email: data.email || '',
         });
       } catch (err) {
+        console.error("❌ Erreur lors de la récupération du profil:", err);
         toast.error(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (accessToken && !isSettingsPage) {
+    // Vérifier que l'utilisateur est authentifié et a le bon rôle
+    if (isAuthenticated && role === 'organizer' && !isSettingsPage) {
       fetchOrganizerProfile();
+    } else if (!isAuthenticated) {
+      console.log("❌ Utilisateur non authentifié");
+      setLoading(false);
+    } else if (role !== 'organizer') {
+      console.log("❌ Rôle incorrect:", role);
+      setLoading(false);
     } else {
       setLoading(false);
     }
-  }, [accessToken, API, isSettingsPage]);
+  }, [API, isSettingsPage, isAuthenticated, role]);
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
@@ -92,8 +111,8 @@ const OrganizerProfileView = () => {
         `${API}/api/organizers/profile/update/`,
         formPayload,
         {
+          withCredentials: true, // Utiliser les cookies HttpOnly
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data',
           },
         }
@@ -101,6 +120,7 @@ const OrganizerProfileView = () => {
 
       toast.success(res.data?.message || 'Profil mis à jour avec succès.');
     } catch (err) {
+      console.error("❌ Erreur lors de la mise à jour du profil:", err);
       toast.error(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
@@ -108,6 +128,40 @@ const OrganizerProfileView = () => {
   };
 
   if (loading) return <Loading />;
+
+  // Vérifier l'authentification et le rôle
+  if (!isAuthenticated) {
+    return (
+      <div style={{ paddingTop: '80px' }}>
+        <Navbar />
+        <div className="profile-container">
+          <div className="profile-content">
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <h2>Accès non autorisé</h2>
+              <p>Vous devez être connecté pour accéder à cette page.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (role !== 'organizer') {
+    return (
+      <div style={{ paddingTop: '80px' }}>
+        <Navbar />
+        <div className="profile-container">
+          <div className="profile-content">
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <h2>Accès non autorisé</h2>
+              <p>Cette page est réservée aux organisateurs.</p>
+              <p>Votre rôle actuel: {role}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ paddingTop: '80px' }}>

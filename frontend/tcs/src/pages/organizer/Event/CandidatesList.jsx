@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
+import CandidateCard from '../../../components/CandidateCard';
 import Navbar from '../../common/NavBar';
 import './CandidatesList.css';
 import '../../../pages/styles/organizer/organizer-buttons.css';
 import CandidateFilters from './CandidateFilters';
+import { useAuth } from '../../../context/AuthContext';
 
 const CandidatesList = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, isAuthLoading } = useAuth();
   const forumId = props.forumId || location.state?.forumId;
-  const accessToken = props.accessToken || location.state?.accessToken;
   const apiBaseUrl = props.apiBaseUrl || location.state?.apiBaseUrl;
   const forum = props.forum || location.state?.forum;
 
@@ -20,6 +22,7 @@ const CandidatesList = (props) => {
   const [error, setError] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filters, setFilters] = useState({});
+  const [forumData, setForumData] = useState(forum);
   const [options, setOptions] = useState({
     contract_type: [], // Sera rempli par l'API
     sector: [], // Sera rempli par l'API
@@ -29,14 +32,52 @@ const CandidatesList = (props) => {
     languages: ['Français', 'Anglais', 'Espagnol'],
   });
 
+  // Récupérer les données du forum si elles ne sont pas disponibles
+  useEffect(() => {
+    const fetchForumData = async () => {
+      if (!forum && forumId && apiBaseUrl && isAuthenticated && !isAuthLoading) {
+        try {
+          const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+          });
+
+          if (response.ok) {
+            const forumInfo = await response.json();
+            setForumData(forumInfo);
+          }
+        } catch (err) {
+          console.error('Erreur lors de la récupération du forum:', err);
+        }
+      } else if (forum) {
+        setForumData(forum);
+      }
+    };
+
+    fetchForumData();
+  }, [forum, forumId, apiBaseUrl, isAuthenticated, isAuthLoading]);
+
   useEffect(() => {
     const fetchCandidates = async () => {
+      // Attendre que l'authentification soit vérifiée
+      if (isAuthLoading) {
+        return;
+      }
+      
+      if (!isAuthenticated) {
+        setError('Vous devez être connecté pour accéder à cette page.');
+        setLoading(false);
+        return;
+      }
+      
       try {
         const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/organizer/candidates/`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
+          credentials: 'include', // Utiliser les cookies HttpOnly
         });
 
         if (!response.ok) {
@@ -52,10 +93,10 @@ const CandidatesList = (props) => {
       }
     };
 
-    if (forumId && accessToken && apiBaseUrl) {
+    if (forumId && apiBaseUrl && isAuthenticated && !isAuthLoading) {
       fetchCandidates();
     }
-  }, [forumId, accessToken, apiBaseUrl]);
+  }, [forumId, apiBaseUrl, isAuthenticated, isAuthLoading]);
 
   // Fonction pour télécharger la liste des candidats
   const handleBack = () => {
@@ -63,7 +104,6 @@ const CandidatesList = (props) => {
       state: { 
         forum: forum,
         forumId: forumId,
-        accessToken: accessToken,
         apiBaseUrl: apiBaseUrl,
         // S'assurer que toutes les données du forum sont passées
         forumData: {
@@ -116,7 +156,45 @@ const CandidatesList = (props) => {
     document.body.removeChild(link);
   };
 
-  if (!forumId || !accessToken || !apiBaseUrl) {
+  // Attendre que l'authentification soit vérifiée
+  if (isAuthLoading) {
+    return (
+      <div className="candidates-list">
+        <Navbar />
+        <div className="organizer-header-block">
+          <button onClick={handleBack} className="organizer-btn-back">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Candidats</h1>
+            <p>Gérez les candidats participant à votre forum</p>
+          </div>
+        </div>
+        <div className="loading-container">
+          <div className="loading-spinner">Chargement...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="candidates-list">
+        <Navbar />
+        <div className="organizer-header-block">
+          <button onClick={handleBack} className="organizer-btn-back">
+            <FaArrowLeft /> Retour
+          </button>
+          <div className="header-content">
+            <h1>Liste des Candidats</h1>
+            <p>Gérez les candidats participant à votre forum</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!forumId || !apiBaseUrl) {
     return (
       <div className="candidates-list">
         <Navbar />
@@ -341,8 +419,8 @@ const CandidatesList = (props) => {
       if (String(s.experience) !== String(filters.experience)) return false;
     }
     // Région
-    if (filters.region && filters.region !== '') {
-      if (s.region !== filters.region) return false;
+    if (filters.region && filters.region.length > 0) {
+      if (!filters.region.includes(s.region)) return false;
     }
     // Niveau d'études
     if (filters.education_level && filters.education_level !== '') {
@@ -376,21 +454,21 @@ const CandidatesList = (props) => {
             <button onClick={handleBack} className="organizer-btn-back">
               <FaArrowLeft /> Retour
             </button>
-            {forum && (
+            {forumData && (
               <div className="forum-details">
-                <h2 className="forum-title">{forum.name}</h2>
+                <h2 className="forum-title">{forumData.name}</h2>
                 <div className="forum-date-range">
                   <FaCalendarAlt className="calendar-icon" />
-                  <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
+                  <span>{forumData.start_date && forumData.end_date ? `${forumData.start_date} - ${forumData.end_date}` : 'Dates non définies'}</span>
                 </div>
               </div>
             )}
-            {!forum && (
+            {!forumData && (
               <div className="forum-details">
-                <h2 className="forum-title">Forum non défini</h2>
+                <h2 className="forum-title">Chargement du forum...</h2>
                 <div className="forum-date-range">
                   <FaCalendarAlt className="calendar-icon" />
-                  <span>Dates non disponibles</span>
+                  <span>Récupération des informations...</span>
                 </div>
               </div>
             )}
@@ -480,61 +558,15 @@ const CandidatesList = (props) => {
             ) : (
               <div className="cards-container">
                 {filteredCandidates.map(({ candidate, search }, index) => (
-                  <div className="candidate-card" key={index}>
-                    {/* Icône de téléchargement en premier pour le positionnement */}
-                    {candidate.cv_file ? (
-                      <a
-                        href={`${apiBaseUrl}${candidate.cv_file}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="organizer-cv-icon"
-                        title="Télécharger le CV"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaDownload />
-                      </a>
-                    ) : (
-                      <div
-                        className="organizer-cv-icon cv-no-file"
-                        title="Aucun CV disponible"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaDownload />
-                      </div>
-                    )}
-                    
-                    <div className="candidate-photo">
-                      {candidate.profile_picture ? (
-                        <img
-                          src={
-                            candidate.profile_picture.startsWith('http')
-                              ? candidate.profile_picture
-                              : `${apiBaseUrl}${candidate.profile_picture}`
-                          }
-                          alt={`${candidate.first_name} ${candidate.last_name}`}
-                        />
-                      ) : (
-                        <FaUserCircle className="default-avatar" />
-                      )}
-                    </div>
-                    <div className="candidate-info" onClick={() => setSelectedCandidate(candidate)} style={{ cursor: 'pointer' }}>
-                      <h3>{candidate.first_name} {candidate.last_name}</h3>
-
-                      <div className="sectors-container">
-                        {(search?.sector?.length ?? 0) > 0
-                          ? search.sector.map((sector, i) => (
-                              <span key={i} className="sector-badge">{sector}</span>
-                            ))
-                          : <span className="sector-badge empty">Non renseigné</span>
-                        }
-                      </div>
-
-                      <p className="region">
-                        <FaMapMarkerAlt className="icon-location" />
-                        {search?.region || 'Non renseignée'}
-                      </p>
-                    </div>
-                  </div>
+                  <CandidateCard
+                    key={index}
+                    candidate={{ ...candidate, search }}
+                    apiBaseUrl={apiBaseUrl}
+                    onCandidateClick={setSelectedCandidate}
+                    onRemoveFromMeetings={null}
+                    showRemoveButton={false}
+                    className="candidate-card"
+                  />
                 ))}
               </div>
             )}

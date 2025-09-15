@@ -1,30 +1,61 @@
 /* Styles pour la page de détails d'entreprise */
 .company-detail-header {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: 1.5rem;
   margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e5e7eb;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
-.back-button {
+.forum-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.forum-date {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  color: #374151;
+  color: #6b7280;
+  font-size: 0.9rem;
   font-weight: 500;
+}
+
+.date-icon {
+  color: #3b82f6;
+  font-size: 0.85rem;
+}
+
+.back-button {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  color: white !important;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.2);
+  position: relative;
+  z-index: 10;
+  min-width: 120px;
+  flex-shrink: 0;
+  height: fit-content;
 }
 
 .back-button:hover {
-  background: #e5e7eb;
-  transform: translateX(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
+  background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%);
 }
 
 .company-detail-title {
@@ -103,13 +134,22 @@
 }
 
 .sector-tag {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #ffffff;
+  color: #111827;
   padding: 0.4rem 0.8rem;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sector-tag:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 /* Informations de contact en bas */
@@ -171,7 +211,6 @@
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
   position: relative;
 }
 
@@ -183,11 +222,11 @@
 }
 
 .recruiter-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: transparent;
+  border: none;
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: none;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -252,6 +291,8 @@
 .recruiter-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .recruiter-name {
@@ -264,6 +305,7 @@
   background: transparent;
   padding: 0;
   transition: color 0.3s ease;
+  text-align: left;
 }
 
 .recruiter-card:hover .recruiter-name {

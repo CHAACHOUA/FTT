@@ -42,9 +42,9 @@ const ForumRecruiterRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId })
         form,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
             'Content-Type': 'application/json',
           },
+          withCredentials: true
         }
       );
       toast.success('Inscription réussie !');

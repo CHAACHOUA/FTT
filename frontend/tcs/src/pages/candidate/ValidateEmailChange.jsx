@@ -24,9 +24,7 @@ const ValidateEmailChange = () => {
         const msg = response.data.message || 'Votre adresse email a bien été mise à jour.';
         toast.success(msg);
 
-        if (response.data.new_email) {
-          localStorage.setItem('email', response.data.new_email);
-        }
+        // Email mis à jour avec succès
 
         setTimeout(() => {
           navigate('/candidate/profile');

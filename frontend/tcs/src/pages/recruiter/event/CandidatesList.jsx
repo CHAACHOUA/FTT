@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import axios from 'axios';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CandidateFilters from '../../organizer/Event/CandidateFilters';
+import CandidateCard from '../../../components/CandidateCard';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 import '../../organizer/Event/CandidatesList.css';
 
-const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
+const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
   const [candidates, setCandidates] = useState([]);
   const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,20 +28,12 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
+        const response = await axios.get(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
+          withCredentials: true,
         });
 
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des candidats');
-        }
-
-        const data = await response.json();
-        setCandidates(data);
-        setFilteredCandidates(data);
+        setCandidates(response.data);
+        setFilteredCandidates(response.data);
       } catch (err) {
         setError(err.message || 'Une erreur est survenue');
       } finally {
@@ -50,7 +44,7 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
     if (forumId) {
       fetchCandidates();
     }
-  }, [forumId, accessToken, apiBaseUrl]);
+  }, [forumId, apiBaseUrl]);
 
   // Appliquer les filtres
   useEffect(() => {
@@ -183,7 +177,6 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
     return (
       <CompanyApprovalCheck 
         forumId={forumId} 
-        accessToken={accessToken} 
         apiBaseUrl={apiBaseUrl}
         fallbackMessage="L'accès à la CVthèque n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
       >
@@ -266,7 +259,6 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
     return (
       <CompanyApprovalCheck 
         forumId={forumId} 
-        accessToken={accessToken} 
         apiBaseUrl={apiBaseUrl}
         fallbackMessage="L'accès à la CVthèque n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
       >
@@ -348,7 +340,6 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
   return (
     <CompanyApprovalCheck 
       forumId={forumId} 
-      accessToken={accessToken} 
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'accès à la CVthèque n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
@@ -475,63 +466,15 @@ const CandidatesList = ({ forumId, accessToken, apiBaseUrl, forum }) => {
               ) : (
                 <div className="cards-container">
                   {filteredCandidates.map(({ candidate, search }, index) => (
-                    <div className="candidate-card" key={index}>
-                      {candidate.cv_file ? (
-                        <a
-                          href={`${apiBaseUrl}${candidate.cv_file}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="organizer-cv-icon"
-                          title="Télécharger le CV"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <FaDownload />
-                        </a>
-                      ) : (
-                        <div
-                          className="organizer-cv-icon cv-no-file"
-                          title="Aucun CV disponible"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <FaDownload />
-                        </div>
-                      )}
-                      
-                      <div className="candidate-photo">
-                        {candidate.profile_picture ? (
-                          <img
-                            src={
-                              candidate.profile_picture.startsWith('http')
-                                ? candidate.profile_picture
-                                : `${apiBaseUrl}${candidate.profile_picture}`
-                            }
-                            alt={`${candidate.first_name} ${candidate.last_name}`}
-                          />
-                        ) : (
-                          <FaUserCircle className="default-avatar" />
-                        )}
-                      </div>
-                      <div className="candidate-info" onClick={() => {
-                        console.log('Candidat sélectionné:', candidate);
-                        setSelectedCandidate(candidate);
-                      }} style={{ cursor: 'pointer' }}>
-                        <h3>{candidate.first_name} {candidate.last_name}</h3>
-
-                        <div className="sectors-container">
-                          {(search?.sector?.length ?? 0) > 0
-                            ? search.sector.map((sector, i) => (
-                                <span key={i} className="sector-badge">{sector}</span>
-                              ))
-                            : <span className="sector-badge empty">Non renseigné</span>
-                          }
-                        </div>
-
-                        <p className="region">
-                          <FaMapMarkerAlt className="icon-location" />
-                          {search?.region || 'Non renseignée'}
-                        </p>
-                      </div>
-                    </div>
+                    <CandidateCard
+                      key={index}
+                      candidate={{ ...candidate, search }}
+                      apiBaseUrl={apiBaseUrl}
+                      onCandidateClick={setSelectedCandidate}
+                      onRemoveFromMeetings={null}
+                      showRemoveButton={false}
+                      className="candidate-card"
+                    />
                   ))}
                 </div>
               )}

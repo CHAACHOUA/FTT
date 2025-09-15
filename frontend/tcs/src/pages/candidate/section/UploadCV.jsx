@@ -2,8 +2,7 @@ import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
 import { FileCheck, Loader2, AlertCircle, Upload, Eye } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from '../../../utils/toast';
 import '../../styles/candidate/uploadCV.css';
 
 const UploadCV = ({ onUpload, formData }) => {
@@ -193,8 +192,6 @@ const UploadCV = ({ onUpload, formData }) => {
         </div>
       </div>
 
-      {/* Toast container */}
-      <ToastContainer position="top-right" autoClose={4000} />
     </div>
   );
 };

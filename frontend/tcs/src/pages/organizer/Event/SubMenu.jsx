@@ -47,7 +47,7 @@ const actions = [
   }
 ];
 
-export default function SubMenu({ forum, forumId, accessToken, API }) {
+export default function SubMenu({ forum, forumId, isAuthenticated, API }) {
   const navigate = useNavigate();
   return (
     <div className="dashboard-submenu">
@@ -57,15 +57,15 @@ export default function SubMenu({ forum, forumId, accessToken, API }) {
           className={`dashboard-action-card ${action.cardClass}`}
           onClick={() => {
             if (action.key === "offers") {
-              navigate(action.route, { state: { forum, forumId, accessToken, apiBaseUrl: API } });
+              navigate(action.route, { state: { forum, forumId, apiBaseUrl: API } });
             } else if (action.key === "forum-info") {
-              navigate(action.route, { state: { forum, forumId, accessToken, apiBaseUrl: API } });
+              navigate(action.route, { state: { forum, forumId, apiBaseUrl: API } });
             } else if (action.key === "entreprises") {
-              navigate(action.route, { state: { companies: forum?.companies, forum, accessToken, apiBaseUrl: API } });
+              navigate(action.route, { state: { companies: forum?.companies, forum, apiBaseUrl: API } });
             } else if (action.key === "candidats") {
-              navigate(action.route, { state: { forumId, accessToken, apiBaseUrl: API } });
+              navigate(action.route, { state: { forumId, apiBaseUrl: API } });
             } else if (action.key === "programmes") {
-              navigate(`/organizer/forum/${forumId}/programmes`, { state: { forum, forumId, accessToken, apiBaseUrl: API } });
+              navigate(`/organizer/forum/${forumId}/programmes`, { state: { forum, forumId, apiBaseUrl: API } });
             }
           }}
           style={{ cursor: "pointer" }}

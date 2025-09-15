@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaBuilding, FaUser, FaBriefcase, FaMapMarkerAlt, FaIndustry, FaCalendar, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
 import Navbar from '../../common/NavBar';
-import OfferDetailPopup from '../../../components/recruiter/OfferDetailPopup';
+import Offer from '../../../components/Offer';
 import './OffersList.css';
 import '../../../pages/styles/organizer/organizer-buttons.css';
-import defaultLogo from '../../../assets/Logo-FTT.png';
-import forumsBg from '../../../assets/forums-bg.png';
+import '../../../components/forum/SearchBar.css';
+import { useAuth } from '../../../context/AuthContext';
+import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
 
 const OffersList = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, isAuthLoading } = useAuth();
   const forum = location.state?.forum;
   const forumId = location.state?.forumId;
-  const accessToken = location.state?.accessToken;
   const API = location.state?.apiBaseUrl || process.env.REACT_APP_API_BASE_URL;
 
   // Extraire les offres des entreprises du forum
@@ -40,11 +41,89 @@ const OffersList = () => {
   const [error, setError] = useState(null);
   const [filteredOffers, setFilteredOffers] = useState(allOffers);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCompany, setSelectedCompany] = useState('');
-  const [selectedSector, setSelectedSector] = useState('');
-  const [selectedContract, setSelectedContract] = useState('');
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [selectedSectors, setSelectedSectors] = useState([]);
+  const [selectedContracts, setSelectedContracts] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [choicesLoading, setChoicesLoading] = useState(true);
+  const [showSectorDropdown, setShowSectorDropdown] = useState(false);
+  const [showContractDropdown, setShowContractDropdown] = useState(false);
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [sectorCounts, setSectorCounts] = useState({});
+  const [contractCounts, setContractCounts] = useState({});
+  const [companyCounts, setCompanyCounts] = useState({});
+
+  // Charger les secteurs et contrats depuis les constantes
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setChoicesLoading(true);
+        const [sectorsData, contractsData] = await Promise.all([
+          getSectorsForSelect(),
+          getContractsForSelect()
+        ]);
+        setSectors(sectorsData);
+        setContracts(contractsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+        // Fallback vers des valeurs par défaut
+        setSectors([
+          { value: 'IT', label: 'Informatique' },
+          { value: 'Marketing', label: 'Marketing' },
+          { value: 'RH', label: 'Ressources Humaines' },
+          { value: 'Finance', label: 'Finance' },
+          { value: 'Autre', label: 'Autre' },
+        ]);
+        setContracts([
+          { value: 'CDI', label: 'CDI' },
+          { value: 'CDD', label: 'CDD' },
+          { value: 'Stage', label: 'Stage' },
+          { value: 'Alternance', label: 'Alternance' },
+        ]);
+      } finally {
+        setChoicesLoading(false);
+      }
+    };
+
+    loadChoices();
+  }, []);
+
+  // Calculer les compteurs des secteurs, contrats et entreprises
+  useEffect(() => {
+    const sectorCounts = {};
+    const contractCounts = {};
+    const companyCounts = {};
+
+    // Initialiser à 0 toutes les options
+    sectors.forEach(s => sectorCounts[s.value] = 0);
+    contracts.forEach(c => contractCounts[c.value] = 0);
+    
+    // Initialiser les compteurs d'entreprises
+    const companies = [...new Set(offers.map(offer => offer.company.name))];
+    companies.forEach(company => companyCounts[company] = 0);
+
+    // Compter dans toutes les offres
+    offers.forEach(offer => {
+      const sector = offer.sector?.trim();
+      const contract = offer.contract_type?.trim();
+      const company = offer.company.name;
+      
+      if (sector && sectorCounts.hasOwnProperty(sector)) {
+        sectorCounts[sector]++;
+      }
+      if (contract && contractCounts.hasOwnProperty(contract)) {
+        contractCounts[contract]++;
+      }
+      if (company && companyCounts.hasOwnProperty(company)) {
+        companyCounts[company]++;
+      }
+    });
+
+    setSectorCounts(sectorCounts);
+    setContractCounts(contractCounts);
+    setCompanyCounts(companyCounts);
+  }, [offers, sectors, contracts]);
 
   // Initialiser les offres avec les données du forum
   useEffect(() => {
@@ -85,42 +164,35 @@ const OffersList = () => {
       );
     }
 
-    if (selectedCompany) {
-      filtered = filtered.filter(offer => offer.company.name === selectedCompany);
+    if (selectedCompanies.length > 0) {
+      filtered = filtered.filter(offer => selectedCompanies.includes(offer.company.name));
     }
 
-    if (selectedSector) {
-      filtered = filtered.filter(offer => offer.sector === selectedSector);
+    if (selectedSectors.length > 0) {
+      filtered = filtered.filter(offer => selectedSectors.includes(offer.sector));
     }
 
-    if (selectedContract) {
-      filtered = filtered.filter(offer => offer.contract_type === selectedContract);
+    if (selectedContracts.length > 0) {
+      filtered = filtered.filter(offer => selectedContracts.includes(offer.contract_type));
     }
 
     setFilteredOffers(filtered);
-  }, [offers, searchTerm, selectedCompany, selectedSector, selectedContract]);
+  }, [offers, searchTerm, selectedCompanies, selectedSectors, selectedContracts]);
 
   // Récupérer les options uniques pour les filtres
   const companies = [...new Set(offers.map(offer => offer.company.name))];
-  const sectors = [...new Set(offers.map(offer => offer.sector))];
-  const contracts = [...new Set(offers.map(offer => offer.contract_type))];
 
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedCompany('');
-    setSelectedSector('');
-    setSelectedContract('');
+  const toggleValue = (list, value, setter) => {
+    setter(
+      list.includes(value)
+        ? list.filter(v => v !== value)
+        : [...list, value]
+    );
   };
 
-  // Ouvre la popup de détails d'offre
+  // Gestion du clic sur une offre (navigation gérée par le composant Offer)
   const handleOfferClick = (offer) => {
-    setSelectedOffer(offer);
-    setIsOfferDetailPopupOpen(true);
-  };
-
-  const handleCloseOfferPopup = () => {
-    setIsOfferDetailPopupOpen(false);
-    setSelectedOffer(null);
+    console.log('Offer clicked:', offer);
   };
 
   const handleBack = () => {
@@ -128,7 +200,6 @@ const OffersList = () => {
       state: { 
         forum: forum,
         forumId: forumId,
-        accessToken: accessToken,
         apiBaseUrl: API,
         // S'assurer que toutes les données du forum sont passées
         forumData: {
@@ -141,6 +212,29 @@ const OffersList = () => {
       }
     });
   };
+
+  // Attendre que l'authentification soit vérifiée
+  if (isAuthLoading) {
+    return (
+      <div className="offers-list-container">
+        <Navbar />
+        <div className="loading-container">
+          <div className="loading-spinner">Chargement...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="offers-list-container">
+        <Navbar />
+        <div className="error-container">
+          <div className="error-message">Vous devez être connecté pour accéder à cette page.</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!forum) {
     return (
@@ -215,60 +309,193 @@ const OffersList = () => {
         
 
 
-        {/* Filtres */}
-        <div className="organizer-offers-filters">
-          <div className="filter-group">
+        {/* Filtres avec le style des forums */}
+        <div className="search-bar-wrapper-search">
+          <div className="search-bar-search">
             <input
+              className="search-input-search"
               type="text"
-              placeholder="Rechercher une offre..."
+              placeholder="Cherchez un job par intitulé, mot clé ou entreprise"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="organizer-search-input"
+              onChange={e => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <FaTimes className="clear-icon-search" onClick={() => setSearchTerm('')} />
+            )}
+
+            {/* Entreprises */}
+            <div className="dropdown-wrapper-search">
+              <button
+                className="dropdown-toggle-search"
+                onClick={() => {
+                  setShowCompanyDropdown(prev => !prev);
+                  setShowContractDropdown(false);
+                  setShowSectorDropdown(false);
+                }}
+              >
+                Entreprise <FaChevronDown />
+                {selectedCompanies.length > 0 && (
+                  <span className="counter-badge-search">{selectedCompanies.length}</span>
+                )}
+              </button>
+              {showCompanyDropdown && (
+                <div className="dropdown-menu-search">
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                    <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Entreprises</strong>
+                  </div>
+                  {companies.map(company => (
+                    <label key={company} className="dropdown-item-search">
+                      <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedCompanies.includes(company)}
+                          onChange={() =>
+                            toggleValue(selectedCompanies, company, setSelectedCompanies)
+                          }
+                          style={{ marginRight: '12px' }}
+                        />
+                        <span style={{ flex: 1 }}>{company}</span>
+                      </div>
+                      <span className="count-search">{companyCounts[company] || 0}</span>
+                    </label>
+                  ))}
+                  {selectedCompanies.length > 0 && (
+                    <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                      <button
+                        onClick={() => setSelectedCompanies([])}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Effacer la sélection
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
 
-          <div className="filter-group">
-            <select
-              value={selectedCompany}
-              onChange={(e) => setSelectedCompany(e.target.value)}
-              className="organizer-filter-select"
-            >
-              <option value="">Toutes les entreprises</option>
-              {companies.map(company => (
-                <option key={company} value={company}>{company}</option>
-              ))}
-            </select>
+            {/* Contrats */}
+            <div className="dropdown-wrapper-search">
+              <button
+                className="dropdown-toggle-search"
+                onClick={() => {
+                  setShowContractDropdown(prev => !prev);
+                  setShowSectorDropdown(false);
+                  setShowCompanyDropdown(false);
+                }}
+              >
+                Contrat <FaChevronDown />
+                {selectedContracts.length > 0 && (
+                  <span className="counter-badge-search">{selectedContracts.length}</span>
+                )}
+              </button>
+              {showContractDropdown && (
+                <div className="dropdown-menu-search">
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                    <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Types de contrats</strong>
+                  </div>
+                  {contracts.map(contract => (
+                    <label key={contract.value} className="dropdown-item-search">
+                      <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedContracts.includes(contract.value)}
+                          onChange={() =>
+                            toggleValue(selectedContracts, contract.value, setSelectedContracts)
+                          }
+                          style={{ marginRight: '12px' }}
+                        />
+                        <span style={{ flex: 1 }}>{contract.label}</span>
+                      </div>
+                      <span className="count-search">{contractCounts[contract.value] || 0}</span>
+                    </label>
+                  ))}
+                  {selectedContracts.length > 0 && (
+                    <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                      <button
+                        onClick={() => setSelectedContracts([])}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Effacer la sélection
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
 
-          <div className="filter-group">
-            <select
-              value={selectedSector}
-              onChange={(e) => setSelectedSector(e.target.value)}
-              className="organizer-filter-select"
-            >
-              <option value="">Tous les secteurs</option>
+            {/* Secteurs */}
+            <div className="dropdown-wrapper-search">
+              <button
+                className="dropdown-toggle-search"
+                onClick={() => {
+                  setShowSectorDropdown(prev => !prev);
+                  setShowContractDropdown(false);
+                  setShowCompanyDropdown(false);
+                }}
+              >
+                Secteur <FaChevronDown />
+                {selectedSectors.length > 0 && (
+                  <span className="counter-badge-search">{selectedSectors.length}</span>
+                )}
+              </button>
+              {showSectorDropdown && (
+                <div className="dropdown-menu-search">
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                    <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Secteurs d'activité</strong>
+                  </div>
               {sectors.map(sector => (
-                <option key={sector} value={sector}>{sector}</option>
-              ))}
-            </select>
+                    <label key={sector.value} className="dropdown-item-search">
+                      <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedSectors.includes(sector.value)}
+                          onChange={() =>
+                            toggleValue(selectedSectors, sector.value, setSelectedSectors)
+                          }
+                          style={{ marginRight: '12px' }}
+                        />
+                        <span style={{ flex: 1 }}>{sector.label}</span>
+                      </div>
+                      <span className="count-search">{sectorCounts[sector.value] || 0}</span>
+                    </label>
+                  ))}
+                  {selectedSectors.length > 0 && (
+                    <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                      <button
+                        onClick={() => setSelectedSectors([])}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Effacer la sélection
+                      </button>
+                    </div>
+                  )}
+          </div>
+              )}
           </div>
 
-          <div className="filter-group">
-            <select
-              value={selectedContract}
-              onChange={(e) => setSelectedContract(e.target.value)}
-              className="organizer-filter-select"
-            >
-              <option value="">Tous les contrats</option>
-              {contracts.map(contract => (
-                <option key={contract} value={contract}>{contract}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <button onClick={clearFilters} className="organizer-btn-clear-filters">
-              Effacer les filtres
+            <button className="search-btn-search">
+              <FaSearch />
             </button>
           </div>
         </div>
@@ -288,67 +515,19 @@ const OffersList = () => {
                 if (byCompany !== 0) return byCompany;
                 return new Date(b.created_at) - new Date(a.created_at);
               })
-              .map((offer) => {
-                const bannerSrc = offer.company.banner
-                  ? (offer.company.banner.startsWith('http') ? offer.company.banner : `${API}${offer.company.banner}`)
-                  : forumsBg;
-                const recruiterFirst = offer.recruiter?.first_name || '';
-                const recruiterLast = offer.recruiter?.last_name || '';
-                const initials = `${recruiterFirst?.[0] || ''}${recruiterLast?.[0] || ''}`.toUpperCase() || 'HR';
-                return (
-                  <div
-                    key={offer.id}
-                    className="organizer-offer-card horizontal"
-                    onClick={() => handleOfferClick(offer)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="offer-left-banner">
-                      <img src={bannerSrc} alt="Bannière entreprise" onError={(e)=>{e.target.src = forumsBg;}} />
-                      <div className="company-logo-badge">
-                        <img
-                          src={offer.company.logo ? (offer.company.logo.startsWith('http') ? offer.company.logo : `${API}${offer.company.logo}`) : defaultLogo}
-                          alt={offer.company.name}
-                          onError={(e)=>{e.target.src = defaultLogo;}}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="offer-right-content">
-                      <div className="offer-top-line">
-                        <div className="recruiter-avatar">{initials}</div>
-                        <div className="recruiter-block">
-                          <div className="recruiter-name-line">{recruiterFirst} {recruiterLast} @ {offer.company.name}</div>
-                        </div>
-                        <span className="offer-date">Publiée le {new Date(offer.created_at).toLocaleDateString('fr-FR')}</span>
-                      </div>
-
-                      <h4 className="offer-title large">{offer.title}</h4>
-                      
-                      {offer.sector && (
-                        <div className="offer-sector-line">
-                          <FaIndustry />
-                          <span>{offer.sector}</span>
-                        </div>
-                      )}
-                      
-                      <div className="offer-location-line">
-                        <FaMapMarkerAlt />
-                        <span>{offer.location || 'Non précisé'}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              .map((offer) => (
+                <Offer
+                  key={offer.id}
+                  offer={offer}
+                  onClick={handleOfferClick}
+                  space="organizer"
+                  forum={forum}
+                  activeTab="offres"
+                />
+              ))}
           </div>
         )}
 
-        {/* Popup pour les détails de l'offre */}
-        {isOfferDetailPopupOpen && selectedOffer && (
-          <OfferDetailPopup
-            offer={selectedOffer}
-            onClose={handleCloseOfferPopup}
-          />
-        )}
       </div>
     </div>
   );

@@ -44,6 +44,30 @@ export const fetchChoices = async () => {
         { value: 'virtuel', label: 'Virtuel' },
         { value: 'hybride', label: 'Hybride' },
       ],
+      regions: [
+        { value: 'Paris', label: 'Paris' },
+        { value: 'Lyon', label: 'Lyon' },
+        { value: 'Marseille', label: 'Marseille' },
+        { value: 'Toulouse', label: 'Toulouse' },
+        { value: 'Nice', label: 'Nice' },
+        { value: 'Nantes', label: 'Nantes' },
+        { value: 'Strasbourg', label: 'Strasbourg' },
+        { value: 'Montpellier', label: 'Montpellier' },
+        { value: 'Bordeaux', label: 'Bordeaux' },
+        { value: 'Lille', label: 'Lille' },
+      ],
+      languages: [
+        { value: 'Français', label: 'Français' },
+        { value: 'Anglais', label: 'Anglais' },
+        { value: 'Espagnol', label: 'Espagnol' },
+        { value: 'Allemand', label: 'Allemand' },
+        { value: 'Italien', label: 'Italien' },
+        { value: 'Portugais', label: 'Portugais' },
+        { value: 'Arabe', label: 'Arabe' },
+        { value: 'Chinois', label: 'Chinois' },
+        { value: 'Japonais', label: 'Japonais' },
+        { value: 'Russe', label: 'Russe' },
+      ],
     };
   }
 };
@@ -73,6 +97,16 @@ export const getContracts = async () => {
 export const getForumTypes = async () => {
   const choices = await fetchChoices();
   return choices.forum_types;
+};
+
+export const getRegions = async () => {
+  const choices = await fetchChoices();
+  return choices.regions;
+};
+
+export const getLanguages = async () => {
+  const choices = await fetchChoices();
+  return choices.languages;
 };
 
 /**
@@ -112,4 +146,14 @@ export const getContractsForSelect = async () => {
 export const getForumTypesForSelect = async () => {
   const forumTypes = await getForumTypes();
   return formatForReactSelect(forumTypes);
+};
+
+export const getRegionsForSelect = async () => {
+  const regions = await getRegions();
+  return formatForReactSelect(regions);
+};
+
+export const getLanguagesForSelect = async () => {
+  const languages = await getLanguages();
+  return formatForReactSelect(languages);
 }; 

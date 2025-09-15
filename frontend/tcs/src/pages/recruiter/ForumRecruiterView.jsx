@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import Navbar from '../common/NavBar';
 import { FaSearch } from 'react-icons/fa';
 import Loading from '../../pages/common/Loading'; 
-import { getUserFromToken } from "../../context/decoder-jwt"
+// import { getUserFromToken } from "../../context/decoder-jwt" // Fichier supprimé
 
 const ForumRecruiterView = () => {
   const [registeredForums, setRegisteredForums] = useState([]);
@@ -18,16 +18,15 @@ const ForumRecruiterView = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true); 
   const [statusFilter, setStatusFilter] = useState('ongoing');
-  const { accessToken } = useAuth();
+  const { isAuthenticated, role } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
-  const user = getUserFromToken();
 
   const fetchForums = useCallback(async () => {
     try {
       setIsLoading(true);
-      if (accessToken) {
+      if (isAuthenticated) {
         const res = await axios.get(`${API}/api/forums/recruiter/my-forums/`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          withCredentials: true
         });
         setRegisteredForums(res.data.registered || []);
         setUnregisteredForums(res.data.unregistered || []);
@@ -43,7 +42,7 @@ const ForumRecruiterView = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [accessToken, API]);
+  }, [isAuthenticated, API]);
 
   useEffect(() => {
     fetchForums();
@@ -69,7 +68,7 @@ const ForumRecruiterView = () => {
       <section className="forum-section">
         {error && <div className="error-message">{error}</div>}
 
-        {!accessToken && (
+        {!isAuthenticated && (
           <>
             <h2>Explorez nos forums</h2>
             <p>Accédez à nos évènements et rencontrez directement des recruteurs</p>
@@ -80,7 +79,7 @@ const ForumRecruiterView = () => {
           </>
         )}
 
-        {accessToken ? (
+        {isAuthenticated ? (
           <>
             {registeredForums.length > 0 && (
               <>
@@ -99,7 +98,7 @@ const ForumRecruiterView = () => {
                 {filteredRegisteredForums.length > 0 ? (
                   <div className="forum-row">
                     {filteredRegisteredForums.map(forum => (
-                      <ForumCardRegistered role={user.role}key={forum.id} forum={forum} />
+                      <ForumCardRegistered role={role}key={forum.id} forum={forum} />
                     ))}
                   </div>
                 ) : (
@@ -128,7 +127,7 @@ const ForumRecruiterView = () => {
                     {displayedForums.map(forum => (
                       <ForumCard
                         key={forum.id}
-                        role={user.role}
+                        role={role}
                         forum={forum}
                         isRegistered={false}
                         onRegistered={fetchForums}

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaExclamationTriangle, FaLock } from 'react-icons/fa';
 import './CompanyApprovalCheck.css';
 
-const CompanyApprovalCheck = ({ children, forumId, accessToken, apiBaseUrl, fallbackMessage = "Cette fonctionnalité n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum." }) => {
+const CompanyApprovalCheck = ({ children, forumId, apiBaseUrl, fallbackMessage = "Cette fonctionnalité n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum." }) => {
   const [isApproved, setIsApproved] = useState(null); // null = loading, true = approved, false = not approved
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,9 +16,7 @@ const CompanyApprovalCheck = ({ children, forumId, accessToken, apiBaseUrl, fall
         
         // Récupérer les informations de l'entreprise du recruteur
         const response = await axios.get(`${apiBaseUrl}/api/recruiters/company-profile/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          withCredentials: true,
           params: {
             forum_id: forumId
           }
@@ -41,10 +39,10 @@ const CompanyApprovalCheck = ({ children, forumId, accessToken, apiBaseUrl, fall
       }
     };
 
-    if (forumId && accessToken && apiBaseUrl) {
+    if (forumId && apiBaseUrl) {
       checkCompanyApproval();
     }
-  }, [forumId, accessToken, apiBaseUrl]);
+  }, [forumId, apiBaseUrl]);
 
   // Pendant le chargement
   if (loading) {

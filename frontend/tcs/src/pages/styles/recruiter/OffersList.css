@@ -7,6 +7,8 @@
 
 .offers-list-content {
   padding: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .offers-list-header {
@@ -72,16 +74,56 @@
   background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%);
 }
 
-/* Grille des offres */
+/* Grille des offres - Code exact de ForumOffer.css */
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 1.5rem;
+  justify-content: center;
 }
 
-/* Variante liste horizontale (une colonne avec cartes longues) */
+/* Variante liste horizontale - Code exact de ForumOffer.css */
 .offers-list-horizontal {
-  grid-template-columns: 1fr;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+/* Combinaison des deux classes - Code exact de ForumOffer.css */
+.offers-grid.offers-list-horizontal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .offers-grid {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
+  
+  .offers-list-horizontal {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
+  
+  .offers-grid.offers-list-horizontal {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .offers-grid {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
+  
+  .offers-list-horizontal {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
+  
+  .offers-grid.offers-list-horizontal {
+    grid-template-columns: repeat(auto-fill, 300px);
+  }
 }
 
 /* Cartes d'offres avec le style du dashboard */
@@ -758,9 +800,7 @@
     font-size: 2rem;
   }
   
-  .offers-grid {
-    grid-template-columns: 1fr;
-  }
+  /* Grille responsive - géré par les media queries ci-dessus */
   
   .offer-card {
     padding: 1rem;

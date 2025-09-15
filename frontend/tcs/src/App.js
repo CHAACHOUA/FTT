@@ -28,6 +28,8 @@ import MatchingCandidates from './pages/recruiter/event/MatchingCandidates';
 import OrganizerDashboard from './pages/organizer/Event/OrganizerDashboard';
 import OrganizerProfileView from './pages/organizer/OrganizerProfileView';
 import ForumInfoEdit from './pages/organizer/ForumInfoEdit';
+import OfferDetail from './pages/OfferDetail';
+import MatchingDetail from './pages/MatchingDetail';
 import CompleteRecruiterSetup from './pages/recruiter/CompleteRecruiterSetup';
 import CompaniesList from './pages/organizer/Event/CompaniesList';
 import CandidatesList from './pages/organizer/Event/CandidatesList';
@@ -39,7 +41,20 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+        <ToastContainer 
+          position="top-right" 
+          autoClose={5000} 
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          limit={5}
+          enableMultiContainer={false}
+        />
         <Routes>
           <Route path="/signup-candidate" element={<CandidateSignup />} />
           <Route path="/upload-cv" element={<UploadCV />} />
@@ -64,6 +79,8 @@ function App() {
           <Route path="/event/organizer/dashboard/" element={<OrganizerDashboard />} />
           <Route path="/candidate/profile" element={<ProfileView />} />
           <Route path="/public/candidate/:token" element={<PublicProfileView />} />
+          <Route path="/offer/detail" element={<OfferDetail />} />
+          <Route path="/matching/detail" element={<MatchingDetail />} />
           <Route path="/matching-candidates" element={<MatchingCandidates />} />
           <Route path="/recruiter/profile" element={<RecruiterProfileView />} />
           <Route path="/organizer/companies" element={<CompaniesList />} />

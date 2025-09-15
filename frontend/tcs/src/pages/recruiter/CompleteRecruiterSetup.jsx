@@ -80,7 +80,6 @@ const CompleteRecruiterSetup = () => {
              // Redirection vers la page d'accueil recruteur
        setTimeout(() => {
          console.log('Redirection vers /recruiter');
-         console.log('Token stocké:', localStorage.getItem('access') ? 'Oui' : 'Non');
          navigate('/recruiter');
        }, 1000);
     } catch (err) {

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './NavBar';
 import Loading from './Loading';
 import { useAuth } from '../../context/AuthContext';
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode } from 'jwt-decode'; // Plus nécessaire avec useAuth()
 import '../styles/common/home.css';
 import recrutement from '../../assets/recrutement.jpg';
 import photo from '../../assets/photo.jpg';
@@ -51,29 +51,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
-  
-  // Récupérer le rôle depuis le token JWT
-  const getUserRole = () => {
-    if (!accessToken) return null;
-    try {
-      const decoded = jwtDecode(accessToken);
-      return decoded.role;
-    } catch (error) {
-      console.error('Erreur lors du décodage du token:', error);
-      return null;
-    }
-  };
-  
-  const userRole = getUserRole();
+  const { role } = useAuth();
   
   // Debug: afficher le rôle récupéré
-  console.log('Token:', accessToken);
-  console.log('Rôle utilisateur:', userRole);
+  console.log('Rôle utilisateur:', role);
 
   const handleJobSearch = () => {
-    if (userRole) {
-      switch (userRole) {
+    if (role) {
+      switch (role) {
         case 'organizer':
           navigate('/organizer/forums');
           break;
@@ -92,8 +77,8 @@ export default function Home() {
   };
 
   const handleViewEvents = () => {
-    if (userRole) {
-      switch (userRole) {
+    if (role) {
+      switch (role) {
         case 'organizer':
           navigate('/organizer/forums');
           break;

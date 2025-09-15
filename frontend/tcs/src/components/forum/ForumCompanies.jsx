@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import CompanyCardPopup from './CompanyCardPopup';
 import { FaTimes } from 'react-icons/fa';
+import Company from '../Company';
 
 const ForumCompanies = ({ companies, forum, usePage = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,7 +68,7 @@ const ForumCompanies = ({ companies, forum, usePage = false }) => {
       {/* Barre de recherche style forum */}
       <div className="search-bar-wrapper-search">
         <div className="search-bar-search">
-          <input
+        <input
             className="search-input-search"
             type="text"
             placeholder="Rechercher une entreprise par nom ou secteur"
@@ -99,53 +100,11 @@ const ForumCompanies = ({ companies, forum, usePage = false }) => {
       {/* Liste des entreprises */}
       <div className="forum-detail-companies-list">
         {currentCompanies.map((company, index) => (
-          <div 
-            key={index} 
-            className="forum-detail-company-card"
-            onClick={() => handleCompanyClick(company)}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="forum-detail-company-logo-container">
-              <img
-                src={company.logo || LogoCompany}
-                alt={company.name}
-                className="forum-detail-company-logo"
-              />
-            </div>
-            <div className="forum-detail-company-info">
-              <h3 className="forum-detail-company-name">{company.name}</h3>
-              
-              {/* Secteur d'activité */}
-              <div className="forum-detail-company-sectors">
-                {company.sectors && company.sectors.length > 0 
-                  ? company.sectors.map((sector, index) => (
-                      <span key={index} className="forum-detail-company-sector">
-                        {sector}
-                      </span>
-                    ))
-                  : company.sector || company.activity_sector 
-                    ? <span className="forum-detail-company-sector">{company.sector || company.activity_sector}</span>
-                    : <span className="forum-detail-company-sector">Secteur non spécifié</span>
-                }
-              </div>
-              
-              {/* Total recruteurs */}
-              <div className="forum-detail-company-recruiters">
-                <strong>{company.recruiters.length}</strong> recruteur
-                {company.recruiters.length > 1 ? 's' : ''}
-              </div>
-              
-              {/* Description (2 lignes) */}
-              {company.description && (
-                <p className="forum-detail-company-description">
-                  {company.description.length > 120 
-                    ? company.description.substring(0, 120) + '...' 
-                    : company.description
-                  }
-                </p>
-              )}
-            </div>
-          </div>
+          <Company
+            key={index}
+            company={company}
+            onClick={handleCompanyClick}
+          />
         ))}
       </div>
 

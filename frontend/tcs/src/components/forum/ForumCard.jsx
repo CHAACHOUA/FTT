@@ -39,14 +39,13 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
   const handleRecruiterRegistration = async () => {
     try {
       const API = process.env.REACT_APP_API_BASE_URL;
-      const token = localStorage.getItem('access');
 
       const response = await axios.post(
         `${API}/api/forums/${forum.id}/register-recruiter/`,
         {}, // Pas besoin de données, on utilise le profil du recruteur connecté
         {
+          withCredentials: true,
           headers: {
-            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }

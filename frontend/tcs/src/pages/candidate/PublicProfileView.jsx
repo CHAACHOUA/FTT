@@ -12,8 +12,7 @@ import Loading from '../common/Loading';
 import './ProfileView.css';
 import Navbar from '../common/NavBar';
 
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from '../../utils/toast';
 
 const PublicProfileView = () => {
   const { token } = useParams();
@@ -27,16 +26,12 @@ const PublicProfileView = () => {
       try {
         const searchParams = new URLSearchParams(window.location.search);
         const forumId = searchParams.get('forum');
-        const accessToken = localStorage.getItem('access');
-
         const url = forumId
           ? `${API}/api/candidates/profile/public/${token}/?forum=${forumId}`
           : `${API}/api/candidates/profile/public/${token}/`;
 
         const response = await axios.get(url, {
-          headers: {
-            Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
-          },
+          withCredentials: true
         });
 
         setFormData(response.data);
@@ -98,7 +93,6 @@ const PublicProfileView = () => {
   if (error) {
     return (
       <>
-        <ToastContainer position="top-right" autoClose={4000} />
         <div style={{ paddingTop: '80px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', maxWidth: '500px', padding: '20px' }}>
             <div style={{ 
@@ -144,7 +138,6 @@ const PublicProfileView = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={4000} />
       {!formData ? (
         <p className="public-error">Candidat introuvable.</p>
       ) : (

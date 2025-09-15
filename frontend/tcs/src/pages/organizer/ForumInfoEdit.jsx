@@ -9,11 +9,13 @@ import './Event/Dashboard.css';
 import { getForumTypesForSelect } from '../../constants/choices';
 import { validateEventDates } from '../../utils/dateValidation';
 import DateValidationError from '../../components/common/DateValidationError';
+import { useAuth } from '../../context/AuthContext';
 
 const ForumInfoEdit = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { forum, accessToken, apiBaseUrl: API, forumId } = location.state || {};
+  const { isAuthenticated, isAuthLoading } = useAuth();
+  const { forum, apiBaseUrl: API, forumId } = location.state || {};
   
   const [formData, setFormData] = useState({
     name: '',
@@ -36,7 +38,6 @@ const ForumInfoEdit = () => {
   const handleBack = () => {
     navigate('/event/organizer/dashboard', { 
       state: { 
-        accessToken: accessToken,
         apiBaseUrl: API,
         forumId: forumId || forumData?.id, // Ajouter le forumId
         // S'assurer que toutes les données sont passées
@@ -77,8 +78,21 @@ const ForumInfoEdit = () => {
   // Récupérer les données du forum si elles ne sont pas disponibles
   useEffect(() => {
     const fetchForumData = async () => {
-      if (!accessToken || !API) {
-        setError('Données d\'authentification manquantes');
+      // Attendre que l'authentification soit vérifiée
+      if (isAuthLoading) {
+        return;
+      }
+      
+      if (!isAuthenticated) {
+        setError('Vous devez être connecté pour accéder à cette page.');
+        setInitialLoading(false);
+        return;
+      }
+      
+      const apiUrl = API || process.env.REACT_APP_API_BASE_URL;
+      
+      if (!apiUrl) {
+        setError('Configuration API manquante.');
         setInitialLoading(false);
         return;
       }
@@ -105,8 +119,8 @@ const ForumInfoEdit = () => {
       // Sinon, récupérer les données du forum via API
       if (forumId) {
         try {
-          const response = await axios.get(`${API}/api/forums/${forumId}/`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
+          const response = await axios.get(`${apiUrl}/api/forums/${forumId}/`, {
+            withCredentials: true // Utiliser les cookies HttpOnly
           });
           const fetchedForum = response.data;
           console.log('Forum récupéré via API:', fetchedForum);
@@ -134,7 +148,7 @@ const ForumInfoEdit = () => {
     };
 
     fetchForumData();
-  }, [forum, forumId, accessToken, API]);
+  }, [forum, forumId, API, isAuthenticated, isAuthLoading]);
 
   const getPhotoURL = (photo) => {
     console.log('getPhotoURL appelé avec:', photo);
@@ -230,9 +244,9 @@ const ForumInfoEdit = () => {
         formPayload,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials: true // Utiliser les cookies HttpOnly
         }
       );
 
@@ -243,7 +257,6 @@ const ForumInfoEdit = () => {
         navigate('/event/organizer/dashboard/', { 
           state: { 
             forum: { ...forumData, ...response.data },
-            accessToken,
             apiBaseUrl: API,
             // S'assurer que toutes les données du forum sont passées
             forumData: {
@@ -266,7 +279,7 @@ const ForumInfoEdit = () => {
     }
   };
 
-  if (initialLoading) {
+  if (isAuthLoading || initialLoading) {
     return (
       <div style={{ paddingTop: '70px' }}>
         <Navbar />

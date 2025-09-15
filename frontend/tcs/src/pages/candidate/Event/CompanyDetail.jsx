@@ -10,6 +10,7 @@ import logo from '../../../assets/Logo-FTT.png';
 import '../../styles/candidate/Dashboard.css';
 import '../../../pages/styles/forum/ForumOffer.css';
 import './CompanyDetail.css';
+import Offer from '../../../components/Offer';
 
 const CompanyDetail = () => {
   const { companyId } = useParams();
@@ -61,9 +62,15 @@ const CompanyDetail = () => {
               onClick={() => navigate('/event/candidate/dashboard/', { state: { forum, activeTab: 'entreprises' } })}
             >
               <FaArrowLeft />
-              Retour aux entreprises
+              Retour
             </button>
-            <h1 className="company-detail-title">{company.name}</h1>
+            <div className="forum-info">
+              <h1 className="company-detail-title">{forum.name}</h1>
+              <div className="forum-date">
+                <FaCalendarAlt className="date-icon" />
+                {formatDate(forum.start_date)} - {formatDate(forum.end_date)}
+              </div>
+            </div>
           </div>
 
           <div className="company-detail-content">
@@ -155,104 +162,28 @@ const CompanyDetail = () => {
                 </h3>
                 
                 <div className="forum-offers-container">
-                  {company.offers.map((offer, index) => (
-                    <div key={index} className="forum-offer-card">
-                      {/* Section Logo et Entreprise */}
-                      <div className="forum-offer-company-section">
-                        <img
-                          src={company.logo || logo}
-                          alt={company.name}
-                          className="forum-offer-logo"
-                        />
-                        <div className="forum-offer-company-info">
-                          <h4 className="forum-offer-company-name">
-                            {company.name}
-                          </h4>
-                          <div className="forum-offer-company-meta">
-                            <FaBuilding className="forum-offer-meta-icon" />
-                            <span>{offer.sector || 'Secteur non précisé'}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Section Contenu Principal */}
-                      <div className="forum-offer-content">
-                        <h3 className="forum-offer-title">{offer.title}</h3>
-                        <p className="forum-offer-description">{offer.description}</p>
-                        
-                        {/* Métadonnées avec icônes */}
-                        <div className="forum-offer-meta">
-                          {offer.location && (
-                            <div className="forum-offer-meta-item">
-                              <FaMapMarkerAlt className="forum-offer-meta-icon" />
-                              <span className="forum-meta-text">{offer.location}</span>
-                            </div>
-                          )}
-                          {offer.contract_type && (
-                            <div className="forum-offer-meta-item">
-                              <FaBriefcase className="forum-offer-meta-icon" />
-                              <span className="forum-meta-text">
-                                <strong>Type :</strong> {offer.contract_type}
-                              </span>
-                            </div>
-                          )}
-                          {offer.start_date && (
-                            <div className="forum-offer-meta-item">
-                              <FaCalendarAlt className="forum-offer-meta-icon" />
-                              <span className="forum-meta-text">
-                                Début: {formatDate(offer.start_date)}
-                              </span>
-                            </div>
-                          )}
-                          {offer.salary && (
-                            <div className="forum-offer-meta-item">
-                              <FaUsers className="forum-offer-meta-icon" />
-                              <span className="forum-meta-text">{offer.salary}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Section Recruteur */}
-                        <div className="forum-offer-recruiter-section">
-                          <div 
-                            className="forum-offer-recruiter-initials"
-                            style={{ 
-                              display: 'flex',
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              backgroundColor: '#4f2cc6',
-                              color: 'white',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '14px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            R
-                          </div>
-                          <div className="forum-offer-recruiter-info">
-                            <div className="forum-offer-recruiter-name">
-                              Recruteur
-                            </div>
-                            <div className="forum-offer-recruiter-role">
-                              Recruteur • {company.name}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="forum-offer-actions">
-                        <button 
-                          className="forum-offer-action-button" 
-                          title="Voir les détails"
-                        >
-                          <FaBriefcase />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                  {company.offers.map((offer, index) => {
+                    // Transformer les données pour le composant Offer
+                    const offerData = {
+                      ...offer,
+                      company: {
+                        name: company.name,
+                        logo: company.logo
+                      },
+                      recruiter: {
+                        name: offer.recruiter_name || 'Recruteur'
+                      }
+                    };
+                    
+                    return (
+                      <Offer
+                        key={index}
+                        offer={offerData}
+                        onClick={() => {}} // Pas d'action de clic
+                        space="company" // Nouvel espace sans boutons
+                      />
+                    );
+                  })}
                 </div>
               </div>
             )}

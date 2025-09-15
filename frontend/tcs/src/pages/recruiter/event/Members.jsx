@@ -61,7 +61,6 @@ function Members({ accessToken, apiBaseUrl }) {
   return (
     <CompanyApprovalCheck 
       forumId={forum?.id} 
-      accessToken={accessToken} 
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'accès à la gestion des membres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >

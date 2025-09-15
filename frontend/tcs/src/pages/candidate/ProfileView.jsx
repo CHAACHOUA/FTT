@@ -25,7 +25,7 @@ const ProfileView = () => {
 
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { accessToken } = useAuth();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -34,9 +34,7 @@ const ProfileView = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API}/api/candidates/profile/me/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        withCredentials: true,
       });
       setFormData(response.data);
     } catch (err) {
@@ -53,7 +51,7 @@ const ProfileView = () => {
 
   useEffect(() => {
     fetchData();
-  }, [API, accessToken]);
+  }, [API, isAuthenticated]);
 
   const handleUpdate = (updatedData) => {
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
@@ -143,8 +141,8 @@ const ProfileView = () => {
       }
 
       const res = await axios.post(`${API}/api/candidates/profile/`, form, {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -155,7 +153,6 @@ const ProfileView = () => {
           : res.data.detail || res.data.message || "Profil mis à jour avec succès !"
       );
 
-      localStorage.setItem('name', formData.first_name || '');
       setLoading(true);
       await fetchData();
     } catch (err) {

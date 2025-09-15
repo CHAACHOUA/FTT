@@ -9,7 +9,7 @@ import axios from 'axios';
 import "./Dashboard.css";
 
 export default function OrganizerDashboard() {
-  const { name, accessToken } = useAuth();
+  const { name, isAuthenticated } = useAuth();
   const location = useLocation();
   const forum = location.state?.forum;
   const forumId = forum?.id || location.state?.forumId;
@@ -47,15 +47,15 @@ export default function OrganizerDashboard() {
 
   useEffect(() => {
     const fetchKPIs = async () => {
-      if (!forumId || !accessToken) {
-        console.log('Données manquantes pour les KPIs:', { forumId, accessToken });
+      if (!forumId || !isAuthenticated) {
+        console.log('Données manquantes pour les KPIs:', { forumId, isAuthenticated });
         setLoading(false);
         return;
       }
 
       try {
         const response = await axios.get(`${API}/api/forums/${forumId}/kpis/`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          withCredentials: true
         });
 
         const data = response.data;
@@ -88,18 +88,18 @@ export default function OrganizerDashboard() {
     };
 
     fetchKPIs();
-  }, [forumId, accessToken, API]);
+  }, [forumId, isAuthenticated, API]);
 
   // Récupérer les données du forum si elles ne sont pas disponibles
   useEffect(() => {
     const fetchForumData = async () => {
-      if (!forumId || !accessToken || forum) {
+      if (!forumId || !isAuthenticated || forum) {
         return;
       }
 
       try {
         const response = await axios.get(`${API}/api/forums/${forumId}/`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          withCredentials: true
         });
         setForumData(response.data);
       } catch (error) {
@@ -108,7 +108,7 @@ export default function OrganizerDashboard() {
     };
 
     fetchForumData();
-  }, [forumId, accessToken, API, forum]);
+  }, [forumId, isAuthenticated, API, forum]);
 
   return (
     <div className="dashboard-bg" style={{ paddingTop: '70px' }}>
@@ -135,7 +135,7 @@ export default function OrganizerDashboard() {
           </div>
         ))}
       </div>
-      <SubMenu forum={forumData || forum} forumId={forumId} accessToken={accessToken} API={API} />
+      <SubMenu forum={forumData || forum} forumId={forumId} isAuthenticated={isAuthenticated} API={API} />
     </div>
   );
 }

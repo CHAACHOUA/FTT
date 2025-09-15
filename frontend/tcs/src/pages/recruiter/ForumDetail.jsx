@@ -9,14 +9,13 @@ import Photo from '../../assets/forum-base.webp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faBuilding, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
-import { getUserFromToken } from '../../context/decoder-jwt';
+// import { getUserFromToken } from '../../context/decoder-jwt'; // Fichier supprimé
 
 const ForumDetail = () => {
   const { state } = useLocation();
   const forum = state?.forum;
   const API = process.env.REACT_APP_API_BASE_URL;
-  const { accessToken } = useAuth();
-  const user = getUserFromToken();
+  const { accessToken, role } = useAuth();
 
   const [activeTab, setActiveTab] = useState('general');
 

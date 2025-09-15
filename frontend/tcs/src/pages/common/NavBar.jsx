@@ -5,16 +5,14 @@ import '../styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
 import { BsPerson, BsGear, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from 'react-icons/md';
-import { getUserFromToken } from "../../context/decoder-jwt";
+// import { getUserFromToken } from "../../context/decoder-jwt"; // Fichier supprimé
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const [name, setName] = useState('');
+  const { isAuthenticated, logout, name, role } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
-  const user = getUserFromToken();
 
   // Fermer le dropdown quand on clique ailleurs
   useEffect(() => {
@@ -50,18 +48,10 @@ const Navbar = () => {
       }
     };
 
-    // Récupération du nom stocké
-    const storedName = localStorage.getItem('name');
-    if (storedName) {
-      setName(storedName);
-    } else if (user && user.name) {
-      setName(user.name);
-    }
-
     // Ajout de l'écouteur scroll
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [user]);
+  }, []);
 
   return (
     <nav className="navbar">
@@ -88,9 +78,9 @@ const Navbar = () => {
               <div className="dropdown-menu">
                <Link
                   to={
-                    user.role === 'recruiter'
+                    role === 'recruiter'
                       ? '/recruiter/profile'
-                      : user.role === 'organizer'
+                      : role === 'organizer'
                       ? '/organizer/profile'
                       : '/candidate/profile'
                   }
@@ -99,9 +89,9 @@ const Navbar = () => {
               </Link>
                <Link
   to={
-    user.role === 'recruiter'
+    role === 'recruiter'
       ? '/recruiter/forums'
-      : user.role === 'organizer'
+      : role === 'organizer'
       ? '/organizer/forums'
       : '/forums'
   }
@@ -111,9 +101,9 @@ const Navbar = () => {
 </Link>
                <Link
   to={
-    user.role === 'recruiter'
+    role === 'recruiter'
       ? '/settings-recruiter'
-      : user.role === 'organizer'
+      : role === 'organizer'
       ? '/settings-organizer'
       : '/settings'
   }

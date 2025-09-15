@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import './CandidatesFilters.css';
-import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
+import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect, getLanguagesForSelect } from '../../../constants/choices';
 
 export default function CandidateFilters({ filters, onChange, options }) {
   const [expandedSections, setExpandedSections] = useState({});
   const [contractTypeOptions, setContractTypeOptions] = useState([]);
   const [sectorOptions, setSectorOptions] = useState([]);
+  const [regionOptions, setRegionOptions] = useState([]);
+  const [languageOptions, setLanguageOptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Helpers pour react-select
@@ -20,24 +22,30 @@ export default function CandidateFilters({ filters, onChange, options }) {
     const loadChoices = async () => {
       try {
         setLoading(true);
-        const [contractsData, sectorsData] = await Promise.all([
+        const [contractsData, sectorsData, regionsData, languagesData] = await Promise.all([
           getContractsForSelect(),
-          getSectorsForSelect()
+          getSectorsForSelect(),
+          getRegionsForSelect(),
+          getLanguagesForSelect()
         ]);
         setContractTypeOptions(contractsData);
         setSectorOptions(sectorsData);
+        setRegionOptions(regionsData);
+        setLanguageOptions(languagesData);
       } catch (error) {
         console.error('Erreur lors du chargement des choix:', error);
         // Fallback vers les options locales
         setContractTypeOptions(mapOptions(options.contract_type));
         setSectorOptions(mapOptions(options.sector));
+        setRegionOptions(mapOptions(options.region));
+        setLanguageOptions(mapOptions(options.languages));
       } finally {
         setLoading(false);
       }
     };
 
     loadChoices();
-  }, [options.contract_type, options.sector]);
+  }, [options.contract_type, options.sector, options.region, options.languages]);
 
   // Toggle section expansion
   const toggleSection = (sectionName) => {
@@ -53,7 +61,6 @@ export default function CandidateFilters({ filters, onChange, options }) {
     setExpandedSections({});
   };
 
-  const languagesOptions = mapOptions(options.languages);
 
   const filterSections = [
     {
@@ -113,22 +120,20 @@ export default function CandidateFilters({ filters, onChange, options }) {
         </select>
       )
     },
-    {
-      name: 'RÉGION',
-      key: 'region',
-      content: (
-        <select
-          value={filters.region || ''}
-          onChange={e => onChange({ ...filters, region: e.target.value })}
-          className="filter-select"
-        >
-          <option value="">Toutes</option>
-          {options.region?.map(opt => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      )
-    },
+     {
+       name: 'RÉGION',
+       key: 'region',
+       content: (
+         <Select
+           isMulti
+           options={regionOptions}
+           value={getValue(filters.region, regionOptions)}
+           onChange={selected => onChange({ ...filters, region: selected ? selected.map(o => o.value) : [] })}
+           placeholder="Sélectionner..."
+           classNamePrefix="react-select"
+         />
+       )
+     },
     {
       name: 'NIVEAU D\'ÉTUDES',
       key: 'education',
@@ -145,20 +150,20 @@ export default function CandidateFilters({ filters, onChange, options }) {
         </select>
       )
     },
-    {
-      name: 'LANGUES',
-      key: 'languages',
-      content: (
-        <Select
-          isMulti
-          options={languagesOptions}
-          value={getValue(filters.languages, languagesOptions)}
-          onChange={selected => onChange({ ...filters, languages: selected ? selected.map(o => o.value) : [] })}
-          placeholder="Sélectionner..."
-          classNamePrefix="react-select"
-        />
-      )
-    },
+     {
+       name: 'LANGUES',
+       key: 'languages',
+       content: (
+         <Select
+           isMulti
+           options={languageOptions}
+           value={getValue(filters.languages, languageOptions)}
+           onChange={selected => onChange({ ...filters, languages: selected ? selected.map(o => o.value) : [] })}
+           placeholder="Sélectionner..."
+           classNamePrefix="react-select"
+         />
+       )
+     },
     {
       name: 'COMPÉTENCES',
       key: 'skills',

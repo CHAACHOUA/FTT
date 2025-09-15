@@ -44,15 +44,12 @@ export default function Login() {
           headers: {
             'Content-Type': 'application/json',
           },
+          withCredentials: true, // Important pour les cookies HttpOnly
         }
       );
 
-      const { access, refresh, email, message, name } = res.data;
-      login({ access, refresh }, { email, name });
-
-      // Extraire le rôle du token JWT pour être cohérent avec le reste de l'app
-      const decoded = jwtDecode(access);
-      const role = decoded.role;
+      const { message, name, role } = res.data;
+      login({ name, role });
 
       if (role === 'candidate') {
         navigate('/forums');

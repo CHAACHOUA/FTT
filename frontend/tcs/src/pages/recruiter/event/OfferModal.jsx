@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../../styles/recruiter/OfferModal.css';
+import Modal from '../../../components/common/Modal';
 import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
+import { FaBriefcase, FaIndustry, FaMapMarkerAlt, FaFileAlt, FaUser } from 'react-icons/fa';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -70,114 +71,149 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   if (loading) {
     return (
-      <div className="modal-backdrop">
-        <div className="modal-content">
-          <div>Chargement des options...</div>
+      <Modal isOpen={isOpen} onClose={onClose} title="Chargement...">
+        <div className="modal-loading">
+          <div className="modal-loading-spinner"></div>
+          Chargement des options...
         </div>
-      </div>
+      </Modal>
     );
   }
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h3>{initialData ? "Modifier l'offre" : 'Ajouter une offre'}</h3>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Titre
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Modifier l'offre" : 'Ajouter une offre'}
+      size="large"
+    >
+      <form className="modal-form" onSubmit={handleSubmit}>
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaBriefcase />
+            Titre du poste
           </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="modal-form-input"
+            placeholder="Ex: Développeur Full Stack"
+            required
+          />
+        </div>
 
-          <div className="modal-row">
-            <label>
+        <div className="modal-form-row">
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaBriefcase />
               Type de contrat
-              <select
-                name="contract_type"
-                value={formData.contract_type}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Sélectionner</option>
-                {contracts.map((contract) => (
-                  <option key={contract.value} value={contract.value}>
-                    {contract.label}
-                  </option>
-                ))}
-              </select>
             </label>
+            <select
+              name="contract_type"
+              value={formData.contract_type}
+              onChange={handleChange}
+              className="modal-form-select"
+              required
+            >
+              <option value="">Sélectionner</option>
+              {contracts.map((contract) => (
+                <option key={contract.value} value={contract.value}>
+                  {contract.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <label>
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaIndustry />
               Secteur
-              <select
-                name="sector"
-                value={formData.sector}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Sélectionner</option>
-                {sectors.map((sector) => (
-                  <option key={sector.value} value={sector.value}>
-                    {sector.label}
-                  </option>
-                ))}
-              </select>
             </label>
-
-            <label>
-              Localisation
-              <select
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Sélectionner</option>
-                <option value="Toulouse">Toulouse</option>
-                <option value="Paris">Paris</option>
-                <option value="Lyon">Lyon</option>
-                <option value="Bordeaux">Bordeaux</option>
-              </select>
-            </label>
-          </div>
-
-          <label>
-            Description
-            <textarea
-              name="description"
-              value={formData.description}
+            <select
+              name="sector"
+              value={formData.sector}
               onChange={handleChange}
-              rows={4}
-            />
-          </label>
+              className="modal-form-select"
+              required
+            >
+              <option value="">Sélectionner</option>
+              {sectors.map((sector) => (
+                <option key={sector.value} value={sector.value}>
+                  {sector.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-          <label>
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaMapMarkerAlt />
+            Localisation
+          </label>
+          <select
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="modal-form-select"
+            required
+          >
+            <option value="">Sélectionner</option>
+            <option value="Toulouse">Toulouse</option>
+            <option value="Paris">Paris</option>
+            <option value="Lyon">Lyon</option>
+            <option value="Bordeaux">Bordeaux</option>
+            <option value="Marseille">Marseille</option>
+            <option value="Lille">Lille</option>
+            <option value="Nantes">Nantes</option>
+            <option value="Strasbourg">Strasbourg</option>
+            <option value="Montpellier">Montpellier</option>
+            <option value="Rennes">Rennes</option>
+          </select>
+        </div>
+
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaFileAlt />
+            Description du poste
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="modal-form-textarea"
+            placeholder="Décrivez les missions et responsabilités du poste..."
+            rows={4}
+          />
+        </div>
+
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaUser />
             Profil recherché
-            <textarea
-              name="profile_recherche"
-              value={formData.profile_recherche}
-              onChange={handleChange}
-              rows={3}
-              placeholder="Décrivez le profil recherché (expérience, compétences, formation...)"
-            />
           </label>
+          <textarea
+            name="profile_recherche"
+            value={formData.profile_recherche}
+            onChange={handleChange}
+            className="modal-form-textarea"
+            placeholder="Décrivez le profil recherché (expérience, compétences, formation...)"
+            rows={3}
+          />
+        </div>
 
-          <div className="modal-actions">
-            <button type="submit" className="btn-save">
-              {initialData ? 'Modifier' : 'Ajouter'}
-            </button>
-            <button type="button" className="btn-cancel" onClick={onClose}>
-              Annuler
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="modal-actions">
+          <button type="button" className="modal-btn modal-btn-secondary" onClick={onClose}>
+            Annuler
+          </button>
+          <button type="submit" className="modal-btn modal-btn-primary">
+            {initialData ? 'Modifier l\'offre' : 'Ajouter l\'offre'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 };
 

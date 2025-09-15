@@ -7,15 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faCheck, faXmark, faToggleOn, faToggleOff, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import InviteRecruiterModal from './InviteRecruiterModal';
+import { useAuth } from '../../../context/AuthContext';
 
 const CompaniesList = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, isAuthLoading } = useAuth();
   console.log('Location state:', location.state);
   console.log('Props:', props);
   
   const initialCompanies = props.companies || location.state?.companies;
-  const accessToken = props.accessToken || location.state?.accessToken;
   const apiBaseUrl = props.apiBaseUrl || location.state?.apiBaseUrl;
   const forum = props.forum || location.state?.forum;
   const forumId = props.forumId || location.state?.forumId || forum?.id;
@@ -42,7 +43,32 @@ const CompaniesList = (props) => {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // all, approved, pending
 
-  if (!companies || !accessToken || !apiBaseUrl) {
+  // Attendre que l'authentification soit vérifiée
+  if (isAuthLoading) {
+    return (
+      <div style={{ paddingTop: '70px' }}>
+        <Navbar />
+        <div className="companies-container">
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <div>Chargement...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ paddingTop: '70px' }}>
+        <Navbar />
+        <div className="companies-container">
+          <div className="error-message">Vous devez être connecté pour accéder à cette page.</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!companies || !apiBaseUrl) {
     return (
       <div style={{ paddingTop: '70px' }}>
         <Navbar />
@@ -96,8 +122,8 @@ const CompaniesList = (props) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
         },
+        credentials: 'include', // Utiliser les cookies HttpOnly
         body: JSON.stringify(requestBody)
       });
 
@@ -158,8 +184,8 @@ const CompaniesList = (props) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
         },
+        credentials: 'include', // Utiliser les cookies HttpOnly
         body: JSON.stringify({
           email: recruiter.email,
           company: company,
@@ -191,8 +217,8 @@ const CompaniesList = (props) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
         },
+        credentials: 'include', // Utiliser les cookies HttpOnly
         body: JSON.stringify({
           company_id: company.id,
           forum_id: forumId,
@@ -239,8 +265,8 @@ const CompaniesList = (props) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
         },
+        credentials: 'include', // Utiliser les cookies HttpOnly
         body: JSON.stringify({
           company_id: company.id,
           forum_id: forumId
@@ -275,7 +301,6 @@ const CompaniesList = (props) => {
       state: { 
         forum: forum,
         forumId: forumId,
-        accessToken: accessToken,
         apiBaseUrl: apiBaseUrl,
         // S'assurer que toutes les données du forum sont passées
         forumData: {
@@ -496,7 +521,6 @@ const CompaniesList = (props) => {
           onInvite={handleInvite}
           company={selectedCompany}
           forum={forum}
-          accessToken={accessToken}
           apiBaseUrl={apiBaseUrl}
         />
 

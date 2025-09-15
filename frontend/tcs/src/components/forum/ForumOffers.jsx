@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FaMapMarkerAlt,
-  FaBriefcase,
-  FaLocationArrow,
-  FaHeart,
-  FaRegHeart,
   FaBuilding,
   FaUser,
-  FaCalendar,
   FaGlobe,
   FaPhone,
   FaEnvelope,
   FaUsers,
 } from 'react-icons/fa';
-import { MdBusiness, MdLocationOn, MdPerson, MdInfo } from 'react-icons/md';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 import SearchBarOffers from './SearchBarOffers';
-import OfferDetailPopup from '../recruiter/OfferDetailPopup';
+import Offer from '../Offer';
 import axios from 'axios';
 
-const ForumOffers = ({ companies }) => {
+const ForumOffers = ({ companies, forum = null }) => {
   const allOffers = companies.flatMap(company =>
     company.offers.map(offer => ({
       ...offer,
@@ -40,7 +33,6 @@ const ForumOffers = ({ companies }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const [isOfferDetailPopupOpen, setIsOfferDetailPopupOpen] = useState(false);
 
   useEffect(() => {
     setFilteredOffers(allOffers);
@@ -49,9 +41,8 @@ const ForumOffers = ({ companies }) => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/recruiters/favorites/list/`, {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true
         });
         const ids = response.data.map(offer => offer.id);
         setFavoriteOfferIds(ids);
@@ -65,11 +56,10 @@ const ForumOffers = ({ companies }) => {
 
   const toggleFavorite = async (offerId) => {
     try {
-      const token = localStorage.getItem('accessToken');
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/recruiters/favorites/toggle/${offerId}/`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
 
       if (response.data.status === 'liked') {
@@ -93,13 +83,8 @@ const ForumOffers = ({ companies }) => {
   };
 
   const handleOfferClick = (offer) => {
-    setSelectedOffer(offer);
-    setIsOfferDetailPopupOpen(true);
-  };
-
-  const handleCloseOfferPopup = () => {
-    setIsOfferDetailPopupOpen(false);
-    setSelectedOffer(null);
+    // La navigation est maintenant gérée par le composant Offer
+    console.log('Offer clicked:', offer);
   };
 
   const getVisibleOffers = () => {
@@ -108,15 +93,6 @@ const ForumOffers = ({ companies }) => {
       : filteredOffers;
   };
 
-  // Fonction pour générer les initiales du recruteur
-  const getInitials = (name) => {
-    if (!name) return 'R';
-    const names = name.split(' ');
-    if (names.length >= 2) {
-      return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
-    }
-    return name.charAt(0).toUpperCase();
-  };
 
   return (
     <div className="forum-offers-wrapper">
@@ -143,154 +119,20 @@ const ForumOffers = ({ companies }) => {
       ) : (
         <div className="forum-offers-container">
           {getVisibleOffers().map(offer => (
-            <div 
+            <Offer
               key={offer.id} 
-              className="forum-offer-card"
-              onClick={() => handleOfferClick(offer)}
-              style={{ cursor: 'pointer' }}
-            >
-              {/* Section Logo et Entreprise */}
-              <div className="forum-offer-company-section">
-                <img
-                  src={offer.logo || LogoCompany}
-                  alt={offer.companyName}
-                  className="forum-offer-logo"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCompanyClick(offer.company);
-                  }}
-                  style={{ cursor: 'pointer' }}
-                />
-                <div className="forum-offer-company-info">
-                  <h4 className="forum-offer-company-name" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCompanyClick(offer.company);
-                      }}
-                      style={{ cursor: 'pointer' }}>
-                    {offer.companyName}
-                  </h4>
-                  <div className="forum-offer-company-meta">
-                    <MdBusiness className="forum-offer-meta-icon" />
-                    <span>{offer.sector || 'Secteur non précisé'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section Contenu Principal */}
-              <div className="forum-offer-content">
-                <h3 className="forum-offer-title">{offer.title}</h3>
-                <p className="forum-offer-description">{offer.description}</p>
-                
-                {/* Métadonnées avec icônes */}
-                <div className="forum-offer-meta">
-                  {offer.location && (
-                    <div className="forum-offer-meta-item">
-                      <MdLocationOn className="forum-offer-meta-icon" />
-                      <span className="forum-meta-text">{offer.location}</span>
-                    </div>
-                  )}
-                  {offer.contract_type && (
-                    <div className="forum-offer-meta-item">
-                      <FaBriefcase className="forum-offer-meta-icon" />
-                      <span className="forum-meta-text">
-                        <strong>Type :</strong> {offer.contract_type}
-                      </span>
-                    </div>
-                  )}
-                  {offer.created_at && (
-                    <div className="forum-offer-meta-item">
-                      <FaCalendar className="forum-offer-meta-icon" />
-                      <span className="forum-meta-text">
-                        Postée le {new Date(offer.created_at).toLocaleDateString('fr-FR', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Section Recruteur */}
-                <div className="forum-offer-recruiter-section">
-                  {offer.recruiter_photo ? (
-                    <img 
-                      src={offer.recruiter_photo} 
-                      alt={`${offer.recruiter_name || 'Recruteur'}`}
-                      className="forum-offer-recruiter-avatar"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div 
-                    className="forum-offer-recruiter-initials"
-                    style={{ 
-                      display: offer.recruiter_photo ? 'none' : 'flex',
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      backgroundColor: '#4f2cc6',
-                      color: 'white',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '14px',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {getInitials(offer.recruiter_name)}
-                  </div>
-                  <div className="forum-offer-recruiter-info">
-                    <div className="forum-offer-recruiter-name">
-                      {offer.recruiter_name || 'Recruteur'}
-                    </div>
-                    <div className="forum-offer-recruiter-role">
-                      Recruteur • {offer.companyName}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="forum-offer-actions">
-                <button
-                  className="forum-offer-action-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(offer.id);
-                  }}
-                  title="Ajouter aux favoris"
-                >
-                  {favoriteOfferIds.includes(offer.id) ? <FaHeart /> : <FaRegHeart />}
-                </button>
-                <button 
-                  className="forum-offer-action-button" 
-                  title="Voir les détails"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOfferClick(offer);
-                  }}
-                >
-                  <FaLocationArrow />
-                </button>
-              </div>
-            </div>
+              offer={offer}
+              onClick={handleOfferClick}
+              onToggleFavorite={toggleFavorite}
+              space="candidate"
+              isFavorite={favoriteOfferIds.includes(offer.id)}
+              forum={forum}
+              activeTab="offres"
+            />
           ))}
         </div>
       )}
 
-      {/* Popup pour les détails de l'offre */}
-      {isOfferDetailPopupOpen && selectedOffer && (
-        <OfferDetailPopup
-          offer={selectedOffer}
-          onClose={() => {
-            setIsOfferDetailPopupOpen(false);
-            setSelectedOffer(null);
-          }}
-        />
-      )}
 
       {/* Popup pour les détails de l'entreprise */}
       {isCompanyPopupOpen && selectedCompany && (

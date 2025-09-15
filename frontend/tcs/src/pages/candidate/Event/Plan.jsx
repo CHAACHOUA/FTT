@@ -23,7 +23,7 @@ const Plan = ({ companies, forumId }) => {
   const [isApplying, setIsApplying] = useState(false);
   const [applyMessage, setApplyMessage] = useState('');
   const [isInitialized, setIsInitialized] = useState(false);
-  const { accessToken } = useAuth();
+  const { isAuthenticated, isAuthLoading } = useAuth();
 
   // Initialisation complète du composant
   useEffect(() => {
@@ -41,40 +41,29 @@ const Plan = ({ companies, forumId }) => {
         setContracts(contractsData);
         console.log('✅ Choices loaded');
         
-        // 2. Charger les critères sauvegardés en priorité
+        // 2. Charger les critères de recherche candidat depuis localStorage
         const savedCriteria = localStorage.getItem(`search-criteria-${forumId}`);
         if (savedCriteria) {
           try {
             const criteria = JSON.parse(savedCriteria);
-            console.log('📁 Loading saved criteria:', criteria);
-            setSelectedSector(criteria.selectedSector || '');
-            setSelectedContract(criteria.selectedContract || '');
-            setSearchTerm(criteria.searchTerm || '');
-            setLocationTerm(criteria.locationTerm || '');
-            console.log('✅ Saved criteria applied');
+            setSelectedSector(criteria.sector || '');
+            setSelectedContract(criteria.contract_type || '');
+            setLocationTerm(criteria.region || '');
+            setSearchTerm(criteria.search_term || '');
+            console.log('✅ Search criteria loaded from localStorage');
           } catch (error) {
-            console.error('❌ Error loading saved criteria:', error);
+            console.error('❌ Error parsing saved criteria:', error);
           }
         }
         
-        // 3. Charger les données du candidat depuis l'API (seulement si pas de critères sauvegardés)
-        if (accessToken && !savedCriteria) {
+        // 3. Charger les données du candidat depuis l'API
+        if (isAuthenticated) {
           try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/forums/candidate/${forumId}/search`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
+              withCredentials: true,
             });
             setCandidateSearch(response.data);
             console.log('📡 API data loaded:', response.data);
-            
-            // Utiliser les critères de l'API seulement si aucun critère n'est défini
-            if (!selectedSector && !selectedContract && !locationTerm && !searchTerm) {
-              setSelectedSector(response.data.sector || '');
-              setSelectedContract(response.data.contract_type || '');
-              setLocationTerm(response.data.region || '');
-              console.log('✅ API criteria applied');
-            }
           } catch (error) {
             console.error('❌ Error loading API data:', error);
           }
@@ -91,20 +80,21 @@ const Plan = ({ companies, forumId }) => {
     };
 
     initializeComponent();
-  }, [accessToken, forumId]);
+  }, [isAuthenticated, forumId]);
 
-  // Sauvegarder automatiquement les critères quand ils changent (après initialisation)
+  // Sauvegarder automatiquement les critères de recherche candidat dans localStorage
   useEffect(() => {
     if (!isInitialized) return;
     
-    const criteria = {
-      selectedSector,
-      selectedContract,
-      searchTerm,
-      locationTerm
+    const searchCriteria = {
+      sector: selectedSector,
+      contract_type: selectedContract,
+      region: locationTerm,
+      search_term: searchTerm
     };
-    localStorage.setItem(`search-criteria-${forumId}`, JSON.stringify(criteria));
-    console.log('💾 Auto-saved criteria:', criteria);
+    
+    localStorage.setItem(`search-criteria-${forumId}`, JSON.stringify(searchCriteria));
+    console.log('✅ Search criteria saved to localStorage');
   }, [selectedSector, selectedContract, searchTerm, locationTerm, forumId, isInitialized]);
 
   // Utiliser les secteurs et contrats standardisés au lieu des données des entreprises
@@ -142,9 +132,7 @@ const Plan = ({ companies, forumId }) => {
     const loadProgress = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          withCredentials: true,
         });
         
         const data = response.data;
@@ -153,69 +141,17 @@ const Plan = ({ companies, forumId }) => {
         console.log('Loaded progress from API:', data);
       } catch (error) {
         console.error('Error loading progress:', error);
-        // Fallback vers localStorage si l'API échoue
-        const visitedKey = `visited-companies-${forumId}`;
-        const notesKey = `company-notes-${forumId}`;
-        
-        const savedVisited = localStorage.getItem(visitedKey);
-        const savedNotes = localStorage.getItem(notesKey);
-        
-        if (savedVisited) {
-          try {
-            const visitedArray = JSON.parse(savedVisited);
-            setVisitedCompanies(new Set(visitedArray));
-          } catch (error) {
-            console.error('Error parsing visited companies:', error);
-          }
-        }
-        if (savedNotes) {
-          try {
-            const notes = JSON.parse(savedNotes);
-            setCompanyNotes(notes);
-          } catch (error) {
-            console.error('Error parsing notes:', error);
-          }
-        }
+        // Initialiser avec des valeurs vides si l'API échoue
+        setVisitedCompanies(new Set());
+        setCompanyNotes({});
       }
     };
 
-    if (accessToken && forumId) {
+    if (isAuthenticated && forumId) {
       loadProgress();
     }
-  }, [forumId, accessToken]);
+  }, [forumId, isAuthenticated]);
 
-  // Charger les critères sauvegardés depuis localStorage (PRIORITÉ)
-  useEffect(() => {
-    const filtersKey = `forum-filters-${forumId}`;
-    const savedFilters = localStorage.getItem(filtersKey);
-    
-    if (savedFilters) {
-      try {
-        const filters = JSON.parse(savedFilters);
-        console.log('Loading saved filters (PRIORITY):', filters);
-        setSelectedSector(filters.sector || '');
-        setSelectedContract(filters.contract || '');
-        setLocationTerm(filters.location || '');
-        setSearchTerm(filters.search || '');
-      } catch (error) {
-        console.error('Error parsing saved filters:', error);
-      }
-    }
-  }, [forumId]);
-
-  // Sauvegarder les critères dans localStorage quand ils changent
-  useEffect(() => {
-    const filtersKey = `forum-filters-${forumId}`;
-    const filters = {
-      sector: selectedSector,
-      contract: selectedContract,
-      location: locationTerm,
-      search: searchTerm
-    };
-    
-    localStorage.setItem(filtersKey, JSON.stringify(filters));
-    console.log('Saved filters to localStorage:', filters);
-  }, [selectedSector, selectedContract, locationTerm, searchTerm, forumId]);
 
   // Sauvegarder les entreprises visitées via API
   const toggleCompanyVisited = async (companyId) => {
@@ -225,23 +161,16 @@ const Plan = ({ companies, forumId }) => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/toggle-visited/`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { withCredentials: true }
       );
       
       const data = response.data;
       setVisitedCompanies(new Set(data.visited_companies));
       console.log('Updated visited companies via API:', data);
       
-      // Sauvegarder aussi en localStorage comme backup
-      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify(data.visited_companies));
-      
     } catch (error) {
       console.error('Error toggling company visited:', error);
-      // Fallback vers localStorage si l'API échoue
+      // Fallback local si l'API échoue
       const newVisited = new Set(visitedCompanies);
       if (newVisited.has(companyId)) {
         newVisited.delete(companyId);
@@ -249,7 +178,6 @@ const Plan = ({ companies, forumId }) => {
         newVisited.add(companyId);
       }
       setVisitedCompanies(newVisited);
-      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify([...newVisited]));
     }
   };
 
@@ -261,28 +189,20 @@ const Plan = ({ companies, forumId }) => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/note/`,
         { note },
-        {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        }
+        { withCredentials: true }
       );
       
       const data = response.data;
       setCompanyNotes(data.company_notes);
       console.log('Updated notes via API:', data);
       
-      // Sauvegarder aussi en localStorage comme backup
-      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(data.company_notes));
-      
       setEditingNote(null);
       
     } catch (error) {
       console.error('Error saving note:', error);
-      // Fallback vers localStorage si l'API échoue
+      // Fallback local si l'API échoue
       const newNotes = { ...companyNotes, [companyId]: note };
       setCompanyNotes(newNotes);
-      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(newNotes));
       setEditingNote(null);
     }
   };
@@ -326,20 +246,6 @@ const Plan = ({ companies, forumId }) => {
       setCompanyNotes(newCompanyNotes);
       setEditingNote(null);
       
-      // Sauvegarder en localStorage
-      localStorage.setItem(`visited-companies-${forumId}`, JSON.stringify([...newVisitedCompanies]));
-      localStorage.setItem(`company-notes-${forumId}`, JSON.stringify(newCompanyNotes));
-      
-      // Sauvegarder les critères de filtrage actuels
-      const criteria = {
-        selectedSector,
-        selectedContract,
-        searchTerm,
-        locationTerm
-      };
-      localStorage.setItem(`search-criteria-${forumId}`, JSON.stringify(criteria));
-      console.log('💾 Saved criteria:', criteria);
-      
       // Sauvegarder en base de données via l'API
       try {
         await axios.post(
@@ -348,11 +254,7 @@ const Plan = ({ companies, forumId }) => {
             visited_companies: [...newVisitedCompanies],
             company_notes: newCompanyNotes
           },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+          { withCredentials: true }
         );
         console.log('✅ Applied filters and updated progression in database');
       } catch (error) {
@@ -385,21 +287,12 @@ const Plan = ({ companies, forumId }) => {
     setSearchTerm('');
     setLocationTerm('');
     
-    // Nettoyer aussi le localStorage
-    const filtersKey = `forum-filters-${forumId}`;
-    localStorage.removeItem(filtersKey);
-    
-    // Réinitialiser aussi la progression de gamification
+    // Réinitialiser la progression de gamification
     setVisitedCompanies(new Set());
     setCompanyNotes({});
     setEditingNote(null);
     
-    // Nettoyer le localStorage de la gamification
-    localStorage.removeItem(`visited-companies-${forumId}`);
-    localStorage.removeItem(`company-notes-${forumId}`);
-    localStorage.removeItem(`search-criteria-${forumId}`);
-    
-    // Réinitialiser aussi en base de données via l'API
+    // Réinitialiser en base de données via l'API
     try {
       await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`,
@@ -407,18 +300,14 @@ const Plan = ({ companies, forumId }) => {
           visited_companies: [],
           company_notes: {}
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { withCredentials: true }
       );
       console.log('Reset progression in database via API');
     } catch (error) {
       console.error('Error resetting progression in database:', error);
     }
     
-    console.log('Reset filters, progression and cleared all localStorage');
+    console.log('Reset filters and progression');
   };
 
   // Fonction pour télécharger le plan en PDF

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import axios from 'axios';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
+import CandidateCard from '../../../components/CandidateCard';
 import './CandidateListRecruiter.css';
 
-const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
+const RencontresList = ({ forumId, apiBaseUrl }) => {
   const [allCandidates, setAllCandidates] = useState([]); // Tous les candidats du forum
   const [meetings, setMeetings] = useState([]); // Candidats rencontrés
   const [searchResults, setSearchResults] = useState([]); // Résultats de recherche
@@ -18,19 +20,11 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
   useEffect(() => {
     const fetchAllCandidates = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
+        const response = await axios.get(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
+          withCredentials: true,
         });
 
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des candidats');
-        }
-
-        const data = await response.json();
-        setAllCandidates(data);
+        setAllCandidates(response.data);
       } catch (err) {
         setError(err.message || 'Une erreur est survenue');
       } finally {
@@ -41,25 +35,17 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
     if (forumId) {
       fetchAllCandidates();
     }
-  }, [forumId, accessToken, apiBaseUrl]);
+  }, [forumId, apiBaseUrl]);
 
   // Charger les rencontres existantes
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/api/recruiters/meetings/candidates/?forum=${forumId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
+        const response = await axios.get(`${apiBaseUrl}/api/recruiters/meetings/candidates/?forum=${forumId}`, {
+          withCredentials: true,
         });
 
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des rencontres');
-        }
-
-        const data = await response.json();
-        const formatted = data.map(entry => ({
+        const formatted = response.data.map(entry => ({
           ...entry.candidate,
           search: entry.search,
         }));
@@ -72,7 +58,7 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
     if (forumId) {
       fetchMeetings();
     }
-  }, [forumId, accessToken, apiBaseUrl]);
+  }, [forumId, apiBaseUrl]);
 
   // Rechercher parmi tous les candidats
   useEffect(() => {
@@ -150,42 +136,22 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
         throw new Error('Données invalides: candidate_public_token ou forum_id manquant');
       }
 
-      const response = await fetch(url, {
-        method: 'POST',
+      const response = await axios.post(url, requestData, {
+        withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify(requestData),
       });
 
       console.log('Réponse du serveur:', {
         status: response.status,
         statusText: response.statusText,
-        url: response.url,
-        headers: Object.fromEntries(response.headers.entries())
+        url: response.config.url,
+        headers: response.headers
       });
 
-      if (!response.ok) {
-        const responseText = await response.text();
-        console.log('Contenu de la réponse d\'erreur:', responseText);
-        
-        let errorMessage = 'Erreur lors de l\'ajout à la rencontre';
-        try {
-          const errorData = JSON.parse(responseText);
-          errorMessage = errorData.error || errorData.detail || errorMessage;
-          console.log('Données d\'erreur parsées:', errorData);
-        } catch (e) {
-          console.log('Impossible de parser la réponse JSON:', e);
-          errorMessage = `Erreur ${response.status}: ${response.statusText}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
-
-      const responseData = await response.json();
-      console.log('Réponse de succès:', responseData);
+      console.log('Réponse de succès:', response.data);
 
       // Ajouter aux rencontres locales immédiatement
       setMeetings(prev => {
@@ -220,19 +186,9 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
       // Retirer immédiatement des rencontres locales (optimistic update)
       setMeetings(prev => prev.filter(c => c.public_token !== candidate.public_token));
       
-      const response = await fetch(`${apiBaseUrl}/api/recruiters/meetings/candidates/${candidate.public_token}/remove/?forum=${forumId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const response = await axios.delete(`${apiBaseUrl}/api/recruiters/meetings/candidates/${candidate.public_token}/remove/?forum=${forumId}`, {
+        withCredentials: true,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        // En cas d'erreur, remettre le candidat dans la liste
-        setMeetings(prev => [...prev, candidate]);
-        throw new Error(errorData.error || errorData.detail || 'Erreur lors de la suppression de la rencontre');
-      }
       
       // Forcer la mise à jour de la recherche si elle est active
       if (searchTerm.trim()) {
@@ -265,7 +221,6 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
   return (
     <CompanyApprovalCheck 
       forumId={forumId} 
-      accessToken={accessToken} 
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'accès aux rencontres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
@@ -301,50 +256,14 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
               <div className="search-cards">
                 {searchResults.map(({ candidate, search }, index) => (
                   <div className="search-candidate-card" key={index}>
-                    <div className="candidate-photo">
-                      {candidate.profile_picture ? (
-                        <img
-                          src={
-                            candidate.profile_picture.startsWith('http')
-                              ? candidate.profile_picture
-                              : `${apiBaseUrl}${candidate.profile_picture}`
-                          }
-                          alt={`${candidate.first_name} ${candidate.last_name}`}
-                        />
-                      ) : (
-                        <FaUserCircle className="default-avatar" />
-                      )}
-                    </div>
-                    <div className="candidate-info">
-                      <h3>{candidate.first_name} {candidate.last_name}</h3>
-
-                      <div className="sectors-container">
-                        {(search?.sector?.length ?? 0) > 0
-                          ? search.sector.map((sector, i) => (
-                              <span key={i} className="sector-badge">{sector}</span>
-                            ))
-                          : <span className="sector-badge empty">Non renseigné</span>
-                        }
-                      </div>
-
-                      <p className="region">
-                        <FaMapMarkerAlt className="icon-location" />
-                        {search?.region || 'Non renseignée'}
-                      </p>
-                    </div>
-                    
-                    {candidate.cv_file && (
-                      <a
-                        href={`${apiBaseUrl}${candidate.cv_file}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cv-download"
-                        title="Télécharger le CV"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaDownload />
-                      </a>
-                    )}
+                    <CandidateCard
+                      candidate={{ ...candidate, search }}
+                      apiBaseUrl={apiBaseUrl}
+                      onCandidateClick={null}
+                      onRemoveFromMeetings={null}
+                      showRemoveButton={false}
+                      className="candidate-card"
+                    />
                     <button
                       className="add-meeting-btn"
                       onClick={() => addToMeetings(candidate)}
@@ -370,68 +289,15 @@ const RencontresList = ({ forumId, accessToken, apiBaseUrl }) => {
         ) : (
           <div className="cards-container">
             {meetings.map((candidate, index) => (
-              <div className="candidate-card meeting-card" key={index}>
-                <div className="candidate-photo">
-                  {candidate.profile_picture ? (
-                    <img
-                      src={
-                        candidate.profile_picture.startsWith('http')
-                          ? candidate.profile_picture
-                          : `${apiBaseUrl}${candidate.profile_picture}`
-                      }
-                      alt={`${candidate.first_name} ${candidate.last_name}`}
-                    />
-                  ) : (
-                    <FaUserCircle className="default-avatar" />
-                  )}
-                </div>
-                <div
-                  className="candidate-info"
-                  onClick={() => setSelectedCandidate(candidate)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <h3>{candidate.first_name} {candidate.last_name}</h3>
-
-                  <div className="sectors-container">
-                    {(candidate.search?.sector?.length ?? 0) > 0
-                      ? candidate.search.sector.map((sector, i) => (
-                          <span key={i} className="sector-badge">{sector}</span>
-                        ))
-                      : <span className="sector-badge empty">Non renseigné</span>
-                    }
-                  </div>
-
-                  <p className="region">
-                    <FaMapMarkerAlt className="icon-location" />
-                    {candidate.search?.region || 'Non renseignée'}
-                  </p>
-                </div>
-                <div className="meeting-actions">
-                  {candidate.cv_file && (
-                    <a
-                      className="cv-download"
-                      href={
-                        candidate.cv_file.startsWith('http')
-                          ? candidate.cv_file
-                          : `${apiBaseUrl}${candidate.cv_file}`
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Télécharger le CV"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <FaDownload />
-                    </a>
-                  )}
-                  <button
-                    className="remove-meeting-btn"
-                    onClick={() => removeFromMeetings(candidate)}
-                    title="Retirer des rencontres"
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-              </div>
+              <CandidateCard
+                key={index}
+                candidate={candidate}
+                apiBaseUrl={apiBaseUrl}
+                onCandidateClick={setSelectedCandidate}
+                onRemoveFromMeetings={removeFromMeetings}
+                showRemoveButton={true}
+                className="candidate-card meeting-card"
+              />
             ))}
           </div>
         )}

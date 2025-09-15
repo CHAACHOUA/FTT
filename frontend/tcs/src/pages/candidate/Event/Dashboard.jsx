@@ -33,9 +33,7 @@ const Dashboard = () => {
     const fetchToken = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/public-token/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access")}`
-          }
+          credentials: 'include'
         });
         const data = await res.json();
         setToken(data.public_token);
@@ -75,7 +73,7 @@ const Dashboard = () => {
           <div className="dashboard-section">
             {activeTab === 'info' && <ForumInfos forum={forum} />}
             {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} forum={forum} usePage={true} />}
-            {activeTab === 'offres' && <ForumOffers companies={forum.companies} />}
+            {activeTab === 'offres' && <ForumOffers companies={forum.companies} forum={forum} />}
             {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
             {activeTab === 'partager' && (
               <PopupQRCode

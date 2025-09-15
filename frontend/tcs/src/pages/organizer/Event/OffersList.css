@@ -37,6 +37,14 @@
   color: #6b7280;
 }
 
+/* Centrer la barre de recherche */
+.search-bar-wrapper-search {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin-bottom: 2rem !important;
+}
+
 /* Filtres avec le style du dashboard */
 .organizer-offers-filters {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -135,11 +143,24 @@
   color: #18386c;
 }
 
-/* Grille des offres */
+/* Grille des offres - même style que ForumOffer */
 .organizer-offers-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, 320px);
   gap: 1.5rem;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .organizer-offers-grid {
+    grid-template-columns: repeat(auto-fill, 320px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .organizer-offers-grid {
+    grid-template-columns: repeat(auto-fill, 320px);
+  }
 }
 
 /* Groupes d'offres par entreprise */
@@ -669,10 +690,7 @@
     justify-content: center;
   }
   
-  /* Grille responsive */
-  .organizer-offers-grid {
-    grid-template-columns: 1fr;
-  }
+  /* Grille responsive - géré par les media queries ci-dessus */
   
   .organizer-offer-card {
     padding: 1rem;

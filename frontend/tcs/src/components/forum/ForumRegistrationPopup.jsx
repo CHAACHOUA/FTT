@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog } from '@headlessui/react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
-import '../../pages/styles/forum/ForumRegistrationPopup.css';
+import Modal from '../common/Modal';
 import { getSectorsForSelect, getContractsForSelect } from '../../constants/choices';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBriefcase,
-  faIndustry,
-  faClock,
-  faMapMarkerAlt,
-  faUniversalAccess,
-} from '@fortawesome/free-solid-svg-icons';
+import { FaBriefcase, FaIndustry, FaClock, FaMapMarkerAlt, FaUniversalAccess } from 'react-icons/fa';
 
 // Les options seront chargées dynamiquement depuis l'API
 
@@ -92,9 +83,9 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
       console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - URL:', url);
       const response = await axios.post(url, form, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
           'Content-Type': 'application/json',
         },
+        withCredentials: true
       });
       console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - Réponse reçue');
       toast.success('Inscription réussie !');
@@ -108,22 +99,21 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
     }
   };
 
-  return (
-    <Dialog open={isOpen} onClose={onClose} className="popup-wrapper fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <Dialog.Panel className="popup-content bg-white p-6 rounded-lg w-full max-w-lg shadow-xl">
-        <Dialog.Title className="text-xl font-semibold mb-4">
-          Inscription – Étape {step}/3
-        </Dialog.Title>
-
-        {step === 1 && (
-          <>
-            {choicesLoading ? (
-              <div className="text-center py-4">Chargement des options...</div>
-            ) : (
-              <>
-                <label className="block font-medium mb-1">
-                  <FontAwesomeIcon icon={faBriefcase} className="mr-2 text-blue-600" />
-                 Quel(s) contrat(s) recherchez-vous ? 
+  const renderStepContent = () => {
+    if (step === 1) {
+      return (
+        <>
+          {choicesLoading ? (
+            <div className="modal-loading">
+              <div className="modal-loading-spinner"></div>
+              Chargement des options...
+            </div>
+          ) : (
+            <>
+              <div className="modal-form-group">
+                <label className="modal-form-label">
+                  <FaBriefcase />
+                  Quel(s) contrat(s) recherchez-vous ?
                 </label>
                 <Select
                   options={contracts}
@@ -135,13 +125,16 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
                       contract_type: selected.map(opt => opt.value)
                     }))
                   }
-                  className="mb-2"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
                 />
-                {errors.contract_type && <p className="text-red-500 text-sm">{errors.contract_type}</p>}
+                {errors.contract_type && <p className="modal-form-error">{errors.contract_type}</p>}
+              </div>
 
-                <label className="block font-medium mt-4 mb-1">
-                  <FontAwesomeIcon icon={faIndustry} className="mr-2 text-blue-600" />
-                  Secteur(s) visé(s) :
+              <div className="modal-form-group">
+                <label className="modal-form-label">
+                  <FaIndustry />
+                  Secteur(s) visé(s)
                 </label>
                 <Select
                   options={sectors}
@@ -153,18 +146,24 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
                       sector: selected.map(opt => opt.value)
                     }))
                   }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
                 />
-                {errors.sector && <p className="text-red-500 text-sm">{errors.sector}</p>}
-              </>
-            )}
-          </>
-        )}
+                {errors.sector && <p className="modal-form-error">{errors.sector}</p>}
+              </div>
+            </>
+          )}
+        </>
+      );
+    }
 
-        {step === 2 && (
-          <>
-            <label className="block font-medium mb-1 mt-4">
-              <FontAwesomeIcon icon={faClock} className="mr-2 text-blue-600" />
-              Expérience (en années) :
+    if (step === 2) {
+      return (
+        <>
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaClock />
+              Expérience (en années)
             </label>
             <input
               type="number"
@@ -172,63 +171,113 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
               value={form.experience}
               onChange={handleChange}
               min={0}
-              className="input mb-2 w-full border rounded px-3 py-2"
+              className="modal-form-input"
+              placeholder="0"
             />
-            {errors.experience && <p className="text-red-500 text-sm">{errors.experience}</p>}
+            {errors.experience && <p className="modal-form-error">{errors.experience}</p>}
+          </div>
 
-            <label className="block font-medium mb-1 mt-4">
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2 text-blue-600" />
-              Région préférée :
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaMapMarkerAlt />
+              Région préférée
             </label>
             <input
               name="region"
               value={form.region}
               onChange={handleChange}
-              className="input w-full border rounded px-3 py-2"
+              className="modal-form-input"
+              placeholder="Ex: Toulouse, Paris, Lyon..."
             />
-            {errors.region && <p className="text-red-500 text-sm">{errors.region}</p>}
-          </>
-        )}
+            {errors.region && <p className="modal-form-error">{errors.region}</p>}
+          </div>
+        </>
+      );
+    }
 
-        {step === 3 && (
-          <label className="flex items-center gap-2 mt-4">
-            <FontAwesomeIcon icon={faUniversalAccess} className="text-blue-600" />
+    if (step === 3) {
+      return (
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaUniversalAccess />
+            Statut RQTH
+          </label>
+          <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
             <input
               type="checkbox"
               name="rqth"
               checked={form.rqth}
               onChange={handleChange}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            Je suis bénéficiaire de la RQTH
-          </label>
-        )}
-
-        <div className="popup-buttons mt-6 flex justify-between">
-          {step > 1 && (
-            <button onClick={prev} disabled={loading} className="text-gray-600">
-              Précédent
-            </button>
-          )}
-          {step < 3 ? (
-            <button
-              onClick={next}
-              disabled={loading}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Suivant
-            </button>
-          ) : (
-            <button
-              onClick={finish}
-              disabled={loading}
-              className="bg-green-600 text-white px-4 py-2 rounded"
-            >
-              {loading ? 'Envoi...' : 'Terminer'}
-            </button>
-          )}
+            <span className="text-sm text-gray-700">
+              Je suis bénéficiaire de la Reconnaissance de la Qualité de Travailleur Handicapé (RQTH)
+            </span>
+          </div>
         </div>
-      </Dialog.Panel>
-    </Dialog>
+      );
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Inscription au forum"
+      subtitle={`Étape ${step}/3`}
+      size="medium"
+    >
+      <div className="modal-steps">
+        <div className={`modal-step ${step >= 1 ? (step === 1 ? 'modal-step-active' : 'modal-step-completed') : 'modal-step-pending'}`}>
+          <div className="modal-step-number">1</div>
+          <span>Préférences</span>
+        </div>
+        <div className={`modal-step ${step >= 2 ? (step === 2 ? 'modal-step-active' : 'modal-step-completed') : 'modal-step-pending'}`}>
+          <div className="modal-step-number">2</div>
+          <span>Profil</span>
+        </div>
+        <div className={`modal-step ${step >= 3 ? (step === 3 ? 'modal-step-active' : 'modal-step-completed') : 'modal-step-pending'}`}>
+          <div className="modal-step-number">3</div>
+          <span>Finalisation</span>
+        </div>
+      </div>
+
+      <form className="modal-form">
+        {renderStepContent()}
+      </form>
+
+      <div className="modal-actions">
+        {step > 1 && (
+          <button 
+            type="button"
+            onClick={prev} 
+            disabled={loading} 
+            className="modal-btn modal-btn-secondary"
+          >
+            Précédent
+          </button>
+        )}
+        {step < 3 ? (
+          <button
+            type="button"
+            onClick={next}
+            disabled={loading}
+            className="modal-btn modal-btn-primary"
+          >
+            Suivant
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={finish}
+            disabled={loading}
+            className="modal-btn modal-btn-success"
+          >
+            {loading ? 'Envoi...' : 'Terminer l\'inscription'}
+          </button>
+        )}
+      </div>
+    </Modal>
   );
 };
 
