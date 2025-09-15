@@ -2,6 +2,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from candidates.models import Candidate
 from users.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -63,11 +64,33 @@ def login_candidate_user(email: str, password: str):
     refresh['role'] = user.role
     refresh['email'] = user.email
 
-    return Response({
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-        "name": candidate.first_name
+    response = Response({
+        "message": "Connexion réussie",
+        "name": candidate.first_name,
+        "role": user.role
     }, status=status.HTTP_200_OK)
+
+    # Configuration des cookies HttpOnly
+    response.set_cookie(
+        'access_token',
+        str(refresh.access_token),
+        max_age=300,  # 5 minutes
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+    response.set_cookie(
+        'refresh_token',
+        str(refresh),
+        max_age=86400,  # 1 jour
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+
+    return response
 
 def login_recruiter_user(email: str, password: str):
 
@@ -91,11 +114,33 @@ def login_recruiter_user(email: str, password: str):
     refresh['role'] = user.role
     refresh['email'] = user.email
 
-    return Response({
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-        "name": recruiter.first_name
+    response = Response({
+        "message": "Connexion réussie",
+        "name": recruiter.first_name,
+        "role": user.role
     }, status=status.HTTP_200_OK)
+
+    # Configuration des cookies HttpOnly
+    response.set_cookie(
+        'access_token',
+        str(refresh.access_token),
+        max_age=300,  # 5 minutes
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+    response.set_cookie(
+        'refresh_token',
+        str(refresh),
+        max_age=86400,  # 1 jour
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+
+    return response
 
 def login_organizer_user(email: str, password: str):
 
@@ -119,9 +164,31 @@ def login_organizer_user(email: str, password: str):
     refresh['role'] = user.role
     refresh['email'] = user.email
 
-    return Response({
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-        "name": organizer.name
+    response = Response({
+        "message": "Connexion réussie",
+        "name": organizer.name,
+        "role": user.role
     }, status=status.HTTP_200_OK)
+
+    # Configuration des cookies HttpOnly
+    response.set_cookie(
+        'access_token',
+        str(refresh.access_token),
+        max_age=300,  # 5 minutes
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+    response.set_cookie(
+        'refresh_token',
+        str(refresh),
+        max_age=86400,  # 1 jour
+        httponly=True,
+        samesite='Lax',  # Lax pour développement cross-origin
+        secure=False,  # False en développement (HTTP)
+        domain=None
+    )
+
+    return response
 

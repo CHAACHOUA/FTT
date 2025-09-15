@@ -62,6 +62,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+# Configuration CORS pour les cookies HttpOnly
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Désactiver pour la sécurité
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -77,7 +81,8 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'users.authentication.CookieJWTAuthentication',  # Authentification par cookies HttpOnly
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Fallback header Authorization
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -172,17 +177,26 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Par exemple 60 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Par exemple 7 jours
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),   # 15 minutes pour plus de sécurité
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # 1 jour
+    'ROTATE_REFRESH_TOKENS': True,                   # Rotation des refresh tokens
+    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist des anciens tokens
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_COOKIE': 'access_token',                   # Nom du cookie pour le token d'accès
+    'AUTH_COOKIE_HTTP_ONLY': True,                   # HttpOnly pour la sécurité
+    'AUTH_COOKIE_SECURE': False,                     # False en développement (HTTP)
+    'AUTH_COOKIE_SAMESITE': 'Lax',                   # Lax pour développement cross-origin
+    'AUTH_COOKIE_DOMAIN': None,                      # Domaine pour les cookies
+    'REFRESH_COOKIE': 'refresh_token',               # Nom du cookie pour le refresh token
+    'REFRESH_COOKIE_HTTP_ONLY': True,                # HttpOnly pour la sécurité
+    'REFRESH_COOKIE_SECURE': False,                  # False en développement (HTTP)
+    'REFRESH_COOKIE_SAMESITE': 'Lax',                # Lax pour développement cross-origin
+    'REFRESH_COOKIE_DOMAIN': None,                   # Domaine pour les cookies
 }
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
-CORS_ALLOW_ALL_ORIGINS = True
 FRONTEND_URL = config('FRONTEND_URL')
 # Configuration Email Gmail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from users.services.registration import register_new_candidate
 from users.services.authentication import login_user_view
+from users.services.logout_service import logout_user_view
 from users.services.account_activation import activate_user_account,resend_activation_link
 from users.services.recruiter_invitation import send_recruiter_invitation, complete_recruiter_registration
 
@@ -21,6 +22,15 @@ def login_user(request):
     email = request.data.get("email")
     password = request.data.get("password")
     return login_user_view(email,password)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Permettre le logout même sans authentification
+def logout_user(request):
+    """
+    Déconnexion utilisateur
+    """
+    return logout_user_view()
 
 
 @api_view(['GET'])

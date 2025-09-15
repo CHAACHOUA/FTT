@@ -25,7 +25,7 @@ class ForumCompany(models.Model):
     approved = models.BooleanField(default=False, help_text="Indique si la participation de l'entreprise à ce forum est approuvée")
 
     class Meta:
-        unique_together = ('company', 'forum')  # Pour éviter les doublons
+        unique_together = ('company', 'forum')
 
     def __str__(self):
         return f"{self.company.name} @ {self.forum.name}"

@@ -2,6 +2,7 @@ from django.urls import path
 from users.views.auth_views import (
     register_candidate,
     login_user,
+    logout_user,
     activate_account,
     resend_activation,
     invite_recruiter,
@@ -14,12 +15,16 @@ from users.views.password_views import (
     change_password,
 )
 from users.views.deletion_views import delete_user_account
+from users.views.user_views import get_current_user
+from users.views.refresh_views import refresh_token_view
 
 
 urlpatterns = [
     # 🔐 Authentification
     path('auth/signup/candidate/', register_candidate, name='register_candidate'),
     path('auth/login/user/', login_user, name='login_candidate'),
+    path('auth/logout/user/', logout_user, name='logout_user'),
+    path('auth/refresh-token/', refresh_token_view, name='refresh_token'),
     path('auth/activate-account/<str:token>/', activate_account, name='activate_account'),
 
     # 📧 Email
@@ -38,4 +43,7 @@ urlpatterns = [
 
     # ❌ Suppression de compte
     path('auth/delete-account/', delete_user_account, name='delete_user_account'),
+    
+    # 👤 Utilisateur
+    path('auth/me/', get_current_user, name='get_current_user'),
 ]
