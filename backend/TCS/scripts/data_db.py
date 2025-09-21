@@ -6,21 +6,12 @@ from forums.models import Forum, ForumRegistration
 from company.models import Company, ForumCompany
 from recruiters.models import Recruiter, RecruiterForumParticipation
 from organizers.models import Organizer
-from candidates.models import Candidate
+
 
 def run():
     print("🚀 Début de la création des données...")
     
-    # --- 🔄 Reset de la base de données ---
-    print("🗑️ Nettoyage de la base de données...")
-    User.objects.all().delete()
-    Organizer.objects.all().delete()
-    Company.objects.all().delete()
-    Forum.objects.all().delete()
-    Recruiter.objects.all().delete()
-    ForumCompany.objects.all().delete()
-    ForumRegistration.objects.all().delete()
-    
+
     # --- 📌 Création du compte organisateur principal ---
     print("👤 Création du compte organisateur principal...")
     organizer_user = User.objects.create_user(

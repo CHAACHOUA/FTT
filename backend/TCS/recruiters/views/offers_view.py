@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from candidates.models import Candidate
 from recruiters.services.offers_service import toggle_favorite_offer
 from recruiters.services.offers_service import get_favorite_offers
@@ -65,8 +65,11 @@ def create_offer(request):
     serializer = OfferWriteSerializer(data=request.data)
     print("Request data:", request.data)
     if serializer.is_valid():
-        offer = create_offer_service(user.recruiter_profile, serializer.validated_data)
-        return Response(OfferSerializer(offer).data, status=status.HTTP_201_CREATED)
+        try:
+            offer = create_offer_service(user.recruiter_profile, serializer.validated_data)
+            return Response(OfferSerializer(offer).data, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
         print("Serializer errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -80,8 +83,11 @@ def update_offer(request, offer_id):
 
     serializer = OfferWriteSerializer(data=request.data, partial=True)
     if serializer.is_valid():
-        offer = update_offer_service(user.recruiter_profile, offer_id, serializer.validated_data)
-        return Response(OfferSerializer(offer).data)
+        try:
+            offer = update_offer_service(user.recruiter_profile, offer_id, serializer.validated_data)
+            return Response(OfferSerializer(offer).data)
+        except ValidationError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

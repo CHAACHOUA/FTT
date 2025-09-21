@@ -28,6 +28,18 @@ def add_company_to_forum_service(user, name, forum_id):
                 'message': 'Vous n\'êtes pas autorisé à modifier ce forum'
             }
         
+        # Vérifier qu'il n'y a pas déjà une entreprise avec le même nom dans ce forum
+        existing_company = Company.objects.filter(
+            name__iexact=name,
+            forum_participations__forum=forum
+        ).first()
+        
+        if existing_company:
+            return {
+                'success': False,
+                'message': f'Une entreprise avec le nom "{name}" existe déjà dans ce forum'
+            }
+        
         # Créer l'entreprise
         company = Company.objects.create(name=name)
         

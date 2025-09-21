@@ -35,6 +35,19 @@ class RecruiterForumParticipation(models.Model):
         return f"{self.recruiter} in {self.forum}"
 
 class Offer(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Brouillon'),
+        ('published', 'Publiée'),
+        ('expired', 'Expirée'),
+    ]
+    
+    EXPERIENCE_CHOICES = [
+        ('0-1', '0-1 an'),
+        ('1-3', '1-3 ans'),
+        ('3-5', '3-5 ans'),
+        ('5+', '5+ ans'),
+    ]
+
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE, related_name='offers')
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='offers')
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, related_name='offers')
@@ -45,6 +58,9 @@ class Offer(models.Model):
     sector = models.CharField(max_length=100, choices=SECTOR_CHOICES)
     contract_type = models.CharField(max_length=50, choices=CONTRACT_CHOICES)
     profile_recherche = models.TextField(blank=True, help_text="Profil recherché pour ce poste")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    start_date = models.DateField(help_text="Date de début du poste", default='2024-01-01')
+    experience_required = models.CharField(max_length=10, choices=EXPERIENCE_CHOICES, help_text="Années d'expérience requises", default='1-3')
 
     created_at = models.DateTimeField(auto_now_add=True)
 

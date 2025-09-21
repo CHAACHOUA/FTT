@@ -48,6 +48,9 @@ class OfferSerializer(serializers.ModelSerializer):
     company_banner = serializers.ImageField(source='company.banner', read_only=True)
     recruiter_photo = serializers.ImageField(source='recruiter.profile_picture', read_only=True)
     recruiter_name = serializers.SerializerMethodField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    experience_display = serializers.CharField(source='get_experience_required_display', read_only=True)
+    
     class Meta:
         model = Offer
         fields = [
@@ -58,6 +61,45 @@ class OfferSerializer(serializers.ModelSerializer):
             'sector',
             'contract_type',
             'profile_recherche',
+            'status',
+            'status_display',
+            'start_date',
+            'experience_required',
+            'experience_display',
+            'created_at',
+            'company_name',
+            'recruiter_name',
+            'company_logo',
+            'company_banner',
+            'recruiter_photo'
+        ]
+
+    def get_recruiter_name(self, obj):
+        return f"{obj.recruiter.first_name} {obj.recruiter.last_name}"
+
+
+class OfferCandidateSerializer(serializers.ModelSerializer):
+    """Serializer pour les candidats - sans le statut"""
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    company_logo = serializers.ImageField(source='company.logo', read_only=True)
+    company_banner = serializers.ImageField(source='company.banner', read_only=True)
+    recruiter_photo = serializers.ImageField(source='recruiter.profile_picture', read_only=True)
+    recruiter_name = serializers.SerializerMethodField()
+    experience_display = serializers.CharField(source='get_experience_required_display', read_only=True)
+    
+    class Meta:
+        model = Offer
+        fields = [
+            'id',
+            'title',
+            'description',
+            'location',
+            'sector',
+            'contract_type',
+            'profile_recherche',
+            'start_date',
+            'experience_required',
+            'experience_display',
             'created_at',
             'company_name',
             'recruiter_name',
@@ -85,6 +127,9 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             'sector',
             'contract_type',
             'profile_recherche',
+            'status',
+            'start_date',
+            'experience_required',
             'forum_id',  # ici forum_id au lieu de forum
         ]
 

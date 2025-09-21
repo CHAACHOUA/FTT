@@ -239,6 +239,11 @@ def forum_offers(request, forum_id):
         'company',
         'recruiter__user'
     ).order_by('-created_at')
+    
+    # Debug: Compter les entreprises uniques dans ce forum
+    unique_companies = offers.values_list('company__name', flat=True).distinct()
+    print(f"DEBUG: Nombre d'entreprises uniques dans le forum {forum_id}: {len(unique_companies)}")
+    print(f"DEBUG: Entreprises dans le forum: {list(unique_companies)}")
 
     # Préparer les données pour la réponse
     offers_data = []
@@ -251,19 +256,27 @@ def forum_offers(request, forum_id):
             'sector': offer.sector,
             'contract_type': offer.contract_type,
             'profile_recherche': offer.profile_recherche,
+            'status': offer.status,
+            'status_display': offer.get_status_display(),
+            'start_date': offer.start_date,
+            'experience_required': offer.experience_required,
+            'experience_display': offer.get_experience_required_display(),
             'created_at': offer.created_at,
             'company': {
                 'id': offer.company.id,
                 'name': offer.company.name,
-                'website': offer.company.website
+                'website': offer.company.website,
+                'logo': offer.company.logo.url if offer.company.logo else None
             },
             'recruiter': {
                 'id': offer.recruiter.id,
                 'first_name': offer.recruiter.first_name,
                 'last_name': offer.recruiter.last_name,
+                'name': f"{offer.recruiter.first_name} {offer.recruiter.last_name}",
                 'email': offer.recruiter.user.email,
                 'phone': offer.recruiter.phone
             }
         })
+
 
     return Response(offers_data, status=status.HTTP_200_OK)
