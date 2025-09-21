@@ -18,21 +18,22 @@ const ForumRecruiterView = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true); 
   const [statusFilter, setStatusFilter] = useState('ongoing');
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, role, isAuthLoading } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
 
   const fetchForums = useCallback(async () => {
     try {
       setIsLoading(true);
       if (isAuthenticated) {
-        const res = await axios.get(`${API}/api/forums/recruiter/my-forums/`, {
+        const res = await axios.get(`${API}/forums/recruiter/my-forums/`, {
           withCredentials: true
         });
         setRegisteredForums(res.data.registered || []);
         setUnregisteredForums(res.data.unregistered || []);
         setDisplayedForums(res.data.unregistered || []);
-      } else {
-        const res = await axios.get(`${API}/api/forums/`);
+      } else if (!isAuthLoading) {
+        // Seulement si l'authentification est complètement terminée et que l'utilisateur n'est pas connecté
+        const res = await axios.get(`${API}/forums/`);
         setAllForums(res.data || []);
         setDisplayedForums(res.data || []);
       }
@@ -42,7 +43,7 @@ const ForumRecruiterView = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, API]);
+  }, [isAuthenticated, isAuthLoading, API]);
 
   useEffect(() => {
     fetchForums();
@@ -107,17 +108,17 @@ const ForumRecruiterView = () => {
               </>
             )}
 
-            {unregisteredForums.length > 0 && (
-              <>
-                <h2>Explorez nos forums</h2>
-                <p>Accédez à nos évènements et rencontrez directement des recruteurs</p>
+            <>
+              <h2>Explorez nos forums</h2>
+              <p>Accédez à nos évènements et rencontrez directement des recruteurs</p>
 
-                <SearchBar
-                  forums={unregisteredForums}
-                  onSearch={setDisplayedForums}
-                />
+              <SearchBar
+                forums={unregisteredForums}
+                onSearch={setDisplayedForums}
+              />
 
-                {displayedForums.length === 0 ? (
+              {unregisteredForums.length > 0 ? (
+                displayedForums.length === 0 ? (
                   <div className="no-results-message">
                     <FaSearch className="no-results-icon" />
                     <p>Aucun forum ne correspond à votre recherche.</p>
@@ -134,9 +135,14 @@ const ForumRecruiterView = () => {
                       />
                     ))}
                   </div>
-                )}
-              </>
-            )}
+                )
+              ) : (
+                <div className="no-results-message">
+                  <FaSearch className="no-results-icon" />
+                  <p>Aucun forum disponible pour le moment.</p>
+                </div>
+              )}
+            </>
           </>
         ) : (
           displayedForums.length === 0 ? (

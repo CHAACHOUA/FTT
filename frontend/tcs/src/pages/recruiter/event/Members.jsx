@@ -3,9 +3,12 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/recruiter/CompanyRecruiter.css';
 import './CandidateListRecruiter.css';
+import '../../organizer/Event/SpeakerManager.css'; // Import SpeakerManager.css for grid styles
 import recruiter_photo from '../../../assets/recruiter.jpg';
 import InviteRecruiterModal from '../../organizer/Event/InviteRecruiterModal';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
+import PersonCard from '../../../components/common/PersonCard';
+import Loading from '../../common/Loading';
 
 function Members({ accessToken, apiBaseUrl }) {
   const [recruiters, setRecruiters] = useState([]);
@@ -18,45 +21,110 @@ function Members({ accessToken, apiBaseUrl }) {
   const forum = state?.forum;
   const [company, setCompany] = useState(null);
 
-  // Récupérer les informations de l'entreprise du recruteur connecté
+  // Récupérer les informations des membres de l'entreprise avec leurs données complètes
   useEffect(() => {
-    const fetchCompanyInfo = async () => {
+    const fetchMembersWithCompanyInfo = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/companies/profile/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        setCompany(response.data);
-      } catch (err) {
-        console.error('Erreur lors de la récupération des infos entreprise:', err);
-      }
-    };
-    
-    if (accessToken) {
-      fetchCompanyInfo();
-    }
-  }, [accessToken, apiBaseUrl]);
+        setLoading(true);
+        setError(null);
 
-  useEffect(() => {
-    const fetchRecruiters = async () => {
-      try {
-        const response = await axios.get(`${apiBaseUrl}/api/recruiters/company-recruiters/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        setRecruiters(response.data);
-        console.log(response.data)
+        // Faire les deux requêtes en parallèle
+        const [recruitersResponse, companyResponse] = await Promise.all([
+          axios.get(`${apiBaseUrl}/recruiters/company-recruiters/`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+          axios.get(`${apiBaseUrl}/companies/profile/`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          })
+        ]);
+
+        const recruitersData = recruitersResponse.data;
+        const companyData = companyResponse.data;
+
+        // Enrichir les données des recruteurs avec les informations de l'entreprise
+        const enrichedRecruiters = recruitersData.map(recruiter => ({
+          ...recruiter,
+          company: { name: companyData.name },
+          company_name: companyData.name
+        }));
+
+        setRecruiters(enrichedRecruiters);
+        setCompany(companyData);
+
       } catch (err) {
-        setError(err.response?.data?.detail || 'Erreur lors du chargement');
+        console.error('Erreur lors du chargement des membres:', err);
+        setError(err.response?.data?.detail || 'Erreur lors du chargement des membres');
       } finally {
         setLoading(false);
       }
     };
-    fetchRecruiters();
-  }, [accessToken, apiBaseUrl]);
+
+    fetchMembersWithCompanyInfo();
+  }, []); // Tableau de dépendances vide pour n'exécuter qu'une seule fois
 
   const handleInviteSuccess = () => {
     // Recharger la liste des recruteurs après une invitation réussie
     window.location.reload();
   };
+
+  // Fonction pour relancer l'invitation d'un recruteur
+  const handleResendInvitation = async (recruiter) => {
+    try {
+      // Vérifier que les données nécessaires sont disponibles
+      if (!company) {
+        console.error('Données de l\'entreprise non disponibles');
+        return;
+      }
+
+      console.log('Tentative de relancement invitation pour:', {
+        email: recruiter.email,
+        company: company,
+        forum: forum,
+        apiBaseUrl: apiBaseUrl
+      });
+
+      const response = await axios.post(`${apiBaseUrl}/users/auth/invite-recruiter/`, {
+        email: recruiter.email,
+        company: company,
+        forum: forum
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Réponse du serveur:', response);
+
+      if (response.status === 200) {
+        console.log('Invitation relancée avec succès');
+        // Recharger la liste des recruteurs
+        window.location.reload();
+      } else if (response.status === 409) {
+        console.log('Recruteur déjà invité, invitation relancée');
+        window.location.reload();
+      } else {
+        console.error('Erreur lors du relancement de l\'invitation:', response.data);
+      }
+    } catch (error) {
+      console.error('Erreur complète lors du relancement de l\'invitation:', error);
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        config: error.config
+      });
+      
+      if (error.response?.status === 409) {
+        window.location.reload();
+      }
+    }
+  };
+
+  // Afficher le loading sur toute la page
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <CompanyApprovalCheck 
@@ -67,43 +135,38 @@ function Members({ accessToken, apiBaseUrl }) {
       <div className="offers-list-wrapper">
         <div className="offers-list-content">
           <div className="company-recruiters-header">
-          <h2 className="company-recruiters-title">Vos recruteurs ({recruiters.length} membre{recruiters.length > 1 ? 's' : ''})</h2>
-          <button 
-            className="invite-recruiter-btn"
-            onClick={() => setIsInviteModalOpen(true)}
-          >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            Inviter un recruteur
-          </button>
-        </div>
-
-      {loading && <p>Chargement...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {!loading && !error && !recruiters.length && <p>Aucun recruteur trouvé.</p>}
-
-      <div className="cards-container">
-        {recruiters.map((r) => (
-          <div key={r.id} className="candidate-card">
-            <div className="candidate-photo">
-              <img
-                src={r.profile_picture ? `${apiBaseUrl}${r.profile_picture}` : recruiter_photo}
-                alt={`${r.first_name} ${r.last_name}`}
-              />
-            </div>
-            <div className="candidate-info">
-              <h3>{r.first_name} {r.last_name}</h3>
-              <p className="recruiter-email">
-                {r.email || 'Email non disponible'}
-              </p>
-              <p className="recruiter-company">
-                {company?.name || 'Entreprise non définie'}
-              </p>
-            </div>
+            <h2 className="company-recruiters-title">Vos recruteurs ({recruiters.length} membre{recruiters.length > 1 ? 's' : ''})</h2>
+            <button 
+              className="invite-recruiter-btn"
+              onClick={() => setIsInviteModalOpen(true)}
+            >
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Inviter un recruteur
+            </button>
           </div>
-        ))}
-      </div>
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {!error && !recruiters.length && <p>Aucun recruteur trouvé.</p>}
+
+          {/* Afficher les recruteurs avec PersonCard */}
+          {!error && recruiters.length > 0 && (
+            <div className="speakers-grid person-cards-grid">
+              {recruiters.map((r) => (
+                <PersonCard
+                  key={r.id}
+                  person={r}
+                  type="recruiter"
+                  onSend={handleResendInvitation}
+                  showActions={true}
+                  showSend={true}
+                  showContact={false}
+                  showView={false}
+                />
+              ))}
+            </div>
+          )}
 
       {/* Bloc informatif */}
       <div className="members-info-block">

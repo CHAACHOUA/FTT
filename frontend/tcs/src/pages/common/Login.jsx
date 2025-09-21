@@ -38,7 +38,7 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-        `${API}/api/users/auth/login/user/`,
+        `${API}/users/auth/login/user/`,
         formData,
         {
           headers: {
@@ -52,7 +52,7 @@ export default function Login() {
       login({ name, role });
 
       if (role === 'candidate') {
-        navigate('/forums');
+        navigate('/candidate/forums');
       } else if (role === 'recruiter') {
         navigate('/recruiter/forums');
       } else if (role === 'organizer') {
@@ -81,7 +81,7 @@ export default function Login() {
 
   const handleResendActivation = async () => {
     try {
-      const res = await axios.post(`${API}/api/users/auth/resend-activation/`, {
+      const res = await axios.post(`${API}/users/auth/resend-activation/`, {
         email: formData.email,
       });
       toast.success(res.data.message || "Lien d’activation envoyé.");

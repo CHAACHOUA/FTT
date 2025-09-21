@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FiLock, FiEye, FiEyeOff, FiUser, FiMail } from "react-icons/fi";
+import { FiLock, FiEye, FiEyeOff, FiUser } from "react-icons/fi";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/candidate/Education.css';
@@ -44,7 +44,7 @@ const CompleteRecruiterSetup = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/api/users/auth/complete-recruiter-setup/${token}/`, {
+      const response = await axios.post(`${API}/users/auth/complete-recruiter-setup/${token}/`, {
         password: password,
         confirm_password: confirmPassword,
         first_name: first_name.trim(),

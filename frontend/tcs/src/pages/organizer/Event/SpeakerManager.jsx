@@ -10,6 +10,8 @@ import {
   faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../context/AuthContext';
+import Modal from '../../../components/common/Modal';
+import PersonCard from '../../../components/common/PersonCard';
 import './SpeakerManager.css';
 
 const SpeakerManager = () => {
@@ -35,7 +37,7 @@ const SpeakerManager = () => {
     try {
       console.log('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - Début');
       setIsLoading(true);
-      const url = `${API}/api/forums/speakers/`;
+      const url = `${API}/forums/speakers/`;
       console.log('🔍 [FRONTEND] SpeakerManager - fetchSpeakers - URL:', url);
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -88,14 +90,14 @@ const SpeakerManager = () => {
       }
 
       if (editingSpeaker) {
-        await axios.put(`${API}/api/forums/speakers/${editingSpeaker.id}/update/`, formDataToSend, {
+        await axios.put(`${API}/forums/speakers/${editingSpeaker.id}/update/`, formDataToSend, {
           headers: { 
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data'
           }
         });
       } else {
-        await axios.post(`${API}/api/forums/speakers/create/`, formDataToSend, {
+        await axios.post(`${API}/forums/speakers/create/`, formDataToSend, {
           headers: { 
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data'
@@ -124,7 +126,7 @@ const SpeakerManager = () => {
   const handleDelete = async (speakerId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce speaker ?')) {
       try {
-        await axios.delete(`${API}/api/forums/speakers/${speakerId}/delete/`, {
+        await axios.delete(`${API}/forums/speakers/${speakerId}/delete/`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
         fetchSpeakers();
@@ -160,79 +162,88 @@ const SpeakerManager = () => {
       )}
 
       {/* Formulaire d'ajout/modification */}
-      {showAddForm && (
-        <div className="speaker-form-overlay">
-          <div className="speaker-form">
-            <div className="form-header">
-              <h3>{editingSpeaker ? 'Modifier le speaker' : 'Ajouter un speaker'}</h3>
-              <button className="close-btn" onClick={resetForm}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
+      <Modal
+        isOpen={showAddForm}
+        onClose={resetForm}
+        title={editingSpeaker ? 'Modifier le speaker' : 'Ajouter un speaker'}
+        size="medium"
+      >
+        <form className="modal-form" onSubmit={handleSubmit}>
+          <div className="modal-form-row">
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faUser} />
+                Prénom *
+              </label>
+              <input
+                type="text"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                className="modal-form-input"
+                placeholder="Ex: Jean"
+                required
+              />
             </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Prénom *</label>
-                  <input
-                    type="text"
-                    name="first_name"
-                    value={formData.first_name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Nom *</label>
-                  <input
-                    type="text"
-                    name="last_name"
-                    value={formData.last_name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Poste *</label>
-                  <input
-                    type="text"
-                    name="position"
-                    value={formData.position}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Photo</label>
-                  <input
-                    type="file"
-                    name="photo"
-                    onChange={handleInputChange}
-                    accept="image/*"
-                  />
-                  <small>Formats acceptés : JPG, PNG, GIF (max 5MB)</small>
-                </div>
-              </div>
-
-              <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={resetForm}>
-                  Annuler
-                </button>
-                <button type="submit" className="save-btn">
-                  <FontAwesomeIcon icon={faSave} />
-                  {editingSpeaker ? 'Modifier' : 'Ajouter'}
-                </button>
-              </div>
-            </form>
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faUser} />
+                Nom *
+              </label>
+              <input
+                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                className="modal-form-input"
+                placeholder="Ex: Dupont"
+                required
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faUser} />
+              Poste *
+            </label>
+            <input
+              type="text"
+              name="position"
+              value={formData.position}
+              onChange={handleInputChange}
+              className="modal-form-input"
+              placeholder="Ex: Directeur Technique"
+              required
+            />
+          </div>
+
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faUser} />
+              Photo
+            </label>
+            <input
+              type="file"
+              name="photo"
+              onChange={handleInputChange}
+              accept="image/*"
+              className="modal-form-input"
+            />
+            <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>Formats acceptés : JPG, PNG, GIF</small>
+          </div>
+
+          <div className="modal-actions">
+            <button type="button" className="modal-btn modal-btn-secondary" onClick={resetForm}>
+              Annuler
+            </button>
+            <button type="submit" className="modal-btn modal-btn-primary">
+              <FontAwesomeIcon icon={faSave} />
+              {editingSpeaker ? 'Modifier' : 'Ajouter'}
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Liste des speakers */}
       <div className="speakers-list">
@@ -245,47 +256,18 @@ const SpeakerManager = () => {
              </button>
           </div>
         ) : (
-          <div className="speakers-grid">
+          <div className="person-cards-grid">
             {speakers.map(speaker => (
-              <div key={speaker.id} className="speaker-card">
-                <div className="speaker-photo">
-                  {speaker.photo ? (
-                    <img 
-                      src={speaker.photo.startsWith('http') ? speaker.photo : `${API}${speaker.photo}`}
-                      alt={speaker.full_name}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                                     <div className="speaker-photo-placeholder" style={{ display: speaker.photo ? 'none' : 'flex' }}>
-                     <FontAwesomeIcon icon={faUser} />
-                   </div>
-                </div>
-
-                <div className="speaker-info">
-                  <h4>{speaker.full_name}</h4>
-                  <p className="speaker-position">{speaker.position}</p>
-                </div>
-
-                <div className="speaker-actions">
-                  <button 
-                    className="edit-btn"
-                    onClick={() => handleEdit(speaker)}
-                    title="Modifier"
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button 
-                    className="delete-btn"
-                    onClick={() => handleDelete(speaker.id)}
-                    title="Supprimer"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              </div>
+              <PersonCard
+                key={speaker.id}
+                person={speaker}
+                type="speaker"
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                showActions={true}
+                showContact={false}
+                showView={false}
+              />
             ))}
           </div>
         )}

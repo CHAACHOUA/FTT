@@ -53,7 +53,7 @@ export default function CandidateSignup() {
     try {
       const { confirmPassword, ...dataToSend } = formData;
       const res = await axios.post(
-        `${API}/api/users/auth/signup/candidate/`,
+        `${API}/users/auth/signup/candidate/`,
         dataToSend,
         {
           headers: { 'Content-Type': 'application/json' },
@@ -74,7 +74,7 @@ export default function CandidateSignup() {
     }
   };
 
-  // ✅ Affichage du loader pendant la soumission
+  
   if (loading) return <Loading />;
 
   return (

@@ -1,6 +1,14 @@
 /* Style CSS Moderne et Épuré */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ===== PERSON CARDS GRID STYLES ===== */
+.person-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 * {
   box-sizing: border-box;
 }

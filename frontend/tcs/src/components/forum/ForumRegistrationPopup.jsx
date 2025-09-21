@@ -78,9 +78,9 @@ const ForumRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId }) => {
     if (!validateStep()) return;
     setLoading(true);
     try {
-      console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - forumId:', forumId);
-      const url = `${API}/api/forums/${forumId}/register/`;
-      console.log('🔍 [FRONTEND] ForumRegistrationPopup - finish - URL:', url);
+    
+      const url = `${API}/forums/${forumId}/register/`;
+ 
       const response = await axios.post(url, form, {
         headers: {
           'Content-Type': 'application/json',

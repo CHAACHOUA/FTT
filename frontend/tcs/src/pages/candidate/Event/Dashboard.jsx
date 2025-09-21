@@ -32,11 +32,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/public-token/`, {
-          credentials: 'include'
+        const axios = (await import('axios')).default;
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidates/public-token/`, {
+          withCredentials: true
         });
-        const data = await res.json();
-        setToken(data.public_token);
+        setToken(res.data.public_token);
       } catch (err) {
         console.error('Erreur récupération token public', err);
       }

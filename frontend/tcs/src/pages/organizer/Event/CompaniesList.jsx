@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../common/NavBar';
+import Loading from '../../common/Loading';
 import './CompaniesList.css';
 import defaultLogo from '../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faCheck, faXmark, faToggleOn, faToggleOff, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faXmark, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import InviteRecruiterModal from './InviteRecruiterModal';
+import PersonCard from '../../../components/common/PersonCard';
 import { useAuth } from '../../../context/AuthContext';
+import axios from 'axios';
 
 const CompaniesList = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, isAuthLoading } = useAuth();
+  const { isAuthenticated, isAuthLoading, accessToken } = useAuth();
   console.log('Location state:', location.state);
   console.log('Props:', props);
   
@@ -22,14 +25,8 @@ const CompaniesList = (props) => {
   const forumId = props.forumId || location.state?.forumId || forum?.id;
   
   // État local pour gérer les entreprises avec mise à jour
-  const [companies, setCompanies] = useState(initialCompanies || []);
-  
-  // Mettre à jour l'état local quand les props changent
-  useEffect(() => {
-    if (initialCompanies) {
-      setCompanies(initialCompanies);
-    }
-  }, [initialCompanies]);
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
   
 
 
@@ -43,32 +40,64 @@ const CompaniesList = (props) => {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // all, approved, pending
 
+  // Fonction pour charger les entreprises du forum
+  const fetchForumCompanies = async () => {
+    if (!forumId) {
+      setError('ID du forum manquant');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Utiliser la même logique que OffersList - récupérer les données du forum
+      const response = await axios.get(`${apiBaseUrl}/forums/${forumId}/`, {
+        withCredentials: true
+      });
+      
+      const forumData = response.data;
+      if (forumData && forumData.companies) {
+        setCompanies(forumData.companies);
+      } else {
+        setCompanies([]);
+      }
+      
+    } catch (error) {
+      console.error('Erreur lors du chargement des entreprises:', error);
+      setError('Erreur lors du chargement des entreprises');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Charger les entreprises au montage du composant
+  useEffect(() => {
+    if (isAuthenticated && !isAuthLoading && forumId) {
+      fetchForumCompanies();
+    }
+  }, [isAuthenticated, isAuthLoading, forumId, apiBaseUrl]);
+
   // Attendre que l'authentification soit vérifiée
   if (isAuthLoading) {
-    return (
-      <div style={{ paddingTop: '70px' }}>
-        <Navbar />
-        <div className="companies-container">
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <div>Chargement...</div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isAuthenticated) {
     return (
       <div style={{ paddingTop: '70px' }}>
         <Navbar />
-        <div className="companies-container">
-          <div className="error-message">Vous devez être connecté pour accéder à cette page.</div>
-        </div>
+       
       </div>
     );
   }
 
-  if (!companies || !apiBaseUrl) {
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!apiBaseUrl) {
     return (
       <div style={{ paddingTop: '70px' }}>
         <Navbar />
@@ -100,6 +129,16 @@ const CompaniesList = (props) => {
       setError("Erreur : ID du forum non disponible");
       return;
     }
+
+    // Vérifier qu'il n'y a pas déjà une entreprise avec le même nom (insensible à la casse)
+    const existingCompany = companies.find(company => 
+      company.name.toLowerCase() === companyName.trim().toLowerCase()
+    );
+    
+    if (existingCompany) {
+      setError(`Une entreprise avec le nom "${companyName.trim()}" existe déjà dans ce forum`);
+      return;
+    }
     
     console.log('Forum object:', forum);
     console.log('Forum ID:', forumId);
@@ -109,7 +148,7 @@ const CompaniesList = (props) => {
     
     try {
       // Endpoint pour ajouter une entreprise à un forum
-      const endpoint = `${apiBaseUrl}/api/companies/forum/`;
+      const endpoint = `${apiBaseUrl}/companies/forum/`;
       
       const requestBody = {
         name: companyName.trim(),
@@ -118,33 +157,25 @@ const CompaniesList = (props) => {
       
       console.log('Request body:', requestBody);
       
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Utiliser les cookies HttpOnly
-        body: JSON.stringify(requestBody)
+      const response = await axios.post(endpoint, requestBody, {
+        withCredentials: true
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de l\'ajout de l\'entreprise');
-      }
-
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.message || 'Erreur lors de l\'ajout de l\'entreprise');
+      if (response.status !== 201 || !response.data.success) {
+        throw new Error(response.data?.message || 'Erreur lors de l\'ajout de l\'entreprise');
       }
 
       setShowAddCompanyModal(false);
       setCompanyName('');
       setError(null);
       
-      // Ajouter la nouvelle entreprise à l'état local
-      if (result.company) {
-        setCompanies(prevCompanies => [...prevCompanies, result.company]);
-      }
+      // Afficher un message de succès
+      console.log('Entreprise ajoutée avec succès:', response.data.message);
+      
+      // Recharger la liste des entreprises après ajout
+      setTimeout(async () => {
+        await refreshCompaniesList();
+      }, 1000);
       
       // Optionnel: rafraîchir les données
       if (props.onCompanyAdded) {
@@ -169,43 +200,85 @@ const CompaniesList = (props) => {
     setError(null);
   };
 
-  // À personnaliser selon ta logique backend
-  const handleInvite = (email, company, forum) => {
-    // Ici tu peux faire un appel API ou autre
-    // Exemple : await api.inviteRecruiter(email, company.id)
-    // Pour l'instant, on affiche juste un message dans le modal
+  // Fonction pour recharger la liste des entreprises
+  const refreshCompaniesList = async () => {
+    await fetchForumCompanies();
+  };
+
+  // Callback appelé après une invitation réussie
+  const handleInvite = async (email, company, forum) => {
     console.log('Invitation envoyée:', { email, company, forum });
+    // Attendre un peu pour que le backend traite l'invitation
+    setTimeout(async () => {
+      await refreshCompaniesList();
+    }, 1000);
   };
 
   // Fonction pour relancer le recruteur
   const handleResendInvitation = async (recruiter, company) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/users/auth/invite-recruiter/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Utiliser les cookies HttpOnly
-        body: JSON.stringify({
-          email: recruiter.email,
-          company: company,
-          forum: forum
-        })
+      console.log('Tentative de relancement invitation pour:', {
+        email: recruiter.email,
+        company: company,
+        forum: forum,
+        apiBaseUrl: apiBaseUrl
       });
 
-      const data = await response.json();
-      
-      if (response.ok) {
+      const response = await axios.post(`${apiBaseUrl}/users/auth/invite-recruiter/`, {
+        email: recruiter.email,
+        company: company,
+        forum: forum
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Réponse du serveur:', response);
+
+      if (response.status === 200) {
         console.log('Invitation relancée avec succès');
-        // Optionnel: afficher un message de succès
+        await refreshCompaniesList();
       } else if (response.status === 409) {
         console.log('Recruteur déjà invité, invitation relancée');
-        // Le recruteur existe déjà, c'est normal pour un relancement
+        await refreshCompaniesList();
       } else {
-        console.error('Erreur lors du relancement de l\'invitation:', data);
+        console.error('Erreur lors du relancement de l\'invitation:', response.data);
       }
     } catch (error) {
-      console.error('Erreur lors du relancement de l\'invitation:', error);
+      console.error('Erreur complète lors du relancement de l\'invitation:', error);
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        config: error.config
+      });
+      
+      if (error.response?.status === 409) {
+        await refreshCompaniesList();
+      }
+    }
+  };
+
+  // Fonction pour gérer l'envoi de message à un recruteur
+  const handleSendMessage = (recruiter) => {
+    console.log('Envoi de message à:', recruiter);
+    // Ici vous pouvez implémenter la logique pour envoyer un message
+    alert(`Envoi de message à ${recruiter.full_name || recruiter.first_name + ' ' + recruiter.last_name}`);
+  };
+
+  // Fonction wrapper pour relancer l'invitation depuis PersonCard
+  const handleResendInvitationFromCard = (recruiter) => {
+    // Trouver l'entreprise correspondante
+    const company = companies.find(c => 
+      c.recruiters && c.recruiters.some(r => r.id === recruiter.id)
+    );
+    
+    if (company) {
+      handleResendInvitation(recruiter, company);
+    } else {
+      console.error('Entreprise non trouvée pour le recruteur:', recruiter);
     }
   };
 
@@ -213,22 +286,15 @@ const CompaniesList = (props) => {
   const handleToggleApproval = async (company) => {
     try {
       const newApprovedStatus = !company.approved;
-      const response = await fetch(`${apiBaseUrl}/api/companies/forum/approve/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Utiliser les cookies HttpOnly
-        body: JSON.stringify({
-          company_id: company.id,
-          forum_id: forumId,
-          approved: newApprovedStatus
-        })
+      const response = await axios.post(`${apiBaseUrl}/companies/forum/approve/`, {
+        company_id: company.id,
+        forum_id: forumId,
+        approved: newApprovedStatus
+      }, {
+        withCredentials: true
       });
-
-      const data = await response.json();
       
-      if (response.ok) {
+      if (response.status === 200) {
         console.log(`Entreprise ${newApprovedStatus ? 'approuvée' : 'désapprouvée'} avec succès`);
         
         // Mettre à jour l'état local pour déclencher un re-render
@@ -245,8 +311,8 @@ const CompaniesList = (props) => {
           props.onCompanyUpdated();
         }
       } else {
-        console.error('Erreur lors du changement de statut:', data);
-        setError(data.message || 'Erreur lors du changement de statut de l\'entreprise');
+        console.error('Erreur lors du changement de statut:', response.data);
+        setError(response.data?.message || 'Erreur lors du changement de statut de l\'entreprise');
       }
     } catch (error) {
       console.error('Erreur lors du changement de statut:', error);
@@ -261,19 +327,15 @@ const CompaniesList = (props) => {
     }
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/companies/forum/remove/`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Utiliser les cookies HttpOnly
-        body: JSON.stringify({
+      const response = await axios.delete(`${apiBaseUrl}/companies/forum/remove/`, {
+        data: {
           company_id: company.id,
           forum_id: forumId
-        })
+        },
+        withCredentials: true
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         console.log('Entreprise refusée avec succès');
         
         // Supprimer l'entreprise de l'état local
@@ -286,9 +348,8 @@ const CompaniesList = (props) => {
           props.onCompanyUpdated();
         }
       } else {
-        const data = await response.json();
-        console.error('Erreur lors du refus:', data);
-        setError(data.message || 'Erreur lors du refus de l\'entreprise');
+        console.error('Erreur lors du refus:', response.data);
+        setError(response.data?.message || 'Erreur lors du refus de l\'entreprise');
       }
     } catch (error) {
       console.error('Erreur lors du refus:', error);
@@ -428,7 +489,7 @@ const CompaniesList = (props) => {
                     onClick={() => toggleExpand(index)}
                   />
                   <img
-                    src={company.logo || defaultLogo}
+                    src={company.logo ? (company.logo.startsWith('http') ? company.logo : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${company.logo}`) : defaultLogo}
                     alt={company.name}
                     className="company-logo"
                   />
@@ -474,38 +535,26 @@ const CompaniesList = (props) => {
                   </div>
                 </div>
 
-                {/* Liste des recruteurs */}
+                {/* Liste des recruteurs avec PersonCard */}
                 {expandedIndex === index && (
                   <div className="recruiters-list">
                     {(!company.recruiters || company.recruiters.length === 0) ? (
                       <p className="no-recruiter">Aucun recruteur</p>
                     ) : (
-                      <ul>
+                      <div className="person-cards-grid">
                         {company.recruiters.map((recruiter, idx) => (
-                          <li key={idx} className="recruiter-item">
-                            <span className="recruiter-avatar">
-                              {recruiter.avatar ? (
-                                <img src={recruiter.avatar} alt={recruiter.first_name} />
-                              ) : (
-                                <span className="recruiter-initials">
-                                  {recruiter.first_name?.[0] || ''}{recruiter.last_name?.[0] || ''}
-                                </span>
-                              )}
-                            </span>
-                            <span className="recruiter-info">
-                              <span className="recruiter-name">{recruiter.first_name} {recruiter.last_name}</span>
-                              <span className="recruiter-email">{recruiter.email}</span>
-                            </span>
-                            <button
-                              className="resend-invitation-button"
-                              title="Relancer l'invitation"
-                              onClick={() => handleResendInvitation(recruiter, company)}
-                            >
-                              <FontAwesomeIcon icon={faPaperPlane} />
-                            </button>
-                          </li>
+                          <PersonCard
+                            key={recruiter.id || idx}
+                            person={recruiter}
+                            type="recruiter"
+                            onSend={handleResendInvitationFromCard}
+                            showActions={true}
+                            showSend={true}
+                            showContact={false}
+                            showView={false}
+                          />
                         ))}
-                      </ul>
+                      </div>
                     )}
                   </div>
                 )}

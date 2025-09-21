@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../../../components/common/Modal';
 import { FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import axios from 'axios';
 
 
 const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, apiBaseUrl }) => {
@@ -44,20 +45,14 @@ const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, apiBase
 
       console.log('Sending request with data:', requestData);
       
-      const response = await fetch(`${apiBaseUrl}/api/users/auth/invite-recruiter/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Utiliser les cookies HttpOnly
-        body: JSON.stringify(requestData)
+      const response = await axios.post(`${apiBaseUrl}/users/auth/invite-recruiter/`, requestData, {
+        withCredentials: true
       });
 
-      const data = await response.json();
-      console.log('Response:', response.status, data);
+      console.log('Response:', response.status, response.data);
 
-      if (response.ok) {
-        setStatus({ type: 'success', msg: data.message || "Invitation envoyée avec succès !" });
+      if (response.status === 200) {
+        setStatus({ type: 'success', msg: response.data.message || "Invitation envoyée avec succès !" });
         setEmail('');
         // Appeler le callback si fourni
         if (onInvite) {
@@ -66,7 +61,7 @@ const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, apiBase
       } else {
         setStatus({ 
           type: 'error', 
-          msg: data.error || data.message || "Erreur lors de l'envoi de l'invitation." 
+          msg: response.data?.error || response.data?.message || "Erreur lors de l'envoi de l'invitation." 
         });
       }
     } catch (error) {

@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
   const checkAuthStatus = async () => {
     try {
       // Mode 100% sécurisé : vérifier uniquement via l'API avec cookies HttpOnly
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/auth/me/`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/auth/me/`, {
         withCredentials: true
       });
       
@@ -25,13 +25,29 @@ export function AuthProvider({ children }) {
         setName(response.data.name);
         setRole(response.data.role);
         setIsAuthenticated(true);
-        console.log("✅ Utilisateur connecté (mode sécurisé):", { 
-          name: response.data.name, 
-          role: response.data.role 
-        });
       }
     } catch (apiError) {
-      console.log("❌ Utilisateur non authentifié");
+      // Si on reçoit une erreur 401, essayer de rafraîchir le token
+      if (apiError.response?.status === 401) {
+        try {
+          await refreshAccessToken();
+          // Retry la requête après le refresh
+          const retryResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/auth/me/`, {
+            withCredentials: true
+          });
+          
+          if (retryResponse.status === 200) {
+            setName(retryResponse.data.name);
+            setRole(retryResponse.data.role);
+            setIsAuthenticated(true);
+            return; // Sortir de la fonction si le retry réussit
+          }
+        } catch (refreshError) {
+          // Si le refresh échoue aussi, l'utilisateur n'est pas authentifié
+          console.log("Token refresh failed:", refreshError);
+        }
+      }
+      
       setIsAuthenticated(false);
     } finally {
       setIsAuthLoading(false);
@@ -47,13 +63,12 @@ export function AuthProvider({ children }) {
     setRole(userRole);
     setIsAuthenticated(true);
     
-    console.log("✅ Connexion réussie (mode sécurisé):", { name: userName, role: userRole });
   };
 
   const logout = async (onRedirect) => {
     try {
       // Appeler l'endpoint de déconnexion pour supprimer les cookies
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/auth/logout/user/`, {}, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/auth/logout/user/`, {}, {
         withCredentials: true
       });
     } catch (error) {
@@ -82,19 +97,22 @@ export function AuthProvider({ children }) {
   const refreshAccessToken = async () => {
     try {
       // Mode 100% sécurisé : utiliser notre endpoint personnalisé avec cookies HttpOnly
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/auth/refresh-token/`, {}, {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/auth/refresh-token/`, {}, {
         withCredentials: true
       });
       
       if (response.status === 200) {
-        console.log("✅ Token rafraîchi avec succès");
         return true;
       }
+      return false;
     } catch (error) {
-      console.error("Token de rafraîchissement expiré:", error);
-      await logout();
-      throw error;
+      console.log("Refresh token failed:", error);
+      return false;
     }
+  };
+
+  const updateName = (newName) => {
+    setName(newName);
   };
 
   useEffect(() => {
@@ -106,7 +124,6 @@ export function AuthProvider({ children }) {
       (config) => {
         // Mode 100% sécurisé : utiliser uniquement les cookies HttpOnly
         config.withCredentials = true;
-        console.log("🍪 Authentification via cookies HttpOnly uniquement");
         
         return config;
       },
@@ -121,19 +138,18 @@ export function AuthProvider({ children }) {
         
         // Éviter la boucle infinie pour certains endpoints
         if (originalRequest.url?.includes('/logout/user/') || 
-            originalRequest.url?.includes('/refresh-token/') ||
-            originalRequest.url?.includes('/me/')) {
+            originalRequest.url?.includes('/refresh-token/')) {
           return Promise.reject(error);
         }
         
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           
-          try {
-            await refreshAccessToken();
+          const refreshSuccess = await refreshAccessToken();
+          if (refreshSuccess) {
             // Retry la requête originale
             return axios(originalRequest);
-          } catch (refreshError) {
+          } else {
             // Si le refresh échoue, nettoyer le state et vider localStorage
             setName(null);
             setRole(null);
@@ -154,7 +170,7 @@ export function AuthProvider({ children }) {
             if (window.location.pathname !== '/login') {
               window.location.href = '/login';
             }
-            return Promise.reject(refreshError);
+            return Promise.reject(error);
           }
         }
         
@@ -177,6 +193,7 @@ export function AuthProvider({ children }) {
         isAuthLoading,
         login,
         logout,
+        updateName,
       }}
     >
       {children}

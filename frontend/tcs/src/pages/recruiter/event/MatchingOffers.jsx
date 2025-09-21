@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUsers, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 import '../../styles/recruiter/OffersList.css';
 import '../../styles/recruiter/Matching.css';
 import Loading from '../../common/Loading';
@@ -68,7 +68,7 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
     const fetchOffers = async () => {
       try {
         setLoadingOffers(true);
-        const response = await axios.get(`${apiBaseUrl}/api/recruiters/company-offers/`, {
+        const response = await axios.get(`${apiBaseUrl}/recruiters/company-offers/`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           params: { forum_id },
         });
@@ -127,7 +127,7 @@ const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
 
     try {
       const res = await axios.post(
-        `${apiBaseUrl}/api/matching/start/${offerId}/`,
+        `${apiBaseUrl}/matching/start/${offerId}/`,
         {},
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );

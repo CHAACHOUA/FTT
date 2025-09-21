@@ -59,7 +59,7 @@ const Plan = ({ companies, forumId }) => {
         // 3. Charger les données du candidat depuis l'API
         if (isAuthenticated) {
           try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/forums/candidate/${forumId}/search`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/forums/candidate/${forumId}/search`, {
               withCredentials: true,
             });
             setCandidateSearch(response.data);
@@ -131,7 +131,7 @@ const Plan = ({ companies, forumId }) => {
   useEffect(() => {
     const loadProgress = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidates/forum/${forumId}/progress/`, {
           withCredentials: true,
         });
         
@@ -159,7 +159,7 @@ const Plan = ({ companies, forumId }) => {
       console.log('Toggle company visited:', companyId, 'Forum ID:', forumId);
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/toggle-visited/`,
+        `${process.env.REACT_APP_API_BASE_URL}/candidates/forum/${forumId}/company/${companyId}/toggle-visited/`,
         {},
         { withCredentials: true }
       );
@@ -187,7 +187,7 @@ const Plan = ({ companies, forumId }) => {
       console.log('Saving note for company:', companyId, 'Note:', note);
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/company/${companyId}/note/`,
+        `${process.env.REACT_APP_API_BASE_URL}/candidates/forum/${forumId}/company/${companyId}/note/`,
         { note },
         { withCredentials: true }
       );
@@ -249,7 +249,7 @@ const Plan = ({ companies, forumId }) => {
       // Sauvegarder en base de données via l'API
       try {
         await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`,
+          `${process.env.REACT_APP_API_BASE_URL}/candidates/forum/${forumId}/progress/`,
           {
             visited_companies: [...newVisitedCompanies],
             company_notes: newCompanyNotes
@@ -295,7 +295,7 @@ const Plan = ({ companies, forumId }) => {
     // Réinitialiser en base de données via l'API
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/candidates/forum/${forumId}/progress/`,
+        `${process.env.REACT_APP_API_BASE_URL}/candidates/forum/${forumId}/progress/`,
         {
           visited_companies: [],
           company_notes: {}

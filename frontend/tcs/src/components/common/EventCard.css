@@ -1,0 +1,469 @@
+/* Styles pour les cartes d'événements */
+.event-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-width: 320px;
+  max-width: 700px;
+  height: 180px;
+}
+
+.event-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+  border-color: #3b82f6;
+}
+
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  z-index: 1;
+}
+
+/* Image de l'événement */
+.event-card-image {
+  position: relative;
+  width: 220px;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px 0 0 16px;
+  flex-shrink: 0;
+}
+
+.event-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.event-card:hover .event-card-image img {
+  transform: scale(1.08);
+}
+
+.event-card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #64748b;
+  font-size: 2.5rem;
+  opacity: 0.8;
+}
+
+/* Détails de la carte */
+.event-card-details {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+}
+
+/* Badge de temps */
+.event-card-time-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #374151;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Actions */
+.event-card-actions {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.4rem;
+  z-index: 3;
+}
+
+.event-card-edit-btn,
+.event-card-delete-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-card-edit-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.event-card-edit-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.2) 100%);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.event-card-delete-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.event-card-delete-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0.2) 100%);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Contenu de la carte */
+.event-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.event-card-title {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: -0.02em;
+}
+
+.event-card-date,
+.event-card-time,
+.event-card-venue {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.15rem 0;
+}
+
+.event-card-icon {
+  color: #3b82f6;
+  width: 14px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.event-card-summary {
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 400;
+}
+
+/* Speaker principal */
+.event-card-main-speaker {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  background: rgba(248, 250, 252, 0.5);
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.event-card-speaker-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-card-speaker-photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-card-speaker-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.event-card-speaker-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.event-card-speaker-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .event-card {
+    max-width: 100%;
+    min-width: 300px;
+    height: auto;
+    min-height: 160px;
+  }
+  
+  .event-card-image {
+    width: 200px;
+  }
+  
+  .event-card-details {
+    padding: 1.25rem;
+  }
+  
+  .event-card-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-card {
+    flex-direction: column;
+    height: auto;
+    max-width: 100%;
+    min-width: 280px;
+    min-height: auto;
+  }
+  
+  .event-card-details {
+    padding: 1rem;
+  }
+  
+  .event-card-image {
+    width: 100%;
+    height: 150px;
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .event-card-title {
+    font-size: 1rem;
+  }
+  
+  .event-card-actions {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .event-card-edit-btn,
+  .event-card-delete-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+  
+  .event-card-time-badge {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .event-card-main-speaker {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-card {
+    max-width: 100%;
+    min-width: 260px;
+    margin: 0 0.5rem;
+  }
+  
+  .event-card-details {
+    padding: 0.75rem;
+  }
+  
+  .event-card-image {
+    height: 130px;
+  }
+  
+  .event-card-title {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+  
+  .event-card-actions {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+  
+  .event-card-edit-btn,
+  .event-card-delete-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 0.55rem;
+  }
+  
+  .event-card-time-badge {
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .event-card-main-speaker {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .event-card-speaker-photo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .event-card-speaker-name {
+    font-size: 0.8rem;
+  }
+  
+  .event-card-speaker-role {
+    font-size: 0.7rem;
+  }
+  
+  .event-card-date,
+  .event-card-time,
+  .event-card-venue {
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+  
+  .event-card-icon {
+    width: 12px;
+  }
+  
+  .event-card-summary {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+}
+
+/* Variantes de grille */
+.event-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  align-items: flex-start;
+}
+
+.event-cards-grid.compact {
+  gap: 1rem;
+}
+
+.event-cards-grid.large {
+  gap: 2rem;
+}
+
+/* Responsive pour la grille */
+@media (max-width: 1024px) {
+  .event-cards-grid {
+    gap: 1.25rem;
+    padding: 0.75rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-cards-grid {
+    gap: 1rem;
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-cards-grid {
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 360px) {
+  .event-card {
+    min-width: 240px;
+    margin: 0 0.25rem;
+  }
+  
+  .event-card-details {
+    padding: 0.5rem;
+  }
+  
+  .event-card-image {
+    height: 120px;
+  }
+  
+  .event-card-title {
+    font-size: 0.9rem;
+  }
+  
+  .event-card-date,
+  .event-card-time,
+  .event-card-venue {
+    font-size: 0.75rem;
+  }
+  
+  .event-card-summary {
+    font-size: 0.7rem;
+  }
+  
+  .event-card-main-speaker {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .event-cards-grid {
+    gap: 0.5rem;
+    padding: 0.125rem 0;
+  }
+}

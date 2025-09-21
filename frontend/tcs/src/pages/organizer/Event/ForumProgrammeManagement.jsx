@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faUsers, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
 import ProgrammeManager from './ProgrammeManager';
 import SpeakerManager from './SpeakerManager';
 import Navbar from '../../common/NavBar';
+import Loading from '../../common/Loading';
 import './ForumProgrammeManagement.css';
 import '../../../pages/styles/organizer/organizer-buttons.css';
 
@@ -16,17 +17,14 @@ const ForumProgrammeManagement = () => {
   const [forum, setForum] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { forumId: urlForumId } = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
   
-  // Récupérer forumId depuis les paramètres d'URL ou location.state
-  const forumId = urlForumId || location.state?.forumId || location.state?.forum?.id;
+  // Récupérer forumId depuis location.state
+  const forumId = location.state?.forumId || location.state?.forum?.id;
 
   // Debug: Log forumId sources
-  console.log('🔍 [FRONTEND] ForumProgrammeManagement - urlForumId:', urlForumId);
   console.log('🔍 [FRONTEND] ForumProgrammeManagement - location.state:', location.state);
   console.log('🔍 [FRONTEND] ForumProgrammeManagement - forumId final:', forumId);
 
@@ -43,7 +41,7 @@ const ForumProgrammeManagement = () => {
     try {
       console.log('🔍 [FRONTEND] fetchForumDetails - Début avec forumId:', forumId);
       setIsLoading(true);
-      const url = `${API}/api/forums/${forumId}/`;
+      const url = `${API}/forums/${forumId}/`;
       console.log('🔍 [FRONTEND] fetchForumDetails - URL:', url);
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -64,12 +62,7 @@ const ForumProgrammeManagement = () => {
   };
 
   if (isLoading) {
-    return (
-      <div style={{ paddingTop: '70px' }}>
-        <Navbar />
-        <div className="forum-programme-loading">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {

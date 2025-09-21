@@ -54,6 +54,7 @@ function App() {
           theme="light"
           limit={5}
           enableMultiContainer={false}
+          style={{ top: '80px' }}
         />
         <Routes>
           <Route path="/signup-candidate" element={<CandidateSignup />} />
@@ -70,6 +71,7 @@ function App() {
           <Route path="/settings-recruiter" element={<RecruiterProfileView />} />
           <Route path="/recruiter/forums" element={<ForumRecruiterView />} />
           <Route path="/organizer/forums" element={<ForumOrganizerView />} />
+          <Route path="/candidate/forums" element={<ForumView />} />
           <Route path="/forums" element={<ForumView />} />
           <Route path="/" element={<Home />} />
           <Route path="/forums/event" element={<ForumDetail />} />
@@ -89,7 +91,7 @@ function App() {
           <Route path="/organizer/profile" element={<OrganizerProfileView />} />
           <Route path="/settings-organizer" element={<OrganizerProfileView />} />
           <Route path="/organizer/forum-info" element={<ForumInfoEdit />} />
-          <Route path="/organizer/forum/:forumId/programmes" element={<ForumProgrammeManagement />} />
+          <Route path="/organizer/programmes" element={<ForumProgrammeManagement />} />
           <Route path="/organizer/speakers" element={<SpeakerManagementPage />} />
           <Route path="/complete-recruiter-setup/:token" element={<CompleteRecruiterSetup />} />
 

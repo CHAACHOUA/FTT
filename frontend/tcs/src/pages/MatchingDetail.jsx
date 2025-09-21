@@ -178,7 +178,7 @@ const MatchingDetail = () => {
                       src={
                         candidate.profile_picture.startsWith('http')
                           ? candidate.profile_picture
-                          : `${process.env.REACT_APP_API_BASE_URL}${candidate.profile_picture}`
+                          : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.profile_picture}`
                       }
                       alt={`${candidate.first_name} ${candidate.last_name}`}
                     />

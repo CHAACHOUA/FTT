@@ -25,7 +25,6 @@ const ForumOffers = ({ companies, forum = null }) => {
     }))
   );
 
-  console.log('All offers:', allOffers);
 
   const [filteredOffers, setFilteredOffers] = useState(allOffers);
   const [favoriteOfferIds, setFavoriteOfferIds] = useState([]);
@@ -41,13 +40,12 @@ const ForumOffers = ({ companies, forum = null }) => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/recruiters/favorites/list/`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiters/favorites/list/`, {
           withCredentials: true
         });
         const ids = response.data.map(offer => offer.id);
         setFavoriteOfferIds(ids);
       } catch (error) {
-        console.error('Erreur lors du chargement des favoris:', error);
       }
     };
 
@@ -57,7 +55,7 @@ const ForumOffers = ({ companies, forum = null }) => {
   const toggleFavorite = async (offerId) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/recruiters/favorites/toggle/${offerId}/`,
+        `${process.env.REACT_APP_API_BASE_URL}/recruiters/favorites/toggle/${offerId}/`,
         {},
         { withCredentials: true }
       );
@@ -68,7 +66,6 @@ const ForumOffers = ({ companies, forum = null }) => {
         setFavoriteOfferIds(prev => prev.filter(id => id !== offerId));
       }
     } catch (error) {
-      console.error('Erreur lors du toggle like:', error);
     }
   };
 
@@ -148,7 +145,7 @@ const ForumOffers = ({ companies, forum = null }) => {
             <div className="company-popup-body">
               <div className="company-popup-logo-section">
                 <img
-                  src={selectedCompany.logo || LogoCompany}
+                  src={selectedCompany.logo ? (selectedCompany.logo.startsWith('http') ? selectedCompany.logo : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${selectedCompany.logo}`) : LogoCompany}
                   alt={selectedCompany.name}
                   className="company-popup-logo"
                 />

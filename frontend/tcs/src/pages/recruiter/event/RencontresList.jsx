@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 import CandidateCard from '../../../components/CandidateCard';
+import Loading from '../../common/Loading';
 import './CandidateListRecruiter.css';
 
 const RencontresList = ({ forumId, apiBaseUrl }) => {
@@ -20,7 +21,7 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
   useEffect(() => {
     const fetchAllCandidates = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
+        const response = await axios.get(`${apiBaseUrl}/forums/${forumId}/candidates/`, {
           withCredentials: true,
         });
 
@@ -41,7 +42,7 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/recruiters/meetings/candidates/?forum=${forumId}`, {
+        const response = await axios.get(`${apiBaseUrl}/recruiters/meetings/candidates/?forum=${forumId}`, {
           withCredentials: true,
         });
 
@@ -117,7 +118,7 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
   // Ajouter un candidat aux rencontres
   const addToMeetings = async (candidate) => {
     try {
-      const url = `${apiBaseUrl}/api/recruiters/meetings/candidates/add/`;
+      const url = `${apiBaseUrl}/recruiters/meetings/candidates/add/`;
       const requestData = {
         candidate_public_token: candidate.public_token,
         forum_id: parseInt(forumId),
@@ -186,7 +187,7 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
       // Retirer immédiatement des rencontres locales (optimistic update)
       setMeetings(prev => prev.filter(c => c.public_token !== candidate.public_token));
       
-      const response = await axios.delete(`${apiBaseUrl}/api/recruiters/meetings/candidates/${candidate.public_token}/remove/?forum=${forumId}`, {
+      await axios.delete(`${apiBaseUrl}/recruiters/meetings/candidates/${candidate.public_token}/remove/?forum=${forumId}`, {
         withCredentials: true,
       });
       
@@ -215,7 +216,7 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
     }
   };
 
-  if (loading) return <div>Chargement des rencontres...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>Erreur : {error}</div>;
 
   return (

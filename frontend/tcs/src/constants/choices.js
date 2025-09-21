@@ -18,7 +18,7 @@ export const fetchChoices = async () => {
   }
 
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/choices/`);
+    const response = await axios.get(`${API_BASE_URL}/choices/`);
     choicesCache = response.data;
     cacheExpiry = Date.now() + CACHE_DURATION;
     return response.data;

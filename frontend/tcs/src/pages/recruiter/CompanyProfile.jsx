@@ -4,6 +4,7 @@ import '../styles/recruiter/CompanyProfile.css';
 import { FaBuilding, FaImage, FaGlobe, FaFileAlt, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Sectors from './Sectors';
+import Loading from '../common/Loading';
 
 const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,9 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const getLogoURL = (logo) => {
     if (!logo) return null;
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${API}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
     return URL.createObjectURL(logo);
   };
@@ -28,7 +31,9 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const getBannerURL = (banner) => {
     if (!banner) return null;
     if (typeof banner === 'string') {
-      return banner.startsWith('http') ? banner : `${API}${banner}`;
+      if (banner.startsWith('http')) return banner;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${banner}`;
     }
     return URL.createObjectURL(banner);
   };
@@ -36,8 +41,8 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
   useEffect(() => {
     const fetchCompanyProfile = async () => {
       try {
-        const res = await axios.get(`${API}/api/companies/profile/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+        const res = await axios.get(`${API}/companies/profile/`, {
+          withCredentials: true
         });
 
         const data = res.data;
@@ -89,20 +94,16 @@ const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const handleLogoChange = (e) => {
     if (readOnly) return;
     const file = e.target.files[0];
-    if (file && file.size <= 2 * 1024 * 1024) {
+    if (file) {
       setFormData((prev) => ({ ...prev, logo: file }));
-    } else {
-      alert('Fichier trop volumineux (max 2Mo)');
     }
   };
 
   const handleBannerChange = (e) => {
     if (readOnly) return;
     const file = e.target.files[0];
-    if (file && file.size <= 5 * 1024 * 1024) { // 5Mo max pour la bannière
+    if (file) {
       setFormData((prev) => ({ ...prev, banner: file }));
-    } else {
-      alert('Fichier trop volumineux (max 5Mo)');
     }
   };
 
@@ -132,7 +133,7 @@ const handleSectorsChange = (newSectors) => {
     }
 
     const res = await axios.put(
-      `${API}/api/companies/profile/update/`,
+      `${API}/companies/profile/update/`,
       formPayload,
       {
         headers: {
@@ -151,7 +152,7 @@ const handleSectorsChange = (newSectors) => {
 };
 
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <Loading />;
 
   return (
     <div className="offers-list-wrapper">

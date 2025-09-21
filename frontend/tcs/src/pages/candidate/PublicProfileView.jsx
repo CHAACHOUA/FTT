@@ -27,8 +27,8 @@ const PublicProfileView = () => {
         const searchParams = new URLSearchParams(window.location.search);
         const forumId = searchParams.get('forum');
         const url = forumId
-          ? `${API}/api/candidates/profile/public/${token}/?forum=${forumId}`
-          : `${API}/api/candidates/profile/public/${token}/`;
+          ? `${API}/candidates/profile/public/${token}/?forum=${forumId}`
+          : `${API}/candidates/profile/public/${token}/`;
 
         const response = await axios.get(url, {
           withCredentials: true

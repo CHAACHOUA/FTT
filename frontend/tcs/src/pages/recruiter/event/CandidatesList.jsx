@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaSearch, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import { FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaCalendarAlt } from 'react-icons/fa';
 import axios from 'axios';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CandidateFilters from '../../organizer/Event/CandidateFilters';
 import CandidateCard from '../../../components/CandidateCard';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
+import Loading from '../../common/Loading';
 import '../../organizer/Event/CandidatesList.css';
 
 const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
@@ -21,14 +22,13 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
     sector: ['Informatique', 'Marketing', 'Finance', 'RH', 'Commercial', 'Communication'],
     experience: ['0', '1', '2', '3', '4', '5+'],
     region: ['Toulouse', 'Paris', 'Lyon', 'Marseille', 'Bordeaux'],
-    education_level: ['Bac', 'Bac+2', 'Bac+3', 'Bac+5', 'Doctorat'],
-    languages: ['Français', 'Anglais', 'Espagnol', 'Allemand', 'Italien'],
+    languages: [], // Sera rempli par l'API depuis les constantes
   };
 
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/forums/${forumId}/candidates/`, {
+        const response = await axios.get(`${apiBaseUrl}/forums/${forumId}/candidates/`, {
           withCredentials: true,
         });
 
@@ -49,6 +49,11 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
   // Appliquer les filtres
   useEffect(() => {
     let filtered = [...candidates];
+    
+    // Debug: Afficher la structure des données pour le premier candidat
+    if (candidates.length > 0) {
+      console.log('Structure des données candidat:', candidates[0]);
+    }
 
     // Filtre par texte (nom, prénom, email)
     if (filters.text) {
@@ -88,25 +93,39 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
       });
     }
 
-    // Filtre par niveau d'études
-    if (filters.education_level) {
-      filtered = filtered.filter(({ search }) => {
-        return search?.education_level === filters.education_level;
-      });
-    }
 
     // Filtre par langues
     if (filters.languages && filters.languages.length > 0) {
-      filtered = filtered.filter(({ search }) => {
-        return search?.languages?.some(lang => filters.languages.includes(lang));
+      filtered = filtered.filter(({ search, candidate }) => {
+        // Vérifier dans search.languages ou candidate.languages
+        const searchLanguages = search?.languages || candidate?.languages || candidate?.candidate_languages || [];
+        return searchLanguages.some(lang => {
+          const language = typeof lang === 'string' ? lang : (lang?.name || lang?.language || String(lang));
+          return filters.languages.includes(language);
+        });
       });
     }
 
-    // Filtre par compétences
-    if (filters.skills) {
+    // Filtre par compétences (recherche texte)
+    if (filters.skills && filters.skills !== '') {
       const skillsTerm = filters.skills.toLowerCase();
-      filtered = filtered.filter(({ search }) => {
-        return search?.skills?.toLowerCase().includes(skillsTerm);
+      filtered = filtered.filter(({ search, candidate }) => {
+        // Vérifier dans search.skills ou candidate.skills
+        const candidateSkills = search?.skills || candidate?.skills || [];
+        
+        if (!candidateSkills) return false;
+        
+        // Si c'est un tableau de compétences
+        if (Array.isArray(candidateSkills)) {
+          return candidateSkills.some(skill => {
+            const skillText = typeof skill === 'string' ? skill : (skill?.name || skill?.skill || String(skill));
+            return skillText.toLowerCase().includes(skillsTerm);
+          });
+        }
+        
+        // Si c'est une chaîne de compétences
+        const skillsText = typeof candidateSkills === 'string' ? candidateSkills : String(candidateSkills);
+        return skillsText.toLowerCase().includes(skillsTerm);
       });
     }
 
@@ -175,83 +194,7 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
 
   if (loading) {
     return (
-      <CompanyApprovalCheck 
-        forumId={forumId} 
-        apiBaseUrl={apiBaseUrl}
-        fallbackMessage="L'accès à la CVthèque n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
-      >
-        <div className="candidates-list">
-          <div className="candidates-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-            <div className="recruiter-header-block">
-              <div className="organizer-header-with-forum">
-                {forum && (
-                  <div className="forum-details">
-                    <h2 className="forum-title">{forum.name}</h2>
-                    <div className="forum-date-range">
-                      <FaCalendarAlt className="calendar-icon" />
-                      <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
-                    </div>
-                  </div>
-                )}
-                {!forum && (
-                  <div className="forum-details">
-                    <h2 className="forum-title">CVthèque</h2>
-                    <div className="forum-date-range">
-                      <FaCalendarAlt className="calendar-icon" />
-                      <span>Consultez les candidats disponibles pour votre forum</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="kpi-section">
-              <div className="kpi-row">
-                <div className="kpi-card kpi-candidates">
-                  <div className="kpi-label-row">
-                    <span className="kpi-label">CANDIDATS</span>
-                    <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
-                  </div>
-                  <span className="kpi-value">...</span>
-                </div>
-                <div className="kpi-card kpi-cv">
-                  <div className="kpi-label-row">
-                    <span className="kpi-label">CV disponibles</span>
-                    <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
-                  </div>
-                  <span className="kpi-value">...</span>
-                </div>
-                <div className="kpi-card kpi-rqth">
-                  <div className="kpi-label-row">
-                    <span className="kpi-label">RQTH</span>
-                    <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
-                  </div>
-                  <span className="kpi-value">...</span>
-                </div>
-                <div className="kpi-card kpi-top-contrat">
-                  <div className="kpi-label-row">
-                    <span className="kpi-label">TOP CONTRAT</span>
-                    <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
-                  </div>
-                  <span className="kpi-value">...</span>
-                </div>
-              </div>
-            </div>
-            <div className="candidates-wrapper">
-              <div className="candidates-flex-row">
-                <aside className="candidates-filters">
-                  <CandidateFilters filters={filters} onChange={handleFiltersChange} options={filterOptions} />
-                </aside>
-                <div className="candidates-main">
-                  <h2>Liste des candidats (chargement...)</h2>
-                  <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-                    Chargement des candidats...
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CompanyApprovalCheck>
+      <Loading />
     );
   }
   

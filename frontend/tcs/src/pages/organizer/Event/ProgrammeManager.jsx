@@ -5,15 +5,16 @@ import {
   faPlus, 
   faEdit, 
   faTrash, 
-  faClock, 
-  faMapMarkerAlt, 
-  faUser,
+  faMapMarkerAlt,
   faSave,
   faTimes,
   faCalendarDays,
-  faCalendarAlt
+  faCalendarAlt,
+  faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../context/AuthContext';
+import Modal from '../../../components/common/Modal';
+import EventCard from '../../../components/common/EventCard';
 import './ProgrammeManager.css';
 import { validateEventDates } from '../../../utils/dateValidation';
 import DateValidationError from '../../../components/common/DateValidationError';
@@ -36,6 +37,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     location: '',
     speakers: []
   });
+  const [isSpeakerDropdownOpen, setIsSpeakerDropdownOpen] = useState(false);
   const [dateErrors, setDateErrors] = useState([]);
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
@@ -45,11 +47,25 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     fetchSpeakers();
   }, [forumId]);
 
+  // Fermer le dropdown des speakers quand on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isSpeakerDropdownOpen && !event.target.closest('.multiselect-container')) {
+        setIsSpeakerDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSpeakerDropdownOpen]);
+
   const fetchProgrammes = async () => {
     try {
       console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Début avec forumId:', forumId);
       setIsLoading(true);
-      const url = `${API}/api/forums/${forumId}/programmes/`;
+      const url = `${API}/forums/${forumId}/programmes/`;
       console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - URL:', url);
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -66,7 +82,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
 
   const fetchSpeakers = async () => {
     try {
-      const response = await axios.get(`${API}/api/forums/speakers/`, {
+      const response = await axios.get(`${API}/forums/speakers/`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       setSpeakers(response.data);
@@ -100,12 +116,27 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     }
   };
 
-  const handleSpeakerChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => parseInt(option.value));
-    setFormData(prev => ({
-      ...prev,
-      speakers: selectedOptions
-    }));
+  const handleSpeakerToggle = (speakerId) => {
+    setFormData(prev => {
+      const currentSpeakers = prev.speakers;
+      const isSelected = currentSpeakers.includes(speakerId);
+      
+      if (isSelected) {
+        return {
+          ...prev,
+          speakers: currentSpeakers.filter(id => id !== speakerId)
+        };
+      } else {
+        return {
+          ...prev,
+          speakers: [...currentSpeakers, speakerId]
+        };
+      }
+    });
+  };
+
+  const getSelectedSpeakers = () => {
+    return speakers.filter(speaker => formData.speakers.includes(speaker.id));
   };
 
   const resetForm = () => {
@@ -122,6 +153,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     });
     setEditingProgramme(null);
     setShowAddForm(false);
+    setIsSpeakerDropdownOpen(false);
   };
 
   const handleSubmit = async (e) => {
@@ -171,14 +203,14 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
       }
 
       if (editingProgramme) {
-        await axios.put(`${API}/api/forums/${forumId}/programmes/${editingProgramme.id}/update/`, formDataToSend, {
+        await axios.put(`${API}/forums/${forumId}/programmes/${editingProgramme.id}/update/`, formDataToSend, {
           headers: { 
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data'
           }
         });
       } else {
-        await axios.post(`${API}/api/forums/${forumId}/programmes/create/`, formDataToSend, {
+        await axios.post(`${API}/forums/${forumId}/programmes/create/`, formDataToSend, {
           headers: { 
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data'
@@ -213,7 +245,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
   const handleDelete = async (programmeId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce programme ?')) {
       try {
-        await axios.delete(`${API}/api/forums/${forumId}/programmes/${programmeId}/delete/`, {
+        await axios.delete(`${API}/forums/${forumId}/programmes/${programmeId}/delete/`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
         fetchProgrammes();
@@ -262,121 +294,145 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
       )}
 
       {/* Formulaire d'ajout/modification */}
-      {showAddForm && (
-        <div className="programme-form-overlay">
-          <div className="programme-form">
-            <div className="form-header">
-              <h3>{editingProgramme ? 'Modifier le programme' : 'Ajouter un programme'}</h3>
-              <button className="close-btn" onClick={resetForm}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
+      <Modal
+        isOpen={showAddForm}
+        onClose={resetForm}
+        title={editingProgramme ? 'Modifier le programme' : 'Ajouter un programme'}
+        size="large"
+      >
+        <form className="modal-form" onSubmit={handleSubmit}>
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faCalendarAlt} />
+              Titre du programme *
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className="modal-form-input"
+              placeholder="Ex: Conférence sur l'innovation"
+              required
+            />
+          </div>
+
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faCalendarDays} />
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="modal-form-textarea"
+              placeholder="Décrivez le contenu du programme..."
+              rows={3}
+            />
+          </div>
+
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faCalendarAlt} />
+              Photo du programme
+            </label>
+            <input
+              type="file"
+              name="photo"
+              onChange={handleInputChange}
+              accept="image/*"
+              className="modal-form-input"
+            />
+            <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>Formats acceptés : JPG, PNG, GIF</small>
+            {editingProgramme && editingProgramme.photo && (
+              <div className="current-photo" style={{ marginTop: '0.5rem' }}>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>Photo actuelle :</p>
+                <img 
+                  src={editingProgramme.photo.startsWith('http') ? editingProgramme.photo : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${editingProgramme.photo}`}
+                  alt="Photo actuelle"
+                  className="current-photo-img"
+                  style={{ maxWidth: '100px', maxHeight: '100px', objectFit: 'cover', borderRadius: '8px' }}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="modal-form-row">
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Date de début *
+              </label>
+              <input
+                type="date"
+                name="start_date"
+                value={formData.start_date}
+                onChange={handleInputChange}
+                className="modal-form-input"
+                required
+              />
             </div>
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Date de fin *
+              </label>
+              <input
+                type="date"
+                name="end_date"
+                value={formData.end_date}
+                onChange={handleInputChange}
+                className="modal-form-input"
+                required
+              />
+            </div>
+          </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Titre *</label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
+          <div className="modal-form-row">
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Heure de début
+              </label>
+              <input
+                type="time"
+                name="start_time"
+                value={formData.start_time}
+                onChange={handleInputChange}
+                className="modal-form-input"
+              />
+            </div>
+            <div className="modal-form-group">
+              <label className="modal-form-label">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                Heure de fin
+              </label>
+              <input
+                type="time"
+                name="end_time"
+                value={formData.end_time}
+                onChange={handleInputChange}
+                className="modal-form-input"
+              />
+            </div>
+          </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows="3"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Photo du programme</label>
-                  <input
-                    type="file"
-                    name="photo"
-                    onChange={handleInputChange}
-                    accept="image/*"
-                  />
-                  <small>Formats acceptés : JPG, PNG, GIF (max 5MB)</small>
-                  {editingProgramme && editingProgramme.photo && (
-                    <div className="current-photo">
-                      <p>Photo actuelle :</p>
-                      <img 
-                        src={editingProgramme.photo.startsWith('http') ? editingProgramme.photo : `${API}${editingProgramme.photo}`}
-                        alt="Photo actuelle"
-                        className="current-photo-img"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Date de début *</label>
-                  <input
-                    type="date"
-                    name="start_date"
-                    value={formData.start_date}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Date de fin *</label>
-                  <input
-                    type="date"
-                    name="end_date"
-                    value={formData.end_date}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Heure de début</label>
-                  <input
-                    type="time"
-                    name="start_time"
-                    value={formData.start_time}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Heure de fin</label>
-                  <input
-                    type="time"
-                    name="end_time"
-                    value={formData.end_time}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Lieu *</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FontAwesomeIcon icon={faMapMarkerAlt} />
+              Lieu *
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              className="modal-form-input"
+              placeholder="Ex: Salle de conférence A, Toulouse"
+              required
+            />
+          </div>
 
               {/* Affichage des erreurs de validation des dates */}
               <DateValidationError 
@@ -384,23 +440,64 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
                 show={dateErrors.length > 0} 
               />
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Speakers</label>
-                  <select
-                    multiple
-                    name="speakers"
-                    value={formData.speakers}
-                    onChange={handleSpeakerChange}
-                    size="4"
+              <div className="modal-form-group">
+                <label className="modal-form-label">
+                  <FontAwesomeIcon icon={faUser} />
+                  Speakers
+                </label>
+                <div className="multiselect-container">
+                  <button
+                    type="button"
+                    className="multiselect-trigger"
+                    onClick={() => setIsSpeakerDropdownOpen(!isSpeakerDropdownOpen)}
                   >
-                    {speakers.map(speaker => (
-                      <option key={speaker.id} value={speaker.id}>
-                        {speaker.full_name} - {speaker.position}
-                      </option>
-                    ))}
-                  </select>
-                  <small>Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs speakers</small>
+                    <span className="multiselect-label">
+                      {formData.speakers.length === 0 
+                        ? 'Sélectionner des speakers' 
+                        : `${formData.speakers.length} speaker${formData.speakers.length > 1 ? 's' : ''} sélectionné${formData.speakers.length > 1 ? 's' : ''}`
+                      }
+                    </span>
+                    <span className={`multiselect-arrow ${isSpeakerDropdownOpen ? 'open' : ''}`}>
+                      ▼
+                    </span>
+                  </button>
+                  
+                  {isSpeakerDropdownOpen && (
+                    <div className="multiselect-dropdown">
+                      <div className="multiselect-header">Speakers</div>
+                      <div className="multiselect-options">
+                        {speakers.map(speaker => (
+                          <label key={speaker.id} className="multiselect-option">
+                            <input
+                              type="checkbox"
+                              checked={formData.speakers.includes(speaker.id)}
+                              onChange={() => handleSpeakerToggle(speaker.id)}
+                            />
+                            <span className="multiselect-option-text">
+                              {speaker.full_name} - {speaker.position}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {formData.speakers.length > 0 && (
+                    <div className="selected-speakers">
+                      {getSelectedSpeakers().map(speaker => (
+                        <span key={speaker.id} className="selected-speaker-tag">
+                          {speaker.full_name}
+                          <button
+                            type="button"
+                            onClick={() => handleSpeakerToggle(speaker.id)}
+                            className="remove-speaker-btn"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -423,10 +520,8 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
                   {editingProgramme ? 'Modifier' : 'Ajouter'}
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+        </form>
+      </Modal>
 
       {/* Liste des programmes */}
       <div className="programme-cards-container">
@@ -439,95 +534,20 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
             </button>
           </div>
         ) : (
-          programmes.map(programme => (
-            <div key={programme.id} className="programme-item-card">
-              {/* Image du programme */}
-              <div className="programme-item-image">
-                {programme.photo ? (
-                  <img 
-                    src={programme.photo.startsWith('http') ? programme.photo : `${API}${programme.photo}`}
-                    alt={programme.title}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <div className="programme-item-placeholder">
-                    <FontAwesomeIcon icon={faCalendarDays} />
-                  </div>
-                )}
-              </div>
-              
-              <div className="programme-item-details">
-                {/* Badge de temps en haut à droite */}
-                <div className="programme-item-time-badge">
-                  {formatTime(programme.start_time)}
-                </div>
-                
-                {/* Actions edit/delete en haut à gauche */}
-                <div className="programme-item-actions">
-                  <button 
-                    className="programme-edit-btn"
-                    onClick={() => handleEdit(programme)}
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button 
-                    className="programme-delete-btn"
-                    onClick={() => handleDelete(programme.id)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-                
-                <div className="programme-item-content">
-                  {/* Titre */}
-                  <h4 className="programme-item-title">{programme.title}</h4>
-                  
-                  {/* Date */}
-                  <div className="programme-item-date">
-                    <FontAwesomeIcon icon={faCalendarAlt} className="programme-item-icon" />
-                    <span>{formatDate(programme.start_date)}</span>
-                  </div>
-                  
-                  {/* Localisation */}
-                  <div className="programme-item-venue">
-                    <FontAwesomeIcon icon={faMapMarkerAlt} className="programme-item-icon" />
-                    <span>{programme.location}</span>
-                  </div>
-                  
-                  {/* Description */}
-                  {programme.description && (
-                    <p className="programme-item-summary">{programme.description}</p>
-                  )}
-                </div>
-                
-                {/* Speaker principal en bas à droite */}
-                {programme.speakers && programme.speakers.length > 0 && (
-                  <div className="programme-item-main-speaker">
-                    <div className="programme-item-speaker-info">
-                      {programme.speakers[0].photo && (
-                        <img 
-                          src={programme.speakers[0].photo.startsWith('http') ? programme.speakers[0].photo : `${API}${programme.speakers[0].photo}`}
-                          alt={programme.speakers[0].full_name}
-                          className="programme-item-speaker-photo"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                      )}
-                      <div className="programme-item-speaker-details">
-                        <span className="programme-item-speaker-name">{programme.speakers[0].full_name}</span>
-                        {programme.speakers[0].position && (
-                          <span className="programme-item-speaker-role">{programme.speakers[0].position}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
+          <div className="event-cards-grid">
+            {programmes.map(programme => (
+              <EventCard
+                key={programme.id}
+                event={programme}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                showActions={true}
+                showSpeaker={true}
+                formatTime={formatTime}
+                formatDate={formatDate}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

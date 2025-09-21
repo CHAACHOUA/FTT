@@ -34,16 +34,20 @@ const ForumDetail = () => {
   const getLogoURL = (logo) => {
     if (!logo) return Logo; // Retourne le logo par défaut
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${API}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
-    return logo;
+    return Logo;
   };
 
   // Fonction pour construire l'URL de la photo du forum
   const getForumPhotoURL = (photo) => {
     if (!photo) return Photo; // Retourne l'image par défaut
     if (typeof photo === 'string') {
-      return photo.startsWith('http') ? photo : `${API}${photo}`;
+      if (photo.startsWith('http')) return photo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+      return `${mediaBaseUrl}${photo}`;
     }
     return Photo;
   };

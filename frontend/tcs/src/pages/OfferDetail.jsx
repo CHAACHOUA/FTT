@@ -9,6 +9,7 @@ import './OfferDetail.css';
 // Imports conditionnels pour les espaces candidat et recruiter
 import CandidateSubMenu from './candidate/Event/SubMenu';
 import RecruiterSubMenu from './recruiter/event/SubMenu';
+import PersonCard from '../components/common/PersonCard';
 import './styles/candidate/Dashboard.css';
 
 const OfferDetail = () => {
@@ -88,6 +89,26 @@ const OfferDetail = () => {
       });
     } else {
       navigate(-1);
+    }
+  };
+
+  // Fonction pour gérer la navigation du sous-menu
+  const handleSubMenuNavigation = (tabId) => {
+    const space = location.state?.space;
+    if (space === 'candidate' && forum) {
+      navigate('/event/candidate/dashboard/', { 
+        state: { 
+          forum, 
+          activeTab: tabId 
+        } 
+      });
+    } else if (space === 'recruiter' && forum) {
+      navigate('/event/recruiter/dashboard/', { 
+        state: { 
+          forum, 
+          activeTab: tabId 
+        } 
+      });
     }
   };
 
@@ -244,25 +265,19 @@ const OfferDetail = () => {
             <FaUserTie className="section-icon" />
             Contact recruteur
           </h3>
-          <div className="recruiter-info">
-            <div className="recruiter-avatar">
-              {offer.recruiter.name ? 
-                offer.recruiter.name.split(' ').map(name => name.charAt(0)).join('').toUpperCase() :
-                'R'
-              }
-            </div>
-            <div className="recruiter-details">
-              <div className="recruiter-name" dangerouslySetInnerHTML={{ __html: sanitizeText(offer.recruiter.name || 'Recruteur') }}>
-              </div>
-              <div className="recruiter-role" dangerouslySetInnerHTML={{ __html: sanitizeText('Recruteur • ' + (offer.company?.name || 'Entreprise')) }}>
-              </div>
-              {offer.recruiter.email && (
-                <div className="recruiter-contact">
-                  <FaEnvelope className="contact-icon" />
-                  <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.recruiter.email) }}></span>
-                </div>
-              )}
-            </div>
+          <div className="recruiter-person-card-container">
+            <PersonCard
+              person={{
+                ...offer.recruiter,
+                company: offer.company,
+                company_name: offer.company?.name
+              }}
+              type="recruiter"
+              showActions={false}
+              showContact={false}
+              showView={false}
+              showSend={false}
+            />
           </div>
         </div>
       )}
@@ -284,9 +299,9 @@ const OfferDetail = () => {
         <div className="candidate-dashboard-layout">
           <div className="candidate-sidebar">
             {space === 'candidate' ? (
-              <CandidateSubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
+              <CandidateSubMenu active={activeTab} setActive={handleSubMenuNavigation} forumType={forum.type} />
             ) : (
-              <RecruiterSubMenu active={activeTab} setActive={setActiveTab} />
+              <RecruiterSubMenu active={activeTab} setActive={handleSubMenuNavigation} />
             )}
           </div>
           <div className="candidate-main-content">

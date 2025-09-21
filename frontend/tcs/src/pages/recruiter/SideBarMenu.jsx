@@ -1,12 +1,9 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import logo from '../../assets/logo-digitalio.png';
+import { useLocation } from 'react-router-dom';
 
 import {
   FaUser,
   FaAddressBook,
-  FaBuilding,
-  FaUsers,
   FaLock,
   FaTimesCircle,
 } from 'react-icons/fa';

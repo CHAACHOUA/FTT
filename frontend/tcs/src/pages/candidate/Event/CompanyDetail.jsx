@@ -11,6 +11,7 @@ import '../../styles/candidate/Dashboard.css';
 import '../../../pages/styles/forum/ForumOffer.css';
 import './CompanyDetail.css';
 import Offer from '../../../components/Offer';
+import PersonCard from '../../../components/common/PersonCard';
 
 const CompanyDetail = () => {
   const { companyId } = useParams();
@@ -44,6 +45,16 @@ const CompanyDetail = () => {
     return time.substring(0, 5);
   };
 
+  // Fonction pour gérer la navigation du sous-menu
+  const handleSubMenuNavigation = (tabId) => {
+    navigate('/event/candidate/dashboard/', { 
+      state: { 
+        forum, 
+        activeTab: tabId 
+      } 
+    });
+  };
+
   if (loading) return <Loading />;
   if (!company || !forum) return <p className="px-6">Entreprise introuvable.</p>;
 
@@ -52,7 +63,7 @@ const CompanyDetail = () => {
       <Navbar />
       <div className="candidate-dashboard-layout">
         <div className="candidate-sidebar">
-          <SubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
+          <SubMenu active={activeTab} setActive={handleSubMenuNavigation} forumType={forum.type} />
         </div>
         <div className="candidate-main-content">
           {/* Header avec bouton retour */}
@@ -133,21 +144,23 @@ const CompanyDetail = () => {
                   Recruteurs ({company.recruiters.length})
                 </h3>
                 
-                <div className="recruiters-container">
+                <div className="recruiters-person-cards-container">
                   {company.recruiters.map((recruiter, index) => (
-                    <div key={index} className="recruiter-card">
-                      <div className="recruiter-photo">
-                        <img
-                          src={recruiter.profile_picture || logo}
-                          alt={`${recruiter.first_name} ${recruiter.last_name}`}
-                        />
-                      </div>
-                      <div className="recruiter-info">
-                        <h4 className="recruiter-name">
-                          {recruiter.first_name} {recruiter.last_name}
-                        </h4>
-                      </div>
-                    </div>
+                    <PersonCard
+                      key={recruiter.id || index}
+                      person={{
+                        ...recruiter,
+                        company: company,
+                        company_name: company.name,
+                        full_name: `${recruiter.first_name} ${recruiter.last_name}`,
+                        photo: recruiter.profile_picture
+                      }}
+                      type="recruiter"
+                      showActions={false}
+                      showContact={false}
+                      showView={false}
+                      showSend={false}
+                    />
                   ))}
                 </div>
               </div>

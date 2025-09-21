@@ -30,7 +30,9 @@ const CompanyCardPopup = ({ isOpen, onClose, company }) => {
   const getLogoURL = (logo) => {
     if (!logo) return logo; // Retourne le logo par défaut
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${API}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
     return logo;
   };

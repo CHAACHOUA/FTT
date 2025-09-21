@@ -23,7 +23,9 @@ const OfferDetailPopup = ({ offer, isOpen, onClose }) => {
   const getLogoURL = (logo) => {
     if (!logo) return LogoCompany;
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${process.env.REACT_APP_API_BASE_URL}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
     return LogoCompany;
   };

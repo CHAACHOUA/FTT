@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../../components/common/Modal';
 import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
-import { FaBriefcase, FaIndustry, FaMapMarkerAlt, FaFileAlt, FaUser } from 'react-icons/fa';
+import { FaBriefcase, FaIndustry, FaMapMarkerAlt, FaFileAlt, FaUser, FaCalendarAlt, FaClock, FaFlag } from 'react-icons/fa';
+import Loading from '../../common/Loading';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -10,6 +11,9 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     location: '',
     description: '',
     profile_recherche: '',
+    status: 'draft',
+    start_date: '',
+    experience_required: '1-3',
   });
   const [sectors, setSectors] = useState([]);
   const [contracts, setContracts] = useState([]);
@@ -44,6 +48,9 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         location: initialData.location || '',
         description: initialData.description || '',
         profile_recherche: initialData.profile_recherche || '',
+        status: initialData.status || 'draft',
+        start_date: initialData.start_date || '',
+        experience_required: initialData.experience_required || '1-3',
       });
     } else {
       setFormData({
@@ -53,6 +60,9 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         location: '',
         description: '',
         profile_recherche: '',
+        status: 'draft',
+        start_date: '',
+        experience_required: '1-3',
       });
     }
   }, [initialData]);
@@ -72,10 +82,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   if (loading) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} title="Chargement...">
-        <div className="modal-loading">
-          <div className="modal-loading-spinner"></div>
-          Chargement des options...
-        </div>
+        <Loading />
       </Modal>
     );
   }
@@ -171,6 +178,60 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             <option value="Strasbourg">Strasbourg</option>
             <option value="Montpellier">Montpellier</option>
             <option value="Rennes">Rennes</option>
+          </select>
+        </div>
+
+        <div className="modal-form-row">
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaFlag />
+              Statut
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="modal-form-select"
+              required
+            >
+              <option value="draft">Brouillon</option>
+              <option value="published">Publiée</option>
+              <option value="expired">Expirée</option>
+            </select>
+          </div>
+
+          <div className="modal-form-group">
+            <label className="modal-form-label">
+              <FaCalendarAlt />
+              Date de début
+            </label>
+            <input
+              type="date"
+              name="start_date"
+              value={formData.start_date}
+              onChange={handleChange}
+              className="modal-form-input"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="modal-form-group">
+          <label className="modal-form-label">
+            <FaClock />
+            Expérience requise
+          </label>
+          <select
+            name="experience_required"
+            value={formData.experience_required}
+            onChange={handleChange}
+            className="modal-form-select"
+            required
+          >
+            <option value="0-1">0-1 an</option>
+            <option value="1-3">1-3 ans</option>
+            <option value="3-5">3-5 ans</option>
+            <option value="5+">5+ ans</option>
           </select>
         </div>
 

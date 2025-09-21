@@ -6,7 +6,6 @@ import './CandidateListRecruiter.css'; // On reprend le même style CSS
 
 const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const candidates = candidatesProp || (location.state?.candidates || []);
   const [selectedCandidate, setSelectedCandidate] = React.useState(null);
@@ -73,7 +72,7 @@ const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
                     src={
                       candidate.profile_picture.startsWith('http')
                         ? candidate.profile_picture
-                        : `${process.env.REACT_APP_API_BASE_URL}${candidate.profile_picture}`
+                        : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.profile_picture}`
                     }
                     alt={`${candidate.first_name} ${candidate.last_name}`}
                   />

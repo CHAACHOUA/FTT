@@ -65,7 +65,7 @@ export default function SubMenu({ forum, forumId, isAuthenticated, API }) {
             } else if (action.key === "candidats") {
               navigate(action.route, { state: { forumId, apiBaseUrl: API } });
             } else if (action.key === "programmes") {
-              navigate(`/organizer/forum/${forumId}/programmes`, { state: { forum, forumId, apiBaseUrl: API } });
+              navigate('/organizer/programmes', { state: { forum, forumId, apiBaseUrl: API } });
             }
           }}
           style={{ cursor: "pointer" }}

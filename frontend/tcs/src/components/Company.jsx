@@ -9,18 +9,27 @@ const Company = ({
   className = ''
 }) => {
 
+  // Fonction pour construire l'URL des fichiers média
+  const getMediaUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+    return `${mediaBaseUrl}${url}`;
+  };
+
   // Traitement des données de l'entreprise avec fallbacks
   const companyData = {
     id: company?.id || null,
     name: company?.name || 'Entreprise non spécifiée',
-    logo: company?.logo || null,
+    logo: company?.logo ? getMediaUrl(company.logo) : null,
     sectors: company?.sectors || (company?.sector ? [company.sector] : []) || (company?.activity_sector ? [company.activity_sector] : []),
     description: company?.description || '',
     recruiters: company?.recruiters || [],
     website: company?.website || null,
     email: company?.email || null,
     phone: company?.phone || null,
-    address: company?.address || null
+    address: company?.address || null,
+    banner: company?.banner ? getMediaUrl(company.banner) : null
   };
 
 

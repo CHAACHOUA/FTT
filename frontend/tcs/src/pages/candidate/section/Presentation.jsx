@@ -12,9 +12,9 @@ const getInitials = (firstName, lastName) => {
 const getProfilePictureURL = (profile_picture) => {
   if (!profile_picture) return null;
   if (typeof profile_picture === 'string') {
-    return profile_picture.startsWith('http')
-      ? profile_picture
-      : `${API_URL}${profile_picture}`;
+    if (profile_picture.startsWith('http')) return profile_picture;
+    const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+    return `${mediaBaseUrl}${profile_picture}`;
   }
   return URL.createObjectURL(profile_picture);
 };

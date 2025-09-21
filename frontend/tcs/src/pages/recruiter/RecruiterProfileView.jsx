@@ -16,7 +16,7 @@ import Navbar from '../common/NavBar';
 const RecruiterProfileView = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -27,7 +27,7 @@ const RecruiterProfileView = () => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API}/api/recruiters/profile/me/`, {
+        const response = await axios.get(`${API}/recruiters/profile/me/`, {
           withCredentials: true,
         });
         if (isMounted) {
@@ -58,12 +58,6 @@ const RecruiterProfileView = () => {
     setFormData((prev) => ({ ...prev, ...updatedData }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, profile_picture: file }));
-    }
-  };
 
   const handleSubmit = async () => {
     try {
@@ -79,7 +73,7 @@ const RecruiterProfileView = () => {
         }
       }
 
-      const res = await axios.put(`${API}/api/recruiters/profile/`, formDataToSend, {
+      const res = await axios.put(`${API}/recruiters/profile/`, formDataToSend, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -88,8 +82,14 @@ const RecruiterProfileView = () => {
 
       toast.success(res.data?.message || 'Profil mis à jour avec succès.');
 
+      // Mettre à jour le nom dans la navbar si le nom a changé
+      if (formData.first_name && formData.last_name) {
+        const fullName = `${formData.first_name} ${formData.last_name}`;
+        updateName(fullName);
+      }
+
       setLoading(true);
-      const response = await axios.get(`${API}/api/recruiters/profile/me/`, {
+      const response = await axios.get(`${API}/recruiters/profile/me/`, {
         withCredentials: true,
       });
       setFormData(response.data);

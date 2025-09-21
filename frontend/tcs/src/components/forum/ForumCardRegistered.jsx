@@ -4,9 +4,30 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import '../../pages/styles/forum/ForumList.css';
-import photo_forum from '../../assets/forum-base.webp';
+import defaultImage from '../../assets/forum-base.webp';
 
 const ForumCardRegistered = ({ forum, role }) => {
+  // Fonction pour construire l'URL de la photo du forum
+  const getForumPhotoURL = (photo) => {
+    console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - photo:', photo);
+    if (!photo) {
+      console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - pas de photo, retour image par défaut');
+      return defaultImage; // Retourne l'image par défaut
+    }
+    if (typeof photo === 'string') {
+      if (photo.startsWith('http')) {
+        console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - URL complète:', photo);
+        return photo;
+      }
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+      const fullUrl = `${mediaBaseUrl}${photo}`;
+      console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - URL construite:', fullUrl);
+      return fullUrl;
+    }
+    console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - type non string, retour image par défaut');
+    return defaultImage;
+  };
+
   const isOngoing = () => {
     const now = new Date();
     const forumDate = new Date(forum.start_date);
@@ -48,9 +69,13 @@ const dashboardPath =
   return (
     <div className={`forum-card-registered ${!ongoing ? 'forum-ended' : ''}`}>
       <img
-        src={photo_forum}
+        src={getForumPhotoURL(forum.photo)}
         alt={`Bannière de ${forum.name}`}
         className="forum-card-image"
+        onError={(e) => {
+          console.log('🔍 [FRONTEND] ForumCardRegistered - Erreur chargement image, utilisation image par défaut');
+          e.target.src = defaultImage;
+        }}
       />
 
       <div className="forum-card-content">

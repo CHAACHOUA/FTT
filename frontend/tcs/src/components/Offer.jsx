@@ -10,6 +10,8 @@ import {
   FaEdit,
   FaTrash,
   FaUsers,
+  FaFlag,
+  FaClock,
 } from 'react-icons/fa';
 import { MdBusiness, MdLocationOn } from 'react-icons/md';
 import LogoCompany from '../assets/Logo-FTT.png';
@@ -32,10 +34,12 @@ const Offer = ({
 }) => {
   const navigate = useNavigate();
   // Gestion des URLs d'images
-  const getFullUrl = (url, apiBaseUrl) => {
+  const getFullUrl = (url) => {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    return apiBaseUrl ? apiBaseUrl.replace(/\/$/, '') + url : url;
+    // Utiliser REACT_APP_API_BASE_URL_MEDIA pour les fichiers média
+    const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+    return mediaBaseUrl + url;
   };
 
   // Données de l'offre avec fallbacks
@@ -46,6 +50,11 @@ const Offer = ({
     location: offer.location || 'Non précisé',
     sector: offer.sector || offer.sectors?.[0] || '',
     contract_type: offer.contract_type || '',
+    status: offer.status,
+    status_display: offer.status_display,
+    start_date: offer.start_date || '',
+    experience_required: offer.experience_required || '1-3',
+    experience_display: offer.experience_display || '1-3 ans',
     created_at: offer.created_at || new Date().toISOString(),
     // Données de l'entreprise
     company: {
@@ -75,10 +84,23 @@ const Offer = ({
     return name.charAt(0).toUpperCase();
   };
 
+  // Fonction pour obtenir la couleur du statut
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'published':
+        return '#28a745'; // Vert
+      case 'draft':
+        return '#ffc107'; // Jaune
+      case 'expired':
+        return '#dc3545'; // Rouge
+      default:
+        return '#6c757d'; // Gris
+    }
+  };
+
   // URLs des images
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const logoSrc = offerData.company.logo
-    ? getFullUrl(offerData.company.logo, apiBaseUrl)
+    ? getFullUrl(offerData.company.logo)
     : LogoCompany;
 
   const handleCardClick = () => {
@@ -265,15 +287,37 @@ const Offer = ({
               </span>
             </div>
           )}
-          {offerData.created_at && (
+          {offerData.experience_display && (
+            <div className="forum-offer-meta-item">
+              <FaClock className="forum-offer-meta-icon" />
+              <span className="forum-meta-text">
+                <strong>Expérience :</strong> {offerData.experience_display}
+              </span>
+            </div>
+          )}
+          {offerData.start_date && (
             <div className="forum-offer-meta-item">
               <FaCalendar className="forum-offer-meta-icon" />
               <span className="forum-meta-text">
-                Postée le {new Date(offerData.created_at).toLocaleDateString('fr-FR', {
+                <strong>Début :</strong> {new Date(offerData.start_date).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric'
                 })}
+              </span>
+            </div>
+          )}
+          {offerData.status && offerData.status_display && (space === 'organizer' || space === 'recruiter') && (
+            <div className="forum-offer-meta-item">
+              <FaFlag 
+                className="forum-offer-meta-icon" 
+                style={{ color: getStatusColor(offerData.status) }}
+              />
+              <span 
+                className="forum-meta-text"
+                style={{ color: getStatusColor(offerData.status), fontWeight: 'bold' }}
+              >
+                {offerData.status_display}
               </span>
             </div>
           )}

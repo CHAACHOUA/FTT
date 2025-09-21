@@ -17,7 +17,7 @@ const RequestPasswordReset = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/api/users/auth/request-password-reset/`, { email });
+      const response = await axios.post(`${API}/users/auth/request-password-reset/`, { email });
       toast.success(response.data.success || "Lien envoyé. Vérifiez votre boîte mail.");
       setEmail('');
     } catch (err) {

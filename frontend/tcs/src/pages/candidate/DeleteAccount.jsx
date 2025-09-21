@@ -25,7 +25,7 @@ const DeleteAccount = () => {
 
     setLoading(true);
     try {
-      const response = await axios.delete(`${API}/api/users/auth/delete-account/`, {
+      const response = await axios.delete(`${API}/users/auth/delete-account/`, {
         withCredentials: true,
         data: { reason: reasonToSend },
       });

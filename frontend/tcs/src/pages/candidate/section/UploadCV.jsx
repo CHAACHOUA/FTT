@@ -15,7 +15,7 @@ const UploadCV = ({ onUpload, formData }) => {
 
   const existingCVUrl = formData?.cv_file?.startsWith('http')
     ? formData.cv_file
-    : `${API}${formData?.cv_file}`;
+    : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${formData?.cv_file}`;
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -66,7 +66,7 @@ const UploadCV = ({ onUpload, formData }) => {
 
     try {
       const response = await axios.post(
-        `${API}/api/candidates/upload-cv/`,
+        `${API}/candidates/upload-cv/`,
         formDataUpload,
         {
           headers: {
@@ -94,7 +94,7 @@ const UploadCV = ({ onUpload, formData }) => {
   const checkTaskStatus = async (taskId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`${API}/api/candidates/task_status/${taskId}/`, {
+        const res = await axios.get(`${API}/candidates/task_status/${taskId}/`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 

@@ -25,7 +25,7 @@ const ProfileView = () => {
 
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -33,7 +33,7 @@ const ProfileView = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API}/api/candidates/profile/me/`, {
+      const response = await axios.get(`${API}/candidates/profile/me/`, {
         withCredentials: true,
       });
       setFormData(response.data);
@@ -140,7 +140,7 @@ const ProfileView = () => {
         form.append('skills', JSON.stringify(skillsFormatted));
       }
 
-      const res = await axios.post(`${API}/api/candidates/profile/`, form, {
+      const res = await axios.post(`${API}/candidates/profile/`, form, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -152,6 +152,12 @@ const ProfileView = () => {
           ? res.data
           : res.data.detail || res.data.message || "Profil mis à jour avec succès !"
       );
+
+      // Mettre à jour le nom dans la navbar si le nom a changé
+      if (formData.first_name && formData.last_name) {
+        const fullName = `${formData.first_name} ${formData.last_name}`;
+        updateName(fullName);
+      }
 
       setLoading(true);
       await fetchData();

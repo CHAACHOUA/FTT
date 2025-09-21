@@ -10,7 +10,7 @@ import {
 import '../../candidate/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
-  const showPhysicalFeatures = forumType === 'hybride' || forumType === 'physique';
+  const showPhysicalFeatures = forumType === 'hybride' || forumType === 'presentiel';
 
   const menuItems = [
     { id: 'info', label: 'Informations générales', icon: <FaInfoCircle /> },
@@ -19,7 +19,7 @@ const SubMenu = ({ active, setActive, forumType }) => {
     ...(showPhysicalFeatures ? [
       { id: 'plan', label: 'Plan du Forum', icon: <FaMap /> },
       { id: 'partager', label: 'Partager mon profil', icon: <FaShareAlt /> },
-      { id: 'cv', label: 'Imprimer mon CV', icon: <FaPrint /> },
+    
     ] : [])
   ];
 

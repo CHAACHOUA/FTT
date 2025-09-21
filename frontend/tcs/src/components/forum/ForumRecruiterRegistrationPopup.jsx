@@ -38,7 +38,7 @@ const ForumRecruiterRegistrationPopup = ({ isOpen, onClose, onSubmit, forumId })
     setLoading(true);
     try {
       const response = await axios.post(
-        `${API}/api/forums/${forumId}/register-recruiter/`,
+        `${API}/forums/${forumId}/register-recruiter/`,
         form,
         {
           headers: {

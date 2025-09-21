@@ -13,7 +13,6 @@ const safeToast = {
         ...options
       });
     } catch (error) {
-      console.warn('Erreur lors de l\'affichage du toast success:', error);
     }
   },
 
@@ -28,7 +27,6 @@ const safeToast = {
         ...options
       });
     } catch (error) {
-      console.warn('Erreur lors de l\'affichage du toast error:', error);
     }
   },
 
@@ -43,7 +41,6 @@ const safeToast = {
         ...options
       });
     } catch (error) {
-      console.warn('Erreur lors de l\'affichage du toast info:', error);
     }
   },
 
@@ -58,7 +55,6 @@ const safeToast = {
         ...options
       });
     } catch (error) {
-      console.warn('Erreur lors de l\'affichage du toast warning:', error);
     }
   },
 
@@ -71,7 +67,6 @@ const safeToast = {
         reactToastify.dismiss();
       }
     } catch (error) {
-      console.warn('Erreur lors de la fermeture du toast:', error);
     }
   },
 
@@ -80,7 +75,6 @@ const safeToast = {
     try {
       return reactToastify.update(toastId, options);
     } catch (error) {
-      console.warn('Erreur lors de la mise à jour du toast:', error);
     }
   }
 };

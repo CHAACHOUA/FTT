@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaCalendarAlt, FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
 import Navbar from '../../common/NavBar';
 import Offer from '../../../components/Offer';
+import Loading from '../../common/Loading';
 import './OffersList.css';
 import '../../../pages/styles/organizer/organizer-buttons.css';
 import '../../../components/forum/SearchBar.css';
 import { useAuth } from '../../../context/AuthContext';
 import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
+import axios from 'axios';
 
 const OffersList = () => {
   const location = useLocation();
@@ -15,31 +17,12 @@ const OffersList = () => {
   const { isAuthenticated, isAuthLoading } = useAuth();
   const forum = location.state?.forum;
   const forumId = location.state?.forumId;
-  const API = location.state?.apiBaseUrl || process.env.REACT_APP_API_BASE_URL;
+  const API = process.env.REACT_APP_API_BASE_URL;
 
-  // Extraire les offres des entreprises du forum
-  const allOffers = forum?.companies?.flatMap(company =>
-    company.offers?.map(offer => ({
-      ...offer,
-      company: {
-        id: company.id,
-        name: company.name,
-        website: company.website,
-        logo: company.logo
-      },
-      recruiter: {
-        id: offer.recruiter?.id || offer.recruiter_id || null,
-        first_name: offer.recruiter?.recruiter_name || offer.recruiter_name?.split(' ')[0] || 'N/A',
-        email: offer.recruiter?.email || offer.recruiter_email || 'N/A',
-        phone: offer.recruiter?.phone || offer.recruiter_phone || 'N/A'
-      }
-    })) || []
-  ) || [];
-
-  const [offers, setOffers] = useState(allOffers);
-  const [loading, setLoading] = useState(false);
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filteredOffers, setFilteredOffers] = useState(allOffers);
+  const [filteredOffers, setFilteredOffers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompanies, setSelectedCompanies] = useState([]);
   const [selectedSectors, setSelectedSectors] = useState([]);
@@ -53,6 +36,35 @@ const OffersList = () => {
   const [sectorCounts, setSectorCounts] = useState({});
   const [contractCounts, setContractCounts] = useState({});
   const [companyCounts, setCompanyCounts] = useState({});
+
+  // Fonction pour récupérer les offres du forum
+  const fetchForumOffers = async () => {
+    if (!forumId) {
+      setError('ID du forum manquant');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get(`${API}/forums/${forumId}/organizer/offers/`, {
+        withCredentials: true
+      });
+      
+      const offersData = response.data || [];
+      console.log('Offres récupérées pour le forum', forumId, ':', offersData);
+      setOffers(offersData);
+      setFilteredOffers(offersData);
+      
+    } catch (error) {
+      console.error('Erreur lors du chargement des offres:', error);
+      setError('Erreur lors du chargement des offres');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Charger les secteurs et contrats depuis les constantes
   useEffect(() => {
@@ -88,6 +100,13 @@ const OffersList = () => {
 
     loadChoices();
   }, []);
+
+  // Charger les offres du forum
+  useEffect(() => {
+    if (isAuthenticated && !isAuthLoading && forumId) {
+      fetchForumOffers();
+    }
+  }, [isAuthenticated, isAuthLoading, forumId]);
 
   // Calculer les compteurs des secteurs, contrats et entreprises
   useEffect(() => {
@@ -125,31 +144,6 @@ const OffersList = () => {
     setCompanyCounts(companyCounts);
   }, [offers, sectors, contracts]);
 
-  // Initialiser les offres avec les données du forum
-  useEffect(() => {
-    if (forum?.companies) {
-      const extractedOffers = forum.companies.flatMap(company =>
-        company.offers?.map(offer => ({
-          ...offer,
-          company: {
-            id: company.id,
-            name: company.name,
-            website: company.website,
-            logo: company.logo
-          },
-          recruiter: {
-            id: offer.recruiter?.id || offer.recruiter_id || null,
-            first_name: offer.recruiter?.first_name || offer.recruiter_name?.split(' ')[0] || 'N/A',
-            last_name: offer.recruiter?.last_name || offer.recruiter_name?.split(' ').slice(1).join(' ') || 'N/A',
-            email: offer.recruiter?.email || offer.recruiter_email || 'N/A',
-            phone: offer.recruiter?.phone || offer.recruiter_phone || 'N/A'
-          }
-        })) || []
-      );
-      setOffers(extractedOffers);
-      setFilteredOffers(extractedOffers);
-    }
-  }, [forum]);
 
   // Filtrage des offres
   useEffect(() => {
@@ -180,7 +174,9 @@ const OffersList = () => {
   }, [offers, searchTerm, selectedCompanies, selectedSectors, selectedContracts]);
 
   // Récupérer les options uniques pour les filtres
-  const companies = [...new Set(offers.map(offer => offer.company.name))];
+  const companies = useMemo(() => {
+    return [...new Set(offers.map(offer => offer.company.name))];
+  }, [offers]);
 
   const toggleValue = (list, value, setter) => {
     setter(
@@ -218,9 +214,7 @@ const OffersList = () => {
     return (
       <div className="offers-list-container">
         <Navbar />
-        <div className="loading-container">
-          <div className="loading-spinner">Chargement...</div>
-        </div>
+       
       </div>
     );
   }
@@ -248,29 +242,24 @@ const OffersList = () => {
   }
 
   if (loading) {
-    return (
-      <div className="offers-list-container">
-        <Navbar />
-        <div className="loading-container">
-          <div className="loading-spinner">Chargement des offres...</div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
     return (
       <div className="offers-list-container">
         <Navbar />
-        <div className="error-container">
-          <div className="error-message">{error}</div>
-          <button onClick={() => window.location.reload()} className="retry-button">
+        <div className="error-container" style={{ padding: '20px', textAlign: 'center' }}>
+          <h3>Erreur</h3>
+          <p>{error}</p>
+          <button onClick={fetchForumOffers} className="btn btn-primary">
             Réessayer
           </button>
         </div>
       </div>
     );
   }
+
 
   return (
     <div className="organizer-offers-container" style={{ paddingTop: '80px' }}>

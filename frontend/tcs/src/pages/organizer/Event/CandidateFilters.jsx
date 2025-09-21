@@ -134,22 +134,6 @@ export default function CandidateFilters({ filters, onChange, options }) {
          />
        )
      },
-    {
-      name: 'NIVEAU D\'ÉTUDES',
-      key: 'education',
-      content: (
-        <select
-          value={filters.education_level || ''}
-          onChange={e => onChange({ ...filters, education_level: e.target.value })}
-          className="filter-select"
-        >
-          <option value="">Tous</option>
-          {options.education_level?.map(opt => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      )
-    },
      {
        name: 'LANGUES',
        key: 'languages',

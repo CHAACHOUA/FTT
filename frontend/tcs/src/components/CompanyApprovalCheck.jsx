@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaExclamationTriangle, FaLock } from 'react-icons/fa';
+import Loading from '../pages/common/Loading';
 import './CompanyApprovalCheck.css';
 
 const CompanyApprovalCheck = ({ children, forumId, apiBaseUrl, fallbackMessage = "Cette fonctionnalité n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum." }) => {
@@ -15,7 +16,7 @@ const CompanyApprovalCheck = ({ children, forumId, apiBaseUrl, fallbackMessage =
         setError(null);
         
         // Récupérer les informations de l'entreprise du recruteur
-        const response = await axios.get(`${apiBaseUrl}/api/recruiters/company-profile/`, {
+        const response = await axios.get(`${apiBaseUrl}/recruiters/company-profile/`, {
           withCredentials: true,
           params: {
             forum_id: forumId
@@ -46,12 +47,7 @@ const CompanyApprovalCheck = ({ children, forumId, apiBaseUrl, fallbackMessage =
 
   // Pendant le chargement
   if (loading) {
-    return (
-      <div className="approval-check-loading">
-        <div className="loading-spinner"></div>
-        <p>Vérification du statut d'approbation...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   // En cas d'erreur

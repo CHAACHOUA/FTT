@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import { FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaFileExport, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import CandidateProfile from '../../candidate/CandidateProfile';
 import CandidateCard from '../../../components/CandidateCard';
 import Navbar from '../../common/NavBar';
+import Loading from '../../common/Loading';
 import './CandidatesList.css';
 import '../../../pages/styles/organizer/organizer-buttons.css';
 import CandidateFilters from './CandidateFilters';
 import { useAuth } from '../../../context/AuthContext';
+import axios from 'axios';
 
 const CandidatesList = (props) => {
   const location = useLocation();
@@ -23,13 +25,12 @@ const CandidatesList = (props) => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filters, setFilters] = useState({});
   const [forumData, setForumData] = useState(forum);
-  const [options, setOptions] = useState({
+  const [options] = useState({
     contract_type: [], // Sera rempli par l'API
     sector: [], // Sera rempli par l'API
     experience: ['0', '1', '2', '3', '4', '5+'],
     region: ['Toulouse', 'Paris', 'Lyon'],
-    education_level: ['Bac', 'Bac+2', 'Bac+3', 'Bac+5', 'Doctorat'],
-    languages: ['Français', 'Anglais', 'Espagnol'],
+    languages: [], // Sera rempli par l'API depuis les constantes
   });
 
   // Récupérer les données du forum si elles ne sont pas disponibles
@@ -37,17 +38,11 @@ const CandidatesList = (props) => {
     const fetchForumData = async () => {
       if (!forum && forumId && apiBaseUrl && isAuthenticated && !isAuthLoading) {
         try {
-          const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/`, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
+          const response = await axios.get(`${apiBaseUrl}/forums/${forumId}/`, {
+            withCredentials: true
           });
 
-          if (response.ok) {
-            const forumInfo = await response.json();
-            setForumData(forumInfo);
-          }
+          setForumData(response.data);
         } catch (err) {
           console.error('Erreur lors de la récupération du forum:', err);
         }
@@ -73,19 +68,11 @@ const CandidatesList = (props) => {
       }
       
       try {
-        const response = await fetch(`${apiBaseUrl}/api/forums/${forumId}/organizer/candidates/`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Utiliser les cookies HttpOnly
+        const response = await axios.get(`${apiBaseUrl}/forums/${forumId}/organizer/candidates/`, {
+          withCredentials: true
         });
 
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des candidats');
-        }
-
-        const data = await response.json();
-        setCandidates(data);
+        setCandidates(response.data);
       } catch (err) {
         setError(err.message || 'Une erreur est survenue');
       } finally {
@@ -170,9 +157,7 @@ const CandidatesList = (props) => {
             <p>Gérez les candidats participant à votre forum</p>
           </div>
         </div>
-        <div className="loading-container">
-          <div className="loading-spinner">Chargement...</div>
-        </div>
+        <Loading />
       </div>
     );
   }
@@ -259,65 +244,7 @@ const CandidatesList = (props) => {
   }
 
   if (loading) {
-    return (
-      <div className="candidates-list">
-        <Navbar />
-        <div className="organizer-header-block">
-          <button onClick={handleBack} className="organizer-btn-back">
-            <FaArrowLeft /> Retour
-          </button>
-          <div className="header-content">
-            <h1>Liste des Candidats</h1>
-            <p>Gérez les candidats participant à votre forum</p>
-          </div>
-        </div>
-        <div className="kpi-section">
-          <div className="kpi-row">
-            <div className="kpi-card kpi-candidates">
-              <div className="kpi-label-row">
-                <span className="kpi-label">CANDIDATS</span>
-                <span className="kpi-icon kpi-pink"><FaUserFriends /></span>
-              </div>
-              <span className="kpi-value">...</span>
-            </div>
-            <div className="kpi-card kpi-cv">
-              <div className="kpi-label-row">
-                <span className="kpi-label">CV disponibles</span>
-                <span className="kpi-icon kpi-pink"><FaFileAlt /></span>
-              </div>
-              <span className="kpi-value">...</span>
-            </div>
-            <div className="kpi-card kpi-rqth">
-              <div className="kpi-label-row">
-                <span className="kpi-label">RQTH</span>
-                <span className="kpi-icon kpi-green"><FaUniversalAccess /></span>
-              </div>
-              <span className="kpi-value">...</span>
-            </div>
-                <div className="kpi-card kpi-top-contrat">
-                  <div className="kpi-label-row">
-                    <span className="kpi-label">TOP CONTRAT</span>
-                    <span className="kpi-icon kpi-blue"><FaBriefcase /></span>
-                  </div>
-                  <span className="kpi-value">...</span>
-                </div>
-          </div>
-        </div>
-        <div className="candidates-wrapper">
-          <div className="candidates-flex-row">
-            <aside className="candidates-filters">
-              <CandidateFilters filters={filters} onChange={setFilters} options={options} />
-            </aside>
-            <div className="candidates-main">
-              <h2>Liste des candidats (chargement...)</h2>
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-                Chargement des candidats...
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
   
   if (error) {
@@ -422,17 +349,21 @@ const CandidatesList = (props) => {
     if (filters.region && filters.region.length > 0) {
       if (!filters.region.includes(s.region)) return false;
     }
-    // Niveau d'études
-    if (filters.education_level && filters.education_level !== '') {
-      if (c.education_level !== filters.education_level) return false;
-    }
     // Langues
     if (filters.languages && filters.languages.length > 0) {
-      if (!c.candidate_languages?.some(lg => filters.languages.includes(lg))) return false;
+      // Vérifier différentes structures possibles pour les langues
+      const candidateLanguages = c.candidate_languages || c.languages || c.candidate?.languages || [];
+      if (!candidateLanguages.some(lg => {
+        const language = typeof lg === 'string' ? lg : (lg?.name || lg?.language || String(lg));
+        return filters.languages.includes(language);
+      })) return false;
     }
     // Compétences (recherche texte)
     if (filters.skills && filters.skills !== '') {
-      if (!c.skills?.some(skill => skill.toLowerCase().includes(filters.skills.toLowerCase()))) return false;
+      if (!c.skills?.some(skill => {
+        const skillText = typeof skill === 'string' ? skill : (skill?.name || skill?.skill || String(skill));
+        return skillText.toLowerCase().includes(filters.skills.toLowerCase());
+      })) return false;
     }
     // RQTH
     if (filters.rqth) {
@@ -465,11 +396,7 @@ const CandidatesList = (props) => {
             )}
             {!forumData && (
               <div className="forum-details">
-                <h2 className="forum-title">Chargement du forum...</h2>
-                <div className="forum-date-range">
-                  <FaCalendarAlt className="calendar-icon" />
-                  <span>Récupération des informations...</span>
-                </div>
+                <Loading />
               </div>
             )}
           </div>

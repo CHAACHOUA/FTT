@@ -39,16 +39,9 @@ const ForumInfoEdit = () => {
     navigate('/event/organizer/dashboard', { 
       state: { 
         apiBaseUrl: API,
-        forumId: forumId || forumData?.id, // Ajouter le forumId
-        // S'assurer que toutes les données sont passées
-        forumData: forumData ? {
-          id: forumData.id,
-          name: forumData.name,
-          description: forumData.description,
-          start_date: forumData.start_date,
-          end_date: forumData.end_date,
-          type: forumData.type
-        } : null
+        forumId: forumId || forumData?.id,
+        // Flag pour indiquer que le forum a été mis à jour
+        forumUpdated: true
       }
     });
   };
@@ -119,7 +112,7 @@ const ForumInfoEdit = () => {
       // Sinon, récupérer les données du forum via API
       if (forumId) {
         try {
-          const response = await axios.get(`${apiUrl}/api/forums/${forumId}/`, {
+          const response = await axios.get(`${apiUrl}/forums/${forumId}/`, {
             withCredentials: true // Utiliser les cookies HttpOnly
           });
           const fetchedForum = response.data;
@@ -157,7 +150,9 @@ const ForumInfoEdit = () => {
       return null;
     }
     if (typeof photo === 'string') {
-      const url = photo.startsWith('http') ? photo : `${API}${photo}`;
+      if (photo.startsWith('http')) return photo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      const url = `${mediaBaseUrl}${photo}`;
       console.log('URL générée:', url);
       return url;
     }
@@ -184,10 +179,8 @@ const ForumInfoEdit = () => {
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.size <= 5 * 1024 * 1024) { // 5MB max
+    if (file) {
       setFormData(prev => ({ ...prev, photo: file }));
-    } else {
-      toast.error('Fichier trop volumineux (max 5Mo)');
     }
   };
 
@@ -240,7 +233,7 @@ const ForumInfoEdit = () => {
       }
 
       const response = await axios.put(
-        `${API}/api/forums/${forum.id}/update/`,
+        `${API}/forums/${forum.id}/update/`,
         formPayload,
         {
           headers: {
@@ -256,17 +249,10 @@ const ForumInfoEdit = () => {
       setTimeout(() => {
         navigate('/event/organizer/dashboard/', { 
           state: { 
-            forum: { ...forumData, ...response.data },
+            forumId: forumData.id,
             apiBaseUrl: API,
-            // S'assurer que toutes les données du forum sont passées
-            forumData: {
-              id: forumData.id,
-              name: response.data.name || forumData.name,
-              description: response.data.description || forumData.description,
-              start_date: response.data.start_date || forumData.start_date,
-              end_date: response.data.end_date || forumData.end_date,
-              type: response.data.type || forumData.type
-            }
+            // Flag pour indiquer que le forum a été mis à jour
+            forumUpdated: true
           } 
         });
       }, 2000);

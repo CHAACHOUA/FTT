@@ -6,7 +6,7 @@ import axios from 'axios';
  */
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/auth/me/`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/auth/me/`, {
       withCredentials: true
     });
     

@@ -168,6 +168,13 @@
   line-height: 1;
 }
 
+/* Réduire la taille du texte pour la carte TOP CONTRAT */
+.kpi-top-contrat .kpi-value {
+  font-size: 1.4rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .kpi-icon {
   position: absolute;
   top: 16px;
@@ -439,6 +446,10 @@
     font-size: 2rem;
   }
   
+  .kpi-top-contrat .kpi-value {
+    font-size: 1.2rem;
+  }
+  
   .kpi-label {
     font-size: 0.9rem;
   }
@@ -471,6 +482,10 @@
   
   .kpi-value {
     font-size: 1.8rem;
+  }
+  
+  .kpi-top-contrat .kpi-value {
+    font-size: 1.1rem;
   }
   
   .kpi-label {
@@ -534,6 +549,10 @@
   
   .kpi-value {
     font-size: 1.6rem;
+  }
+  
+  .kpi-top-contrat .kpi-value {
+    font-size: 1rem;
   }
   
   .kpi-label {

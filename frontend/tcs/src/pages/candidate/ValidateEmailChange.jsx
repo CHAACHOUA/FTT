@@ -18,7 +18,7 @@ const ValidateEmailChange = () => {
 
       try {
         const response = await axios.get(
-          `${API}/api/users/auth/validate-email-change/${token}/`
+          `${API}/users/auth/validate-email-change/${token}/`
         );
 
         const msg = response.data.message || 'Votre adresse email a bien été mise à jour.';

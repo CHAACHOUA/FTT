@@ -5,6 +5,7 @@ import '../../styles/recruiter/OffersList.css';
 import OfferModal from './OfferModal';
 import CompanyApprovalCheck from '../../../components/CompanyApprovalCheck';
 import Offer from '../../../components/Offer';
+import Loading from '../../common/Loading';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
@@ -24,11 +25,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
 
   const forum_id = forum.id;
 
-  const getFullUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    return apiBaseUrl.replace(/\/$/, '') + url;
-  };
 
   // Obtenir les options uniques pour les filtres
   const getUniqueSectors = () => {
@@ -74,8 +70,8 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     const fetchOffers = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${apiBaseUrl}/api/recruiters/company-offers/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
+        const response = await axios.get(`${apiBaseUrl}/recruiters/company-offers/`, {
+          withCredentials: true,
           params: { forum_id },
         });
         setOffers(response.data);
@@ -143,8 +139,8 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const onDeleteOffer = async (id) => {
     if (!window.confirm('Voulez-vous vraiment supprimer cette offre ?')) return;
     try {
-      await axios.delete(`${apiBaseUrl}/api/recruiters/offers/${id}/delete/`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+      await axios.delete(`${apiBaseUrl}/recruiters/offers/${id}/delete/`, {
+        withCredentials: true
       });
       setOffers((prev) => prev.filter((offer) => offer.id !== id));
     } catch {
@@ -162,16 +158,16 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     try {
       if (editingOffer) {
         const response = await axios.put(
-          `${apiBaseUrl}/api/recruiters/offers/${editingOffer.id}/update/`,
+          `${apiBaseUrl}/recruiters/offers/${editingOffer.id}/update/`,
           { ...formData, forum_id },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
+          { withCredentials: true }
         );
         setOffers((prev) =>
           prev.map((offer) => (offer.id === editingOffer.id ? response.data : offer))
         );
       } else {
         const response = await axios.post(
-          `${apiBaseUrl}/api/recruiters/offers/create/`,
+          `${apiBaseUrl}/recruiters/offers/create/`,
           { ...formData, forum_id },
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
@@ -183,7 +179,7 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     }
   };
 
-  if (loading) return <p>Chargement des offres...</p>;
+  if (loading) return <Loading />;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (

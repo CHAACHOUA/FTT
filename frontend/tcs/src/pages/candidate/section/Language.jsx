@@ -11,7 +11,7 @@ const Language = ({ formData, onUpdate }) => {
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/candidates/languages/`);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidates/languages/`);
         setAllLanguages(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des langues :", error.message);

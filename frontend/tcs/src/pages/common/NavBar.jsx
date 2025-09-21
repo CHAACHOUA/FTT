@@ -93,7 +93,7 @@ const Navbar = () => {
       ? '/recruiter/forums'
       : role === 'organizer'
       ? '/organizer/forums'
-      : '/forums'
+      : '/candidate/forums'
   }
   className="dropdown-item"
 >

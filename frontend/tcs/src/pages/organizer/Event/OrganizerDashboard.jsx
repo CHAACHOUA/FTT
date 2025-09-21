@@ -14,11 +14,8 @@ export default function OrganizerDashboard() {
   const forum = location.state?.forum;
   const forumId = forum?.id || location.state?.forumId;
   const API = process.env.REACT_APP_API_BASE_URL;
+  const forumUpdated = location.state?.forumUpdated;
   
-  // Debug: Log location state
-  console.log('🔍 [FRONTEND] OrganizerDashboard - location.state:', location.state);
-  console.log('🔍 [FRONTEND] OrganizerDashboard - forum:', forum);
-  console.log('🔍 [FRONTEND] OrganizerDashboard - forumId:', forumId);
   
   // Fallback pour récupérer les données du forum si elles ne sont pas disponibles
   const [forumData, setForumData] = useState(forum);
@@ -54,7 +51,7 @@ export default function OrganizerDashboard() {
       }
 
       try {
-        const response = await axios.get(`${API}/api/forums/${forumId}/kpis/`, {
+        const response = await axios.get(`${API}/forums/${forumId}/kpis/`, {
           withCredentials: true
         });
 
@@ -88,19 +85,28 @@ export default function OrganizerDashboard() {
     };
 
     fetchKPIs();
-  }, [forumId, isAuthenticated, API]);
+  }, [forumId, isAuthenticated, API, forumUpdated]);
 
   // Récupérer les données du forum si elles ne sont pas disponibles
   useEffect(() => {
     const fetchForumData = async () => {
-      if (!forumId || !isAuthenticated || forum) {
+      if (!forumId || !isAuthenticated) {
         return;
       }
 
+      // Si on a déjà les données du forum et qu'il n'y a pas de mise à jour, les utiliser
+      if (forum && !forumUpdated) {
+        setForumData(forum);
+        return;
+      }
+
+      // Sinon, récupérer les données via API (notamment après une mise à jour)
       try {
-        const response = await axios.get(`${API}/api/forums/${forumId}/`, {
+        console.log('Récupération des données du forum via API...');
+        const response = await axios.get(`${API}/forums/${forumId}/`, {
           withCredentials: true
         });
+        console.log('Données du forum récupérées:', response.data);
         setForumData(response.data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données du forum:', error);
@@ -108,7 +114,7 @@ export default function OrganizerDashboard() {
     };
 
     fetchForumData();
-  }, [forumId, isAuthenticated, API, forum]);
+  }, [forumId, isAuthenticated, API, forum, forumUpdated]);
 
   return (
     <div className="dashboard-bg" style={{ paddingTop: '70px' }}>

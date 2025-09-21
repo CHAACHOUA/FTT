@@ -46,7 +46,7 @@ const ProgrammeTimeline = ({ programmes }) => {
             <div className="programme-item-image">
               {programme.photo ? (
                 <img 
-                  src={programme.photo.startsWith('http') ? programme.photo : `${process.env.REACT_APP_API_BASE_URL}${programme.photo}`}
+                  src={programme.photo.startsWith('http') ? programme.photo : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${programme.photo}`}
                   alt={programme.title}
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -93,7 +93,7 @@ const ProgrammeTimeline = ({ programmes }) => {
                   <div className="programme-item-speaker-info">
                     {programme.speakers[0].photo && (
                       <img 
-                        src={programme.speakers[0].photo.startsWith('http') ? programme.speakers[0].photo : `${process.env.REACT_APP_API_BASE_URL}${programme.speakers[0].photo}`}
+                        src={programme.speakers[0].photo.startsWith('http') ? programme.speakers[0].photo : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${programme.speakers[0].photo}`}
                         alt={programme.speakers[0].full_name}
                         className="programme-item-speaker-photo"
                         onError={(e) => {

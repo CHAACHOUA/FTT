@@ -28,14 +28,18 @@ const CandidateCard = ({
   };
 
   return (
-    <div className={`${className} ${showRemoveButton ? 'meeting-card' : ''}`}>
+    <div 
+      className={`${className} ${showRemoveButton ? 'meeting-card' : ''}`}
+      onClick={handleCandidateClick}
+      style={{ cursor: onCandidateClick ? 'pointer' : 'default' }}
+    >
       <div className="candidate-photo">
         {candidate.profile_picture ? (
           <img
             src={
               candidate.profile_picture.startsWith('http')
                 ? candidate.profile_picture
-                : `${apiBaseUrl}${candidate.profile_picture}`
+                : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.profile_picture}`
             }
             alt={`${candidate.first_name} ${candidate.last_name}`}
           />
@@ -44,11 +48,7 @@ const CandidateCard = ({
         )}
       </div>
       
-      <div
-        className="candidate-info"
-        onClick={handleCandidateClick}
-        style={{ cursor: onCandidateClick ? 'pointer' : 'default' }}
-      >
+      <div className="candidate-info">
         <h3>{candidate.first_name} {candidate.last_name}</h3>
 
         <div className="sectors-container">
@@ -73,7 +73,7 @@ const CandidateCard = ({
           href={
             candidate.cv_file.startsWith('http')
               ? candidate.cv_file
-              : `${apiBaseUrl}${candidate.cv_file}`
+              : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.cv_file}`
           }
           target="_blank"
           rel="noopener noreferrer"

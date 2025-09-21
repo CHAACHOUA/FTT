@@ -21,17 +21,31 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
   const getLogoURL = (logo) => {
     if (!logo) return logo; // Retourne le logo par défaut
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${API}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
     return logo;
   };
 
   // Fonction pour construire l'URL de la photo du forum
   const getForumPhotoURL = (photo) => {
-    if (!photo) return defaultImage; // Retourne l'image par défaut
-    if (typeof photo === 'string') {
-      return photo.startsWith('http') ? photo : `${API}${photo}`;
+    console.log('🔍 [FRONTEND] ForumCard - getForumPhotoURL - photo:', photo);
+    if (!photo) {
+      console.log('🔍 [FRONTEND] ForumCard - getForumPhotoURL - pas de photo, retour image par défaut');
+      return defaultImage; // Retourne l'image par défaut
     }
+    if (typeof photo === 'string') {
+      if (photo.startsWith('http')) {
+        console.log('🔍 [FRONTEND] ForumCard - getForumPhotoURL - URL complète:', photo);
+        return photo;
+      }
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+      const fullUrl = `${mediaBaseUrl}${photo}`;
+      console.log('🔍 [FRONTEND] ForumCard - getForumPhotoURL - URL construite:', fullUrl);
+      return fullUrl;
+    }
+    console.log('🔍 [FRONTEND] ForumCard - getForumPhotoURL - type non string, retour image par défaut');
     return defaultImage;
   };
 
@@ -41,7 +55,7 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
       const API = process.env.REACT_APP_API_BASE_URL;
 
       const response = await axios.post(
-        `${API}/api/forums/${forum.id}/register-recruiter/`,
+        `${API}/forums/${forum.id}/register-recruiter/`,
         {}, // Pas besoin de données, on utilise le profil du recruteur connecté
         {
           withCredentials: true,
@@ -66,6 +80,10 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
           src={getForumPhotoURL(forum.photo)}
           alt="Bannière"
           className="forum-image-banner"
+          onError={(e) => {
+            console.log('🔍 [FRONTEND] ForumCard - Erreur chargement image, utilisation image par défaut');
+            e.target.src = defaultImage;
+          }}
         />
 
         <div className="forum-card-body">

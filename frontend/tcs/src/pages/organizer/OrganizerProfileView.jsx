@@ -20,7 +20,7 @@ const OrganizerProfileView = () => {
     email: '',
   });
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated, name, role } = useAuth();
+  const { isAuthenticated, name, role, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -36,7 +36,9 @@ const OrganizerProfileView = () => {
   const getLogoURL = (logo) => {
     if (!logo) return null;
     if (typeof logo === 'string') {
-      return logo.startsWith('http') ? logo : `${API}${logo}`;
+      if (logo.startsWith('http')) return logo;
+      const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+      return `${mediaBaseUrl}${logo}`;
     }
     return URL.createObjectURL(logo);
   };
@@ -47,7 +49,7 @@ const OrganizerProfileView = () => {
         console.log("🔄 Tentative de récupération du profil organisateur...");
         
         // Utiliser les cookies HttpOnly pour l'authentification
-        const res = await axios.get(`${API}/api/organizers/profile/`, {
+        const res = await axios.get(`${API}/organizers/profile/`, {
           withCredentials: true, // Important pour les cookies HttpOnly
         });
 
@@ -88,10 +90,8 @@ const OrganizerProfileView = () => {
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.size <= 2 * 1024 * 1024) {
+    if (file) {
       setFormData((prev) => ({ ...prev, logo: file }));
-    } else {
-      alert('Fichier trop volumineux (max 2Mo)');
     }
   };
 
@@ -108,7 +108,7 @@ const OrganizerProfileView = () => {
       }
 
       const res = await axios.put(
-        `${API}/api/organizers/profile/update/`,
+        `${API}/organizers/profile/update/`,
         formPayload,
         {
           withCredentials: true, // Utiliser les cookies HttpOnly
@@ -119,6 +119,11 @@ const OrganizerProfileView = () => {
       );
 
       toast.success(res.data?.message || 'Profil mis à jour avec succès.');
+
+      // Mettre à jour le nom dans la navbar si le nom a changé
+      if (formData.name) {
+        updateName(formData.name);
+      }
     } catch (err) {
       console.error("❌ Erreur lors de la mise à jour du profil:", err);
       toast.error(err.response?.data?.message || err.message);

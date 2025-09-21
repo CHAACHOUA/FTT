@@ -3,7 +3,7 @@ import '../../pages/styles/forum/ForumInfos.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays, faBuilding, faVideo, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/Logo-FTT.png';
-import ProgrammeTimeline from './ProgrammeTimeline';
+import EventCard from '../common/EventCard';
 
 const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
   const recruiterCount = forum.companies.reduce(
@@ -26,7 +26,35 @@ const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
         
         {/* Timeline des programmes intégrée directement sous la description */}
         <div className="forum-programmes-section">
-          <ProgrammeTimeline programmes={forum.programmes} />
+          <h3 className="programme-timeline-title">Programme</h3>
+          {forum.programmes && forum.programmes.length > 0 ? (
+            <div className="event-cards-grid">
+              {forum.programmes.map(programme => (
+                <EventCard
+                  key={programme.id}
+                  event={programme}
+                  showActions={false}
+                  showSpeaker={true}
+                  formatTime={(time) => {
+                    if (!time) return '';
+                    return time.substring(0, 5); // Format HH:MM
+                  }}
+                  formatDate={(dateString) => {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    });
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="programme-timeline-empty">Aucun programme disponible pour le moment.</p>
+          )}
         </div>
       </div>
 

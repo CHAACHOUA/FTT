@@ -53,8 +53,6 @@ export default function Home() {
   const navigate = useNavigate();
   const { role } = useAuth();
   
-  // Debug: afficher le rôle récupéré
-  console.log('Rôle utilisateur:', role);
 
   const handleJobSearch = () => {
     if (role) {

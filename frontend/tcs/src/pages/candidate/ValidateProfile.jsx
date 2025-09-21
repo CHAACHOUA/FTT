@@ -17,7 +17,7 @@ const ValidateProfile = () => {
       hasCalled.current = true;
 
       try {
-        const response = await axios.get(`${API}/api/users/auth/activate-account/${token}/`);
+        const response = await axios.get(`${API}/users/auth/activate-account/${token}/`);
         const msg = response.data.message || 'Votre compte a bien été activé.';
         toast.success(msg);
 

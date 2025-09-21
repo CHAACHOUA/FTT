@@ -205,7 +205,7 @@
     text-decoration: underline;
   }
 
-/* Section recruteurs */
+/* Section recruteurs avec PersonCard */
 .company-recruiters-section {
   background: white;
   border-radius: 16px;
@@ -214,102 +214,27 @@
   position: relative;
 }
 
-.recruiters-container {
-  display: flex;
-  flex-wrap: wrap;
+.recruiters-person-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
 }
 
-.recruiter-card {
-  background: transparent;
-  border: none;
-  border-radius: 16px;
+.recruiters-person-cards-container .person-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: none;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex: 1;
-  min-width: 280px;
-  max-width: 320px;
-  position: relative;
-  overflow: hidden;
-}
-
-.recruiter-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.recruiter-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  border-color: rgba(24, 56, 108, 0.2);
-}
-
-.recruiter-card:hover::before {
-  opacity: 1;
-}
-
-.recruiter-photo {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 3px solid #3b82f6;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
-.recruiter-card:hover .recruiter-photo {
-  transform: scale(1.05);
-  border-color: #18386c;
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
-}
-
-.recruiter-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.recruiter-card:hover .recruiter-photo img {
-  transform: scale(1.1);
-}
-
-.recruiter-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-}
-
-.recruiter-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.025em;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: transparent;
-  padding: 0;
-  transition: color 0.3s ease;
-  text-align: left;
-}
-
-.recruiter-card:hover .recruiter-name {
-  color: #18386c;
+.recruiters-person-cards-container .person-card:hover {
+  background: #f1f5f9;
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
   
   /* Section offres */
@@ -394,19 +319,9 @@
     padding: 1.5rem;
   }
   
-  .recruiters-container {
-    flex-direction: column;
+  .recruiters-person-cards-container {
+    grid-template-columns: 1fr;
     gap: 1rem;
-  }
-  
-  .recruiter-card {
-    min-width: auto;
-    max-width: none;
-  }
-  
-  .recruiter-photo {
-    width: 60px;
-    height: 60px;
   }
 }
 
@@ -425,18 +340,8 @@
     padding: 1rem;
   }
   
-  .recruiter-card {
+  .recruiters-person-cards-container .person-card {
     padding: 1rem;
-    gap: 0.75rem;
-  }
-  
-  .recruiter-photo {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .recruiter-name {
-    font-size: 1.1rem;
   }
   
 }
