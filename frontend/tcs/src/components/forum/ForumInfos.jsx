@@ -3,7 +3,7 @@ import '../../pages/styles/forum/ForumInfos.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays, faBuilding, faVideo, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/Logo-FTT.png';
-import EventCard from '../common/EventCard';
+import EventCard from '../card/common/EventCard';
 
 const ForumInfos = ({ forum, onRegister, showRegisterButton = false }) => {
   const recruiterCount = forum.companies.reduce(

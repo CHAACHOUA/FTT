@@ -9,8 +9,8 @@ import {
 } from 'react-icons/fa';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
-import SearchBarOffers from './SearchBarOffers';
-import Offer from '../Offer';
+import SearchBarOffers from '../filters/offer/SearchBarOffers';
+import Offer from '../card/offer/Offer';
 import axios from 'axios';
 
 const ForumOffers = ({ companies, forum = null }) => {

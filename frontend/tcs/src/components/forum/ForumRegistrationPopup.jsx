@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
-import Modal from '../common/Modal';
+import Modal from '../card/common/Modal';
 import { getSectorsForSelect, getContractsForSelect } from '../../constants/choices';
 import { FaBriefcase, FaIndustry, FaClock, FaMapMarkerAlt, FaUniversalAccess } from 'react-icons/fa';
 

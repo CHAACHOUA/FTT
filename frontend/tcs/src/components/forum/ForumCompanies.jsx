@@ -4,9 +4,9 @@ import '../../pages/styles/forum/ForumCompany.css';
 import logo from '../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import CompanyCardPopup from './CompanyCardPopup';
+import CompanyCardPopup from '../card/company/CompanyCardPopup';
 import { FaTimes } from 'react-icons/fa';
-import Company from '../Company';
+import Company from '../card/company/Company';
 
 const ForumCompanies = ({ companies, forum, usePage = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
