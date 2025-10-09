@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from forums.services.registration_services import register_candidate_to_forum, register_recruiter_to_forum
+from forums.services.registration_services import register_candidate_to_forum, register_recruiter_to_forum, check_recruiter_forum_status
 
 
 
@@ -18,4 +18,10 @@ def register_to_forum(request, forum_id):
 @permission_classes([IsAuthenticated])
 def register_recruiter_to_forum_view(request, forum_id):
     return register_recruiter_to_forum(request.user, forum_id, data=request.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_recruiter_forum_status_view(request, forum_id):
+    return check_recruiter_forum_status(request.user, forum_id)
 

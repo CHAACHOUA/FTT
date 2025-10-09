@@ -61,7 +61,6 @@ class Offer(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     start_date = models.DateField(help_text="Date de début du poste", default='2024-01-01')
     experience_required = models.CharField(max_length=10, choices=EXPERIENCE_CHOICES, help_text="Années d'expérience requises", default='1-3')
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -77,7 +76,7 @@ class FavoriteOffer(models.Model):
         verbose_name_plural = "Offres Favorites"
 
     def __str__(self):
-        return f"{self.candidate.user.email} ❤️ {self.offer.title}"
+        return f"{self.candidate.user.email}  {self.offer.title}"
 
 # models.py
 class Meeting(models.Model):

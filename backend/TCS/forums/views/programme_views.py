@@ -15,8 +15,9 @@ def programme_list(request, forum_id):
     """
     try:
         forum = Forum.objects.get(id=forum_id)
-        programmes = forum.programmes.all().order_by('start_date', 'start_time')
+        programmes = forum.programmes.all().prefetch_related('speakers').order_by('start_date', 'start_time')
         serializer = ProgrammeSerializer(programmes, many=True)
+        print(f"🔍 [BACKEND] programme_list - programmes avec speakers: {[p.speakers.all() for p in programmes]}")
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Forum.DoesNotExist:
         return Response({"error": "Forum non trouvé"}, status=status.HTTP_404_NOT_FOUND)
@@ -32,8 +33,9 @@ def programme_detail(request, forum_id, programme_id):
     """
     try:
         forum = Forum.objects.get(id=forum_id)
-        programme = forum.programmes.get(id=programme_id)
+        programme = forum.programmes.prefetch_related('speakers').get(id=programme_id)
         serializer = ProgrammeSerializer(programme)
+        print(f"🔍 [BACKEND] programme_detail - programme speakers: {programme.speakers.all()}")
         return Response(serializer.data, status=status.HTTP_200_OK)
     except (Forum.DoesNotExist, Programme.DoesNotExist):
         return Response({"error": "Forum ou programme non trouvé"}, status=status.HTTP_404_NOT_FOUND)
@@ -57,7 +59,15 @@ def create_programme(request, forum_id):
         
         serializer = ProgrammeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(forum=forum)
+            programme = serializer.save(forum=forum)
+            
+            # Gérer les speakers
+            speaker_ids = request.data.getlist('speakers')
+            print(f"🔍 [BACKEND] create_programme - speaker_ids reçus: {speaker_ids}")
+            if speaker_ids:
+                programme.speakers.set(speaker_ids)
+                print(f"🔍 [BACKEND] create_programme - speakers associés: {programme.speakers.all()}")
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Forum.DoesNotExist:
@@ -87,7 +97,15 @@ def update_programme(request, forum_id, programme_id):
         
         serializer = ProgrammeSerializer(programme, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            programme = serializer.save()
+            
+            # Gérer les speakers
+            speaker_ids = request.data.getlist('speakers')
+            print(f"🔍 [BACKEND] update_programme - speaker_ids reçus: {speaker_ids}")
+            if speaker_ids:
+                programme.speakers.set(speaker_ids)
+                print(f"🔍 [BACKEND] update_programme - speakers associés: {programme.speakers.all()}")
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except (Forum.DoesNotExist, Programme.DoesNotExist):

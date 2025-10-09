@@ -76,7 +76,7 @@ def register_recruiter_to_forum(user, forum_id, data=None):
         forum_company, company_created = ForumCompany.objects.get_or_create(
             company=company,
             forum=forum,
-            defaults={'approved': True}  # Directement approuvé par défaut
+            defaults={'approved': False}  # En attente d'approbation
         )
         
         # Vérifier si le recruteur est déjà inscrit au forum
@@ -93,11 +93,12 @@ def register_recruiter_to_forum(user, forum_id, data=None):
         )
         
         return Response({
-            "detail": "Inscription réussie ! Votre entreprise a été ajoutée au forum et est directement approuvée.",
+            "detail": "Demande d'inscription envoyée ! Votre entreprise est en attente d'approbation par l'organisateur.",
             "company_id": company.id,
             "forum_id": forum.id,
             "recruiter_id": recruiter.id,
-            "approved": forum_company.approved
+            "approved": forum_company.approved,
+            "status": "pending"
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
@@ -105,8 +106,56 @@ def register_recruiter_to_forum(user, forum_id, data=None):
             {"detail": f"Erreur lors de l'inscription : {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+def check_recruiter_forum_status(user, forum_id):
+    """
+    Vérifie le statut d'approbation d'un recruteur pour un forum donné.
+    Retourne: 'not_registered', 'pending', 'approved'
+    """
+    try:
+        forum = get_object_or_404(Forum, id=forum_id)
+        
+        # Récupérer le profil recruteur de l'utilisateur
+        try:
+            recruiter = Recruiter.objects.get(user=user)
+        except Recruiter.DoesNotExist:
+            return Response(
+                {"detail": "Profil recruteur non trouvé."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Vérifier si le recruteur est inscrit au forum
+        if not RecruiterForumParticipation.objects.filter(recruiter=recruiter, forum=forum).exists():
+            return Response({
+                "status": "not_registered",
+                "message": "Non inscrit à ce forum"
+            }, status=status.HTTP_200_OK)
+        
+        # Vérifier le statut d'approbation de l'entreprise
+        try:
+            forum_company = ForumCompany.objects.get(company=recruiter.company, forum=forum)
+            if forum_company.approved:
+                return Response({
+                    "status": "approved",
+                    "message": "Inscription approuvée",
+                    "approved": True
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    "status": "pending",
+                    "message": "En attente d'approbation",
+                    "approved": False
+                }, status=status.HTTP_200_OK)
+        except ForumCompany.DoesNotExist:
+            return Response({
+                "status": "pending",
+                "message": "En attente d'approbation",
+                "approved": False
+            }, status=status.HTTP_200_OK)
+            
     except Exception as e:
         return Response(
-            {"detail": f"Erreur inattendue : {str(e)}"},
+            {"detail": f"Erreur lors de la vérification : {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
