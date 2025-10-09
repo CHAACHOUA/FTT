@@ -2,7 +2,7 @@
 import React from 'react';
 import { FaStar, FaTrash, FaPlusCircle } from 'react-icons/fa';
 
-const Skill = ({ formData, onUpdate }) => {
+const Skill = ({ formData, onUpdate, children }) => {
   const handleListChange = (index, value) => {
     const updatedList = [...(formData.skills || [])];
     updatedList[index] = value;
@@ -28,7 +28,12 @@ const Skill = ({ formData, onUpdate }) => {
 
   return (
     <div className="section education-section">
-      <h3 className="skill-title">Compétences</h3>
+      <div className="skill-header">
+        <h3 className="skill-title">Compétences</h3>
+        <button className="add-btn-modern" onClick={addSkill}>
+          <FaPlusCircle className="add-btn-icon" /> Ajouter
+        </button>
+      </div>
       {skills.map((skill, index) => (
         <div key={index} className="skill-item-modern">
           <div className="input-modern">
@@ -52,9 +57,7 @@ const Skill = ({ formData, onUpdate }) => {
           )}
         </div>
       ))}
-      <button className="add-btn-modern" onClick={addSkill} style={{ marginTop: '10px' }}>
-        <FaPlusCircle className="add-btn-icon" /> Ajouter
-      </button>
+      {children}
     </div>
   );
 };

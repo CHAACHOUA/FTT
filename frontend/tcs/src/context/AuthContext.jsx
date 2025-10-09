@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -9,12 +9,7 @@ export function AuthProvider({ children }) {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Vérifier l'authentification au chargement
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
       // Mode 100% sécurisé : vérifier uniquement via l'API avec cookies HttpOnly
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/auth/me/`, {
@@ -52,7 +47,12 @@ export function AuthProvider({ children }) {
     } finally {
       setIsAuthLoading(false);
     }
-  };
+  }, []);
+
+  // Vérifier l'authentification au chargement
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
 
   const login = (userData) => {
     const userName = userData.name || "User";
@@ -66,6 +66,14 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async (onRedirect) => {
+    // Nettoyer immédiatement le state pour éviter les appels API pendant la déconnexion
+    setName(null);
+    setRole(null);
+    setIsAuthenticated(false);
+    
+    // Vider localStorage immédiatement
+    localStorage.clear();
+
     try {
       // Appeler l'endpoint de déconnexion pour supprimer les cookies
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/auth/logout/user/`, {}, {
@@ -73,25 +81,17 @@ export function AuthProvider({ children }) {
       });
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
-    } finally {
-      // Nettoyer le state et vider localStorage
-      setName(null);
-      setRole(null);
-      setIsAuthenticated(false);
-      
-      // Vider localStorage après déconnexion
-      localStorage.clear();
-
-      // Fermer tous les toasts de manière sécurisée
-      try {
-        const { toast } = await import('react-toastify');
-        toast.dismiss();
-      } catch (error) {
-        console.warn('Erreur lors de la fermeture des toasts:', error);
-      }
-
-      if (onRedirect) onRedirect();
     }
+
+    // Fermer tous les toasts de manière sécurisée
+    try {
+      const { toast } = await import('react-toastify');
+      toast.dismiss();
+    } catch (error) {
+      console.warn('Erreur lors de la fermeture des toasts:', error);
+    }
+
+    if (onRedirect) onRedirect();
   };
 
   const refreshAccessToken = async () => {

@@ -5,6 +5,7 @@ import SidebarMenu from './SideBarMenu';
 import ChangePassword from '../../candidate/auth/account/ChangePassword';
 import Presentation from '../../../components/card/candidate/profile_section/Presentation';
 import Contact from '../../../components/card/candidate/profile_section/Contact';
+import SaveButton from '../../../components/common/SaveButton';
 import { toast } from 'react-toastify';
 import Loading from '../../../components/loyout/Loading';
 import { useLocation } from 'react-router-dom';
@@ -114,17 +115,18 @@ const RecruiterProfileView = () => {
         {!isSettingsPage ? (
           <>
             <section id="profile">
-              <Presentation formData={formData} onUpdate={handleUpdate} />
+              <Presentation formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Presentation>
             </section>
             <section id="contact">
-              <Contact formData={formData} onUpdate={handleUpdate} />
+              <Contact formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Contact>
             </section>
+          
             
          
-           
-            <button className="validate-button" onClick={handleSubmit}>
-              Enregistrer les modifications
-            </button>
           </>
         ) : (
           <>

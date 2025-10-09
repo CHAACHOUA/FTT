@@ -141,7 +141,7 @@ const PublicProfileView = () => {
       {!formData ? (
         <p className="public-error">Candidat introuvable.</p>
       ) : (
-        <div style={{ paddingTop: '80px' }}>
+        <div style={{ paddingTop: '80px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
           <Navbar />
           <div className="profile-container">
             <SidebarMenu />

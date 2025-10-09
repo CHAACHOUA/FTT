@@ -13,10 +13,10 @@
   box-sizing: border-box;
 }
 
-/* Container principal avec fond blanc */
+/* Container principal avec fond transparent */
 .companies-container {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;
   padding: 40px 32px;
   color: #1f2937;
   font-family: 'Inter', sans-serif;
@@ -61,27 +61,34 @@
 }
 
 .filter-btn {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  color: #374151;
-  padding: 12px 24px;
-  border-radius: 12px;
+  background: transparent;
+  border: 1.5px solid #3b82f6;
+  color: #3b82f6;
+  padding: 8px 28px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
   transition: all 0.3s ease;
+  outline: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
 }
 
 .filter-btn:hover {
-  background: #f3f4f6;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border-color: #1d4ed8;
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* Messages d'erreur */
@@ -179,31 +186,30 @@
 }
 
 .add-company-button {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 12px;
+  background: transparent;
+  color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  padding: 8px 28px;
   font-weight: 600;
-  font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(79, 140, 255, 0.2);
+  font-family: 'Inter', sans-serif;
 }
 
 .add-company-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px -5px rgba(79, 140, 255, 0.3);
-  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  
+  border-color: #1d4ed8;
 }
 
 .add-company-button:active {
   transform: translateY(0);
-  box-shadow: 0 4px 6px -1px rgba(79, 140, 255, 0.2);
 }
 
 .companies-dashboard-list {
@@ -217,17 +223,19 @@
 .company-dashboard-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
+
   border-radius: 16px;
   padding: 24px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+ 
   position: relative;
+  overflow: visible;
 }
 
 .company-dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-  border-color: #d1d5db;
+  transform: translateY(-6px);
+
+
 }
 
 /* Ajout/override pour dashboard moderne */
@@ -296,13 +304,174 @@
 }
 
 /* ===== BOUTONS D'ACTION ENTREPRISES ===== */
-.company-actions {
+.enterprise-actions-container {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
   align-items: center;
+  justify-content: center;
   position: relative;
   flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 1001;
+}
+
+.enterprise-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+}
+
+.enterprise-options-trigger {
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748b;
+  box-shadow: none !important;
+  font-size: 20px;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.enterprise-options-trigger:hover {
+  background: #f3f4f6 !important;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: none !important;
+  outline: none !important;
+}
+
+.enterprise-options-trigger:active {
+  transform: translateY(0);
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.enterprise-options-trigger:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.enterprise-options-trigger:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Style ultra-spécifique pour forcer la suppression des bordures */
+.company-actions .dropdown-menu .three-dots-button,
+.company-dashboard-card .company-actions .dropdown-menu .three-dots-button,
+.company-dashboard-card .company-actions .dropdown-menu button.three-dots-button {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.company-actions .dropdown-menu .three-dots-button:hover,
+.company-dashboard-card .company-actions .dropdown-menu .three-dots-button:hover,
+.company-dashboard-card .company-actions .dropdown-menu button.three-dots-button:hover {
+  background: #f3f4f6 !important;
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+.enterprise-options-panel {
+  position: fixed;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  z-index: 99999;
+  min-width: 200px;
+  padding: 8px 0;
+  backdrop-filter: blur(10px);
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.enterprise-option-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border-radius: 8px;
+  margin: 0 8px;
+}
+
+.enterprise-option-button:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
+  transform: translateX(4px);
+}
+
+.enterprise-option-button:active {
+  transform: translateX(2px);
+}
+
+.enterprise-delete-option {
+  color: #dc2626;
+}
+
+.enterprise-delete-option:hover {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #b91c1c;
+}
+
+.enterprise-option-button svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.enterprise-option-button:hover svg {
+  transform: scale(1.1);
 }
 
 .add-recruiter-button {
@@ -702,8 +871,8 @@
   }
 
   .company-logo {
-    width: 60px;
-    height: 60px;
+    width: 70px !important;
+    height: 70px !important;
   }
 
   .company-name {
@@ -850,8 +1019,8 @@
   }
   
   .company-logo {
-    width: 50px;
-    height: 50px;
+    width: 70px !important;
+    height: 70px !important;
   }
   
   .company-name {
@@ -914,25 +1083,24 @@
 }
 
 .company-logo {
-  width: 60px;
-  height: 60px;
+  width: 70px !important;
+  height: 70px !important;
   border-radius: 12px;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
+  border: none !important;
   transition: all 0.3s ease;
-  background: #f9fafb;
-  padding: 4px;
+  padding: 0;
 }
 
 .company-dashboard-card:hover .company-logo {
-  border-color: #4f8cff;
+ 
   transform: scale(1.05);
 }
 
 @media (max-width: 700px) {
   .company-logo {
-    width: 50px;
-    height: 50px;
+    width: 70px !important;
+    height: 70px !important;
     border-radius: 8px;
   }
 }

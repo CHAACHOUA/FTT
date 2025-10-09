@@ -1,27 +1,35 @@
 /* ProfileView.css */
 .profile-container {
   display: flex;
+  background-color: #f9fafb;
+  min-height: 100vh;
 }
 
 .profile-content {
   margin-left: 100px;
   padding: 40px;
   width: 100%;
+  background-color: #f9fafb;
 }
 
-.validate-button {
-  margin: 20px 100px;
+.profile-save-button {
   padding: 10px 20px;
   font-weight: bold;
-  background-color: #2980b9;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
+  display: block;
+  width: fit-content;
+  margin: 20px 0;
 }
 
-.validate-button:hover {
-  background-color: #3498db;
+.profile-save-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* ===== RESPONSIVE DESIGN POUR PROFIL ORGANIZATEUR ===== */

@@ -1,12 +1,42 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
 import '../../../pages/styles/forum/ForumList.css';
 import defaultImage from '../../../assets/forum-base.webp';
+import axios from 'axios';
 
 const ForumCardRegistered = ({ forum, role }) => {
+  const [recruiterStatus, setRecruiterStatus] = useState(null);
+  const API = process.env.REACT_APP_API_BASE_URL;
+
+  // Vérifier le statut du recruteur au chargement
+  useEffect(() => {
+    if (role === 'recruiter') {
+      checkRecruiterStatus();
+    }
+  }, [role, forum.id]);
+
+  // Fonction pour vérifier le statut d'inscription du recruteur
+  const checkRecruiterStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${API}/forums/${forum.id}/recruiter-status/`,
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setRecruiterStatus(response.data.status);
+    } catch (err) {
+      console.error('Erreur lors de la vérification du statut:', err);
+      setRecruiterStatus('approved'); // Par défaut, considérer comme approuvé
+    }
+  };
+
   // Fonction pour construire l'URL de la photo du forum
   const getForumPhotoURL = (photo) => {
     console.log('🔍 [FRONTEND] ForumCardRegistered - getForumPhotoURL - photo:', photo);
@@ -85,10 +115,19 @@ const dashboardPath =
             <span className="forum-meta-text">{formatDateTime()}</span>
 
             {ongoing && (
-              <span className="forum-badge">
-                <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '6px' }} />
-                Inscrit
-              </span>
+              <>
+                {role === 'recruiter' && recruiterStatus === 'pending' ? (
+                  <span className="forum-status-badge-pending">
+                    <FontAwesomeIcon icon={faClock} style={{ marginRight: '6px' }} />
+                    En attente
+                  </span>
+                ) : (
+                  <span className="forum-status-badge-registered">
+                    <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '6px' }} />
+                    Inscrit
+                  </span>
+                )}
+              </>
             )}
           </div>
 

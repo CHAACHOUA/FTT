@@ -1,14 +1,16 @@
 /* Container principal avec le même style que le dashboard */
 .organizer-offers-container {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;
   padding-top: 70px;
   color: #111827;
+  width: 100%;
 }
 
 .organizer-offers-content {
-  max-width: 1300px;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
   padding: 2rem;
 }
 
@@ -37,10 +39,17 @@
   color: #6b7280;
 }
 
-/* Centrer la barre de recherche */
+/* Conteneur principal centré */
+.offers-main-container {
+ 
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Aligner la barre de recherche à gauche */
 .search-bar-wrapper-search {
   display: flex !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   width: 100% !important;
   margin-bottom: 2rem !important;
 }
@@ -145,10 +154,17 @@
 
 /* Grille des offres - même style que ForumOffer */
 .organizer-offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 320px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.organizer-offers-grid > * {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
 }
 
 @media (min-width: 768px) {

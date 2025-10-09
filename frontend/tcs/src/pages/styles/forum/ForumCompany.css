@@ -4,6 +4,8 @@
   padding: 24px;
   background: #f8fafc;
   min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* ===== BARRE DE RECHERCHE STYLE FORUM ===== */
@@ -498,8 +500,9 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border-color: #3b82f6;
   transform: translateY(-1px);
 }
 
@@ -535,11 +538,11 @@
 }
 
 .pagination-number.active {
-  background: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border-color: #3b82f6;
 }
 
 .pagination-number.active:hover {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
 }

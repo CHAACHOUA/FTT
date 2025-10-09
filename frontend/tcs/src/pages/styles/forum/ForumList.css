@@ -38,6 +38,7 @@ html {
   align-items: center;
 }
 
+
 .forum-section h2 {
   font-size: 2rem;
   font-weight: 700;
@@ -150,7 +151,7 @@ html {
 }
 
 .forum-card-image {
-  width: 150px;
+  width: 200px;
   height: 100%;
   object-fit: cover;
   flex-shrink: 0;
@@ -192,21 +193,48 @@ html {
 }
 
 .forum-card-link {
-  background-color: #27a5df;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 8px 28px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 1rem;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.forum-card-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
 }
 
 .forum-card-link:hover {
-  background-color: #1991c7;
+  color: white;
+}
+
+.forum-card-link:hover::before {
+  left: 0;
+}
+
+.forum-card-link-disabled {
+  background-color: #fbbf24;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 /* ---------------------- */
@@ -231,6 +259,9 @@ html {
 
 .forum-card-body {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .forum-organizer {
@@ -252,9 +283,14 @@ html {
 }
 
 .organizer-text {
-  font-size: 14px;
-  color: #94a3b8;
+  font-size: 1.05rem;
+  color: #6b7280;
   font-weight: 500;
+}
+
+.organizer-text strong {
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .forum-title {
@@ -298,10 +334,17 @@ html {
 }
 
 .forum-description {
-  font-size: 15px;
-  color: #334155;
+  font-size: 1.05rem;
+  color: #6b7280;
+  font-weight: 500;
   margin-bottom: 20px;
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limite à 3 lignes */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 4.5em; /* Hauteur pour 3 lignes */
 }
 
 /* ---------------------- */
@@ -311,7 +354,10 @@ html {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: auto; /* Pousse les boutons vers le bas */
+  height: 50px; /* Hauteur fixe pour les boutons */
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .btn-seekube {
@@ -332,10 +378,18 @@ html {
 }
 
 .btn-outline {
-  background-color: white;
-  color: #18386c;
-  border: 2px solid #18386c;
-  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.1);
+  background: transparent;
+  color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
   text-decoration: none !important;
 }
 
@@ -370,21 +424,19 @@ a:hover .btn-seekube,
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(98, 107, 122, 0.1), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
 }
 
 .btn-outline:hover {
-  background-color: #f8fafc;
-  border-color: #06b6d4;
-  color: #06b6d4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(24, 56, 108, 0.2);
+  
+  border-color: #1d4ed8;
   text-decoration: none !important;
 }
 
 .btn-outline:hover::before {
-  left: 100%;
+  left: 0;
 }
 
 .btn-outline:active {
@@ -392,10 +444,19 @@ a:hover .btn-seekube,
 }
 
 .btn-filled {
-  background: #18386c;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.2);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  width: 55%;
 }
 
 .btn-filled::before {
@@ -405,18 +466,17 @@ a:hover .btn-seekube,
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
 }
 
 .btn-filled:hover {
-  background: #06b6d4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(24, 56, 108, 0.3);
+  color: white;
 }
 
 .btn-filled:hover::before {
-  left: 100%;
+  left: 0;
 }
 
 .btn-filled:active {
@@ -639,9 +699,17 @@ a:hover .btn-seekube,
   color: #1f2937; /* Gris très foncé pour bonne lisibilité */
 }
 
-.forum-badge {
+.forum-status-badge-registered {
   background-color: #d1fae5; /* Vert très clair */
   color: #047857; /* Vert foncé lisible */
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+
 }
 
 .forum-card-link {
@@ -660,3 +728,15 @@ a:hover .btn-seekube,
 }
 
 
+.forum-status-badge-pending {
+  background-color: #f7cc61;
+  color: #9a6f00;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #fbbf24;
+}

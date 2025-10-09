@@ -11,7 +11,7 @@
 /* Main container - Version blanche */
 .landing-container-white {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;;
 }
 
 /* Main container - Version originale */
@@ -982,7 +982,7 @@
   opacity: 0;
   transform: translateY(2.5rem);
   transition: all 1s ease;
-  background: #ffffff;
+  background: #f8fafc;
 }
 
 .stats-section-white.visible {
@@ -1116,7 +1116,7 @@
   opacity: 0;
   transform: translateY(2.5rem);
   transition: all 1s ease;
-  background: #ffffff;
+  background: #f8fafc;
 }
 
 .how-it-works-section-white.visible {
@@ -1239,7 +1239,7 @@
   opacity: 0;
   transform: translateY(2.5rem);
   transition: all 1s ease;
-  background: #ffffff;
+  background: #f8fafc;
 }
 
 .testimonials-section-white.visible {
@@ -1423,7 +1423,7 @@
   opacity: 0;
   transform: translateY(2.5rem);
   transition: all 1s ease;
-  background: #ffffff;
+  background: #f8fafc;
 }
 
 .services-section-white.visible {

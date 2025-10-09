@@ -1,6 +1,6 @@
 // SubMenuOrganizer.js
 import React from "react";
-import { FaBolt, FaCalendarAlt, FaEdit, FaBriefcase, FaUsers } from "react-icons/fa";
+import { FaBuilding, FaCalendarAlt, FaEdit, FaBriefcase, FaUsers } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./SubMenu.css";
 
@@ -32,7 +32,7 @@ const actions = [
   {
     label: "Entreprises participantes",
     desc: "Pilotez les entreprises rattachées à vos forums",
-    icon: <FaBolt size={48} />,
+    icon: <FaBuilding size={48} />,
     cardClass: "entreprise-card",
     key: "entreprises",
     route: "/organizer/companies"

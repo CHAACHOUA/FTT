@@ -32,36 +32,31 @@ const EventCard = ({
   };
 
   return (
-    <div className={`event-card ${className}`}>
-      {/* Image de l'événement */}
-      <div className="event-card-image">
-        {event.photo ? (
-          <img 
-            src={getImageUrl(event.photo)}
-            alt={event.title}
-            onError={handleImageError}
-          />
-        ) : (
-          <div className="event-card-placeholder">
-            <FontAwesomeIcon icon={faCalendarDays} />
-          </div>
-        )}
+    <div className={`programme-event-card ${className}`}>
+      {/* Section de temps à gauche */}
+      <div className="programme-time-section">
+        <div className="programme-time-display">
+          {event.start_time && event.end_time ? (
+            `${formatTime ? formatTime(event.start_time) : event.start_time} - ${formatTime ? formatTime(event.end_time) : event.end_time}`
+          ) : event.start_time ? (
+            formatTime ? formatTime(event.start_time) : event.start_time
+          ) : (
+            'Heure non définie'
+          )}
+        </div>
+        <div className="programme-session-type">
+          {event.session_type || 'Session'}
+        </div>
       </div>
       
-      <div className="event-card-details">
-        {/* Badge horaire de début en haut à droite */}
-        {event.start_time && (
-          <div className="event-card-time-badge">
-            {formatTime ? formatTime(event.start_time) : event.start_time}
-          </div>
-        )}
-        
-        {/* Actions edit/delete */}
+      {/* Section de détails à droite */}
+      <div className="programme-details-section">
+        {/* Actions edit/delete en haut */}
         {showActions && (
-          <div className="event-card-actions">
+          <div className="programme-actions">
             {onEdit && (
               <button 
-                className="event-card-edit-btn"
+                className="programme-edit-btn"
                 onClick={() => onEdit(event)}
                 title="Modifier"
               >
@@ -70,7 +65,7 @@ const EventCard = ({
             )}
             {onDelete && (
               <button 
-                className="event-card-delete-btn"
+                className="programme-delete-btn"
                 onClick={() => onDelete(event.id)}
                 title="Supprimer"
               >
@@ -80,58 +75,54 @@ const EventCard = ({
           </div>
         )}
         
-        <div className="event-card-content">
+        <div className="programme-content">
           {/* Titre */}
-          <h4 className="event-card-title">{event.title}</h4>
+          <h4 className="programme-title">{event.title}</h4>
           
-          {/* Date */}
-          {event.start_date && (
-            <div className="event-card-date">
-              <FontAwesomeIcon icon={faCalendarAlt} className="event-card-icon" />
-              <span>{formatDate ? formatDate(event.start_date) : event.start_date}</span>
-            </div>
+          {/* Description */}
+          {event.description && (
+            <p className="programme-description">{event.description}</p>
           )}
-          
           
           {/* Localisation */}
           {event.location && (
-            <div className="event-card-venue">
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="event-card-icon" />
+            <div className="programme-location">
+              <FontAwesomeIcon icon={faMapMarkerAlt} className="programme-icon" />
               <span>{event.location}</span>
             </div>
           )}
           
-          {/* Description */}
-          {event.description && (
-            <p className="event-card-summary">{event.description}</p>
+          {/* Speakers */}
+          {showSpeaker && event.speakers && event.speakers.length > 0 && (
+            <div className="programme-main-speaker">
+              <div className="programme-speakers-list">
+                {event.speakers.slice(0, 3).map((speaker, index) => (
+                  <div key={speaker.id} className="programme-speaker-item">
+                    {speaker.photo && (
+                      <img 
+                        src={getImageUrl(speaker.photo)}
+                        alt={speaker.full_name}
+                        className="programme-speaker-photo"
+                        onError={handleImageError}
+                      />
+                    )}
+                    <div className="programme-speaker-details">
+                      <span className="programme-speaker-name">{speaker.full_name}</span>
+                      {speaker.position && (
+                        <span className="programme-speaker-role">{speaker.position}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {event.speakers.length > 3 && (
+                  <div className="programme-speaker-more">
+                    +{event.speakers.length - 3} autre{event.speakers.length > 4 ? 's' : ''}
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
-        
-        {/* Speakers */}
-        {showSpeaker && event.speakers && event.speakers.length > 0 && (
-          <div className="event-card-speakers">
-            <div className="event-card-speakers-grid">
-              {event.speakers.map((speaker, index) => (
-                <div key={speaker.id || index} className="event-card-speaker-item">
-                  {speaker.photo && (
-                    <img 
-                      src={getImageUrl(speaker.photo)}
-                      alt={speaker.full_name}
-                      className="event-card-speaker-photo"
-                      onError={handleImageError}
-                    />
-                  )}
-                  <div className="event-card-speaker-details">
-                    <span className="event-card-speaker-name">{speaker.full_name}</span>
-                    {speaker.position && (
-                      <span className="event-card-speaker-role">{speaker.position}</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

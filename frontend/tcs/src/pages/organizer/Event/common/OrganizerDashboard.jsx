@@ -119,7 +119,7 @@ export default function OrganizerDashboard() {
   return (
     <div className="dashboard-bg" style={{ paddingTop: '70px' }}>
       <Navbar />
-      <div className="dashboard-header">
+      <div className="dashboard-org">
         <h1>Bonjour {name || 'Organisateur'} ! <span role="img" aria-label="wave">👋</span></h1>
         <p>Découvrez de nouvelles opportunités qui vous correspondent parfaitement.</p>
       </div>

@@ -1,36 +1,23 @@
 /* Styles pour les cartes d'événements */
-.event-card {
+.programme-event-card {
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: row;
   width: 100%;
-  min-width: 320px;
-  max-width: 700px;
-  height: 180px;
+  min-height: 180px;
 }
 
 .event-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
-  border-color: #3b82f6;
+  transform: translateY(-6px);
 }
 
-.event-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
-  z-index: 1;
-}
+/* Bordure gauche supprimée */
 
 /* Image de l'événement */
 .event-card-image {
@@ -65,15 +52,40 @@
   opacity: 0.8;
 }
 
+/* Section de temps à gauche */
+.programme-time-section {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-right: 28px;
+  border-right: 1px solid #e5e7eb;
+  margin-right: 28px;
+}
+
+.programme-time-display {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1f2937;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.programme-session-type {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.3;
+}
+
 /* Détails de la carte */
-.event-card-details {
-  padding: 1.5rem;
+.programme-details-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
   justify-content: space-between;
-  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
 }
 
 /* Badge de temps */
@@ -92,9 +104,9 @@
 }
 
 /* Actions */
-.event-card-actions {
+.programme-actions {
   position: absolute;
-  bottom: 1rem;
+  top: 1rem;
   right: 1rem;
   display: flex;
   gap: 0.4rem;
@@ -102,7 +114,7 @@
 }
 
 .event-card-edit-btn,
-.event-card-delete-btn {
+.programme-delete-btn {
   width: 28px;
   height: 28px;
   border: none;
@@ -116,7 +128,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.event-card-edit-btn {
+.programme-edit-btn {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
   color: #3b82f6;
   border: 1px solid rgba(59, 130, 246, 0.2);
@@ -128,7 +140,7 @@
   box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
 }
 
-.event-card-delete-btn {
+.programme-delete-btn {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.2);
@@ -141,19 +153,19 @@
 }
 
 /* Contenu de la carte */
-.event-card-content {
+.programme-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
-.event-card-title {
+.programme-title {
   margin: 0;
   color: #1f2937;
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 600;
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -164,7 +176,7 @@
 
 .event-card-date,
 .event-card-time,
-.event-card-venue {
+.programme-location {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -174,16 +186,16 @@
   padding: 0.15rem 0;
 }
 
-.event-card-icon {
+.programme-icon {
   color: #3b82f6;
-  width: 14px;
+  width: 15px;
   flex-shrink: 0;
   opacity: 0.8;
 }
 
-.event-card-summary {
-  color: #6b7280;
-  font-size: 0.8rem;
+.programme-description {
+  color: #2d2d2d;
+  font-size: 0.9rem;
   line-height: 1.4;
   margin: 0;
   display: -webkit-box;
@@ -194,46 +206,74 @@
 }
 
 /* Speaker principal */
-.event-card-main-speaker {
-  margin-top: auto;
-  padding-top: 0.75rem;
+.programme-main-speaker {
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid #e5e7eb;
-  background: rgba(248, 250, 252, 0.5);
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 0.25rem;
 }
 
-.event-card-speaker-info {
+.programme-speakers-list {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.programme-speaker-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 12px;
 }
 
-.event-card-speaker-photo {
-  width: 32px;
-  height: 32px;
+.programme-speaker-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+.programme-speaker-photo {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.event-card-speaker-details {
+.programme-speaker-details {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 2px;
 }
 
-.event-card-speaker-name {
+.programme-speaker-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.programme-speaker-role {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+.programme-speaker-name {
   font-size: 0.85rem;
   font-weight: 600;
   color: #1f2937;
 }
 
-.event-card-speaker-role {
+.programme-speaker-role {
   font-size: 0.75rem;
   color: #6b7280;
   font-weight: 500;
@@ -241,7 +281,7 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .event-card {
+  .programme-event-card {
     max-width: 100%;
     min-width: 300px;
     height: auto;
@@ -252,17 +292,17 @@
     width: 200px;
   }
   
-  .event-card-details {
+  .programme-details-section {
     padding: 1.25rem;
   }
   
-  .event-card-title {
+  .programme-title {
     font-size: 1.1rem;
   }
 }
 
 @media (max-width: 768px) {
-  .event-card {
+  .programme-event-card {
     flex-direction: column;
     height: auto;
     max-width: 100%;
@@ -270,7 +310,7 @@
     min-height: auto;
   }
   
-  .event-card-details {
+  .programme-details-section {
     padding: 1rem;
   }
   
@@ -280,17 +320,17 @@
     border-radius: 16px 16px 0 0;
   }
   
-  .event-card-title {
+  .programme-title {
     font-size: 1rem;
   }
   
-  .event-card-actions {
+  .programme-actions {
     bottom: 0.75rem;
     right: 0.75rem;
   }
   
   .event-card-edit-btn,
-  .event-card-delete-btn {
+  .programme-delete-btn {
     width: 24px;
     height: 24px;
     font-size: 0.6rem;
@@ -303,7 +343,7 @@
     padding: 0.3rem 0.6rem;
   }
   
-  .event-card-main-speaker {
+  .programme-main-speaker {
     margin-left: -1rem;
     margin-right: -1rem;
     padding-left: 1rem;
@@ -312,13 +352,13 @@
 }
 
 @media (max-width: 480px) {
-  .event-card {
+  .programme-event-card {
     max-width: 100%;
     min-width: 260px;
     margin: 0 0.5rem;
   }
   
-  .event-card-details {
+  .programme-details-section {
     padding: 0.75rem;
   }
   
@@ -326,18 +366,18 @@
     height: 130px;
   }
   
-  .event-card-title {
+  .programme-title {
     font-size: 0.95rem;
     line-height: 1.2;
   }
   
-  .event-card-actions {
+  .programme-actions {
     bottom: 0.5rem;
     right: 0.5rem;
   }
   
   .event-card-edit-btn,
-  .event-card-delete-btn {
+  .programme-delete-btn {
     width: 22px;
     height: 22px;
     font-size: 0.55rem;
@@ -350,38 +390,38 @@
     padding: 0.25rem 0.5rem;
   }
   
-  .event-card-main-speaker {
+  .programme-main-speaker {
     margin-left: -0.75rem;
     margin-right: -0.75rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
   
-  .event-card-speaker-photo {
+  .programme-speaker-photo {
     width: 28px;
     height: 28px;
   }
   
-  .event-card-speaker-name {
+  .programme-speaker-name {
     font-size: 0.8rem;
   }
   
-  .event-card-speaker-role {
+  .programme-speaker-role {
     font-size: 0.7rem;
   }
   
   .event-card-date,
   .event-card-time,
-  .event-card-venue {
+  .programme-location {
     font-size: 0.8rem;
     gap: 0.4rem;
   }
   
-  .event-card-icon {
+  .programme-icon {
     width: 12px;
   }
   
-  .event-card-summary {
+  .programme-description {
     font-size: 0.75rem;
     line-height: 1.3;
   }
@@ -428,12 +468,12 @@
 
 /* Très petits écrans */
 @media (max-width: 360px) {
-  .event-card {
+  .programme-event-card {
     min-width: 240px;
     margin: 0 0.25rem;
   }
   
-  .event-card-details {
+  .programme-details-section {
     padding: 0.5rem;
   }
   
@@ -441,21 +481,21 @@
     height: 120px;
   }
   
-  .event-card-title {
+  .programme-title {
     font-size: 0.9rem;
   }
   
   .event-card-date,
   .event-card-time,
-  .event-card-venue {
+  .programme-location {
     font-size: 0.75rem;
   }
   
-  .event-card-summary {
+  .programme-description {
     font-size: 0.7rem;
   }
   
-  .event-card-main-speaker {
+  .programme-main-speaker {
     margin-left: -0.5rem;
     margin-right: -0.5rem;
     padding-left: 0.5rem;

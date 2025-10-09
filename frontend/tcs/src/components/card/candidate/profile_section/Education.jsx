@@ -29,7 +29,7 @@ const formatDate = (month, year) => {
   return `${year}-${m}-01`;
 };
 
-const Education = ({ formData, onUpdate }) => {
+const Education = ({ formData, onUpdate, children }) => {
   const [dateErrors, setDateErrors] = useState([]);
   useEffect(() => {
     if (!formData.educations) return;
@@ -121,7 +121,12 @@ const Education = ({ formData, onUpdate }) => {
 
   return (
     <div className="section education-section">
-      <h3 className="education-title">Éducation</h3>
+      <div className="education-header">
+        <h3 className="education-title">Éducation</h3>
+        <button className="add-btn-modern" onClick={addEducation}>
+          <FaPlusCircle className="add-btn-icon" /> Ajouter
+        </button>
+      </div>
       
       {/* Affichage des erreurs de validation */}
       {dateErrors.length > 0 && (
@@ -231,9 +236,7 @@ const Education = ({ formData, onUpdate }) => {
           </div>
         </div>
       ))}
-      <button className="add-btn-modern" onClick={addEducation} style={{ marginTop: '10px' }}>
-        <FaPlusCircle className="add-btn-icon" /> Ajouter
-      </button>
+      {children}
     </div>
   );
 };

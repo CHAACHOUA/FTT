@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FaGlobe, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdLeaderboard } from 'react-icons/md';
 
-const Language = ({ formData, onUpdate }) => {
+const Language = ({ formData, onUpdate, children }) => {
   const [allLanguages, setAllLanguages] = useState([]);
 
   // 📌 Récupération des langues depuis l'API
@@ -60,7 +60,12 @@ const Language = ({ formData, onUpdate }) => {
 
   return (
     <div className="section education-section">
-      <h3 className="language-title">Langues</h3>
+      <div className="language-header">
+        <h3 className="language-title">Langues</h3>
+        <button className="add-btn-modern" onClick={addLanguage}>
+          <FaPlusCircle className="add-btn-icon" /> Ajouter
+        </button>
+      </div>
       {candidate_languages.map((lang, index) => (
         <div key={index} className="language-item-modern">
           <div className="input-modern">
@@ -104,9 +109,7 @@ const Language = ({ formData, onUpdate }) => {
           )}
         </div>
       ))}
-      <button className="add-btn-modern" onClick={addLanguage} style={{ marginTop: '10px' }}>
-        <FaPlusCircle className="add-btn-icon" /> Ajouter
-      </button>
+      {children}
     </div>
   );
 };

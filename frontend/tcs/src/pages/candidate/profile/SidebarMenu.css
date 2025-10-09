@@ -9,9 +9,9 @@ html {
   position: fixed;
   left: 0;
   top: 70px;
-  background-color: #ffffff;
+
   border-radius: 0 20px 20px 0;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.083);
   padding: 24px 0;
   display: flex;
   flex-direction: column;
@@ -19,6 +19,7 @@ html {
   z-index: 1000;
   animation: slideInSidebar 0.4s ease-out;
   font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
 }
 
 /* Titre de la page active - affiché au hover sur la sidebar */
@@ -97,7 +98,7 @@ html {
 /* Icône */
 .sidebar-icon {
   font-size: 22px;
-  color:#18386c;
+  color: #2b3a5a;
 }
 
 /* Le label est caché mais utilisé comme tooltip */

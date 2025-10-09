@@ -28,7 +28,7 @@ const formatDate = (month, year) => {
   return `${year}-${m}-01`;
 };
 
-const Experience = ({ formData, onUpdate }) => {
+const Experience = ({ formData, onUpdate, children }) => {
   const [dateErrors, setDateErrors] = useState([]);
   useEffect(() => {
     if (!formData.experiences) return;
@@ -124,7 +124,12 @@ const Experience = ({ formData, onUpdate }) => {
 
   return (
     <div className="section education-section">
-      <h3 className="experience-title">Expériences</h3>
+      <div className="experience-header">
+        <h3 className="experience-title">Expériences</h3>
+        <button className="add-btn-modern" onClick={addExperience}>
+          <FaPlusCircle className="add-btn-icon" /> Ajouter
+        </button>
+      </div>
       
       {/* Affichage des erreurs de validation */}
       {dateErrors.length > 0 && (
@@ -245,9 +250,7 @@ const Experience = ({ formData, onUpdate }) => {
           </div>
         </div>
       ))}
-      <button className="add-btn-modern" onClick={addExperience} style={{ marginTop: '10px' }}>
-        <FaPlusCircle className="add-btn-icon" /> Ajouter
-      </button>
+      {children}
     </div>
   );
 };

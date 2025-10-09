@@ -20,9 +20,9 @@ const Loading = () => {
           height: 100%;
           display: block;
           animation: spinner-b4c8mmmd 0.5s backwards, spinner-49opz7md 1.25s 0.5s infinite ease;
-          border: 5.6px solid #18386c;
+          border: 5.6px solid rgb(38, 102, 205);;
           border-radius: 50%;
-          box-shadow: 0 -33.6px 0 -5.6px #18386c;
+          box-shadow: 0 -33.6px 0 -5.6px rgb(38, 102, 205);;
           position: absolute;
         }
 
@@ -32,7 +32,7 @@ const Loading = () => {
 
         @keyframes spinner-b4c8mmmd {
           from {
-            box-shadow: 0 0 0 -5.6px #18386c;
+            box-shadow: 0 0 0 -5.6pxrgb(38, 102, 205);
           }
         }
 

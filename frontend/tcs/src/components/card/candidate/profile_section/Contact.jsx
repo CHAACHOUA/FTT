@@ -2,7 +2,7 @@ import React from 'react';
 import '../../../../pages/styles/candidate/Contact.css';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
 
-const Contact = ({ formData, onUpdate = () => {}, readOnly = false }) => {
+const Contact = ({ formData, onUpdate = () => {}, readOnly = false, children }) => {
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     if (!readOnly) onUpdate({ [name]: value });
@@ -54,6 +54,8 @@ const Contact = ({ formData, onUpdate = () => {}, readOnly = false }) => {
           />
         </div>
       </div>
+      
+      {children}
     </div>
   );
 };

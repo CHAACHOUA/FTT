@@ -364,7 +364,7 @@ const ForumInfoEdit = () => {
           <p>Modifiez les détails de votre forum : {forumData?.name}</p>
         </div>
 
-        <div className="presentation-section" style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
+        <div className="presentation-section" style={{ maxWidth: '1200px', margin: '20px auto', padding: '20px',width: '100%' ,}}>
           <form onSubmit={handleSubmit}>
             {/* Photo du forum */}
             <div className="profile-photo-container">
@@ -576,11 +576,11 @@ const ForumInfoEdit = () => {
             </div>
 
                          {/* Bouton d'action */}
-             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+             <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '30px' }}>
                <button
                  type="submit"
                  disabled={loading}
-                 className="organizer-btn-back"
+                 className="organizer-save-btn"
                  style={{
                    cursor: loading ? 'not-allowed' : 'pointer',
                    opacity: loading ? 0.7 : 1,

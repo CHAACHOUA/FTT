@@ -62,15 +62,7 @@ const Dashboard = () => {
           <SubMenu active={activeTab} setActive={setActiveTab} forumType={forum.type} />
         </div>
         <div className="candidate-main-content">
-          <div className="page-header">
-            {activeTab === 'info' && <span>Informations générales</span>}
-            {activeTab === 'entreprises' && <span>Entreprises</span>}
-            {activeTab === 'offres' && <span>Offres d'emploi</span>}
-            {activeTab === 'plan' && <span>Plan du Forum</span>}
-            {activeTab === 'partager' && <span>Partager mon profil</span>}
-            {activeTab === 'cv' && <span>Imprimer mon CV</span>}
-          </div>
-          <div className="dashboard-section">
+       
             {activeTab === 'info' && <ForumInfos forum={forum} />}
             {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} forum={forum} usePage={true} />}
             {activeTab === 'offres' && <ForumOffers companies={forum.companies} forum={forum} />}
@@ -94,7 +86,7 @@ const Dashboard = () => {
                 </button>
               </>
             )}
-          </div>
+       
         </div>
       </div>
     </div>

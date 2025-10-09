@@ -1,12 +1,12 @@
 /* Fond général du dashboard */
 .dashboard-bg {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;
   padding: 40px 0 0 0;
   color: #333;
 }
 
-.dashboard-header {
+.dashboard-org {
   text-align: left;
   max-width: 1200px;
   margin: 0 auto 32px auto;
@@ -55,13 +55,13 @@
   font-size: 1.2rem;
   color: #6b7280;
 }
-.dashboard-header h1 {
+.dashboard-org h1 {
   font-size: 2.7rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
   color: #111827;
 }
-.dashboard-header p {
+.dashboard-org p {
   font-size: 1.2rem;
   color: #6b7280;
 }
@@ -76,7 +76,7 @@
 }
 
 .dashboard-kpi-card {
-  background: #ffffff;
+  background: transparent;
   border-radius: 16px;
   padding: 28px 24px;
   position: relative;
@@ -112,17 +112,17 @@
   opacity: 1;
 }
 
-/* Couleurs différentes pour chaque type de KPI dans le dashboard */
+/* Couleurs différentes pour chaque type de KPI dans le dashboard - toutes en bleu */
 .dashboard-kpi-card:nth-child(1) {
-  border-top-color: #4f8cff; /* Bleu pour les entreprises */
+  border-top-color: #3b82f6; /* Bleu pour les entreprises */
 }
 
 .dashboard-kpi-card:nth-child(2) {
-  border-top-color: #E91E63; /* Rose vif pour les candidats */
+  border-top-color: #3b82f6; /* Bleu pour les candidats */
 }
 
 .dashboard-kpi-card:nth-child(3) {
-  border-top-color: #34d399; /* Vert pour les offres */
+  border-top-color: #3b82f6; /* Bleu pour les offres */
 }
 
 .kpi-label {
@@ -157,17 +157,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Couleurs spécifiques pour chaque KPI */
+/* Couleurs spécifiques pour chaque KPI - toutes en bleu */
 .dashboard-kpi-card:nth-child(1) .kpi-icon {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 
 .dashboard-kpi-card:nth-child(2) .kpi-icon {
-  background: linear-gradient(135deg, #ec4899, #be185d);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 
 .dashboard-kpi-card:nth-child(3) .kpi-icon {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 
 .dashboard-kpi-card:nth-child(1)::before {
@@ -175,11 +175,11 @@
 }
 
 .dashboard-kpi-card:nth-child(2)::before {
-  background: linear-gradient(90deg, #ec4899, #be185d);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 .dashboard-kpi-card:nth-child(3)::before {
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 .dashboard-kpi-card:nth-child(1):hover {
@@ -187,11 +187,11 @@
 }
 
 .dashboard-kpi-card:nth-child(2):hover {
-  border-color: #ec4899;
+  border-color: #3b82f6;
 }
 
 .dashboard-kpi-card:nth-child(3):hover {
-  border-color: #10b981;
+  border-color: #3b82f6;
 }
 
 .dashboard-submenu {
@@ -204,14 +204,13 @@
 }
 
 .dashboard-action-card {
-  background: #ffffff;
+  background: transparent;
   border: 2px solid #e5e7eb;
   border-radius: 16px;
   padding: 32px 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
 }
@@ -256,45 +255,45 @@
   line-height: 1.5;
 }
 
-/* Couleurs spécifiques pour chaque carte */
+/* Couleurs spécifiques pour chaque carte - toutes en bleu */
 .offers-card .action-icon {
-  color: #10b981;
+  color: #3b82f6;
 }
 .offers-card:hover {
-  border-color: #10b981;
+  border-color: #3b82f6;
 }
 .offers-card::before {
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 .candidat-card .action-icon {
-  color: #f59e0b;
+  color: #3b82f6;
 }
 .candidat-card:hover {
-  border-color: #f59e0b;
+  border-color: #3b82f6;
 }
 .candidat-card::before {
-  background: linear-gradient(90deg, #f59e0b, #d97706);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 .forum-info-card .action-icon {
-  color: #18386c;
+  color: #3b82f6;
 }
 .forum-info-card:hover {
-  border-color: #18386c;
+  border-color: #3b82f6;
 }
 .forum-info-card::before {
-  background: linear-gradient(90deg, #18386c, #06b6d4);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 .entreprise-card .action-icon {
-  color: #ef4444;
+  color: #3b82f6;
 }
 .entreprise-card:hover {
-  border-color: #ef4444;
+  border-color: #3b82f6;
 }
 .entreprise-card::before {
-  background: linear-gradient(90deg, #ef4444, #dc2626);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
 }
 
 /* Responsive design */
@@ -309,16 +308,16 @@
     padding: 20px 0 0 0;
   }
   
-  .dashboard-header {
+  .dashboard-org {
     padding: 0 16px;
     text-align: center;
   }
   
-  .dashboard-header h1 {
+  .dashboard-org h1 {
     font-size: 2rem;
   }
   
-  .dashboard-header p {
+  .dashboard-org p {
     font-size: 1rem;
   }
   
@@ -352,7 +351,7 @@
 }
 
 @media (max-width: 480px) {
-  .dashboard-header h1 {
+  .dashboard-org h1 {
     font-size: 1.8rem;
   }
   
@@ -367,4 +366,38 @@
   .dashboard-action-card {
     padding: 20px 16px;
   }
+}
+
+/* Style du bouton save pour le bouton d'enregistrement */
+.organizer-save-btn {
+  padding: 10px 20px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: block;
+  width: fit-content;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.organizer-btn-back:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.organizer-btn-back:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.organizer-btn-back:active:not(:disabled) {
+  transform: translateY(0);
 } 

@@ -291,16 +291,19 @@ const OffersList = () => {
           </div>
         </div>
         
+       
+        
+
+
+        {/* Conteneur centré pour la recherche et les offres */}
+        <div className="offers-main-container">
         <div className="page-title-section">
           <h1>Liste des Offres</h1>
           <p>Consultez toutes les offres postées par les recruteurs</p>
         </div>
-        
-
-
-        {/* Filtres avec le style des forums */}
-        <div className="search-bar-wrapper-search">
-          <div className="search-bar-search">
+          {/* Filtres avec le style des forums */}
+          <div className="search-bar-wrapper-search">
+            <div className="search-bar-search">
             <input
               className="search-input-search"
               type="text"
@@ -516,6 +519,7 @@ const OffersList = () => {
               ))}
           </div>
         )}
+        </div>
 
       </div>
     </div>

@@ -71,6 +71,9 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       console.log('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Réponse reçue:', response.data);
+      if (response.data.length > 0) {
+        console.log('🔍 [FRONTEND] ProgrammeManager - Premier programme speakers:', response.data[0].speakers);
+      }
       setProgrammes(response.data);
     } catch (err) {
       console.error('🔍 [FRONTEND] ProgrammeManager - fetchProgrammes - Erreur:', err);
@@ -82,12 +85,14 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
 
   const fetchSpeakers = async () => {
     try {
+      console.log('🔍 [FRONTEND] ProgrammeManager - fetchSpeakers - Début');
       const response = await axios.get(`${API}/forums/speakers/`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
+      console.log('🔍 [FRONTEND] ProgrammeManager - fetchSpeakers - Réponse reçue:', response.data);
       setSpeakers(response.data);
     } catch (err) {
-      console.error('Erreur lors du chargement des speakers:', err);
+      console.error('🔍 [FRONTEND] ProgrammeManager - fetchSpeakers - Erreur:', err);
     }
   };
 

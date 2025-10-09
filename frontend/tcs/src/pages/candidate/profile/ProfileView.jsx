@@ -7,6 +7,7 @@ import Education from '../../../components/card/candidate/profile_section/Educat
 import Experience from '../../../components/card/candidate/profile_section/Experience';
 import Language from '../../../components/card/candidate/profile_section/Language';
 import Skill from '../../../components/card/candidate/profile_section/Skill';
+import SaveButton from '../../../components/common/SaveButton';
 import SidebarMenu from './SidebarMenu';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
@@ -177,7 +178,7 @@ const ProfileView = () => {
   if (loading) return <Loading />;
 
   return (
-    <div style={{ paddingTop: '80px' }}>
+    <div style={{ paddingTop: '80px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
       <div className="profile-container">
         <SidebarMenu />
@@ -188,26 +189,35 @@ const ProfileView = () => {
               <UploadCV onUpload={handleCVUpload} formData={formData} />
             </section>
             <section id="presentation">
-              <Presentation formData={formData} onUpdate={handleUpdate} />
+              <Presentation formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Presentation>
             </section>
             <section id="contact">
-              <Contact formData={formData} onUpdate={handleUpdate} />
+              <Contact formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Contact>
             </section>
             <section id="education">
-              <Education formData={formData} onUpdate={handleUpdate} />
+              <Education formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Education>
             </section>
             <section id="experience">
-              <Experience formData={formData} onUpdate={handleUpdate} />
+              <Experience formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Experience>
             </section>
             <section id="language">
-              <Language formData={formData} onUpdate={handleUpdate} />
+              <Language formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Language>
             </section>
             <section id="skill">
-              <Skill formData={formData} onUpdate={handleUpdate} />
+              <Skill formData={formData} onUpdate={handleUpdate}>
+                <SaveButton onClick={handleSubmit} />
+              </Skill>
             </section>
-            <button className="validate-button" onClick={handleSubmit}>
-              Enregistrer les modifications
-            </button>
           </>
         ) : (
           <>

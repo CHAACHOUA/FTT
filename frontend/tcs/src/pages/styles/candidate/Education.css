@@ -254,6 +254,33 @@
   transform: translateY(-1px);
 }
 
+/* Headers avec bouton Ajouter aligné à droite */
+.education-header,
+.experience-header,
+.language-header,
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.education-header h3,
+.experience-header h3,
+.language-header h3,
+.skill-header h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.education-header .add-btn-modern,
+.experience-header .add-btn-modern,
+.language-header .add-btn-modern,
+.skill-header .add-btn-modern {
+  margin: 0;
+  margin-top: 0 !important;
+}
+
 /* ===== RESPONSIVE DESIGN POUR SECTIONS EDUCATION/CHANGE PASSWORD/DELETE ACCOUNT ===== */
 @media (max-width: 1024px) {
   .education-section,
@@ -918,20 +945,19 @@ input[type="text"] {
   align-items: center;
   gap: 8px;
   background: #fff;
-  color: #2196f3;
-  border: 2px solid #2196f3;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   border-radius: 10px;
   padding: 12px 32px;
   font-size: 1.13em;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s, border-color 0.18s;
-  box-shadow: 0 2px 8px rgba(33,150,243,0.07);
+  transition: all 0.3s ease;
 }
 .add-btn-modern:hover, .add-btn-modern:focus {
-  background: #e3f1fd;
-  color: #1769aa;
-  border-color: #1769aa;
+  background: #f0f7ff;
+  color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 .add-btn-modern .add-btn-icon {
   display: flex;

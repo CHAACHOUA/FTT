@@ -5,7 +5,7 @@ import Loading from '../../../../components/loyout/Loading';
 import './CompaniesList.css';
 import defaultLogo from '../../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faXmark, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faXmark, faToggleOn, faToggleOff, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import InviteRecruiterModal from './InviteRecruiterModal';
 import PersonCard from '../../../../components/card/common/PersonCard';
@@ -37,6 +37,7 @@ const CompaniesList = (props) => {
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // all, approved, pending
 
@@ -110,6 +111,28 @@ const CompaniesList = (props) => {
 
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
+  };
+
+  const toggleDropdown = (index, event) => {
+    if (dropdownOpen === index) {
+      setDropdownOpen(null);
+    } else {
+      setDropdownOpen(index);
+      
+      // Calculer la position du popup après un court délai
+      setTimeout(() => {
+        if (event && event.currentTarget) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const popup = document.querySelector('.enterprise-options-panel');
+          if (popup) {
+            popup.style.position = 'fixed';
+            popup.style.top = `${rect.bottom + 8}px`;
+            popup.style.left = `${rect.right - 200}px`;
+            popup.style.zIndex = '99999';
+          }
+        }
+      }, 10);
+    }
   };
 
   const handleAddRecruiter = (company) => {
@@ -507,31 +530,59 @@ const CompaniesList = (props) => {
                     </div>
                   </div>
                   
-                  {/* Boutons d'action */}
-                  <div className="company-actions">
-                    <button
-                      className={`toggle-approval-button ${company.approved ? 'approved' : 'pending'}`}
-                      title={company.approved ? 'Désapprouver l\'entreprise' : 'Approuver l\'entreprise'}
-                      onClick={() => handleToggleApproval(company)}
-                    >
-                      <FontAwesomeIcon icon={company.approved ? faToggleOn : faToggleOff} />
-                    </button>
-                    <button
-                      className="reject-company-button"
-                      title="Supprimer l'entreprise du forum"
-                      onClick={() => handleRejectCompany(company)}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                    {company.approved && (
+                  {/* Menu à 3 points */}
+                  <div className="enterprise-actions-container">
+                    <div className="enterprise-menu-wrapper">
                       <button
-                        className="add-recruiter-button"
-                        title="Ajouter un recruteur"
-                        onClick={() => handleAddRecruiter(company)}
+                        className="enterprise-options-trigger"
+                        onClick={(e) => toggleDropdown(index, e)}
+                        title="Options"
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          outline: 'none',
+                          boxShadow: 'none',
+                          padding: 0,
+                          margin: 0
+                        }}
                       >
-                        <FontAwesomeIcon icon={faPlus} />
+                        <FontAwesomeIcon icon={faEllipsisVertical} />
                       </button>
-                    )}
+                      {dropdownOpen === index && (
+                        <div className="enterprise-options-panel">
+                          <button
+                            className="enterprise-option-button"
+                            onClick={() => {
+                              handleToggleApproval(company);
+                              setDropdownOpen(null);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={company.approved ? faToggleOff : faToggleOn} />
+                            {company.approved ? 'Désapprouver' : 'Approuver'}
+                          </button>
+                          <button
+                            className="enterprise-option-button"
+                            onClick={() => {
+                              handleAddRecruiter(company);
+                              setDropdownOpen(null);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPlus} />
+                            Inviter un recruteur
+                          </button>
+                          <button
+                            className="enterprise-option-button enterprise-delete-option"
+                            onClick={() => {
+                              handleRejectCompany(company);
+                              setDropdownOpen(null);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faXmark} />
+                            Supprimer
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 

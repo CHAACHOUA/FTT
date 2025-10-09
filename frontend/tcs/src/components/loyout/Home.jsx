@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './NavBar';
 import Loading from './Loading';
 import { useAuth } from '../../context/AuthContext';
-// import { jwtDecode } from 'jwt-decode'; // Plus nécessaire avec useAuth()
 import '../../pages/styles/common/home.css';
 import recrutement from '../../assets/recrutement.jpg';
 import photo from '../../assets/photo.jpg';
@@ -124,7 +123,7 @@ export default function Home() {
             </p>
                                      <div className="hero-buttons">
               <button className="hero-button-primary-blue" onClick={handleJobSearch}>Je cherche un emploi</button>
-              <button className="hero-button-secondary">Je recrute</button>
+          
             </div>
           </div>
         </div>

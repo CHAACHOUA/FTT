@@ -19,7 +19,7 @@ const getProfilePictureURL = (profile_picture) => {
   return URL.createObjectURL(profile_picture);
 };
 
-const Presentation = ({ formData, onUpdate = () => {}, readOnly = false }) => {
+const Presentation = ({ formData, onUpdate = () => {}, readOnly = false, children }) => {
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     if (!readOnly) onUpdate({ [name]: value });
@@ -148,6 +148,8 @@ const Presentation = ({ formData, onUpdate = () => {}, readOnly = false }) => {
           />
         </div>
       </div>
+      
+      {children}
     </div>
   );
 };

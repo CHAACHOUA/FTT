@@ -134,7 +134,20 @@ const UploadCV = ({ onUpload, formData }) => {
 
   return (
     <div className="upload-cv-container" id="uploadcv">
-      <h2 className="upload-title">Upload your CV</h2>
+      <div className="upload-header">
+        <h2 className="upload-title">Télécharger votre CV</h2>
+        {(file || formData?.cv_file) && (
+          <a
+            href={file ? URL.createObjectURL(file) : existingCVUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="view-link"
+          >
+            <Eye size={16} style={{ marginRight: 4 }} />
+            Voir le CV
+          </a>
+        )}
+      </div>
 
       {loading && (
         <div className="parsing-banner">
@@ -165,21 +178,6 @@ const UploadCV = ({ onUpload, formData }) => {
       </div>
 
       <div className="upload-footer">
-      <div className="view-wrapper">
-  {(file || formData?.cv_file) && (
-    <a
-      href={file ? URL.createObjectURL(file) : existingCVUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="view-link"
-    >
-      <Eye size={16} style={{ marginRight: 4 }} />
-      Voir le CV
-    </a>
-  )}
-</div>
-
-
         <div className="button-wrapper">
           <button
             onClick={handleUpload}
@@ -187,7 +185,7 @@ const UploadCV = ({ onUpload, formData }) => {
             className="upload-button"
           >
             {loading ? <Loader2 size={18} className="spin" /> : <FileCheck size={18} />}
-            {loading ? ' Uploading...' : ' Upload CV'}
+            {loading ? ' Téléchargement...' : ' Télécharger CV'}
           </button>
         </div>
       </div>

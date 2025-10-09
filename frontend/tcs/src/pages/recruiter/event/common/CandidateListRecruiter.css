@@ -1,6 +1,6 @@
 .candidates-list {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;
   color: #111827;
   padding-top: 70px;
 }
@@ -52,7 +52,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -60,14 +60,14 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .export-candidates-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
-  background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
 }
 
 .export-candidates-btn:active {
@@ -110,7 +110,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .kpi-label-row {
@@ -223,7 +223,6 @@
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.05);
   transition: all 0.3s ease;
   cursor: pointer;
   flex: 1;
@@ -233,8 +232,7 @@
 
 .candidate-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(24, 56, 108, 0.1);
-  border-color: #18386c;
+  border-color: #3b82f6;
 }
 
 .candidate-photo {
@@ -243,8 +241,8 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 3px solid #e2e8f0;
-  background: #f3f4f6;
+  border: none;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,7 +288,7 @@
 
 /* Styles spécifiques pour les cartes de membres */
 .recruiter-email {
-  background: #f8fafc;
+  background: transparent;
   color: #475569;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
@@ -321,12 +319,14 @@
 }
 
 .sector-badge {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  background: #dbeafeda;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .sector-badge.empty {
@@ -438,17 +438,17 @@
 
 .filter-toggle-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
 }
 
 .filter-toggle-btn.active {
-  background: linear-gradient(135deg, #4f2cc6 0%, #667eea 100%);
-  box-shadow: 0 4px 12px rgba(79, 44, 198, 0.4);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .reset-filters-btn {
   padding: 0.75rem 1.5rem;
-  background: #f3f4f6;
+  background: transparent;
   color: #6b7280;
   border: 1px solid #d1d5db;
   border-radius: 12px;
@@ -491,8 +491,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .search-input::placeholder {
@@ -503,7 +503,7 @@
 .filters-container {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: #f8fafc;
+  background: transparent;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -513,7 +513,7 @@
 .no-candidates {
   text-align: center;
   padding: 3rem 2rem;
-  background: #f8fafc;
+  background: transparent;
   border-radius: 16px;
   border: 2px dashed #d1d5db;
 }
@@ -527,20 +527,20 @@
 .clear-filters-btn,
 .clear-search-btn {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .clear-filters-btn:hover,
 .clear-search-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
 }
 
 /* Container des cartes */
@@ -556,8 +556,6 @@
   background: #ffffff;
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(229, 231, 235, 0.5);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -569,21 +567,19 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.candidate-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  border-color: rgba(102, 126, 234, 0.3);
+.candidate-card {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  border-top: 4px solid #3b82f6;
 }
 
-.candidate-card:hover::before {
-  opacity: 1;
-}
+
 
 .candidate-card {
   display: flex;
@@ -601,17 +597,16 @@
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #667eea;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  border: none;
+  
 }
 
 .default-avatar {
   width: 60px;
   height: 60px;
-  color: #9ca3af;
-  border: 3px solid #e5e7eb;
+  border: none;
   border-radius: 50%;
-  background: #f8fafc;
+  background: transparent;
 }
 
 .candidate-info {
@@ -641,17 +636,18 @@
 }
 
 .sector-badge {
-  padding: 0.25rem 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  background: #dbeafeda;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
   font-weight: 600;
+  display: inline-block;
   white-space: nowrap;
 }
 
 .sector-badge.empty {
-  background: #f3f4f6;
+  background: transparent;
   color: #6b7280;
   border: 1px solid #d1d5db;
 }
@@ -666,7 +662,7 @@
 }
 
 .icon-location {
-  color: #667eea;
+  color: #3b82f6;
   font-size: 0.9rem;
 }
 
@@ -679,7 +675,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #18386c;
+  color: #3b82f6;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -687,7 +683,7 @@
 }
 
 .cv-download:hover {
-  color: #06b6d4;
+  color: #3b82f6;
   transform: scale(1.1);
 }
 
@@ -758,7 +754,7 @@
 .search-candidate-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  border-color: #3b82f6;
 }
 
 .add-meeting-btn {
@@ -767,7 +763,7 @@
   right: 0.75rem;
   width: 35px;
   height: 35px;
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 50%;
@@ -800,12 +796,12 @@
 }
 
 .meeting-card {
-  border-left: 4px solid #18386c;
+  border-left: 4px solid #3b82f6;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
 }
 
 .meeting-card::before {
-  background: linear-gradient(90deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .meeting-actions {

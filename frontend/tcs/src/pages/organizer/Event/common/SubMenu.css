@@ -22,23 +22,22 @@
  
 }
 .entreprise-card{
-  background: linear-gradient(135deg, #4f8cff 0%, #38e8ff 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 .candidat-card {
-
-  background: linear-gradient(135deg, #b16cea 0%, #ff5e69 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .forum-info-card {
-  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .offers-card {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .programmes-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 .dashboard-action-card:hover {
   transform: translateY(-4px) scale(1.03);

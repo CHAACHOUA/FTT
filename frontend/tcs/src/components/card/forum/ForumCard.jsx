@@ -92,7 +92,7 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
               className="organizer-logo-seekube"
             />
             <span className="organizer-text">
-              Organisé par {forum.organizer?.name}
+              Organisé par <strong>{forum.organizer?.name}</strong>
             </span>
           </div>
 
@@ -141,8 +141,8 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
           </div>
 
           <p className="forum-description">
-            {forum.description?.length > 300
-              ? forum.description.slice(0, 300) + '…'
+            {forum.description?.length > 200
+              ? forum.description.slice(0, 200) + '…'
               : forum.description}
           </p>
 
