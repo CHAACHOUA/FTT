@@ -1,74 +1,115 @@
 version: '3.8'
 
 services:
-  db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
-    container_name: tcs_mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tcs
+
+  # Redis pour Celery
+  redis:
+    image: redis:7-alpine
+    container_name: tcs_redis_local
     ports:
-      - "3307:3306"
+      - "6379:6379"
     volumes:
-      - db_data:/var/lib/mysql
+      - redis_data:/data
     networks:
-      - tcs_net
+      - tcs_network
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: tcs_phpmyadmin
-    environment:
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: root
-    ports:
-      - "8080:80"
-    networks:
-      - tcs_net
-
-  backend:
+  # Backend Django
+  django:
     build:
       context: ./backend/TCS
       dockerfile: Dockerfile
-    container_name: tcs_backend
-    command: >
-      sh -c "
-        python manage.py migrate &&
-        python manage.py runserver 0.0.0.0:8000
-      "
-    volumes:
-      - ./backend/tcs:/app
-    ports:
-      - "8000:8000"
+    container_name: tcs_django_local
+    restart: always
     env_file:
       - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/TCS:/app
+      - django_media:/app/media
+      - django_static:/app/static
     depends_on:
-      - db
+      - redis
     networks:
-      - tcs_net
+      - tcs_network
+    command: >
+      sh -c "
+        pip install -r requirements.txt &&
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 TCS.wsgi:application
+      "
 
-  frontend:
+  # Celery Worker
+  celery:
+    build:
+      context: ./backend/TCS
+      dockerfile: Dockerfile
+    container_name: tcs_celery_local
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ./backend/TCS:/app
+      - django_media:/app/media
+    depends_on:
+      - redis
+    networks:
+      - tcs_network
+    command: celery -A TCS worker --loglevel=info
+
+  # Celery Beat (scheduler)
+  celery-beat:
+    build:
+      context: ./backend/TCS
+      dockerfile: Dockerfile
+    container_name: tcs_celery_beat_local
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - ./backend/TCS:/app
+    depends_on:
+      - redis
+    networks:
+      - tcs_network
+    command: celery -A TCS beat --loglevel=info
+
+  # Frontend React
+  react:
     build:
       context: ./frontend/tcs
       dockerfile: Dockerfile
-    container_name: tcs_frontend
-    volumes:
-      - ./frontend/tcs:/app
-    ports:
-      - "3000:3000"
+    container_name: tcs_react_local
+    restart: always
     env_file:
       - .env
-    stdin_open: true
-    tty: true
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend/tcs:/app
+      - /app/node_modules
     networks:
-      - tcs_net
+      - tcs_network
+
 
 volumes:
-  db_data:
+  redis_data:
+  django_media:
+  django_static:
 
 networks:
-  tcs_net:
+  tcs_network:
     driver: bridge
