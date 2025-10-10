@@ -111,7 +111,6 @@ class OfferCandidateSerializer(serializers.ModelSerializer):
     def get_recruiter_name(self, obj):
         return f"{obj.recruiter.first_name} {obj.recruiter.last_name}"
 
-
 class OfferWriteSerializer(serializers.ModelSerializer):
     forum_id = serializers.PrimaryKeyRelatedField(
         queryset=Forum.objects.all(),  # remplace Forum par ton modèle Forum exact
@@ -132,8 +131,8 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             'experience_required',
             'forum_id',  # ici forum_id au lieu de forum
         ]
-
 class FavoriteOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteOffer
         fields = ['id', 'candidate', 'offer', 'added_at']
+
