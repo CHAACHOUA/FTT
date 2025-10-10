@@ -5,7 +5,7 @@ import CandidateProfile from '../../../candidate/profile/CandidateProfile';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import CandidateCard from '../../../../components/card/candidate/CandidateCard';
 import Loading from '../../../../components/loyout/Loading';
-import '../common/CandidateListRecruiter.css';
+import './RencontresList.css';
 
 const RencontresList = ({ forumId, apiBaseUrl }) => {
   const [allCandidates, setAllCandidates] = useState([]); // Tous les candidats du forum
@@ -225,93 +225,124 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'accès aux rencontres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
-      <div className="offers-list-wrapper">
-        <div className="offers-list-content">
-        <div className="candidates-header">
-        <h2>Mes rencontres - {meetings.length} candidat{meetings.length > 1 ? 's' : ''}</h2>
-      </div>
-
-      {/* Barre de recherche pour ajouter des candidats */}
-      <div className="search-section">
-        <h3>Ajouter des candidats aux rencontres</h3>
-        <div className="search-bar">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Rechercher un candidat par nom, prénom ou email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
+      <div className="rencontres-list-wrapper">
+        {/* Header avec titre principal */}
+        <div className="rencontres-list-header">
+          <div className="rencontres-list-header-left">
+            <div className="rencontres-list-title-section">
+              <h2 className="rencontres-list-main-title">
+                Mes Rencontres
+              </h2>
+              <p className="rencontres-list-subtitle">
+                Gérez vos rencontres avec les candidats du forum
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Résultats de recherche */}
-        {searchTerm && (
-          <div className="search-results">
-            <h4>Résultats de recherche ({searchResults.length})</h4>
-            {isSearching ? (
-              <p>Recherche en cours...</p>
-            ) : searchResults.length === 0 ? (
-              <p>Aucun candidat trouvé ou tous les candidats sont déjà dans vos rencontres.</p>
-            ) : (
-              <div className="search-cards">
-                {searchResults.map(({ candidate, search }, index) => (
-                  <div className="search-candidate-card" key={index}>
-                    <CandidateCard
-                      candidate={{ ...candidate, search }}
-                      apiBaseUrl={apiBaseUrl}
-                      onCandidateClick={null}
-                      onRemoveFromMeetings={null}
-                      showRemoveButton={false}
-                      className="candidate-card"
-                    />
-                    <button
-                      className="add-meeting-btn"
-                      onClick={() => addToMeetings(candidate)}
-                      title="Ajouter aux rencontres"
-                    >
-                      <FaPlus />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Statistiques */}
+        <div className="rencontres-list-stats">
+          <div className="rencontres-list-stat-item">
+            <div className="rencontres-list-stat-content">
+              <span className="rencontres-list-stat-number">{meetings.length}</span>
+            </div>
+            <span className="rencontres-list-stat-label">Rencontres</span>
           </div>
+          <div className="rencontres-list-stat-item">
+            <div className="rencontres-list-stat-content">
+              <span className="rencontres-list-stat-number">{allCandidates.length}</span>
+            </div>
+            <span className="rencontres-list-stat-label">Candidats disponibles</span>
+          </div>
+          <div className="rencontres-list-stat-item">
+            <div className="rencontres-list-stat-content">
+              <span className="rencontres-list-stat-number">{searchResults.length}</span>
+            </div>
+            <span className="rencontres-list-stat-label">Résultats de recherche</span>
+          </div>
+        </div>
+
+        {/* Section de recherche */}
+        <div className="rencontres-list-search-section">
+          <h3>Ajouter des candidats aux rencontres</h3>
+          <div className="rencontres-list-search-bar">
+            <FaSearch className="rencontres-list-search-icon" />
+            <input
+              type="text"
+              placeholder="Rechercher un candidat par nom, prénom ou email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="rencontres-list-search-input"
+            />
+          </div>
+
+          {/* Résultats de recherche */}
+          {searchTerm && (
+            <div className="rencontres-list-search-results">
+              <h4>Résultats de recherche ({searchResults.length})</h4>
+              {isSearching ? (
+                <p>Recherche en cours...</p>
+              ) : searchResults.length === 0 ? (
+                <p>Aucun candidat trouvé ou tous les candidats sont déjà dans vos rencontres.</p>
+              ) : (
+                <div className="rencontres-list-search-cards">
+                  {searchResults.map(({ candidate, search }, index) => (
+                    <div className="rencontres-list-search-candidate-card" key={index}>
+                      <CandidateCard
+                        candidate={{ ...candidate, search }}
+                        apiBaseUrl={apiBaseUrl}
+                        onCandidateClick={null}
+                        onRemoveFromMeetings={null}
+                        showRemoveButton={false}
+                        className="candidate-card"
+                      />
+                      <button
+                        className="rencontres-list-add-meeting-btn"
+                        onClick={() => addToMeetings(candidate)}
+                        title="Ajouter aux rencontres"
+                      >
+                        <FaPlus />
+                        Ajouter
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Section des rencontres */}
+        <div className="rencontres-list-meetings-section">
+          <h3>Mes rencontres programmées</h3>
+          {meetings.length === 0 ? (
+            <div className="rencontres-list-no-candidates">
+              <p>Aucune rencontre programmée. Utilisez la recherche ci-dessus pour ajouter des candidats.</p>
+            </div>
+          ) : (
+            <div className="rencontres-list-cards-container">
+              {meetings.map((candidate, index) => (
+                <CandidateCard
+                  key={index}
+                  candidate={candidate}
+                  apiBaseUrl={apiBaseUrl}
+                  onCandidateClick={setSelectedCandidate}
+                  onRemoveFromMeetings={removeFromMeetings}
+                  showRemoveButton={true}
+                  className="candidate-card meeting-card"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {selectedCandidate && (
+          <CandidateProfile
+            candidateData={selectedCandidate}
+            onClose={() => setSelectedCandidate(null)}
+          />
         )}
       </div>
-
-      {/* Liste des rencontres */}
-      <div className="meetings-section">
-        <h3>Mes rencontres programmées</h3>
-        {meetings.length === 0 ? (
-          <div className="no-candidates">
-            <p>Aucune rencontre programmée. Utilisez la recherche ci-dessus pour ajouter des candidats.</p>
-          </div>
-        ) : (
-          <div className="cards-container">
-            {meetings.map((candidate, index) => (
-              <CandidateCard
-                key={index}
-                candidate={candidate}
-                apiBaseUrl={apiBaseUrl}
-                onCandidateClick={setSelectedCandidate}
-                onRemoveFromMeetings={removeFromMeetings}
-                showRemoveButton={true}
-                className="candidate-card meeting-card"
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {selectedCandidate && (
-        <CandidateProfile
-          candidateData={selectedCandidate}
-          onClose={() => setSelectedCandidate(null)}
-        />
-      )}
-      </div>
-    </div>
     </CompanyApprovalCheck>
   );
 };

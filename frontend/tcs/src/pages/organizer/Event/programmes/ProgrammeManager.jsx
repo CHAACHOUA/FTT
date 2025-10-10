@@ -10,7 +10,10 @@ import {
   faTimes,
   faCalendarDays,
   faCalendarAlt,
-  faUser
+  faUser,
+  faChevronDown,
+  faChevronRight,
+  faCalendarDay
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../../context/AuthContext';
 import Modal from '../../../../components/card/common/Modal';
@@ -39,6 +42,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
   });
   const [isSpeakerDropdownOpen, setIsSpeakerDropdownOpen] = useState(false);
   const [dateErrors, setDateErrors] = useState([]);
+  const [activeDay, setActiveDay] = useState(null);
   const { accessToken } = useAuth();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -46,6 +50,17 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     fetchProgrammes();
     fetchSpeakers();
   }, [forumId]);
+
+  // Définir automatiquement le premier jour comme actif
+  useEffect(() => {
+    if (programmes.length > 0 && !activeDay) {
+      const groupedProgrammes = groupProgrammesByDay(programmes);
+      const sortedDays = getSortedDays(groupedProgrammes);
+      if (sortedDays.length > 0) {
+        setActiveDay(sortedDays[0]);
+      }
+    }
+  }, [programmes, activeDay]);
 
   // Fermer le dropdown des speakers quand on clique en dehors
   useEffect(() => {
@@ -272,6 +287,58 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     return date.toLocaleDateString('fr-FR');
   };
 
+  // Fonction pour grouper les programmes par jour
+  const groupProgrammesByDay = (programmes) => {
+    const grouped = {};
+    
+    programmes.forEach(programme => {
+      const dateKey = programme.start_date;
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = [];
+      }
+      grouped[dateKey].push(programme);
+    });
+
+    // Trier les programmes par heure de début dans chaque jour
+    Object.keys(grouped).forEach(dateKey => {
+      grouped[dateKey].sort((a, b) => {
+        if (a.start_time && b.start_time) {
+          return a.start_time.localeCompare(b.start_time);
+        }
+        return 0;
+      });
+    });
+
+    return grouped;
+  };
+
+  // Fonction pour obtenir les jours triés
+  const getSortedDays = (groupedProgrammes) => {
+    return Object.keys(groupedProgrammes).sort((a, b) => new Date(a) - new Date(b));
+  };
+
+  // Fonction pour obtenir le numéro du jour
+  const getDayNumber = (dateString, allDays) => {
+    const sortedDays = allDays.sort((a, b) => new Date(a) - new Date(b));
+    return sortedDays.indexOf(dateString) + 1;
+  };
+
+  // Fonction pour définir le jour actif
+  const setActiveDayHandler = (dateKey) => {
+    setActiveDay(dateKey);
+  };
+
+  // Fonction pour pré-remplir les dates du forum
+  const prefillForumDates = () => {
+    if (forumDates && forumDates.start_date && forumDates.end_date) {
+      setFormData(prev => ({
+        ...prev,
+        start_date: forumDates.start_date,
+        end_date: forumDates.end_date
+      }));
+    }
+  };
+
 
 
   if (isLoading) {
@@ -284,7 +351,10 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
         <div className="programme-manager-header">
           <button 
             className="add-programme-btn"
-            onClick={() => setShowAddForm(true)}
+            onClick={() => {
+              prefillForumDates();
+              setShowAddForm(true);
+            }}
           >
             <FontAwesomeIcon icon={faPlus} />
             Ajouter un programme
@@ -528,31 +598,74 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
         </form>
       </Modal>
 
-      {/* Liste des programmes */}
-      <div className="programme-cards-container">
+      {/* Interface avec onglets pour les jours */}
+      <div className="programme-tabs-container">
         {programmes.length === 0 ? (
           <div className="no-programmes">
             <p>Aucun programme ajouté pour le moment.</p>
-            <button onClick={() => setShowAddForm(true)}>
+            <button onClick={() => {
+              prefillForumDates();
+              setShowAddForm(true);
+            }}>
               <FontAwesomeIcon icon={faPlus} />
               Ajouter le premier programme
             </button>
           </div>
         ) : (
-          <div className="event-cards-grid">
-            {programmes.map(programme => (
-              <EventCard
-                key={programme.id}
-                event={programme}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                showActions={true}
-                showSpeaker={true}
-                formatTime={formatTime}
-                formatDate={formatDate}
-              />
-            ))}
-          </div>
+          <>
+            {/* Sélection des jours */}
+            <div className="programme-days-selector">
+              {(() => {
+                const groupedProgrammes = groupProgrammesByDay(programmes);
+                const sortedDays = getSortedDays(groupedProgrammes);
+                
+                return sortedDays.map(dateKey => {
+                  const dayNumber = getDayNumber(dateKey, sortedDays);
+                  const isActive = activeDay === dateKey;
+                  
+                  return (
+                    <button
+                      key={dateKey}
+                      className={`day-selector-card ${isActive ? 'active' : ''}`}
+                      onClick={() => setActiveDayHandler(dateKey)}
+                    >
+                      <div className="day-card-content">
+                        <div className="day-card-title">Jour {dayNumber.toString().padStart(2, '0')}</div>
+                        <div className="day-card-date">{formatDate(dateKey)}</div>
+                      </div>
+                    </button>
+                  );
+                });
+              })()}
+            </div>
+
+            {/* Contenu du jour actif */}
+            {activeDay && (
+              <div className="programme-tab-content">
+                {(() => {
+                  const groupedProgrammes = groupProgrammesByDay(programmes);
+                  const dayProgrammes = groupedProgrammes[activeDay] || [];
+                  
+                  return (
+                    <div className="event-cards-grid">
+                      {dayProgrammes.map(programme => (
+                        <EventCard
+                          key={programme.id}
+                          event={programme}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                          showActions={true}
+                          showSpeaker={true}
+                          formatTime={formatTime}
+                          formatDate={formatDate}
+                        />
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

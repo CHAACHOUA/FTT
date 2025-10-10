@@ -187,7 +187,7 @@ const OrganizerProfileView = () => {
                         src={getLogoURL(formData.logo)}
                         alt="Logo"
                         className="profile-photo"
-                        style={{ borderRadius: '50%' }}
+                      
                       />
                     ) : (
                       <div className="profile-initials-circle" style={{ fontSize: 24 }}>

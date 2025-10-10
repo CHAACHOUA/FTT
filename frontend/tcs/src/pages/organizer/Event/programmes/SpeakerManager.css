@@ -27,13 +27,13 @@
 }
 
 .add-speaker-btn {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
-  color: white;
-  border: none;
+  background: #ffffff;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -42,8 +42,9 @@
 }
 
 .add-speaker-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
 }
 
 .error-message {
@@ -229,12 +230,13 @@
 }
 
 .no-speakers button {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
-  color: white;
-  border: none;
+  background: #ffffff;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -244,8 +246,9 @@
 }
 
 .no-speakers button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
 }
 
 .speakers-grid {
@@ -325,13 +328,14 @@
 
 .edit-btn,
 .delete-btn {
-  background: none;
+  background: transparent;
   border: none;
   padding: 0.5rem;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
+  box-shadow: none;
 }
 
 .edit-btn {
@@ -339,7 +343,8 @@
 }
 
 .edit-btn:hover {
-  background: rgba(24, 56, 108, 0.1);
+  background: transparent;
+  opacity: 0.7;
 }
 
 .delete-btn {
@@ -347,7 +352,8 @@
 }
 
 .delete-btn:hover {
-  background: rgba(220, 53, 69, 0.1);
+  background: transparent;
+  opacity: 0.7;
 }
 
 /* Responsive */

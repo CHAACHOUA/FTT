@@ -58,6 +58,17 @@ const PersonCard = ({
     return null;
   };
 
+  const getInitials = () => {
+    if (person.full_name) {
+      const names = person.full_name.split(' ');
+      return names.map(name => name.charAt(0)).join('').toUpperCase();
+    }
+    if (person.first_name && person.last_name) {
+      return `${person.first_name.charAt(0)}${person.last_name.charAt(0)}`.toUpperCase();
+    }
+    return '?';
+  };
+
   return (
     <div className={`person-card ${type} ${className}`}>
       <div className="person-photo">
@@ -69,7 +80,7 @@ const PersonCard = ({
           />
         ) : null}
         <div className="person-photo-placeholder" style={{ display: person.photo ? 'none' : 'flex' }}>
-          <FontAwesomeIcon icon={faUser} />
+          {getInitials()}
         </div>
       </div>
 
