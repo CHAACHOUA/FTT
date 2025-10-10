@@ -8,6 +8,7 @@ from users.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from recruiters.models import Recruiter
 from organizers.models import Organizer
+from django.utils import timezone
 
 
 def login_user_view(email: str, password: str):
@@ -53,6 +54,9 @@ def login_candidate_user(email: str, password: str):
         return Response({"message": "Identifiants incorrects. Veuillez réessayer."},
                         status=status.HTTP_401_UNAUTHORIZED)
 
+    # Mettre à jour la dernière connexion
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
 
     try:
         candidate = Candidate.objects.get(user=user)
@@ -104,6 +108,10 @@ def login_recruiter_user(email: str, password: str):
         return Response({"message": "Identifiants incorrects. Veuillez réessayer."},
                         status=status.HTTP_401_UNAUTHORIZED)
 
+    # Mettre à jour la dernière connexion
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
+
     try:
         recruiter = Recruiter.objects.get(user=user)
     except ObjectDoesNotExist:
@@ -153,6 +161,10 @@ def login_organizer_user(email: str, password: str):
     if not user.check_password(password):
         return Response({"message": "Identifiants incorrects. Veuillez réessayer."},
                         status=status.HTTP_401_UNAUTHORIZED)
+
+    # Mettre à jour la dernière connexion
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
 
     try:
         organizer = Organizer.objects.get(user=user)
