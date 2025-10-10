@@ -302,7 +302,6 @@ const RencontresList = ({ forumId, apiBaseUrl }) => {
                         title="Ajouter aux rencontres"
                       >
                         <FaPlus />
-                        Ajouter
                       </button>
                     </div>
                   ))}

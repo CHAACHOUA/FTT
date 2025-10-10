@@ -229,6 +229,7 @@
   flex: 1;
   min-width: 300px;
   max-width: 400px;
+  position: relative;
 }
 
 .candidate-card:hover {
@@ -815,13 +816,13 @@
   display: flex;
   gap: 0.5rem;
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  bottom: 12px;
+  right: 12px;
 }
 
 .remove-meeting-btn {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
   border: none;
@@ -831,13 +832,14 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  z-index: 10;
 }
 
 .remove-meeting-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
 /* Responsive */
