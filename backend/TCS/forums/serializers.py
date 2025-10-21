@@ -34,6 +34,9 @@ class ProgrammeSerializer(serializers.ModelSerializer):
 class ForumSerializer(serializers.ModelSerializer):
     organizer = OrganizerSerializer(read_only=True)
     programmes = ProgrammeSerializer(many=True, read_only=True)
+    current_phase = serializers.SerializerMethodField()
+    phase_display = serializers.SerializerMethodField()
+    is_virtual = serializers.SerializerMethodField()
 
     class Meta:
         model = Forum
@@ -49,13 +52,33 @@ class ForumSerializer(serializers.ModelSerializer):
             'description',
             'organizer',
             'programmes',
+            'preparation_start',
+            'preparation_end',
+            'jobdating_start',
+            'interview_start',
+            'interview_end',
+            'current_phase',
+            'phase_display',
+            'is_virtual',
         ]
+    
+    def get_current_phase(self, obj):
+        return obj.get_current_phase()
+    
+    def get_phase_display(self, obj):
+        return obj.get_phase_display()
+    
+    def get_is_virtual(self, obj):
+        return obj.is_virtual_forum()
 
 
 class ForumDetailSerializer(serializers.ModelSerializer):
     organizer = OrganizerSerializer(read_only=True)
     companies = serializers.SerializerMethodField()
     programmes = ProgrammeSerializer(many=True, read_only=True)
+    current_phase = serializers.SerializerMethodField()
+    phase_display = serializers.SerializerMethodField()
+    is_virtual = serializers.SerializerMethodField()
 
     class Meta:
         model = Forum
@@ -72,7 +95,24 @@ class ForumDetailSerializer(serializers.ModelSerializer):
             'organizer',
             'companies',
             'programmes',
+            'preparation_start',
+            'preparation_end',
+            'jobdating_start',
+            'interview_start',
+            'interview_end',
+            'current_phase',
+            'phase_display',
+            'is_virtual',
         ]
+    
+    def get_current_phase(self, obj):
+        return obj.get_current_phase()
+    
+    def get_phase_display(self, obj):
+        return obj.get_phase_display()
+    
+    def get_is_virtual(self, obj):
+        return obj.is_virtual_forum()
 
     def get_companies(self, obj):
         forum = obj

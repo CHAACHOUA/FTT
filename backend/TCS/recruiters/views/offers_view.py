@@ -77,7 +77,13 @@ def create_offer(request):
 @api_view(['PUT', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def update_offer(request, offer_id):
+    print(f"=== UPDATE OFFER CALLED === offer_id: {offer_id}")
+    print(f"Request method: {request.method}")
+    print(f"Request data: {request.data}")
+    
     user = request.user
+    print(f"User: {user}, Has recruiter_profile: {hasattr(user, 'recruiter_profile')}")
+    
     if not hasattr(user, 'recruiter_profile'):
         return Response({'detail': 'Seuls les recruteurs peuvent modifier une offre.'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -85,9 +91,13 @@ def update_offer(request, offer_id):
     if serializer.is_valid():
         try:
             offer = update_offer_service(user.recruiter_profile, offer_id, serializer.validated_data)
+            print(f"Offre mise à jour avec succès: {offer.id}")
             return Response(OfferSerializer(offer).data)
         except ValidationError as e:
+            print(f"Erreur de validation: {e}")
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        print(f"Serializer errors: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

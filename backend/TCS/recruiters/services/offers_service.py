@@ -51,6 +51,21 @@ def create_offer_service(recruiter, data):
     )
 
 def update_offer_service(recruiter, offer_id, data):
+    print(f"=== UPDATE OFFER SERVICE ===")
+    print(f"Recruiter: {recruiter}")
+    print(f"Offer ID: {offer_id}")
+    print(f"Data: {data}")
+    
+    # Vérifier si l'offre existe
+    try:
+        offer = Offer.objects.get(id=offer_id)
+        print(f"Offre trouvée: {offer.id}, Recruiter: {offer.recruiter}")
+        print(f"Recruiter actuel: {recruiter}")
+        print(f"Offre appartient au recruteur: {offer.recruiter == recruiter}")
+    except Offer.DoesNotExist:
+        print(f"Offre {offer_id} n'existe pas")
+        raise
+    
     offer = get_object_or_404(Offer, id=offer_id, recruiter=recruiter)
     company = recruiter.company
     

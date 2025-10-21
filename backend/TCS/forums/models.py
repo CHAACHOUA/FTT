@@ -15,10 +15,58 @@ class Forum(models.Model):
     start_time = models.TimeField(default='09:00')
     end_time = models.TimeField(default='17:00')
     created_at = models.DateTimeField(auto_now_add=True)
-    organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, related_name='forums') 
+    organizer = models.ForeignKey(Organizer, on_delete=models.CASCADE, related_name='forums')
+    
+    # Attributs pour les forums virtuels - Phases temporelles
+    preparation_start = models.DateTimeField(null=True, blank=True, help_text="Début de la phase de préparation")
+    preparation_end = models.DateTimeField(null=True, blank=True, help_text="Fin de la phase de préparation")
+    jobdating_start = models.DateTimeField(null=True, blank=True, help_text="Début de la phase jobdating/traitement")
+    interview_start = models.DateTimeField(null=True, blank=True, help_text="Début de la phase des entretiens")
+    interview_end = models.DateTimeField(null=True, blank=True, help_text="Fin de la phase des entretiens") 
 
     def __str__(self):
         return self.name
+    
+    def is_virtual_forum(self):
+        """Vérifie si le forum est de type virtuel"""
+        return self.type == 'virtuel'
+    
+    def get_current_phase(self):
+        """Retourne la phase actuelle du forum virtuel"""
+        from django.utils import timezone
+        now = timezone.now()
+        
+        if not self.is_virtual_forum():
+            return None
+            
+        if self.preparation_start and now < self.preparation_start:
+            return 'before_preparation'
+        elif self.preparation_start and self.preparation_end and self.preparation_start <= now <= self.preparation_end:
+            return 'preparation'
+        elif self.preparation_end and self.jobdating_start and self.preparation_end < now < self.jobdating_start:
+            return 'between_preparation_jobdating'
+        elif self.jobdating_start and self.interview_start and self.jobdating_start <= now < self.interview_start:
+            return 'jobdating'
+        elif self.interview_start and self.interview_end and self.interview_start <= now <= self.interview_end:
+            return 'interview'
+        elif self.interview_end and now > self.interview_end:
+            return 'completed'
+        else:
+            return 'unknown'
+    
+    def get_phase_display(self):
+        """Retourne l'affichage de la phase actuelle"""
+        phase = self.get_current_phase()
+        phase_display = {
+            'before_preparation': 'Avant préparation',
+            'preparation': 'Phase de préparation',
+            'between_preparation_jobdating': 'Transition',
+            'jobdating': 'Phase jobdating/traitement',
+            'interview': 'Phase entretiens',
+            'completed': 'Terminé',
+            'unknown': 'Phase inconnue'
+        }
+        return phase_display.get(phase, 'Phase inconnue')
 
 
 class Speaker(models.Model):

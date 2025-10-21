@@ -12,10 +12,11 @@ class RecruiterSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
     last_login = serializers.DateTimeField(source='user.last_login', read_only=True)
     forum_offers_count = serializers.SerializerMethodField()
+    photo = serializers.ImageField(source='profile_picture', read_only=True)
     
     class Meta:
         model = Recruiter
-        fields = ['id', 'first_name', 'last_name','profile_picture', 'company','title','phone','email','created_at','last_login','forum_offers_count']
+        fields = ['id', 'first_name', 'last_name','profile_picture', 'photo', 'company','title','phone','email','created_at','last_login','forum_offers_count']
     
     def get_forum_offers_count(self, obj):
         """Compter le nombre d'offres du recruteur pour le forum spécifique"""
@@ -71,6 +72,7 @@ class OfferSerializer(serializers.ModelSerializer):
     company_banner = serializers.ImageField(source='company.banner', read_only=True)
     recruiter_photo = serializers.ImageField(source='recruiter.profile_picture', read_only=True)
     recruiter_name = serializers.SerializerMethodField()
+    recruiter = serializers.SerializerMethodField()
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     experience_display = serializers.CharField(source='get_experience_required_display', read_only=True)
     
@@ -92,6 +94,7 @@ class OfferSerializer(serializers.ModelSerializer):
             'created_at',
             'company_name',
             'recruiter_name',
+            'recruiter',
             'company_logo',
             'company_banner',
             'recruiter_photo'
@@ -99,6 +102,14 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def get_recruiter_name(self, obj):
         return f"{obj.recruiter.first_name} {obj.recruiter.last_name}"
+    
+    def get_recruiter(self, obj):
+        return {
+            'id': obj.recruiter.id,
+            'first_name': obj.recruiter.first_name,
+            'last_name': obj.recruiter.last_name,
+            'email': obj.recruiter.user.email if hasattr(obj.recruiter, 'user') else None
+        }
 
 
 class OfferCandidateSerializer(serializers.ModelSerializer):

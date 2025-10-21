@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/organizers/', include('organizers.urls')),
     path('api/companies/', include('company.urls')),
     path('api/recruiters/', include('recruiters.urls')),
-    path('api/matching/', include('matching.urls'))
+    path('api/matching/', include('matching.urls')),
+    path('api/virtual/', include('virtual.urls'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

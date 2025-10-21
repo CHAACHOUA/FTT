@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'organizers.apps.OrganizersConfig',
     'recruiters.apps.RecruitersConfig',
     'company.apps.CompanyConfig',
-    'matching.apps.MatchingConfig'
+    'matching.apps.MatchingConfig',
+    'virtual.apps.VirtualConfig'
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
