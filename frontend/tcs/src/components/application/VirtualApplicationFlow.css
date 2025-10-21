@@ -1,0 +1,12 @@
+/* Styles pour le contenu du modal - ne pas interférer avec Modal.css */
+.virtual-application-content {
+  /* Le modal utilise maintenant le composant Modal standard */
+}
+
+/* Styles supprimés - utilisent maintenant Modal.css */
+
+/* Styles des étapes - maintenant gérés par modal-steps dans Modal.css */
+
+/* Styles du contenu - maintenant gérés par modal-body et modal-actions dans Modal.css */
+
+/* Responsive styles - maintenant gérés par Modal.css */

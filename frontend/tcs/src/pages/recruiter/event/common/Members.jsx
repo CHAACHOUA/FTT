@@ -3,12 +3,8 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
-import './CandidateListRecruiter.css';
-import '../../../organizer/Event/programmes/SpeakerManager.css'; // Import SpeakerManager.css for grid styles
-import recruiter_photo from '../../../../assets/recruiter.jpg';
 import InviteRecruiterModal from '../../../organizer/Event/companies/InviteRecruiterModal';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
-import PersonCard from '../../../../components/card/common/PersonCard';
 import Loading from '../../../../components/loyout/Loading';
 
 function Members({ accessToken, apiBaseUrl }) {
@@ -490,17 +486,23 @@ function Members({ accessToken, apiBaseUrl }) {
                             <img 
                               src={recruiter.photo.startsWith('http') 
                                 ? recruiter.photo 
-                                : `${apiBaseUrl}${recruiter.photo}`} 
+                                : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${recruiter.photo}`} 
                               alt={recruiter.first_name} 
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                              }}
                             />
-                          ) : (
-                            <div className="avatar-placeholder">
-                              {recruiter.first_name?.charAt(0)?.toUpperCase() || 
-                               recruiter.last_name?.charAt(0)?.toUpperCase() || 
-                               recruiter.email?.charAt(0)?.toUpperCase() || 
-                               '?'}
-                            </div>
-                          )}
+                          ) : null}
+                          <div 
+                            className="avatar-placeholder" 
+                            style={{ display: recruiter.photo ? 'none' : 'flex' }}
+                          >
+                            {recruiter.first_name?.charAt(0)?.toUpperCase() || 
+                             recruiter.last_name?.charAt(0)?.toUpperCase() || 
+                             recruiter.email?.charAt(0)?.toUpperCase() || 
+                             '?'}
+                          </div>
                         </div>
                         <div className="recruiter-details">
                           <div className="recruiter-name">
@@ -551,11 +553,6 @@ function Members({ accessToken, apiBaseUrl }) {
 
       {/* Bloc informatif */}
       <div className="members-info-block">
-        <div className="info-card">
-          <h3>Statistiques</h3>
-          <p>Total des recruteurs : <strong>{recruiters.length}</strong></p>
-          <p>Entreprise : <strong>{company?.name || 'Non définie'}</strong></p>
-        </div>
         <div className="info-card">
           <h3>Conseils</h3>
           <p>Invitez vos collègues pour collaborer efficacement sur les forums et gérer les candidatures ensemble.</p>

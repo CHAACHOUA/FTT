@@ -1,0 +1,236 @@
+.agenda-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.agenda-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.agenda-card.past {
+  opacity: 0.6;
+  background: #f9fafb;
+}
+
+.agenda-card.conflict {
+  border: 2px solid #DC2626;
+  background: #FEF2F2;
+  position: relative;
+}
+
+.agenda-card.conflict .agenda-card-header {
+  background: #FECACA;
+  border-bottom-color: #DC2626;
+}
+
+.conflict-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #DC2626;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 10;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.agenda-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.agenda-card-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agenda-card-type .type-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.agenda-card-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.agenda-card-content {
+  padding: 20px;
+}
+
+.agenda-card-time,
+.agenda-card-date,
+.agenda-card-candidate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.agenda-card-time {
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.agenda-card-time .time-range {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.agenda-card-candidate {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.candidate-info strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.candidate-info span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.agenda-card-description {
+  margin-bottom: 16px;
+}
+
+.agenda-card-description p {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.agenda-card-link {
+  margin-bottom: 16px;
+}
+
+.meeting-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.meeting-link:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.agenda-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+}
+
+.agenda-card-actions button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-edit:hover {
+  background: #e5e7eb;
+}
+
+.btn-start {
+  background: #10b981;
+  color: white;
+}
+
+.btn-start:hover {
+  background: #059669;
+}
+
+.btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .agenda-card-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .agenda-card-actions {
+    flex-direction: column;
+  }
+
+  .agenda-card-actions button {
+    justify-content: center;
+  }
+}

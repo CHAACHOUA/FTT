@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
@@ -12,6 +12,7 @@ import {
   FaUsers,
   FaFlag,
   FaClock,
+  FaFileAlt,
 } from 'react-icons/fa';
 import { MdBusiness, MdLocationOn } from 'react-icons/md';
 import LogoCompany from '../../../assets/Logo-FTT.png';
@@ -165,6 +166,15 @@ const Offer = ({
     }
   };
 
+  const handleApplyClick = () => {
+    navigate('/forums/event/application', { 
+      state: { 
+        offer: offerData, 
+        forum: forum 
+      } 
+    });
+  };
+
   // Déterminer quels boutons afficher selon l'espace
   const getActionButtons = () => {
     switch (space) {
@@ -185,6 +195,20 @@ const Offer = ({
             >
               <FaLocationArrow />
             </button>
+            {/* Bouton Postuler pour les forums virtuels */}
+            {forum && (forum.type === 'virtuel' || forum.is_virtual) && (
+              <button 
+                className="forum-offer-action-button apply-button" 
+                title="Postuler à cette offre"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleApplyClick();
+                }}
+              >
+                <FaFileAlt />
+              </button>
+            )}
           </div>
         );
       case 'organizer':
@@ -366,6 +390,7 @@ const Offer = ({
 
       {/* Actions */}
       {getActionButtons()}
+
     </div>
   );
 };

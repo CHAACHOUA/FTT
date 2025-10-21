@@ -10,6 +10,11 @@ import { useAuth } from '../../../../context/AuthContext';
 import RencontresList from '../hybrid/RencontresList'
 import OffersList from './OffersList';
 import MatchingOffers from './MatchingOffers';
+// Pages virtuelles
+import VirtualAgenda from '../virtual/VirtualAgenda';
+import VirtualCandidates from '../virtual/VirtualCandidates';
+import VirtualInterviews from '../virtual/VirtualInterviews';
+import RecruiterApplications from '../virtual/RecruiterApplications';
 import '../../../../pages/styles/recruiter/RecruiterDashboard.css';
 
 const RecruiterDashboard = () => {
@@ -46,6 +51,11 @@ const RecruiterDashboard = () => {
           {active === 'rencontres' && <RencontresList forumId={forumId} apiBaseUrl={API} />}
           {active === 'offres' && <OffersList forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
           {active === 'matching' && <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={API}/>}
+          
+          {/* Pages virtuelles */}
+          {active === 'virtual-agenda' && <VirtualAgenda forum={forum} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'virtual-candidates' && <RecruiterApplications forumId={forumId} />}
+          {active === 'virtual-interviews' && <VirtualInterviews forum={forum} accessToken={accessToken} apiBaseUrl={API} />}
         </div>
       </div>
     </div>

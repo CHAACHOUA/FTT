@@ -6,6 +6,11 @@ import {
   FaPhone,
   FaEnvelope,
   FaUsers,
+  FaHeart,
+  FaRegHeart,
+  FaSearch,
+  FaFilter,
+  FaTimes
 } from 'react-icons/fa';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
@@ -14,17 +19,16 @@ import Offer from '../card/offer/Offer';
 import axios from 'axios';
 
 const ForumOffers = ({ companies, forum = null }) => {
+  // Préparer toutes les offres avec les informations de l'entreprise
   const allOffers = companies.flatMap(company =>
     company.offers.map(offer => ({
       ...offer,
       companyName: company.name,
       logo: company.logo,
-      company: company, // Ajouter l'objet company complet
-      // Ajouter temporairement un profil recherché pour tester
-      profile_recherche: offer.profile_recherche || "Nous recherchons un profil avec 3-5 ans d'expérience en développement web, maîtrise de React/Node.js, et une forte capacité d'adaptation."
+      company: company,
+      profile_recherche: offer.profile_recherche || "Profil recherché non spécifié"
     }))
   );
-
 
   const [filteredOffers, setFilteredOffers] = useState(allOffers);
   const [favoriteOfferIds, setFavoriteOfferIds] = useState([]);
@@ -32,87 +36,223 @@ const ForumOffers = ({ companies, forum = null }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSector, setSelectedSector] = useState('');
+  const [selectedContractType, setSelectedContractType] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Mettre à jour les offres filtrées quand les entreprises changent
   useEffect(() => {
     setFilteredOffers(allOffers);
   }, [companies]);
 
+  // Récupérer les favoris
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiters/favorites/list/`, {
+        setLoading(true);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/list/`, {
           withCredentials: true
         });
         const ids = response.data.map(offer => offer.id);
         setFavoriteOfferIds(ids);
       } catch (error) {
+        console.log('Aucun favori trouvé ou erreur:', error);
+        setFavoriteOfferIds([]);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchFavorites();
   }, []);
 
+  // Fonction pour obtenir les offres visibles selon les filtres
+  const getVisibleOffers = () => {
+    let offers = showOnlyFavorites 
+      ? allOffers.filter(offer => favoriteOfferIds.includes(offer.id))
+      : allOffers;
+
+    // Filtrage par recherche
+    if (searchTerm) {
+      offers = offers.filter(offer => 
+        offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtrage par secteur
+    if (selectedSector) {
+      offers = offers.filter(offer => offer.sector === selectedSector);
+    }
+
+    // Filtrage par type de contrat
+    if (selectedContractType) {
+      offers = offers.filter(offer => offer.contract_type === selectedContractType);
+    }
+
+    return offers;
+  };
+
+  // Gestion des favoris
   const toggleFavorite = async (offerId) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/recruiters/favorites/toggle/${offerId}/`,
-        {},
-        { withCredentials: true }
-      );
-
-      if (response.data.status === 'liked') {
-        setFavoriteOfferIds(prev => [...prev, offerId]);
-      } else {
+      const isFavorite = favoriteOfferIds.includes(offerId);
+      
+      if (isFavorite) {
+        // Supprimer des favoris
+        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {
+          withCredentials: true
+        });
         setFavoriteOfferIds(prev => prev.filter(id => id !== offerId));
+      } else {
+        // Ajouter aux favoris
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {}, {
+          withCredentials: true
+        });
+        setFavoriteOfferIds(prev => [...prev, offerId]);
       }
     } catch (error) {
+      console.error('Erreur lors de la gestion des favoris:', error);
     }
   };
 
+  // Gestion du clic sur une offre
+  const handleOfferClick = (offer) => {
+    setSelectedOffer(offer);
+    // Pour les forums virtuels, ouvrir le modal de candidature
+    if (forum && (forum.type === 'virtuel' || forum.is_virtual)) {
+      // Le modal sera géré par le composant Offer
+      return;
+    }
+    // Pour les autres forums, afficher les détails
+    console.log('Offre sélectionnée:', offer);
+  };
+
+  // Gestion du clic sur une entreprise
   const handleCompanyClick = (company) => {
     setSelectedCompany(company);
     setIsCompanyPopupOpen(true);
   };
 
+  // Fermer le popup d'entreprise
   const handleCloseCompanyPopup = () => {
     setIsCompanyPopupOpen(false);
     setSelectedCompany(null);
   };
 
-  const handleOfferClick = (offer) => {
-    // La navigation est maintenant gérée par le composant Offer
-    console.log('Offer clicked:', offer);
+  // Obtenir les secteurs uniques
+  const getUniqueSectors = () => {
+    const sectors = [...new Set(allOffers.map(offer => offer.sector).filter(Boolean))];
+    return sectors;
   };
 
-  const getVisibleOffers = () => {
-    return showOnlyFavorites
-      ? filteredOffers.filter(offer => favoriteOfferIds.includes(offer.id))
-      : filteredOffers;
+  // Obtenir les types de contrat uniques
+  const getUniqueContractTypes = () => {
+    const contractTypes = [...new Set(allOffers.map(offer => offer.contract_type).filter(Boolean))];
+    return contractTypes;
   };
 
+  if (loading) {
+    return (
+      <div className="offers-list-wrapper">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Chargement des offres...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="forum-offers-wrapper">
-      <div className="forum-offers-header">
-        <SearchBarOffers offers={allOffers} onFilter={setFilteredOffers} />
-        <div className="favorites-toggle-container">
+    <div className="offers-list-wrapper">
+      {/* En-tête avec titre et filtres */}
+      <div className="offers-list-header">
+        <h2>Offres d'emploi ({getVisibleOffers().length})</h2>
+        
+        {/* Boutons de filtrage */}
+        <div className="offers-filter-buttons">
           <button
-            className={`favorites-toggle-btn ${!showOnlyFavorites ? 'active' : ''}`}
+            className={`filter-btn ${!showOnlyFavorites ? 'active' : ''}`}
             onClick={() => setShowOnlyFavorites(false)}
           >
             Tous
           </button>
           <button
-            className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
+            className={`filter-btn ${showOnlyFavorites ? 'active' : ''}`}
             onClick={() => setShowOnlyFavorites(true)}
           >
-            Favoris
+            <FaHeart /> Favoris
           </button>
         </div>
       </div>
 
+      {/* Barre de recherche et filtres */}
+      <div className="offers-search-section">
+        <div className="search-bar-container">
+          <div className="search-input-wrapper">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Rechercher une offre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            {searchTerm && (
+              <button 
+                className="clear-search-btn"
+                onClick={() => setSearchTerm('')}
+              >
+                <FaTimes />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="filters-container">
+          <div className="filter-group">
+            <label className="filter-label">Secteur</label>
+            <select
+              value={selectedSector}
+              onChange={(e) => setSelectedSector(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">Tous les secteurs</option>
+              {getUniqueSectors().map(sector => (
+                <option key={sector} value={sector}>{sector}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Type de contrat</label>
+            <select
+              value={selectedContractType}
+              onChange={(e) => setSelectedContractType(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">Tous les types</option>
+              {getUniqueContractTypes().map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Liste des offres */}
       {getVisibleOffers().length === 0 ? (
-        <p className="text-gray-500">Aucune offre ne correspond à votre recherche.</p>
+        <div className="no-offers-message">
+          <FaBuilding className="no-offers-icon" />
+          <h3>Aucune offre trouvée</h3>
+          <p>
+            {showOnlyFavorites 
+              ? "Vous n'avez pas encore d'offres en favoris."
+              : "Aucune offre ne correspond à vos critères de recherche."
+            }
+          </p>
+        </div>
       ) : (
         <div className="forum-offers-container">
           {getVisibleOffers().map(offer => (
@@ -129,7 +269,6 @@ const ForumOffers = ({ companies, forum = null }) => {
           ))}
         </div>
       )}
-
 
       {/* Popup pour les détails de l'entreprise */}
       {isCompanyPopupOpen && selectedCompany && (

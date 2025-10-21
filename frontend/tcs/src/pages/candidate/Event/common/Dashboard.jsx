@@ -6,6 +6,8 @@ import ForumInfos from '../../../../components/forum/ForumInfos';
 import ForumCompanies from '../../../../components/forum/ForumCompanies';
 import ForumOffers from '../../../../components/forum/ForumOffers';
 import Plan from '../hybrid/Plan';
+import VirtualApplications from '../virtual/VirtualApplications';
+import CandidateApplications from '../virtual/CandidateApplications';
 import Loading from '../../../../components/loyout/Loading';
 import PopupQRCode from '../hybrid/PopupQRCode';
 import '../../../../pages/styles/candidate/Dashboard.css';
@@ -66,6 +68,9 @@ const Dashboard = () => {
             {activeTab === 'info' && <ForumInfos forum={forum} />}
             {activeTab === 'entreprises' && <ForumCompanies companies={forum.companies} forum={forum} usePage={true} />}
             {activeTab === 'offres' && <ForumOffers companies={forum.companies} forum={forum} />}
+            {activeTab === 'candidatures' && (
+              <CandidateApplications forumId={forum.id} />
+            )}
             {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
             {activeTab === 'partager' && (
               <PopupQRCode

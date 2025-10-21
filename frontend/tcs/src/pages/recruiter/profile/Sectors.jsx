@@ -89,27 +89,24 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
           onClick={handleAdd}
           style={{
             marginTop: 10,
-            background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
-            color: 'white',
-            padding: '6px 12px',
-            border: 'none',
-            borderRadius: 4,
+            background: '#ffffff',
+            color: '#3b82f6',
+            padding: '12px 20px',
+            border: '2px solid #3b82f6',
+            borderRadius: 8,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            fontWeight: 'bold',
-            transition: 'all 0.2s',
-            boxShadow: '0 2px 8px rgba(24, 56, 108, 0.1)',
+            fontWeight: 600,
+            fontSize: '1rem',
+            transition: 'all 0.3s ease',
+            gap: 8
           }}
           onMouseEnter={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, #06b6d4 0%, #18386c 100%)';
-            e.target.style.transform = 'translateY(-1px)';
-            e.target.style.boxShadow = '0 4px 12px rgba(24, 56, 108, 0.18)';
+            e.target.style.transform = 'translateY(-4px)';
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)';
             e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 2px 8px rgba(24, 56, 108, 0.1)';
           }}
         >
           <FaPlus style={{ marginRight: 6 }} /> Ajouter un secteur

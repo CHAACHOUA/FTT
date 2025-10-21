@@ -3,6 +3,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Section phase pour les forums virtuels */
+.forum-phase-section {
+  margin: 16px 0;
+  padding: 12px;
+  background: #F8FAFC;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
 .filter-container {
   display: flex;
   justify-content: flex-end;

@@ -5,17 +5,22 @@ import {
   FaBriefcase,
   FaShareAlt,
   FaPrint,
-  FaMap
+  FaMap,
+  FaFileAlt
 } from 'react-icons/fa';
 import '../../profile/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
   const showPhysicalFeatures = forumType === 'hybride' || forumType === 'presentiel';
+  const showVirtualFeatures = forumType === 'virtuel' || forumType === 'hybride';
 
   const menuItems = [
     { id: 'info', label: 'Informations générales', icon: <FaInfoCircle /> },
     { id: 'entreprises', label: 'Entreprises', icon: <FaBuilding /> },
     { id: 'offres', label: 'Offres', icon: <FaBriefcase /> },
+    ...(showVirtualFeatures ? [
+      { id: 'candidatures', label: 'Mes candidatures', icon: <FaFileAlt /> },
+    ] : []),
     ...(showPhysicalFeatures ? [
       { id: 'plan', label: 'Plan du Forum', icon: <FaMap /> },
       { id: 'partager', label: 'Partager mon profil', icon: <FaShareAlt /> },

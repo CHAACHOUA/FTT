@@ -265,6 +265,22 @@
   transform: translateY(0);
 }
 
+/* Bouton Postuler spécial */
+.forum-offer-action-button.apply-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-color: #28a745;
+  color: white;
+  font-weight: 600;
+}
+
+.forum-offer-action-button.apply-button:hover {
+  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+  border-color: #218838;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 @media (max-width: 768px) {

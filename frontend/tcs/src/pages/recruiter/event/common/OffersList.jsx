@@ -3,9 +3,11 @@ import axios from 'axios';
 import { FaPlus, FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
 import '../../../../pages/styles/recruiter/OffersList.css';
 import OfferModal from '../../../../components/card/offer/OfferModal';
+import VirtualOfferModal from '../../../../components/offers/VirtualOfferModal';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Offer from '../../../../components/card/offer/Offer';
 import Loading from '../../../../components/loyout/Loading';
+import RecruiterOfferFilters from '../../../../components/filters/offer/RecruiterOfferFilters';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);
@@ -13,11 +15,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSector, setSelectedSector] = useState('');
-  const [selectedContractType, setSelectedContractType] = useState('');
-  const [selectedRecruiter, setSelectedRecruiter] = useState('');
 
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,44 +23,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
   const forum_id = forum.id;
 
 
-  // Obtenir les options uniques pour les filtres
-  const getUniqueSectors = () => {
-    const sectors = new Set();
-    offers.forEach(offer => {
-      if (offer.sectors) {
-        offer.sectors.forEach(sector => sectors.add(sector));
-      }
-    });
-    return Array.from(sectors).sort();
-  };
-
-  const getUniqueContractTypes = () => {
-    const contractTypes = new Set();
-    offers.forEach(offer => {
-      if (offer.contract_type) {
-        contractTypes.add(offer.contract_type);
-      }
-    });
-    return Array.from(contractTypes).sort();
-  };
-
-  const getUniqueRecruiters = () => {
-    const recruiters = new Set();
-    offers.forEach(offer => {
-      if (offer.recruiter_name) {
-        recruiters.add(offer.recruiter_name);
-      }
-    });
-    return Array.from(recruiters).sort();
-  };
-
-  // Réinitialiser les filtres
-  const resetFilters = () => {
-    setSearchTerm('');
-    setSelectedSector('');
-    setSelectedContractType('');
-    setSelectedRecruiter('');
-  };
 
   // Récupération des offres liées au forum
   useEffect(() => {
@@ -74,6 +33,7 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           withCredentials: true,
           params: { forum_id },
         });
+        console.log('Offers fetched:', response.data); // Debug log
         setOffers(response.data);
         setFilteredOffers(response.data);
         setError(null);
@@ -86,42 +46,9 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     fetchOffers();
   }, [accessToken, apiBaseUrl, forum_id]);
 
-  // Filtrage des offres
-  useEffect(() => {
-    let filtered = offers;
 
-    // Filtre par terme de recherche
-    if (searchTerm) {
-      filtered = filtered.filter(offer =>
-        offer.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        offer.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        offer.company_name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filtre par secteur
-    if (selectedSector) {
-      filtered = filtered.filter(offer =>
-        offer.sectors?.some(sector => sector === selectedSector)
-      );
-    }
-
-    // Filtre par type de contrat
-    if (selectedContractType) {
-      filtered = filtered.filter(offer =>
-        offer.contract_type === selectedContractType
-      );
-    }
-
-    // Filtre par recruteur
-    if (selectedRecruiter) {
-      filtered = filtered.filter(offer =>
-        offer.recruiter_name === selectedRecruiter
-      );
-    }
-
-    setFilteredOffers(filtered);
-  }, [offers, searchTerm, selectedSector, selectedContractType, selectedRecruiter]);
+  // Vérifier si c'est un forum virtuel
+  const isVirtualForum = forum?.type === 'virtuel' || forum?.is_virtual;
 
   // Ouvre modal pour ajout
   const onAddOffer = () => {
@@ -203,89 +130,12 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           </div>
 
         {/* Filtres et recherche */}
-        <div className="filters-section">
-          <div className="search-bar">
-            <div className="search-input-container">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder="Rechercher par titre, description ou entreprise..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="clear-search-btn"
-                  title="Effacer la recherche"
-                >
-                  <FaTimes />
-                </button>
-              )}
-            </div>
-          </div>
+        <RecruiterOfferFilters 
+          offers={offers} 
+          onFilter={setFilteredOffers} 
+        />
+        {console.log('Passing to RecruiterOfferFilters:', { offers: offers.length, onFilter: typeof setFilteredOffers })} {/* Debug log */}
 
-          <div className="filters-row">
-            <div className="filter-group">
-              <label>Secteur</label>
-              <select
-                value={selectedSector}
-                onChange={(e) => setSelectedSector(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">Tous les secteurs</option>
-                {getUniqueSectors().map(sector => (
-                  <option key={sector} value={sector}>{sector}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label>Type de contrat</label>
-              <select
-                value={selectedContractType}
-                onChange={(e) => setSelectedContractType(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">Tous les types</option>
-                {getUniqueContractTypes().map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label>Recruteur</label>
-              <select
-                value={selectedRecruiter}
-                onChange={(e) => setSelectedRecruiter(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">Tous les recruteurs</option>
-                {getUniqueRecruiters().map(recruiter => (
-                  <option key={recruiter} value={recruiter}>{recruiter}</option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              onClick={resetFilters}
-              className="reset-filters-btn"
-              title="Réinitialiser tous les filtres"
-            >
-              <FaFilter /> Réinitialiser
-            </button>
-          </div>
-
-          {/* Compteur de résultats */}
-          <div className="results-count">
-            <span>
-              {filteredOffers.length} offre{filteredOffers.length !== 1 ? 's' : ''} trouvée{filteredOffers.length !== 1 ? 's' : ''}
-              {offers.length !== filteredOffers.length && ` sur ${offers.length}`}
-            </span>
-          </div>
-        </div>
 
         {/* Liste des offres */}
         {filteredOffers.length === 0 ? (
@@ -311,13 +161,26 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
 
       </div>
 
-      <OfferModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleSubmit}
-        initialData={editingOffer}
-        forumId={forum_id}
-      />
+      {/* Modal conditionnel selon le type de forum */}
+      {isVirtualForum ? (
+        <VirtualOfferModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          offer={editingOffer}
+          forum={forum}
+          onSave={handleSubmit}
+          accessToken={accessToken}
+          apiBaseUrl={apiBaseUrl}
+        />
+      ) : (
+        <OfferModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleSubmit}
+          initialData={editingOffer}
+          forumId={forum_id}
+        />
+      )}
 
     </div>
     </CompanyApprovalCheck>

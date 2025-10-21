@@ -20,6 +20,9 @@ import ProfileView from './pages/candidate/profile/ProfileView';
 import PublicProfileView from './pages/candidate/profile/PublicProfileView';
 import Dashboard from './pages/candidate/Event/common/Dashboard';
 import CompanyDetail from './pages/candidate/Event/common/CompanyDetail';
+import CandidateApplicationPage from './pages/candidate/Event/virtual/CandidateApplicationPage';
+import CandidateApplications from './pages/candidate/Event/virtual/CandidateApplications';
+import RecruiterApplications from './pages/recruiter/event/virtual/RecruiterApplications';
 import ForumRecruiterView from './pages/recruiter/forums/ForumRecruiterView';
 import ForumOrganizerView from './pages/organizer/Event/forum/ForumOrganizerView';
 import RecruiterProfileView from './pages/recruiter/profile/RecruiterProfileView';
@@ -75,6 +78,9 @@ function App() {
           <Route path="/forums" element={<ForumView />} />
           <Route path="/" element={<Home />} />
           <Route path="/forums/event" element={<ForumDetail />} />
+          <Route path="/forums/event/application" element={<CandidateApplicationPage />} />
+          <Route path="/forums/:forumId/applications/candidate" element={<CandidateApplications />} />
+          <Route path="/forums/:forumId/applications/recruiter" element={<RecruiterApplications />} />
           <Route path="/event/candidate/dashboard/" element={<Dashboard />} />
           <Route path="/candidate/event/company/:companyId" element={<CompanyDetail />} />
           <Route path="/event/recruiter/dashboard/" element={<RecruiterDashboard />} />

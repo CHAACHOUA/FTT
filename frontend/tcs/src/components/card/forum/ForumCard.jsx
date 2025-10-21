@@ -146,6 +146,8 @@ const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {
               : forum.description}
           </p>
 
+      
+
           <div className="forum-actions-seekube">
             <Link to={`/forums/event`} state={{ forum }}>
               <button className="btn-seekube btn-outline">En savoir plus</button>

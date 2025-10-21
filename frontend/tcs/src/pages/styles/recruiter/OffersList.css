@@ -54,9 +54,9 @@
 }
 
 .btn-add-offer {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
-  border: none;
-  color: white;
+  background: #ffffff;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   padding: 12px 20px;
   border-radius: 8px;
   font-weight: 600;
@@ -65,65 +65,146 @@
   gap: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.3);
+  font-size: 1rem;
 }
 
 .btn-add-offer:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
-  background: linear-gradient(135deg, #06b6d4 0%, #18386c 100%);
+  transform: translateY(-4px);
 }
 
-/* Grille des offres - Code exact de ForumOffer.css */
+/* Grille des offres - Style organisateur optimisé */
 .offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
 }
 
-/* Variante liste horizontale - Code exact de ForumOffer.css */
+.offers-grid > * {
+  flex: 0 0 320px;
+  width: 320px;
+}
+
+/* Variante liste horizontale - Style organisateur optimisé */
 .offers-list-horizontal {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
 }
 
-/* Combinaison des deux classes - Code exact de ForumOffer.css */
+.offers-list-horizontal > * {
+  flex: 0 0 320px;
+  width: 320px;
+}
+
+/* Combinaison des deux classes - Style organisateur optimisé */
 .offers-grid.offers-list-horizontal {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.offers-grid.offers-list-horizontal > * {
+  flex: 0 0 320px;
+  width: 320px;
 }
 
 @media (min-width: 768px) {
   .offers-grid {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .offers-grid > * {
+    flex: 0 0 320px;
+    width: 320px;
   }
   
   .offers-list-horizontal {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .offers-list-horizontal > * {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
   }
   
   .offers-grid.offers-list-horizontal {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
   }
+  
+.offers-grid.offers-list-horizontal > * {
+  flex: 0 0 320px;
+  width: 320px;
+}
 }
 
 @media (min-width: 1200px) {
   .offers-grid {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .offers-grid > * {
+    flex: 0 0 320px;
+    width: 320px;
   }
   
   .offers-list-horizontal {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .offers-list-horizontal > * {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
   }
   
   .offers-grid.offers-list-horizontal {
-    grid-template-columns: repeat(auto-fill, 300px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
   }
+  
+.offers-grid.offers-list-horizontal > * {
+  flex: 0 0 320px;
+  width: 320px;
+}
 }
 
 /* Cartes d'offres avec le style du dashboard */
@@ -1160,18 +1241,6 @@
   box-shadow: 0 4px 16px rgba(100, 116, 139, 0.4);
 }
 
-.results-count {
-  padding-top: 1rem;
-  border-top: 1px solid #cbd5e1;
-  color: #475569;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-top: 0.5rem;
-}
 
 /* Responsive pour les filtres */
 @media (max-width: 768px) {

@@ -302,26 +302,26 @@ const handleSectorsChange = (newSectors) => {
           <button
             onClick={handleSubmit}
             style={{
-              background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
               color: 'white',
-              padding: '10px 20px',
+              padding: '12px 24px',
               border: 'none',
-              borderRadius: 4,
+              borderRadius: 8,
               cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: 16,
-              transition: 'all 0.2s',
-              boxShadow: '0 2px 8px rgba(24, 56, 108, 0.1)',
+              fontWeight: 600,
+              fontSize: '1rem',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, #06b6d4 0%, #18386c 100%)';
-              e.target.style.transform = 'translateY(-1px)';
-              e.target.style.boxShadow = '0 4px 12px rgba(24, 56, 108, 0.18)';
+              e.target.style.background = 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)';
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)';
+              e.target.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
               e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 2px 8px rgba(24, 56, 108, 0.1)';
+              e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
             }}
           >
             Enregistrer
