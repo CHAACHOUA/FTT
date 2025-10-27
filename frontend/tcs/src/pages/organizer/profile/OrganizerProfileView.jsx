@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
 import ChangePassword from '../../candidate/auth/account/ChangePassword';
 import DeleteAccount from '../../candidate/auth/account/DeleteAccount';
+import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import SaveButton from '../../../components/common/SaveButton';
 import { toast } from 'react-toastify';
 import Loading from '../../../components/loyout/Loading';
@@ -21,7 +22,7 @@ const OrganizerProfileView = () => {
     email: '',
   });
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated, name, role, updateName } = useAuth();
+  const { isAuthenticated, user, name, role, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -263,6 +264,9 @@ const OrganizerProfileView = () => {
             <>
               <section id="changepassword">
                 <ChangePassword />
+              </section>
+              <section id="timezone">
+                <TimezoneSettings user={user} onUpdate={updateName} />
               </section>
               <section id="deleteaccount">
                 <DeleteAccount />

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
 import SidebarMenu from './SideBarMenu';
 import ChangePassword from '../../candidate/auth/account/ChangePassword';
+import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import Presentation from '../../../components/card/candidate/profile_section/Presentation';
 import Contact from '../../../components/card/candidate/profile_section/Contact';
 import SaveButton from '../../../components/common/SaveButton';
@@ -17,7 +18,7 @@ import Navbar from '../../../components/loyout/NavBar';
 const RecruiterProfileView = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated, updateName } = useAuth();
+  const { isAuthenticated, user, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -132,6 +133,9 @@ const RecruiterProfileView = () => {
           <>
             <section id="changepassword">
               <ChangePassword />
+            </section>
+            <section id="timezone">
+              <TimezoneSettings user={user} onUpdate={updateName} />
             </section>
             <section id="deleteaccount">
               <DeleteAccount />

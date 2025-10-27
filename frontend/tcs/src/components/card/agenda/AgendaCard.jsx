@@ -4,12 +4,12 @@ import {
   faVideo, 
   faPhone, 
   faClock, 
-  faUser, 
   faCalendarAlt,
   faEdit,
-  faTrash,
-  faPlay
+  faTrash
 } from '@fortawesome/free-solid-svg-icons';
+import { formatTimeForUser } from '../../../utils/timezoneUtils';
+import { useAuth } from '../../../context/AuthContext';
 
 const AgendaCard = ({ 
   slot, 
@@ -19,6 +19,7 @@ const AgendaCard = ({
   isPast = false,
   isInConflict = false
 }) => {
+  const { user } = useAuth();
   const getTypeIcon = (type) => {
     return type === 'video' ? faVideo : faPhone;
   };
@@ -29,9 +30,19 @@ const AgendaCard = ({
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'available': return '#10b981';
-      case 'booked': return '#f59e0b';
-      case 'completed': return '#6b7280';
+      case 'available': return '#166534'; // text-green-800
+      case 'booked': return '#854d0e'; // text-yellow-800
+      case 'completed': return '#166534'; // text-green-800
+      case 'cancelled': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
+
+  const getStatusBackgroundColor = (status) => {
+    switch (status) {
+      case 'available': return '#dcfce7'; // bg-green-100
+      case 'booked': return '#fef9c3'; // bg-yellow-100
+      case 'completed': return '#dcfce7'; // bg-green-100
       case 'cancelled': return '#ef4444';
       default: return '#6b7280';
     }
@@ -81,6 +92,40 @@ const AgendaCard = ({
           ⚠️ CONFLIT
         </div>
       )}
+
+      {/* Actions en haut à droite */}
+      <div className="agenda-actions">
+        {slot.status === 'available' && !isPast && (
+          <button 
+            className="agenda-edit-btn"
+            onClick={() => onEdit(slot)}
+            title="Modifier"
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+        )}
+
+        {slot.status === 'booked' && !isPast && (
+          <button 
+            className="agenda-start-btn"
+            onClick={() => onStartInterview(slot)}
+            title="Démarrer"
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+        )}
+
+        {!isPast && (
+          <button 
+            className="agenda-delete-btn"
+            onClick={() => onDelete(slot)}
+            title="Supprimer"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
+      </div>
+
       <div className="agenda-card-header">
         <div className="agenda-card-type">
           <FontAwesomeIcon 
@@ -95,7 +140,10 @@ const AgendaCard = ({
         <div className="agenda-card-status">
           <span 
             className="status-badge"
-            style={{ backgroundColor: getStatusColor(slot.status) }}
+            style={{ 
+              backgroundColor: getStatusBackgroundColor(slot.status),
+              color: getStatusColor(slot.status)
+            }}
           >
             {getStatusText(slot.status)}
           </span>
@@ -106,7 +154,10 @@ const AgendaCard = ({
         <div className="agenda-card-time">
           <FontAwesomeIcon icon={faClock} />
           <span className="time-range">
-            {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+            {slot.start_time_display && slot.end_time_display ? 
+              `${slot.start_time_display} - ${slot.end_time_display}` :
+              `${formatTime(slot.start_time)} - ${formatTime(slot.end_time)}`
+            }
           </span>
         </div>
 
@@ -115,15 +166,6 @@ const AgendaCard = ({
           <span>{formatDate(slot.date)}</span>
         </div>
 
-        {slot.candidate && (
-          <div className="agenda-card-candidate">
-            <FontAwesomeIcon icon={faUser} />
-            <div className="candidate-info">
-              <strong>{slot.candidate.name}</strong>
-              <span>{slot.candidate.email}</span>
-            </div>
-          </div>
-        )}
 
         {slot.description && (
           <div className="agenda-card-description">
@@ -139,42 +181,9 @@ const AgendaCard = ({
               rel="noopener noreferrer"
               className="meeting-link"
             >
-              <FontAwesomeIcon icon={faPlay} />
               Rejoindre la réunion
             </a>
           </div>
-        )}
-      </div>
-
-      <div className="agenda-card-actions">
-        {slot.status === 'available' && !isPast && (
-          <button 
-            className="btn-edit"
-            onClick={() => onEdit(slot)}
-          >
-            <FontAwesomeIcon icon={faEdit} />
-            Modifier
-          </button>
-        )}
-
-        {slot.status === 'booked' && !isPast && (
-          <button 
-            className="btn-start"
-            onClick={() => onStartInterview(slot)}
-          >
-            <FontAwesomeIcon icon={faPlay} />
-            Démarrer
-          </button>
-        )}
-
-        {!isPast && (
-          <button 
-            className="btn-delete"
-            onClick={() => onDelete(slot)}
-          >
-            <FontAwesomeIcon icon={faTrash} />
-            Supprimer
-          </button>
         )}
       </div>
     </div>

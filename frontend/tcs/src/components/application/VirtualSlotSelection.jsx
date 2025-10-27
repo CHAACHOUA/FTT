@@ -5,11 +5,43 @@ import './VirtualSlotSelection.css';
 
 const VirtualSlotSelection = ({ 
   slots, 
+  offer,
   onSelect, 
-  onSkip 
+  onSkip,
+  hideActions = false
 }) => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' ou 'calendar'
+
+  // Filtrer les slots pour l'offre spécifique
+  const filteredSlots = React.useMemo(() => {
+    if (!slots || !offer) return slots || [];
+    
+    console.log('🔍 [SLOTS] Filtering slots for offer:', offer.id, offer.title);
+    console.log('🔍 [SLOTS] Total slots before filtering:', slots.length);
+    
+    // Filtrer les slots qui appartiennent aux recruteurs de l'entreprise de l'offre
+    const filtered = slots.filter(slot => {
+      // Vérifier si le slot appartient à un recruteur de la même entreprise que l'offre
+      const slotCompanyId = slot.recruiter?.company?.id;
+      const offerCompanyId = offer.company?.id;
+      
+      console.log('🔍 [SLOTS] Slot details:', {
+        slotId: slot.id,
+        slotRecruiter: slot.recruiter,
+        slotCompany: slot.recruiter?.company,
+        offerCompany: offer.company,
+        slotCompanyId,
+        offerCompanyId,
+        match: slotCompanyId === offerCompanyId
+      });
+      
+      return slotCompanyId === offerCompanyId;
+    });
+    
+    console.log('🔍 [SLOTS] Filtered slots count:', filtered.length);
+    return filtered;
+  }, [slots, offer]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -54,7 +86,7 @@ const VirtualSlotSelection = ({
 
   const groupSlotsByDate = () => {
     const grouped = {};
-    slots.forEach(slot => {
+    filteredSlots.forEach(slot => {
       // Utiliser slot.date au lieu de slot.start_time pour grouper par date
       const date = new Date(slot.date).toDateString();
       if (!grouped[date]) {
@@ -71,6 +103,7 @@ const VirtualSlotSelection = ({
 
   const handleConfirm = () => {
     if (selectedSlot) {
+      console.log('🔍 [SLOT] Selected slot:', selectedSlot);
       onSelect(selectedSlot);
     } else {
       toast.error('Veuillez sélectionner un créneau');
@@ -81,16 +114,18 @@ const VirtualSlotSelection = ({
     onSkip();
   };
 
-  if (!slots || slots.length === 0) {
+  if (!filteredSlots || filteredSlots.length === 0) {
     return (
       <div className="slot-selection-step">
         <div className="no-slots">
           <FaClock className="no-slots-icon" />
           <h3>Aucun créneau disponible</h3>
           <p>Il n'y a actuellement aucun créneau disponible pour cette offre.</p>
-          <button className="btn-primary" onClick={onSkip}>
-            Continuer sans créneau
-          </button>
+          {!hideActions && (
+            <button className="btn-primary" onClick={onSkip}>
+              Continuer sans créneau
+            </button>
+          )}
         </div>
       </div>
     );
@@ -198,18 +233,20 @@ const VirtualSlotSelection = ({
         </div>
       )}
 
-      <div className="slot-actions">
-        <button className="btn-secondary" onClick={handleSkip}>
-          <FaTimes /> Continuer sans créneau
-        </button>
-        <button 
-          className="btn-primary" 
-          onClick={handleConfirm}
-          disabled={!selectedSlot}
-        >
-          <FaCheck /> Confirmer le créneau
-        </button>
-      </div>
+      {!hideActions && (
+        <div className="slot-actions">
+          <button className="btn-secondary" onClick={handleSkip}>
+            <FaTimes /> Continuer sans créneau
+          </button>
+          <button 
+            className="btn-primary" 
+            onClick={handleConfirm}
+            disabled={!selectedSlot}
+          >
+            <FaCheck /> Confirmer le créneau
+          </button>
+        </div>
+      )}
     </div>
   );
 };

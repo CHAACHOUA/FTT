@@ -6,6 +6,7 @@ import {
   FaAddressBook,
   FaLock,
   FaTimesCircle,
+  FaClock,
 } from 'react-icons/fa';
 
 import '../../candidate/profile/SidebarMenu.css';
@@ -28,6 +29,12 @@ const SidebarMenu = () => {
                 <a href="#changepassword" className="active">
                   <FaLock className="sidebar-icon" />
                   <span className="sidebar-label">Mot de passe</span>
+                </a>
+              </li>
+              <li>
+                <a href="#timezone">
+                  <FaClock className="sidebar-icon" />
+                  <span className="sidebar-label">Fuseau horaire</span>
                 </a>
               </li>
                <li>

@@ -1,5 +1,5 @@
 .slot-selection-step {
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .slot-selection-header {
@@ -160,57 +160,124 @@
 }
 
 .slots-calendar {
-  max-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
   margin-bottom: 30px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.calendar-day {
-  background: white;
-  border: 1px solid #e9ecef;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 1px;
+  background: #e9ecef;
   border-radius: 8px;
   overflow: hidden;
 }
 
+/* Colonne des heures */
+.time-column {
+  background: white;
+  padding: 10px 5px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e9ecef;
+}
+
+/* En-têtes des jours */
 .day-header {
-  background: #f8f9fa;
-  padding: 12px 15px;
+  background: white;
+  padding: 15px 10px;
   font-weight: 600;
   color: #333;
+  text-align: center;
   border-bottom: 1px solid #e9ecef;
+  border-right: 1px solid #e9ecef;
 }
 
-.day-slots {
-  padding: 15px;
+.day-header .day-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 2px;
 }
 
+.day-header .day-month {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+
+/* Cellules de créneaux */
+.time-slot {
+  background: white;
+  border-right: 1px solid #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+  min-height: 40px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Créneaux avec événements */
 .calendar-slot {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
   border-radius: 4px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 500;
+  background: white;
+  color: #333;
+  font-size: 0.85rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid #6c757d;
+}
+
+/* Couleurs des créneaux */
+.calendar-slot.orange {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+.calendar-slot.green {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.calendar-slot.blue {
+  border-color: #007bff;
+  color: #007bff;
 }
 
 .calendar-slot:hover {
-  background: #e3f2fd;
-  border-color: #1976d2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .calendar-slot.selected {
-  background: #28a745;
-  color: white;
-  border-color: #28a745;
+  border: 2px solid #333;
+  box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.2);
+}
+
+/* Icône caméra */
+.calendar-slot .camera-icon {
+  margin-right: 6px;
+  font-size: 0.9rem;
+  color: inherit;
 }
 
 .selected-slot-info {

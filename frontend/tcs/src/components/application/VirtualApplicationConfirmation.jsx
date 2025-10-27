@@ -6,7 +6,8 @@ import './VirtualApplicationConfirmation.css';
 const VirtualApplicationConfirmation = ({ 
   applicationData, 
   onSubmit, 
-  loading 
+  loading,
+  hideActions = false
 }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -118,16 +119,18 @@ const VirtualApplicationConfirmation = ({
         </div>
       </div>
 
-      <div className="confirmation-actions">
-        <button 
-          className="btn-primary submit-btn" 
-          onClick={onSubmit}
-          disabled={loading}
-        >
-          <FaCheck />
-          {loading ? 'Envoi en cours...' : 'Envoyer la candidature'}
-        </button>
-      </div>
+      {!hideActions && (
+        <div className="confirmation-actions">
+          <button 
+            className="btn-primary submit-btn" 
+            onClick={onSubmit}
+            disabled={loading}
+          >
+            <FaCheck />
+            {loading ? 'Envoi en cours...' : 'Envoyer la candidature'}
+          </button>
+        </div>
+      )}
 
       <div className="confirmation-note">
         <p>

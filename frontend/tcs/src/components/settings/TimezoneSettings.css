@@ -1,0 +1,172 @@
+.timezone-settings {
+  background: #fff;
+  border-radius: 16px;
+  margin: 20px auto;
+  padding: 40px 36px 32px 36px;
+  width: 90%;
+  max-width: 1200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+.timezone-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.timezone-header h3 {
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.timezone-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.timezone-content {
+  margin-bottom: 20px;
+}
+
+.timezone-selector {
+  margin-bottom: 16px;
+}
+
+.timezone-selector label {
+  display: block;
+  margin-bottom: 12px;
+  color: #374151;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.timezone-selector select {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.timezone-selector select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
+}
+
+.timezone-selector select:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.timezone-preview {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preview-time {
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.timezone-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.save-button {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.save-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.save-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.timezone-info {
+  padding: 16px;
+  background: #f0f9ff;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+  margin-top: 20px;
+}
+
+.timezone-info h4 {
+  margin: 0 0 8px 0;
+  color: #0369a1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.timezone-info ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #0c4a6e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.timezone-info li {
+  margin-bottom: 4px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timezone-actions {
+    flex-direction: column;
+  }
+  
+  .save-button {
+    width: 100%;
+  }
+}

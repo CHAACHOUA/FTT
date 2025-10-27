@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
@@ -6,7 +6,6 @@ import {
   FaCalendar,
   FaHeart,
   FaRegHeart,
-  FaLocationArrow,
   FaEdit,
   FaTrash,
   FaUsers,
@@ -16,13 +15,13 @@ import {
 } from 'react-icons/fa';
 import { MdBusiness, MdLocationOn } from 'react-icons/md';
 import LogoCompany from '../../../assets/Logo-FTT.png';
+import CandidateApplicationPage from '../../../pages/candidate/Event/virtual/CandidateApplicationPage';
 import './Offer.css';
 
 const Offer = ({ 
   offer, 
   onClick, 
   onToggleFavorite,
-  onShare,
   onEdit,
   onDelete,
   onMatching,
@@ -34,6 +33,7 @@ const Offer = ({
   activeTab = 'offres' // Onglet actif pour la navigation
 }) => {
   const navigate = useNavigate();
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   // Gestion des URLs d'images
   const getFullUrl = (url) => {
     if (!url) return null;
@@ -104,6 +104,11 @@ const Offer = ({
     ? getFullUrl(offerData.company.logo)
     : LogoCompany;
 
+  // URL de la photo du recruteur
+  const recruiterPhotoSrc = offerData.recruiter.photo
+    ? getFullUrl(offerData.recruiter.photo)
+    : null;
+
   const handleCardClick = () => {
     // Pour les espaces qui ne doivent pas naviguer (matching, company)
     if (space === 'matching' || space === 'company') {
@@ -132,25 +137,6 @@ const Offer = ({
     }
   };
 
-  const handleShareClick = (e) => {
-    e.stopPropagation();
-    if (onShare) {
-      onShare(offer);
-    } else {
-      // Partage par défaut
-      if (navigator.share) {
-        navigator.share({
-          title: offerData.title,
-          text: `Découvrez cette offre d'emploi : ${offerData.title} chez ${offerData.company.name}`,
-          url: window.location.href
-        });
-      } else {
-        // Fallback : copier le lien
-        navigator.clipboard.writeText(window.location.href);
-        alert('Lien copié dans le presse-papiers !');
-      }
-    }
-  };
 
   const handleEditClick = (e) => {
     e.stopPropagation();
@@ -167,18 +153,17 @@ const Offer = ({
   };
 
   const handleApplyClick = () => {
-    navigate('/forums/event/application', { 
-      state: { 
-        offer: offerData, 
-        forum: forum 
-      } 
-    });
+    // Ouvrir le modal de candidature
+    setIsApplicationModalOpen(true);
   };
 
   // Déterminer quels boutons afficher selon l'espace
   const getActionButtons = () => {
     switch (space) {
       case 'candidate':
+        // Vérifier si c'est un forum virtuel ou hybride pour afficher le bouton postuler
+        const isVirtualOrHybrid = forum && (forum.type === 'virtuel' || forum.type === 'hybrid');
+        
         return (
           <div className="forum-offer-actions">
             <button
@@ -188,17 +173,10 @@ const Offer = ({
             >
               {isFavorite ? <FaHeart /> : <FaRegHeart />}
             </button>
-            <button 
-              className="forum-offer-action-button" 
-              title="Voir les détails"
-              onClick={handleShareClick}
-            >
-              <FaLocationArrow />
-            </button>
-            {/* Bouton Postuler pour les forums virtuels */}
-            {forum && (forum.type === 'virtuel' || forum.is_virtual) && (
+            {/* Bouton Postuler - seulement pour forums virtuels et hybrides */}
+            {isVirtualOrHybrid && (
               <button 
-                className="forum-offer-action-button apply-button" 
+                className="forum-offer-apply-btn" 
                 title="Postuler à cette offre"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -206,7 +184,7 @@ const Offer = ({
                   handleApplyClick();
                 }}
               >
-                <FaFileAlt />
+                Postuler
               </button>
             )}
           </div>
@@ -266,11 +244,12 @@ const Offer = ({
   };
 
   return (
-    <div 
-      className={`forum-offer-card ${className}`}
-      onClick={handleCardClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
-    >
+    <>
+      <div 
+        className={`forum-offer-card ${className}`}
+        onClick={handleCardClick}
+        style={{ cursor: onClick ? 'pointer' : 'default' }}
+      >
       {/* Section Logo et Entreprise */}
       <div className="forum-offer-company-section">
         <img
@@ -349,9 +328,9 @@ const Offer = ({
 
         {/* Section Recruteur */}
         <div className="forum-offer-recruiter-section">
-          {offerData.recruiter.photo ? (
+          {recruiterPhotoSrc ? (
             <img 
-              src={offerData.recruiter.photo} 
+              src={recruiterPhotoSrc} 
               alt={offerData.recruiter.name}
               className="forum-offer-recruiter-avatar"
               onError={(e) => {
@@ -363,16 +342,7 @@ const Offer = ({
           <div 
             className="forum-offer-recruiter-initials"
             style={{ 
-              display: offerData.recruiter.photo ? 'none' : 'flex',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              backgroundColor: '#4f2cc6',
-              color: 'white',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: 'bold'
+              display: recruiterPhotoSrc ? 'none' : 'flex'
             }}
           >
             {getInitials(offerData.recruiter.name)}
@@ -392,6 +362,17 @@ const Offer = ({
       {getActionButtons()}
 
     </div>
+
+    {/* Modal de candidature */}
+    {isApplicationModalOpen && (
+      <CandidateApplicationPage
+        isModal={true}
+        onClose={() => setIsApplicationModalOpen(false)}
+        offer={offerData}
+        forum={forum}
+      />
+    )}
+    </>
   );
 };
 

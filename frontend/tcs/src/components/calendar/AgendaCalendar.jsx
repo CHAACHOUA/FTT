@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
@@ -9,6 +9,8 @@ import {
   faClock
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
+import { formatTimeForUser } from '../../utils/timezoneUtils';
+import { useAuth } from '../../context/AuthContext';
 
 const AgendaCalendar = ({ 
   timeSlots: agendaSlots = [], 
@@ -19,8 +21,10 @@ const AgendaCalendar = ({
   interviewStartDate,
   interviewEndDate
 }) => {
+  const { user } = useAuth();
+  
+  
   const [currentWeek, setCurrentWeek] = useState(new Date());
-  const [calendarData, setCalendarData] = useState([]);
   const [selectedDates, setSelectedDates] = useState(new Set());
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionStart, setSelectionStart] = useState(null);
@@ -34,13 +38,14 @@ const AgendaCalendar = ({
     date: ''
   });
 
-  // Générer les données du calendrier
-  useEffect(() => {
-    generateCalendarData();
-  }, [currentWeek, agendaSlots, interviewStartDate, interviewEndDate]);
+  const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
 
-  const generateCalendarData = () => {
-    if (!interviewStartDate || !interviewEndDate) return;
+  // Générer les données du calendrier avec useMemo pour éviter les recalculs
+  const calendarData = useMemo(() => {
+    if (!interviewStartDate || !interviewEndDate) return [];
 
     const startDate = new Date(interviewStartDate);
     const endDate = new Date(interviewEndDate);
@@ -49,7 +54,7 @@ const AgendaCalendar = ({
     const monday = new Date(currentWeek);
     monday.setDate(currentWeek.getDate() - currentWeek.getDay() + 1);
     
-    // CORRECTION: Générer UNE SEULE semaine (celle de currentWeek)
+    // Générer UNE SEULE semaine (celle de currentWeek)
     const weekDays = [];
     
     for (let i = 0; i < 7; i++) {
@@ -81,17 +86,12 @@ const AgendaCalendar = ({
       }
     }
     
-    // CORRECTION: Ne retourner qu'une seule semaine
-    setCalendarData([{
+    // Ne retourner qu'une seule semaine
+    return [{
       weekStart: new Date(monday),
       days: weekDays
-    }]);
-  };
-
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
+    }];
+  }, [currentWeek, interviewStartDate, interviewEndDate, selectedDate, agendaSlots]);
 
   const navigateWeek = (direction) => {
     setCurrentWeek(prev => {
@@ -175,26 +175,6 @@ const AgendaCalendar = ({
     setSelectionEnd(null);
   };
 
-  const handleAddSingleSlot = () => {
-    // Créer un créneau unique de 30 min à l'heure actuelle
-    const now = new Date();
-    const currentHour = now.getHours();
-    
-    const startTime = `${currentHour.toString().padStart(2, '0')}:00`;
-    const endTime = `${currentHour.toString().padStart(2, '0')}:30`;
-    
-    const slot = {
-      id: Date.now() + Math.random(),
-      date: now.toISOString().split('T')[0],
-      start_time: startTime,
-      end_time: endTime,
-      type: 'video',
-      duration: 30,
-      status: 'available'
-    };
-    
-    onAddSlot(slot);
-  };
 
   const handleCreateSlot = () => {
     // Créer les créneaux selon la configuration de la popup
@@ -354,21 +334,27 @@ const AgendaCalendar = ({
     return `${startStr} - ${endStr}`;
   };
 
-  const weekDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
   
-  // Générer les heures de la journée (8h à 20h)
+  // Générer les heures de la journée (8h à 18h)
   const generateTimeSlots = () => {
     const hours = [];
-    for (let hour = 8; hour <= 20; hour++) {
+    for (let hour = 8; hour <= 18; hour++) {
+      const hourStr = hour.toString().padStart(2, '0');
+      const display = hourStr + ':00';
       hours.push({
         hour,
-        display: `${hour.toString().padStart(2, '0')}:00`
+        display: display
       });
     }
     return hours;
   };
 
   const hourSlots = generateTimeSlots();
+  
+  // Debug pour voir les heures générées
+  console.log('🔍 Heures générées:', hourSlots);
+  console.log('🔍 Premier élément:', hourSlots[0]);
+  console.log('🔍 Type du display:', typeof hourSlots[0]?.display);
 
   return (
     <div className="agenda-calendar-container">
@@ -393,14 +379,6 @@ const AgendaCalendar = ({
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
-        
-            <button
-              className="add-slot-btn"
-              onClick={() => handleAddSingleSlot()}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              Ajouter un créneau
-            </button>
       </div>
 
       {/* Grille du calendrier avec horaires */}
@@ -417,14 +395,6 @@ const AgendaCalendar = ({
 
         {/* Grille principale */}
         <div className="calendar-main-grid">
-          {/* En-têtes des jours de la semaine */}
-          <div className="calendar-weekdays">
-            {weekDays.map(day => (
-              <div key={day} className="weekday-header">
-                {day}
-              </div>
-            ))}
-          </div>
 
           {/* CORRECTION: Afficher UNE SEULE semaine */}
           {calendarData.length > 0 && (
@@ -447,39 +417,72 @@ const AgendaCalendar = ({
                   {/* Grille horaire pour ce jour */}
                   <div className="day-time-grid">
                     {hourSlots.map((timeSlot, timeIndex) => {
-                      // Trouver les créneaux pour cette heure
-                      const slotsForHour = day.slots.filter(slot => {
-                        const slotHour = parseInt(slot.start_time.split(':')[0]);
-                        return slotHour === timeSlot.hour;
+                      // Créer 4 cellules de 15 minutes pour chaque heure
+                      const quarterHours = [0, 15, 30, 45];
+                      
+                      return quarterHours.map((quarterMinute, quarterIndex) => {
+                        const quarterTime = {
+                          hour: timeSlot.hour,
+                          minute: quarterMinute,
+                          display: `${timeSlot.hour.toString().padStart(2, '0')}:${quarterMinute.toString().padStart(2, '0')}`
+                        };
+                        
+                        // Trouver les créneaux pour ce quart d'heure
+                        const slotsForQuarter = day.slots.filter(slot => {
+                          const timeToUse = slot.start_time_display || slot.start_time;
+                          const slotHour = parseInt(timeToUse.split(':')[0]);
+                          const slotMinute = parseInt(timeToUse.split(':')[1]);
+                          return slotHour === timeSlot.hour && slotMinute === quarterMinute;
+                        });
+                        
+                        return (
+                          <div
+                            key={`${timeIndex}-${quarterIndex}`}
+                            className="time-cell"
+                            onClick={(e) => handleCellClick(day, quarterTime, e)}
+                            onMouseDown={(e) => handleMouseDown(day, quarterTime, e)}
+                            onMouseEnter={() => handleMouseEnter(day, quarterTime)}
+                            onMouseUp={handleMouseUp}
+                          >
+                            {slotsForQuarter.map((slot, slotIndex) => {
+                              const startTime = slot.start_time_display || slot.start_time;
+                              const endTime = slot.end_time_display || slot.end_time;
+                              const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
+                              const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
+                              const duration = endMinutes - startMinutes;
+                              
+                              // Calculer la position verticale dans la cellule (0-30px)
+                              const slotStartMinutes = parseInt(startTime.split(':')[1]);
+                              const topPosition = (slotStartMinutes / 60) * 30; // Position en pixels
+                              const height = Math.max((duration / 60) * 30, 10); // Hauteur minimale de 10px
+                              
+                              return (
+                                <div
+                                  key={slotIndex}
+                                  className="time-slot-event"
+                                  style={{ 
+                                    borderColor: getSlotColor(slot.status),
+                                    color: getSlotColor(slot.status),
+                                    top: `${topPosition}px`,
+                                    height: `${height}px`
+                                  }}
+                                  onClick={(e) => handleSlotClick(slot, e)}
+                                  data-duration={duration}
+                                >
+                                  <FontAwesomeIcon 
+                                    icon={getSlotIcon(slot.type)} 
+                                    className="slot-icon"
+                                    style={{ color: getSlotColor(slot.status) }}
+                                  />
+                                  <span className="slot-time">
+                                    {startTime} - {endTime}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
                       });
-
-                      return (
-                            <div
-                              key={timeIndex}
-                              className="time-cell"
-                              onClick={(e) => handleCellClick(day, timeSlot, e)}
-                              onMouseDown={(e) => handleMouseDown(day, timeSlot, e)}
-                              onMouseEnter={() => handleMouseEnter(day, timeSlot)}
-                              onMouseUp={handleMouseUp}
-                            >
-                          {slotsForHour.map((slot, slotIndex) => (
-                            <div
-                              key={slotIndex}
-                              className="time-slot-event"
-                              style={{ backgroundColor: getSlotColor(slot.status) }}
-                              onClick={(e) => handleSlotClick(slot, e)}
-                            >
-                              <FontAwesomeIcon 
-                                icon={getSlotIcon(slot.type)} 
-                                className="slot-icon"
-                              />
-                              <span className="slot-time">
-                                {slot.start_time}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      );
                     })}
                   </div>
                 </div>

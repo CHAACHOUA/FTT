@@ -8,10 +8,8 @@ import {
   faVideo,
   faPhone,
   faClock,
-  faUser,
   faList,
   faCalendar,
-  faFilter,
   faChevronDown,
   faUsers
 } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +23,7 @@ import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
 import '../../../../components/card/agenda/AgendaCard.css';
 import '../../../../components/calendar/AgendaCalendar.css';
 import { useAuth } from '../../../../context/AuthContext';
+import { formatAgendaSlots } from '../../../../utils/timezoneUtils';
 
 // Styles pour les contrôles d'agenda
 const agendaStyles = `
@@ -119,7 +118,50 @@ const agendaStyles = `
   .recruiter-selector {
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+  }
+
+  .company-recruiters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .add-slot-section-above-filters {
+    display: flex;
+    justify-content: flex-end;
+    margin: 16px 0;
+    padding: 0 16px;
+  }
+
+  .invite-recruiter-btn-small {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .invite-recruiter-btn-small:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  .invite-recruiter-btn-small:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 
   .recruiter-dropdown {
@@ -279,6 +321,18 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [showRecruiterDropdown, setShowRecruiterDropdown] = useState(false);
   const { isAuthenticated, user } = useAuth(); // Use isAuthenticated and user from AuthContext
+  
+  // Debug pour voir le timezone actuel
+  console.log('🔍 VirtualAgenda - user timezone:', user?.timezone);
+  
+  // Effet pour recharger les données quand le timezone change
+  useEffect(() => {
+    if (user?.timezone && timeSlots.length > 0) {
+      console.log('🔄 Timezone changé, rechargement des données d\'agenda...');
+      // Forcer le rechargement des créneaux pour appliquer le nouveau fuseau horaire
+      fetchTimeSlots();
+    }
+  }, [user?.timezone]);
   const [newSlot, setNewSlot] = useState({
     start_time: '',
     end_time: '',
@@ -291,31 +345,6 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
     checkAuthAndFetchData();
   }, [forum]);
 
-  // Rafraîchir les slots quand le composant devient visible
-  useEffect(() => {
-    const handleFocus = () => {
-      console.log('🔄 [AGENDA] Rafraîchissement des slots');
-      fetchTimeSlots();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, []);
-
-  // Rafraîchissement simple toutes les 10 secondes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('🔄 [AGENDA] Rafraîchissement automatique');
-      fetchTimeSlots();
-    }, 10000);
-    
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
 
   const checkAuthAndFetchData = async () => {
     try {
@@ -377,6 +406,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
       
       // Adapter les données pour correspondre à la structure attendue
       const currentUserEmail = user?.email || 'recruiter6@example.com';
+      console.log('🔍 User object:', user);
       console.log('🔍 Email de l\'utilisateur connecté:', currentUserEmail);
       console.log('🔍 Données brutes des membres:', response.data);
       
@@ -473,6 +503,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
       console.log('🌐 API Base URL:', apiBaseUrl);
       console.log('📋 Forum ID:', forum?.id);
       console.log('📋 URL complète:', `${apiBaseUrl}/virtual/forums/${forum.id}/agenda/`);
+      console.log('🕐 Timezone actuel:', user?.timezone);
       
       // Récupérer tous les slots du forum
       const response = await axios.get(`${apiBaseUrl}/virtual/forums/${forum.id}/agenda/`, {
@@ -484,6 +515,24 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
       console.log('📊 Structure du premier créneau:', response.data[0]);
       console.log('📊 URL de la requête:', `${apiBaseUrl}/virtual/forums/${forum.id}/agenda/`);
       console.log('📊 Status de la réponse:', response.status);
+      
+      // DEBUG: Afficher chaque slot reçu
+      if (response.data && response.data.length > 0) {
+        console.log('🔍 DÉTAIL DES SLOTS REÇUS:');
+        response.data.forEach((slot, index) => {
+          console.log(`🔍 Slot ${index}:`, {
+            id: slot.id,
+            date: slot.date,
+            start_time: slot.start_time,
+            end_time: slot.end_time,
+            type: slot.type,
+            status: slot.status,
+            recruiter: slot.recruiter
+          });
+        });
+      } else {
+        console.log('⚠️ AUCUN SLOT REÇU DE L\'API');
+      }
       
       // Ne pas filtrer par recruteur ici, on le fera dans le rendu
       let filteredSlots = response.data;
@@ -549,11 +598,13 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
         duration: newSlot.duration,
         description: newSlot.description,
         status: 'available',
-        recruiter: selectedRecruiter.id // CORRECTION: Associer le créneau au recruteur sélectionné
+        recruiter: selectedRecruiter.email // CORRECTION: Associer le créneau au recruteur sélectionné (utiliser l'email)
       };
 
       console.log('🔍 Création d\'un nouveau créneau:', newSlotData);
       console.log('🔍 Données du formulaire:', newSlot);
+      console.log('🔍 selectedRecruiter au moment de la création:', selectedRecruiter);
+      console.log('🔍 selectedRecruiter.id:', selectedRecruiter?.id);
       console.log('🔑 AccessToken disponible:', accessToken ? 'OUI' : 'NON');
       console.log('🌐 API Base URL:', apiBaseUrl);
       console.log('📋 Forum ID:', forum?.id);
@@ -565,9 +616,6 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
       });
 
           console.log('✅ Créneau créé:', response.data);
-          
-          // Mettre à jour immédiatement la liste locale
-          setTimeSlots(prev => [...prev, response.data]);
           
           // Fermer le modal
           setShowAddModal(false);
@@ -582,18 +630,9 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
             date: ''
           });
           
-          // Rafraîchir depuis le serveur pour s'assurer de la cohérence
-          setTimeout(() => {
-            fetchTimeSlots();
-          }, 100);
           
-          // Déclencher un événement pour notifier les autres composants
-          window.dispatchEvent(new CustomEvent('slotUpdated', { 
-            detail: { 
-              action: 'created', 
-              slotId: response.data.id 
-            } 
-          }));
+          // Rafraîchir depuis l'API
+          fetchTimeSlots();
           
           toast.success('✅ Créneau créé avec succès', {
             position: "top-right",
@@ -667,21 +706,8 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
 
         console.log('✅ Créneau supprimé');
         
-        // Mettre à jour immédiatement la liste locale
-        setTimeSlots(prev => prev.filter(s => s.id !== slot.id));
-        
-        // Rafraîchir depuis le serveur pour s'assurer de la cohérence
-        setTimeout(() => {
-          fetchTimeSlots();
-        }, 100);
-        
-        // Déclencher un événement pour notifier les autres composants
-        window.dispatchEvent(new CustomEvent('slotUpdated', { 
-          detail: { 
-            action: 'deleted', 
-            slotId: slot.id 
-          } 
-        }));
+        // Rafraîchir depuis l'API
+        fetchTimeSlots();
         
         toast.success('✅ Créneau supprimé avec succès', {
           position: "top-right",
@@ -706,6 +732,8 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   };
 
   const handleRecruiterSelect = (recruiter) => {
+    console.log('🔍 handleRecruiterSelect appelé avec:', recruiter);
+    console.log('🔍 Nouveau recruteur sélectionné:', recruiter.full_name, 'ID:', recruiter.id);
     setSelectedRecruiter(recruiter);
     setShowRecruiterDropdown(false);
   };
@@ -728,6 +756,10 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
 
   // Fonctions pour gérer les dates d'entretien du forum
   const getInterviewStartDate = () => {
+    console.log('🔍 Forum complet:', forum);
+    console.log('🔍 Forum interview_start:', forum?.interview_start);
+    console.log('🔍 Forum interview_end:', forum?.interview_end);
+    
     if (forum?.interview_start) {
       console.log('🔍 Forum interview_start:', forum.interview_start);
       return new Date(forum.interview_start);
@@ -765,67 +797,39 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   };
 
   const isDateInInterviewPeriod = (date) => {
-    const checkDate = new Date(date);
-    const startDate = getInterviewStartDate();
-    const endDate = getInterviewEndDate();
-    
-    console.log('🔍 Vérification période pour date:', date);
-    console.log('🔍 Date à vérifier:', checkDate);
-    console.log('🔍 Période d\'entretiens:', startDate, 'à', endDate);
-    
-    // Si le forum n'a pas de dates d'entretiens définies, accepter toutes les dates futures
-    if (!forum?.interview_start || !forum?.interview_end) {
-      console.log('🔍 Pas de période d\'entretiens définie, accepter toutes les dates futures');
-      return checkDate >= new Date(); // Accepter toutes les dates futures
-    }
-    
-    const isInPeriod = checkDate >= startDate && checkDate <= endDate;
-    console.log('🔍 Dans la période?', isInPeriod);
-    
-    return isInPeriod;
+    // TEMPORAIRE: Accepter toutes les dates pour le moment
+    console.log('🔍 Date acceptée (vérification désactivée):', date);
+    return true;
   };
 
   // Filtrer les créneaux selon les critères
-  console.log('🔍 Filtrage des créneaux - timeSlots:', timeSlots);
-  console.log('🔍 Nombre de timeSlots avant filtrage:', timeSlots.length);
-  console.log('🔍 Recruteur sélectionné pour filtrage:', selectedRecruiter);
-  console.log('🔍 ID du recruteur sélectionné:', selectedRecruiter?.id);
-  console.log('🔍 Type de l\'ID du recruteur:', typeof selectedRecruiter?.id);
+  console.log('🔍 Slots reçus de l\'API:', timeSlots);
+  console.log('🔍 Nombre de slots reçus:', timeSlots.length);
   
   const filteredSlots = timeSlots.filter(slot => {
     const isInPeriod = isDateInInterviewPeriod(slot.date);
     const matchesType = filterType === 'all' || slot.type === filterType;
     
-    // CORRECTION: Afficher tous les slots (pas de filtrage par recruteur)
-    const slotRecruiterId = typeof slot.recruiter === 'object' ? slot.recruiter?.id : slot.recruiter;
-    const matchesRecruiter = true; // Afficher tous les slots
+    // Filtrer par recruteur sélectionné (utiliser l'email au lieu de l'ID)
+    const slotRecruiterEmail = typeof slot.recruiter === 'object' ? slot.recruiter?.email : slot.recruiter;
+    const matchesRecruiter = selectedRecruiter ? slotRecruiterEmail === selectedRecruiter.email : true;
     
-    console.log('🔍 Slot:', slot.date, 'slot.recruiter:', slot.recruiter, 'type:', typeof slot.recruiter);
-    console.log('🔍 slotRecruiterId extrait:', slotRecruiterId, 'type:', typeof slotRecruiterId);
-    console.log('🔍 selectedRecruiter.id:', selectedRecruiter?.id, 'type:', typeof selectedRecruiter?.id);
-    console.log('🔍 Comparaison:', slotRecruiterId, '===', selectedRecruiter?.id, '=', slotRecruiterId === selectedRecruiter?.id);
-    console.log('🔍 matchesRecruiter:', matchesRecruiter);
-    console.log('🔍 isInPeriod:', isInPeriod, 'matchesType:', matchesType, 'matchesRecruiter:', matchesRecruiter);
+    console.log('--- DEBUG FILTRE RECRUTEUR ---');
+    console.log('Slot:', slot.id, 'Date:', slot.date);
+    console.log('slot.recruiter (raw):', slot.recruiter);
+    console.log('slotRecruiterEmail (extracted):', slotRecruiterEmail);
+    console.log('selectedRecruiter.email:', selectedRecruiter?.email);
+    console.log('Comparison (slotRecruiterEmail === selectedRecruiter.email):', slotRecruiterEmail === selectedRecruiter?.email);
+    console.log('isInPeriod:', isInPeriod, 'matchesType:', matchesType, 'matchesRecruiter:', matchesRecruiter);
+    console.log('------------------------------');
     
     return isInPeriod && matchesType && matchesRecruiter;
   });
   
-  console.log('🔍 Créneaux après filtrage final:', filteredSlots);
-  console.log('🔍 Nombre de créneaux après filtrage:', filteredSlots.length);
+  console.log('🔍 Slots après filtrage:', filteredSlots);
+  console.log('🔍 Nombre de slots après filtrage:', filteredSlots.length);
 
 
-  const getSlotIcon = (type) => {
-    return type === 'video' ? faVideo : faPhone;
-  };
-
-  const getSlotColor = (status) => {
-    switch (status) {
-      case 'available': return '#10B981'; // Vert
-      case 'booked': return '#3B82F6'; // Bleu
-      case 'completed': return '#6B7280'; // Gris
-      default: return '#9CA3AF';
-    }
-  };
 
   // Fonction pour détecter les conflits de créneaux
   const detectConflicts = (slots) => {
@@ -859,14 +863,6 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   const conflicts = detectConflicts(timeSlots);
   console.log('🔍 Conflits détectés:', conflicts);
 
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'available': return 'Disponible';
-      case 'booked': return 'Réservé';
-      case 'completed': return 'Terminé';
-      default: return 'Inconnu';
-    }
-  };
 
   if (loading) {
     return <Loading />;
@@ -883,7 +879,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
               <div className="company-recruiters-header">
                 <h2 className="company-recruiters-title">Agenda des entretiens</h2>
                 
-                {/* Sélecteur de recruteur */}
+                {/* Sélecteur de recruteur - maintenant à droite du titre */}
                 <div className="recruiter-selector">
                   <div className="recruiter-dropdown">
                     <button
@@ -895,6 +891,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                         {selectedRecruiter ? (
                           <>
                             {selectedRecruiter.full_name}
+                            {console.log('🔍 selectedRecruiter.is_current_user:', selectedRecruiter.is_current_user)}
                             {selectedRecruiter.is_current_user && (
                               <span className="you-badge" style={{ marginLeft: '8px' }}>Vous</span>
                             )}
@@ -908,37 +905,43 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                     
                     {showRecruiterDropdown && (
                       <div className="recruiter-dropdown-menu">
-                        {teamMembers.map(member => (
-                          <button
-                            key={member.id}
-                            className={`recruiter-option ${selectedRecruiter?.id === member.id ? 'selected' : ''}`}
-                            onClick={() => handleRecruiterSelect(member)}
-                          >
-                            <div className="recruiter-info">
-                              <div className="recruiter-name">
-                                <span>{member.full_name}</span>
-                                {member.is_current_user && (
-                                  <span className="you-badge">Vous</span>
-                                )}
+                        {teamMembers.map(member => {
+                          console.log('🔍 Member:', member.full_name, 'is_current_user:', member.is_current_user);
+                          return (
+                            <button
+                              key={member.id}
+                              className={`recruiter-option ${selectedRecruiter?.id === member.id ? 'selected' : ''}`}
+                              onClick={() => handleRecruiterSelect(member)}
+                            >
+                              <div className="recruiter-info">
+                                <div className="recruiter-name">
+                                  <span>{member.full_name}</span>
+                                  {member.is_current_user && (
+                                    <span className="you-badge">Vous</span>
+                                  )}
+                                </div>
+                                <span className="recruiter-role">{member.email}</span>
                               </div>
-                              <span className="recruiter-role">{member.email}</span>
-                            </div>
-                          </button>
-                        ))}
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
                 </div>
-
-                <button
-                  className="invite-recruiter-btn"
-                  onClick={() => setShowAddModal(true)}
-                  disabled={!selectedRecruiter}
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                  Ajouter un créneau
-                </button>
               </div>
+
+          {/* Bouton Ajouter un créneau - au-dessus des filtres, aligné à droite */}
+          <div className="add-slot-section-above-filters">
+            <button
+              className="invite-recruiter-btn-small"
+              onClick={() => setShowAddModal(true)}
+              disabled={!selectedRecruiter}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              Ajouter un créneau
+            </button>
+          </div>
 
           <div className="agenda-controls">
             <div className="view-toggle">
@@ -1045,6 +1048,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
             ) : (
               <div className="agenda-calendar">
                 <AgendaCalendar
+                  key={`calendar-${user?.timezone || 'Europe/Paris'}`}
                   timeSlots={filteredSlots}
                   selectedDate={getCurrentInterviewDate()}
                   interviewStartDate={getInterviewStartDate().toISOString().split('T')[0]}
@@ -1055,10 +1059,10 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                         // Ajouter le créneau via l'API
                         if (selectedRecruiter) {
                           try {
-                            // CORRECTION: Associer le créneau au recruteur sélectionné
+                            // CORRECTION: Associer le créneau au recruteur sélectionné (utiliser l'email)
                             const slotWithRecruiter = {
                               ...slot,
-                              recruiter: selectedRecruiter.id
+                              recruiter: selectedRecruiter.email
                             };
                             
                             console.log('🔍 Création de créneau depuis le calendrier:', slotWithRecruiter);
@@ -1071,13 +1075,8 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
 
                             console.log('✅ Créneau créé depuis le calendrier:', response.data);
                             
-                            // Mettre à jour immédiatement la liste locale
-                            setTimeSlots(prev => [...prev, response.data]);
-                            
-                            // Rafraîchir depuis le serveur pour s'assurer de la cohérence
-                            setTimeout(() => {
-                              fetchTimeSlots();
-                            }, 100);
+                            // Rafraîchir depuis l'API
+                            fetchTimeSlots();
                           } catch (error) {
                             console.error('❌ Erreur lors de la création du créneau:', error);
                             if (error.response) {

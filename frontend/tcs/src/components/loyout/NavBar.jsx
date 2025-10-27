@@ -29,6 +29,17 @@ const Navbar = () => {
 
   const getInitials = (name) => {
     if (!name) return '';
+    
+    // Si c'est un objet, extraire le nom
+    if (typeof name === 'object' && name.name) {
+      name = name.name;
+    }
+    
+    // S'assurer que c'est une chaîne
+    if (typeof name !== 'string') {
+      return '';
+    }
+    
     const names = name.split(' ');
     if (names.length >= 2) {
       return (names[0][0] + names[1][0]).toUpperCase();

@@ -11,16 +11,30 @@ import {
   faBuilding,
   faEnvelope,
   faPhone,
-  faVideo
+  faVideo,
+  faQuestion,
+  faFileText,
+  faCheckCircle,
+  faEllipsisV,
+  faBookmark,
+  faEye,
+  faMapMarkerAlt,
+  faBriefcase,
+  faIndustry,
+  faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './RecruiterApplications.css';
+import Loading from '../../../../components/loyout/Loading';
 
 const RecruiterApplications = ({ forumId: propForumId }) => {
   const { forumId: paramForumId } = useParams();
   const location = useLocation();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, pending, accepted, rejected
+  const [activeTab, setActiveTab] = useState('pending'); // pending, confirmed, waiting, rejected
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Récupérer le forumId depuis les props, params ou depuis le state
   const currentForumId = propForumId || paramForumId || location.state?.forum?.id;
@@ -56,6 +70,20 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
       );
       
       console.log('✅ [RECRUTEUR] Candidatures chargées:', response.data);
+      console.log('🔍 [RECRUTEUR] Détail première candidature:', response.data[0]);
+      if (response.data[0]) {
+        console.log('🔍 [RECRUTEUR] Offer data:', response.data[0].offer);
+        console.log('🔍 [RECRUTEUR] Status:', response.data[0].status);
+        console.log('🔍 [RECRUTEUR] Candidate photo:', response.data[0].candidate_photo);
+        console.log('🔍 [RECRUTEUR] Candidate data:', response.data[0].candidate);
+        console.log('🔍 [RECRUTEUR] Questionnaire responses:', response.data[0].questionnaire_responses);
+        console.log('🔍 [RECRUTEUR] Questionnaire responses type:', typeof response.data[0].questionnaire_responses);
+        console.log('🔍 [RECRUTEUR] Questionnaire responses keys:', response.data[0].questionnaire_responses ? Object.keys(response.data[0].questionnaire_responses) : 'null/undefined');
+        if (response.data[0].questionnaire_responses && response.data[0].questionnaire_responses.answers) {
+          console.log('🔍 [RECRUTEUR] Answers array:', response.data[0].questionnaire_responses.answers);
+          console.log('🔍 [RECRUTEUR] Answers length:', response.data[0].questionnaire_responses.answers.length);
+        }
+      }
       setApplications(response.data);
     } catch (error) {
       console.error('❌ [RECRUTEUR] Erreur lors du chargement des candidatures:', error);
@@ -153,19 +181,62 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
 
   const getStatusBadge = (status) => {
     const badges = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', icon: faClock, text: 'En attente' },
-      accepted: { color: 'bg-green-100 text-green-800', icon: faCheck, text: 'Acceptée' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: faTimes, text: 'Rejetée' }
+      pending: { color: 'bg-yellow-100', icon: faClock, text: 'En Attente' },
+      accepted: { color: 'bg-green-100', icon: faCheck, text: 'Acceptée' },
+      rejected: { color: 'bg-red-100', icon: faTimes, text: 'Rejetée' },
+      confirmed: { color: 'bg-blue-100', icon: faCheckCircle, text: 'Confirmée' },
+      waiting: { color: 'bg-orange-100', icon: faClock, text: 'Attente retour' }
     };
     
     const badge = badges[status] || badges.pending;
     
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.color}`}>
-        <FontAwesomeIcon icon={badge.icon} className="w-3 h-3 mr-1" />
+      <span className={`status-badge ${badge.color}`}>
+        <FontAwesomeIcon icon={badge.icon} className="status-icon" />
         {badge.text}
       </span>
     );
+  };
+
+  const getCandidateInitials = (application) => {
+    if (!application) return '?';
+    // Utiliser le nom complet de l'application
+    const candidateName = application.candidate_name || application.candidate_email || '';
+    if (candidateName) {
+      const names = candidateName.split(' ');
+      if (names.length >= 2) {
+        return `${names[0].charAt(0)}${names[1].charAt(0)}`.toUpperCase();
+      }
+      return candidateName.charAt(0).toUpperCase();
+    }
+    return '?';
+  };
+
+  const getCandidatePhoto = (application) => {
+    // Utiliser directement le champ candidate_photo du serializer
+    if (application?.candidate_photo) {
+      return `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${application.candidate_photo}`;
+    }
+    // Fallback sur l'ancien système
+    if (application?.candidate?.profile_picture) {
+      return `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${application.candidate.profile_picture}`;
+    }
+    return null;
+  };
+
+  const getTabCount = (tab) => {
+    switch (tab) {
+      case 'pending':
+        return applications.filter(app => app.status === 'pending').length;
+      case 'confirmed':
+        return applications.filter(app => app.status === 'accepted').length;
+      case 'waiting':
+        return applications.filter(app => app.status === 'waiting').length;
+      case 'rejected':
+        return applications.filter(app => app.status === 'rejected').length;
+      default:
+        return 0;
+    }
   };
 
   const getTypeIcon = (type) => {
@@ -179,11 +250,32 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    if (!dateString) return 'Date non spécifiée';
+    
+    try {
+      // Si c'est déjà un objet Date
+      if (dateString instanceof Date) {
+        return dateString.toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      }
+      
+      // Si c'est une chaîne
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Date invalide';
+      }
+      return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (error) {
+      console.error('Erreur formatage date:', error, dateString);
+      return 'Date invalide';
+    }
   };
 
   const formatTime = (timeString) => {
@@ -195,174 +287,349 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
   };
 
   const filteredApplications = applications.filter(app => {
-    if (filter === 'all') return true;
-    return app.status === filter;
+    // Filtrage par onglet actif
+    let statusMatch = false;
+    switch (activeTab) {
+      case 'pending':
+        statusMatch = app.status === 'pending';
+        break;
+      case 'confirmed':
+        statusMatch = app.status === 'accepted';
+        break;
+      case 'waiting':
+        statusMatch = app.status === 'waiting';
+        break;
+      case 'rejected':
+        statusMatch = app.status === 'rejected';
+        break;
+      default:
+        statusMatch = true;
+    }
+    
+    // Filtrage par terme de recherche
+    const searchMatch = !searchTerm || 
+      (app.candidate_name && app.candidate_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (app.candidate_email && app.candidate_email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (app.offer?.title && app.offer.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (app.offer?.company?.name && app.offer.company.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    return statusMatch && searchMatch;
   });
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Candidatures reçues</h1>
-        <p className="mt-2 text-gray-600">Gérez les candidatures pour vos offres</p>
-      </div>
+    <div className="applications-container">
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          {/* Header avec onglets */}
+          <div className="applications-header">
+        <div className="header-tabs">
+          <button
+            className={`tab-button ${activeTab === 'pending' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pending')}
+          >
+            Nouveau - à traiter ({getTabCount('pending')})
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'confirmed' ? 'active' : ''}`}
+            onClick={() => setActiveTab('confirmed')}
+          >
+            Confirmés ({getTabCount('confirmed')})
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'waiting' ? 'active' : ''}`}
+            onClick={() => setActiveTab('waiting')}
+          >
+            Attente retour candidat ({getTabCount('waiting')})
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'rejected' ? 'active' : ''}`}
+            onClick={() => setActiveTab('rejected')}
+          >
+            Refusé ({getTabCount('rejected')})
+          </button>
+        </div>
 
-      {/* Filtres */}
-      <div className="mb-6">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              filter === 'all' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Toutes ({applications.length})
-          </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              filter === 'pending' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            En attente ({applications.filter(app => app.status === 'pending').length})
-          </button>
-          <button
-            onClick={() => setFilter('accepted')}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              filter === 'accepted' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Acceptées ({applications.filter(app => app.status === 'accepted').length})
-          </button>
-          <button
-            onClick={() => setFilter('rejected')}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              filter === 'rejected' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Rejetées ({applications.filter(app => app.status === 'rejected').length})
-          </button>
+        {/* Barre de recherche */}
+        <div className="search-section">
+          <div className="search-bar">
+            <FontAwesomeIcon icon={faUser} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Rechercher par mots-clé"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+          <div className="results-count">
+            {filteredApplications.length} Résultat{filteredApplications.length > 1 ? 's' : ''} sur {applications.length} Participants
+          </div>
         </div>
       </div>
 
-      {/* Liste des candidatures */}
+      {/* Contenu principal - Layout Indeed */}
+      <div className="applications-layout">
+        {/* Colonne gauche - Liste des candidats */}
+        <div className="candidates-column">
       {filteredApplications.length === 0 ? (
-        <div className="text-center py-12">
-          <FontAwesomeIcon icon={faUser} className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucune candidature</h3>
-          <p className="text-gray-500">
-            {filter === 'all' 
-              ? 'Aucune candidature reçue pour le moment.' 
-              : `Aucune candidature ${filter === 'pending' ? 'en attente' : filter === 'accepted' ? 'acceptée' : 'rejetée'}.`
+            <div className="empty-state">
+              <FontAwesomeIcon icon={faUser} className="empty-icon" />
+              <h3>Aucune candidature</h3>
+              <p>
+                {activeTab === 'pending' 
+                  ? 'Aucune nouvelle candidature à traiter.' 
+                  : `Aucune candidature ${activeTab === 'confirmed' ? 'confirmée' : activeTab === 'waiting' ? 'en attente de retour' : 'refusée'}.`
             }
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+            <div className="candidates-list">
           {filteredApplications.map((application) => (
-            <div key={application.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {application.candidate_name || application.candidate_email}
-                    </h3>
-                    {getStatusBadge(application.status)}
+                <div 
+                  key={application.id} 
+                  className={`recruiter-candidate-card ${selectedApplication?.id === application.id ? 'selected' : ''}`}
+                  onClick={() => setSelectedApplication(application)}
+                >
+                  {/* Avatar du candidat */}
+                  <div className="recruiter-candidate-avatar">
+                    {getCandidatePhoto(application) ? (
+                      <img 
+                        src={getCandidatePhoto(application)} 
+                        alt={application.candidate_name}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="recruiter-candidate-initials"
+                      style={{ display: getCandidatePhoto(application) ? 'none' : 'flex' }}
+                    >
+                      {getCandidateInitials(application)}
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={faBuilding} className="w-4 h-4 mr-2" />
-                      {application.offer?.company?.name || 'Entreprise non spécifiée'}
+
+                  {/* Informations du candidat */}
+                  <div className="recruiter-candidate-info">
+                    <h3 className="recruiter-candidate-name">
+                      {application.candidate_name || application.candidate_email || 'Candidat'}
+                    </h3>
+                    <div className="recruiter-candidate-status">
+                      {getStatusBadge(application.status)}
                     </div>
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 mr-2" />
-                      {application.candidate_email}
-                    </div>
+                  </div>
+                
+                  {/* Actions */}
+                  <div className="recruiter-candidate-actions">
+                {application.status === 'pending' && (
+                      <>
+                    <button
+                          className="recruiter-action-button reject"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRejectApplication(application.id);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                    <button
+                          className="recruiter-action-button accept"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleValidateApplication(application.id);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faCheck} />
+                        </button>
+                      </>
+                    )}
+                    <button className="recruiter-action-button more">
+                      <FontAwesomeIcon icon={faEllipsisV} />
+                    </button>
                   </div>
                 </div>
-                
-                {application.status === 'pending' && (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleValidateApplication(application.id)}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                    >
-                      <FontAwesomeIcon icon={faCheck} className="w-4 h-4 mr-2" />
-                      Valider
-                    </button>
-                    <button
-                      onClick={() => handleRejectApplication(application.id)}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                      <FontAwesomeIcon icon={faTimes} className="w-4 h-4 mr-2" />
-                      Rejeter
-                    </button>
+              ))}
                   </div>
                 )}
               </div>
 
-              {/* Détails de l'offre */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="font-medium text-gray-900 mb-2">Offre</h4>
-                <p className="text-gray-700">{application.offer?.title || 'Titre non spécifié'}</p>
+        {/* Colonne droite - Détails de la candidature */}
+        <div className="details-column">
+          {selectedApplication ? (
+            <div className="application-details">
+              {/* Informations du candidat */}
+              <div className="candidate-section">
+                <h3 className="section-title">Informations du candidat</h3>
+                <div className="candidate-details">
+                  <div className="candidate-name-section">
+                    <h4 className="candidate-full-name">
+                      {selectedApplication.candidate_name || selectedApplication.candidate_email}
+                    </h4>
+                    <div className="candidate-email">
+                      <FontAwesomeIcon icon={faEnvelope} className="detail-icon" />
+                      {selectedApplication.candidate_email}
+                    </div>
+                    {selectedApplication.candidate && (
+                      <div className="candidate-profile-info">
+                        <div className="candidate-position">
+                          {selectedApplication.candidate.current_position || 'Candidat'}
+                        </div>
+                        {selectedApplication.candidate.location && (
+                          <div className="candidate-location">
+                            <FontAwesomeIcon icon={faBuilding} className="detail-icon" />
+                            {selectedApplication.candidate.location}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="candidate-actions">
+                    <button className="primary-action">
+                      <FontAwesomeIcon icon={faEye} />
+                      Voir le profil
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informations sur l'offre */}
+              <div className="offer-section">
+                <h3 className="section-title">Informations sur l'offre</h3>
+                <div className="offer-info">
+                  <div className="offer-details">
+                    <div className="offer-title">
+                      {selectedApplication.offer?.title || selectedApplication.offer_title || 'Titre non spécifié'}
+                    </div>
+                    <div className="offer-company">
+                      {selectedApplication.offer?.company?.name || selectedApplication.offer_company || 'Entreprise non spécifiée'}
+                    </div>
+                    <div className="offer-tags">
+                      {selectedApplication.offer?.location && (
+                        <div className="offer-tag">
+                          <FontAwesomeIcon icon={faMapMarkerAlt} className="tag-icon" />
+                          {selectedApplication.offer.location}
+                        </div>
+                      )}
+                      {selectedApplication.offer?.contract_type && (
+                        <div className="offer-tag">
+                          <FontAwesomeIcon icon={faBriefcase} className="tag-icon" />
+                          Type : {selectedApplication.offer.contract_type}
+                        </div>
+                      )}
+                      {selectedApplication.offer?.sector && (
+                        <div className="offer-tag">
+                          <FontAwesomeIcon icon={faIndustry} className="tag-icon" />
+                          Secteur : {selectedApplication.offer.sector}
+                        </div>
+                      )}
+                      {selectedApplication.offer?.start_date && (
+                        <div className="offer-tag">
+                          <FontAwesomeIcon icon={faCalendarAlt} className="tag-icon" />
+                          Début : {formatDate(selectedApplication.offer.start_date)}
+                        </div>
+                      )}
+                    </div>
+                    {selectedApplication.offer?.description && (
+                      <div className="offer-description">
+                        {selectedApplication.offer.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Créneau sélectionné */}
-              {application.selected_slot && (
-                <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                  <h4 className="font-medium text-gray-900 mb-2">Créneau sélectionné</h4>
-                  <div className="flex items-center space-x-4 text-sm">
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={faCalendar} className="w-4 h-4 mr-2 text-blue-600" />
-                      {formatDate(application.selected_slot.date)}
+              {selectedApplication.selected_slot_info && (
+                <div className="slot-section">
+                  <h3 className="section-title">Créneau sélectionné</h3>
+                  <div className="slot-info">
+                    <div className="slot-date">
+                      <FontAwesomeIcon icon={faCalendar} className="detail-icon" />
+                      {formatDate(selectedApplication.selected_slot_info.date)}
                     </div>
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={getTypeIcon(application.selected_slot.type)} className="w-4 h-4 mr-2 text-blue-600" />
-                      {formatTime(application.selected_slot.start_time)} - {formatTime(application.selected_slot.end_time)}
+                    <div className="slot-time">
+                      <FontAwesomeIcon icon={faClock} className="detail-icon" />
+                      {formatTime(selectedApplication.selected_slot_info.start_time)} - {formatTime(selectedApplication.selected_slot_info.end_time)}
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-blue-600 font-medium">
-                        {application.selected_slot.type === 'video' ? 'Vidéo' : 
-                         application.selected_slot.type === 'phone' ? 'Téléphone' : 'Présentiel'}
-                      </span>
+                    <div className="slot-type">
+                      <FontAwesomeIcon icon={getTypeIcon(selectedApplication.selected_slot_info.type)} className="detail-icon" />
+                      {selectedApplication.selected_slot_info.type === 'video' ? 'Visioconférence' : 
+                       selectedApplication.selected_slot_info.type === 'phone' ? 'Téléphone' : 'Présentiel'}
                     </div>
+                    {selectedApplication.selected_slot_info.description && (
+                      <div className="slot-description">
+                        <FontAwesomeIcon icon={faFileText} className="detail-icon" />
+                        {selectedApplication.selected_slot_info.description}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Réponses au questionnaire */}
-              {application.questionnaire_responses && (
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2">Réponses au questionnaire</h4>
-                  <div className="text-sm text-gray-600">
-                    {Object.keys(application.questionnaire_responses).length} réponse(s) fournie(s)
+              {selectedApplication.questionnaire_responses && selectedApplication.questionnaire_responses.answers && (
+                <div className="questionnaire-section">
+                  <h3 className="section-title">Questionnaire</h3>
+                  <div className="questionnaire-info">
+                    <div className="responses-count">
+                      {selectedApplication.questionnaire_responses.answers.length} question(s) répondue(s)
+                    </div>
+                    <div className="responses-list">
+                      {selectedApplication.questionnaire_responses.answers.map((answer, index) => (
+                        <div key={index} className="response-item">
+                          <div className="response-question">
+                            <strong>Question {index + 1} :</strong> {answer.question_text || `Question ${index + 1}`}
+                          </div>
+                          <div className="response-answer">
+                            <strong>Réponse :</strong>
+                            {answer.answer_text && (
+                              <div className="answer-text">
+                                {answer.answer_text}
+                              </div>
+                            )}
+                            {answer.answer_number !== null && answer.answer_number !== undefined && (
+                              <div className="answer-number">
+                                {answer.answer_number}
+                              </div>
+                            )}
+                            {answer.answer_choices && answer.answer_choices.length > 0 && (
+                              <div className="answer-choices">
+                                {answer.answer_choices.join(', ')}
+                              </div>
+                            )}
+                            {answer.answer_file && (
+                              <div className="answer-file">
+                                <FontAwesomeIcon icon={faFileText} className="file-icon" />
+                                {answer.answer_file.name || 'Fichier joint'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Date de candidature */}
-              <div className="text-xs text-gray-500 mt-4">
-                Candidature du {formatDate(application.created_at)}
+              <div className="application-date">
+                Candidature du {formatDate(selectedApplication.created_at)}
               </div>
             </div>
-          ))}
+          ) : (
+            <div className="no-selection">
+              <FontAwesomeIcon icon={faUser} className="no-selection-icon" />
+              <h3>Sélectionnez une candidature</h3>
+              <p>Choisissez une candidature dans la liste pour voir les détails</p>
         </div>
+      )}
+        </div>
+      </div>
+        </>
       )}
     </div>
   );

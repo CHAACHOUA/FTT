@@ -5,7 +5,8 @@
   border: 1px solid #e5e7eb;
   margin-bottom: 16px;
   transition: all 0.2s ease;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 
 .agenda-card:hover {
@@ -49,6 +50,68 @@
   100% { opacity: 1; }
 }
 
+/* Actions en bas à droite - style programme */
+.agenda-actions {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.4rem;
+  z-index: 3;
+}
+
+.agenda-edit-btn,
+.agenda-start-btn,
+.agenda-delete-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.agenda-edit-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.agenda-edit-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.2) 100%);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.agenda-start-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.agenda-start-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.2) 100%);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.agenda-delete-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.agenda-delete-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0.2) 100%);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
 .agenda-card-header {
   display: flex;
   justify-content: space-between;
@@ -76,13 +139,17 @@
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  color: white;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 2px 8px; /* py-0.5 px-2 */
+  border-radius: 6px; /* rounded-md */
+  font-size: 12px; /* text-xs */
+  font-weight: 500; /* font-medium */
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  width: fit-content;
+  height: auto;
 }
 
 .agenda-card-content {
@@ -168,56 +235,6 @@
   color: white;
 }
 
-.agenda-card-actions {
-  display: flex;
-  gap: 8px;
-  padding: 16px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e5e7eb;
-}
-
-.agenda-card-actions button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-edit {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.btn-edit:hover {
-  background: #e5e7eb;
-}
-
-.btn-start {
-  background: #10b981;
-  color: white;
-}
-
-.btn-start:hover {
-  background: #059669;
-}
-
-.btn-delete {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-}
-
-.btn-delete:hover {
-  background: #fee2e2;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .agenda-card-header {
@@ -226,11 +243,16 @@
     align-items: flex-start;
   }
 
-  .agenda-card-actions {
-    flex-direction: column;
+  .agenda-actions {
+    bottom: 0.5rem;
+    right: 0.5rem;
   }
 
-  .agenda-card-actions button {
-    justify-content: center;
+  .agenda-edit-btn,
+  .agenda-start-btn,
+  .agenda-delete-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
   }
 }

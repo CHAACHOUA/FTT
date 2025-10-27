@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../common/Modal';
-import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
+import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect } from '../../../constants/choices';
 import { FaBriefcase, FaIndustry, FaMapMarkerAlt, FaFileAlt, FaUser, FaCalendarAlt, FaClock, FaFlag } from 'react-icons/fa';
 import Loading from '../../loyout/Loading';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
@@ -8,7 +8,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     title: '',
     contract_type: '',
     sector: '',
-    location: '',
+    region: '',
     description: '',
     profile_recherche: '',
     status: 'draft',
@@ -17,18 +17,21 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   });
   const [sectors, setSectors] = useState([]);
   const [contracts, setContracts] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadChoices = async () => {
       try {
         setLoading(true);
-        const [sectorsData, contractsData] = await Promise.all([
+        const [sectorsData, contractsData, regionsData] = await Promise.all([
           getSectorsForSelect(),
-          getContractsForSelect()
+          getContractsForSelect(),
+          getRegionsForSelect()
         ]);
         setSectors(sectorsData);
         setContracts(contractsData);
+        setRegions(regionsData);
       } catch (error) {
         console.error('Erreur lors du chargement des choix:', error);
       } finally {
@@ -45,7 +48,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         title: initialData.title || '',
         contract_type: initialData.contract_type || '',
         sector: initialData.sector || '',
-        location: initialData.location || '',
+        region: initialData.location || initialData.region || '', // Mapper location du backend vers region du frontend
         description: initialData.description || '',
         profile_recherche: initialData.profile_recherche || '',
         status: initialData.status || 'draft',
@@ -57,7 +60,7 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         title: '',
         contract_type: '',
         sector: '',
-        location: '',
+        region: '',
         description: '',
         profile_recherche: '',
         status: 'draft',
@@ -74,7 +77,15 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Mapper region vers location pour le backend
+    const dataToSubmit = {
+      ...formData,
+      location: formData.region
+    };
+    delete dataToSubmit.region;
+    console.log('Data soumise:', dataToSubmit);
+    console.log('Location (région) dans les données:', dataToSubmit.location);
+    onSubmit(dataToSubmit);
   };
 
   if (!isOpen) return null;
@@ -158,26 +169,21 @@ const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         <div className="modal-form-group">
           <label className="modal-form-label">
             <FaMapMarkerAlt />
-            Localisation
+            Région *
           </label>
           <select
-            name="location"
-            value={formData.location}
+            name="region"
+            value={formData.region}
             onChange={handleChange}
             className="modal-form-select"
             required
           >
             <option value="">Sélectionner</option>
-            <option value="Toulouse">Toulouse</option>
-            <option value="Paris">Paris</option>
-            <option value="Lyon">Lyon</option>
-            <option value="Bordeaux">Bordeaux</option>
-            <option value="Marseille">Marseille</option>
-            <option value="Lille">Lille</option>
-            <option value="Nantes">Nantes</option>
-            <option value="Strasbourg">Strasbourg</option>
-            <option value="Montpellier">Montpellier</option>
-            <option value="Rennes">Rennes</option>
+            {regions.map((region) => (
+              <option key={region.value} value={region.value}>
+                {region.label}
+              </option>
+            ))}
           </select>
         </div>
 

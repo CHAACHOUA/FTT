@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faSave,
   faTimes,
   faPlus,
   faTrash,
@@ -97,6 +96,11 @@ const QuestionForm = ({ question, onSave, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    console.log('=== QUESTION FORM SUBMIT ===');
+    console.log('formData:', formData);
+    console.log('question prop:', question);
+    console.log('onSave function:', onSave);
+    
     if (!formData.question_text.trim()) {
       alert('Le texte de la question est obligatoire');
       return;
@@ -107,7 +111,9 @@ const QuestionForm = ({ question, onSave, onCancel }) => {
       return;
     }
 
+    console.log('Appel de onSave avec:', formData);
     onSave(formData);
+    console.log('=== FIN QUESTION FORM SUBMIT ===');
   };
 
   const isChoiceQuestion = () => {
@@ -326,8 +332,8 @@ const QuestionForm = ({ question, onSave, onCancel }) => {
               type="submit"
               className="btn-primary"
             >
-              <FontAwesomeIcon icon={faSave} />
-              Sauvegarder
+              <FontAwesomeIcon icon={faPlus} />
+              Ajouter
             </button>
           </div>
         </form>

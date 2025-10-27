@@ -14,6 +14,7 @@ import { useAuth } from '../../../context/AuthContext';
 import './ProfileView.css';
 import DeleteAccount from '../auth/account/DeleteAccount';
 import ChangePassword from '../auth/account/ChangePassword';
+import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../../components/loyout/Loading'; // ✅ Import du composant de chargement
@@ -26,7 +27,7 @@ const ProfileView = () => {
 
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated, updateName } = useAuth();
+  const { isAuthenticated, user, updateName } = useAuth();
   const location = useLocation();
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -223,6 +224,9 @@ const ProfileView = () => {
           <>
             <section id="changepassword">
               <ChangePassword />
+            </section>
+            <section id="timezone">
+              <TimezoneSettings user={user} onUpdate={updateName} />
             </section>
             <section id="deleteaccount">
               <DeleteAccount />

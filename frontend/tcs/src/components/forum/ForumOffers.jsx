@@ -16,6 +16,7 @@ import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 import SearchBarOffers from '../filters/offer/SearchBarOffers';
 import Offer from '../card/offer/Offer';
+import Loading from '../loyout/Loading';
 import axios from 'axios';
 
 const ForumOffers = ({ companies, forum = null }) => {
@@ -100,14 +101,18 @@ const ForumOffers = ({ companies, forum = null }) => {
       const isFavorite = favoriteOfferIds.includes(offerId);
       
       if (isFavorite) {
-        // Supprimer des favoris
-        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {
+        // Supprimer des favoris - utiliser POST avec action=remove
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {
+          action: 'remove'
+        }, {
           withCredentials: true
         });
         setFavoriteOfferIds(prev => prev.filter(id => id !== offerId));
       } else {
         // Ajouter aux favoris
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {}, {
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offerId}/`, {
+          action: 'add'
+        }, {
           withCredentials: true
         });
         setFavoriteOfferIds(prev => [...prev, offerId]);
@@ -154,14 +159,7 @@ const ForumOffers = ({ companies, forum = null }) => {
   };
 
   if (loading) {
-    return (
-      <div className="offers-list-wrapper">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Chargement des offres...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

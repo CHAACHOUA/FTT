@@ -24,26 +24,28 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
 
 
 
+  // Fonction pour rafraîchir les offres
+  const refreshOffers = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiBaseUrl}/recruiters/company-offers/`, {
+        withCredentials: true,
+        params: { forum_id },
+      });
+      console.log('Offers refreshed:', response.data); // Debug log
+      setOffers(response.data);
+      setFilteredOffers(response.data);
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Erreur lors du chargement des offres');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Récupération des offres liées au forum
   useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${apiBaseUrl}/recruiters/company-offers/`, {
-          withCredentials: true,
-          params: { forum_id },
-        });
-        console.log('Offers fetched:', response.data); // Debug log
-        setOffers(response.data);
-        setFilteredOffers(response.data);
-        setError(null);
-      } catch (err) {
-        setError(err.response?.data?.detail || 'Erreur lors du chargement des offres');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOffers();
+    refreshOffers();
   }, [accessToken, apiBaseUrl, forum_id]);
 
 
@@ -69,8 +71,11 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
       await axios.delete(`${apiBaseUrl}/recruiters/offers/${id}/delete/`, {
         withCredentials: true
       });
-      setOffers((prev) => prev.filter((offer) => offer.id !== id));
-    } catch {
+      console.log('Offre supprimée avec succès');
+      // Rafraîchir la liste des offres pour avoir les données les plus récentes
+      await refreshOffers();
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
       alert('Erreur lors de la suppression');
     }
   };
@@ -89,21 +94,34 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           { ...formData, forum_id },
           { withCredentials: true }
         );
-        setOffers((prev) =>
-          prev.map((offer) => (offer.id === editingOffer.id ? response.data : offer))
-        );
+        console.log('Offre mise à jour:', response.data);
+        // Rafraîchir la liste des offres pour avoir les données les plus récentes
+        await refreshOffers();
       } else {
         const response = await axios.post(
           `${apiBaseUrl}/recruiters/offers/create/`,
           { ...formData, forum_id },
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
-        setOffers((prev) => [response.data, ...prev]);
+        console.log('Offre créée:', response.data);
+        // Rafraîchir la liste des offres pour avoir les données les plus récentes
+        await refreshOffers();
       }
       setModalOpen(false);
-    } catch {
+      setEditingOffer(null);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
       alert('Erreur lors de la sauvegarde');
     }
+  };
+
+  // Fonction pour gérer la sauvegarde depuis VirtualOfferModal
+  const handleVirtualOfferSave = async (savedOffer) => {
+    console.log('VirtualOfferModal - Offre sauvegardée:', savedOffer);
+    // Rafraîchir la liste des offres
+    await refreshOffers();
+    setModalOpen(false);
+    setEditingOffer(null);
   };
 
   if (loading) return <Loading />;
@@ -168,7 +186,7 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
           onClose={() => setModalOpen(false)}
           offer={editingOffer}
           forum={forum}
-          onSave={handleSubmit}
+          onSave={handleVirtualOfferSave}
           accessToken={accessToken}
           apiBaseUrl={apiBaseUrl}
         />

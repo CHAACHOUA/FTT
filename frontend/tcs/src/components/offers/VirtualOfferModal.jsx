@@ -17,7 +17,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Select from 'react-select';
 import QuestionnaireBuilder from '../questionnaire/QuestionnaireBuilder';
+import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect } from '../../constants/choices';
 import './VirtualOfferModal.css';
 
 const VirtualOfferModal = ({ 
@@ -35,7 +37,7 @@ const VirtualOfferModal = ({
     title: '',
     contract_type: '',
     sector: '',
-    location: '',
+    region: '',
     description: '',
     profile_recherche: '',
     status: 'draft',
@@ -44,6 +46,63 @@ const VirtualOfferModal = ({
   });
   const [questionnaire, setQuestionnaire] = useState(null);
   const [errors, setErrors] = useState({});
+  const [sectors, setSectors] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [choicesLoading, setChoicesLoading] = useState(true);
+
+  // Charger les choix depuis l'API
+  useEffect(() => {
+    const loadChoices = async () => {
+      try {
+        setChoicesLoading(true);
+        const [sectorsData, contractsData, regionsData] = await Promise.all([
+          getSectorsForSelect(),
+          getContractsForSelect(),
+          getRegionsForSelect()
+        ]);
+        setSectors(sectorsData);
+        setContracts(contractsData);
+        setRegions(regionsData);
+        console.log('Régions chargées:', regionsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des choix:', error);
+        toast.error('Erreur lors du chargement des options');
+      } finally {
+        setChoicesLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      loadChoices();
+    }
+  }, [isOpen]);
+
+  // Gérer l'effet de flou sur la navbar et le body
+  useEffect(() => {
+    const navbar = document.querySelector('.navbar');
+    const body = document.body;
+    
+    if (isOpen) {
+      if (navbar) {
+        navbar.classList.add('modal-open');
+      }
+      body.classList.add('modal-open');
+    } else {
+      if (navbar) {
+        navbar.classList.remove('modal-open');
+      }
+      body.classList.remove('modal-open');
+    }
+
+    // Cleanup
+    return () => {
+      if (navbar) {
+        navbar.classList.remove('modal-open');
+      }
+      body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,21 +112,37 @@ const VirtualOfferModal = ({
           title: offer.title || '',
           contract_type: offer.contract_type || '',
           sector: offer.sector || '',
-          location: offer.location || '',
+          region: offer.location || offer.region || '', // Mapper location du backend vers region du frontend
           description: offer.description || '',
           profile_recherche: offer.profile_recherche || '',
           status: offer.status || 'draft',
           start_date: offer.start_date || '',
           experience_required: offer.experience_required || '1-3',
         });
-        setQuestionnaire(offer.questionnaire || null);
+        console.log('Mode édition - Région initialisée:', offer.location || offer.region);
+        console.log('Mode édition - offer.location:', offer.location);
+        console.log('Mode édition - offer.region:', offer.region);
+        // Charger le questionnaire existant
+        if (offer.questionnaire) {
+          console.log('Questionnaire existant chargé:', offer.questionnaire);
+          setQuestionnaire(offer.questionnaire);
+        } else {
+          console.log('Aucun questionnaire existant');
+          setQuestionnaire(null);
+        }
+        
+        // Log après un délai pour voir l'état final
+        setTimeout(() => {
+          console.log('État offerData après initialisation:', offerData);
+          console.log('Région dans offerData après initialisation:', offerData.region);
+        }, 100);
       } else {
         // Mode création
         setOfferData({
           title: '',
           contract_type: '',
           sector: '',
-          location: '',
+          region: '',
           description: '',
           profile_recherche: '',
           status: 'draft',
@@ -96,6 +171,12 @@ const VirtualOfferModal = ({
     }
   };
 
+  const handleSelectChange = (field, selectedOption) => {
+    const value = selectedOption ? selectedOption.value : '';
+    console.log(`Changement de ${field}:`, value);
+    handleInputChange(field, value);
+  };
+
   const validateStep1 = () => {
     const newErrors = {};
     
@@ -115,6 +196,10 @@ const VirtualOfferModal = ({
       newErrors.sector = 'Le secteur est obligatoire';
     }
     
+    if (!offerData.region) {
+      newErrors.region = 'La région est obligatoire';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -130,7 +215,37 @@ const VirtualOfferModal = ({
   };
 
   const handleQuestionnaireSave = (questionnaireData) => {
+    console.log('Questionnaire sauvegardé:', questionnaireData);
     setQuestionnaire(questionnaireData);
+  };
+
+  // Fonction pour récupérer les questions du QuestionnaireBuilder
+  const getQuestionnaireData = () => {
+    console.log('=== GET QUESTIONNAIRE DATA ===');
+    console.log('window.questionnaireBuilderData:', window.questionnaireBuilderData);
+    console.log('questionnaire state local:', questionnaire);
+    
+    // Essayer de récupérer les données du QuestionnaireBuilder
+    if (window.questionnaireBuilderData) {
+      console.log('Données récupérées du QuestionnaireBuilder:', window.questionnaireBuilderData);
+      console.log('Questions dans les données du builder:', window.questionnaireBuilderData.questions);
+      console.log('Nombre de questions dans le builder:', window.questionnaireBuilderData.questions?.length || 0);
+      
+      // Vérifier que c'est bien un objet questionnaire et pas un objet offer
+      if (window.questionnaireBuilderData.questions !== undefined) {
+        console.log('=== FIN GET QUESTIONNAIRE DATA (builder) ===');
+        return window.questionnaireBuilderData;
+      } else {
+        console.log('window.questionnaireBuilderData ne contient pas de questions, utilisation du state local');
+      }
+    }
+    
+    // Fallback vers le state local
+    console.log('Utilisation du state local:', questionnaire);
+    console.log('Questions dans le state local:', questionnaire?.questions);
+    console.log('Nombre de questions dans le state local:', questionnaire?.questions?.length || 0);
+    console.log('=== FIN GET QUESTIONNAIRE DATA (local) ===');
+    return questionnaire;
   };
 
   const handleSave = async () => {
@@ -139,6 +254,8 @@ const VirtualOfferModal = ({
       console.log('apiBaseUrl:', apiBaseUrl);
       console.log('forum:', forum);
       console.log('offer:', offer);
+      console.log('offerData avant sauvegarde:', offerData);
+      console.log('Région dans offerData:', offerData.region);
       
       let savedOffer;
       
@@ -146,61 +263,100 @@ const VirtualOfferModal = ({
         // Mode édition
         console.log('Mode édition - Offre ID:', offer.id);
         console.log('URL:', `${apiBaseUrl}/recruiters/offers/${offer.id}/update/`);
-        console.log('Data:', { ...offerData, forum_id: forum.id });
+        const dataToSend = {
+          ...offerData,
+          location: offerData.region, // Mapper region vers location pour le backend
+          forum_id: forum.id
+        };
+        // Supprimer region des données envoyées car on utilise location
+        delete dataToSend.region;
+        
+        // Ajouter le questionnaire si disponible
+        console.log('=== DEBUG QUESTIONNAIRE ===');
+        console.log('window.questionnaireBuilderData:', window.questionnaireBuilderData);
+        console.log('questionnaire state:', questionnaire);
+        
+        const questionnaireData = getQuestionnaireData();
+        console.log('questionnaireData récupéré:', questionnaireData);
+        
+        if (questionnaireData) {
+          dataToSend.questionnaire = questionnaireData;
+          console.log('Questionnaire envoyé:', questionnaireData);
+          console.log('Questions dans le questionnaire:', questionnaireData.questions);
+          console.log('Nombre de questions:', questionnaireData.questions?.length || 0);
+        } else {
+          console.log('Aucun questionnaire à envoyer');
+        }
+        
+        console.log('Data envoyée:', dataToSend);
+        console.log('Location (région) dans les données:', dataToSend.location);
+        console.log('Questionnaire inclus:', !!dataToSend.questionnaire);
         
         const response = await axios.put(
           `${apiBaseUrl}/recruiters/offers/${offer.id}/update/`,
-          {
-            ...offerData,
-            forum_id: forum.id
-          },
+          dataToSend,
           { withCredentials: true }
         );
         savedOffer = response.data;
       } else {
         // Mode création
+        const dataToSend = {
+          ...offerData,
+          location: offerData.region, // Mapper region vers location pour le backend
+          forum_id: forum.id
+        };
+        // Supprimer region des données envoyées car on utilise location
+        delete dataToSend.region;
+        
+        // Ajouter le questionnaire si disponible
+        const questionnaireData = getQuestionnaireData();
+        if (questionnaireData) {
+          dataToSend.questionnaire = questionnaireData;
+          console.log('Questionnaire envoyé (création):', questionnaireData);
+          console.log('Questions dans le questionnaire:', questionnaireData.questions);
+          console.log('Nombre de questions:', questionnaireData.questions?.length || 0);
+        } else {
+          console.log('Aucun questionnaire à envoyer (création)');
+        }
+        
+        console.log('Mode création - Data envoyée:', dataToSend);
+        console.log('Location (région) dans les données:', dataToSend.location);
+        console.log('Questionnaire inclus:', !!dataToSend.questionnaire);
+        
         const response = await axios.post(
           `${apiBaseUrl}/recruiters/offers/create/`,
-          {
-            ...offerData,
-            forum_id: forum.id
-          },
+          dataToSend,
           { withCredentials: true }
         );
         savedOffer = response.data;
       }
       
-      // Sauvegarder le questionnaire si fourni
-      if (questionnaire) {
+      console.log('Offre sauvegardée avec succès:', savedOffer);
+      
+      // Recharger les données de l'offre pour avoir les questions mises à jour
+      if (offer && savedOffer) {
         try {
-          const questionnaireData = {
-            ...questionnaire,
-            offer: savedOffer.id
-          };
+          const offerResponse = await axios.get(
+            `${apiBaseUrl}/recruiters/offers/${savedOffer.id}/`,
+            { withCredentials: true }
+          );
+          const offerWithUpdatedQuestionnaire = offerResponse.data;
+          console.log('Offre rechargée avec questionnaire mis à jour:', offerWithUpdatedQuestionnaire);
+          console.log('Questions dans l\'offre rechargée:', offerWithUpdatedQuestionnaire.questionnaire?.questions);
+          console.log('Nombre de questions dans l\'offre rechargée:', offerWithUpdatedQuestionnaire.questionnaire?.questions?.length || 0);
           
-          if (offer?.questionnaire) {
-            // Mettre à jour le questionnaire existant
-            await axios.put(
-              `${apiBaseUrl}/virtual/questionnaires/${offer.questionnaire.id}/`,
-              questionnaireData,
-              { withCredentials: true }
-            );
-          } else {
-            // Créer un nouveau questionnaire
-            await axios.post(
-              `${apiBaseUrl}/virtual/questionnaires/`,
-              questionnaireData,
-              { withCredentials: true }
-            );
-          }
-        } catch (questionnaireError) {
-          console.error('Erreur lors de la sauvegarde du questionnaire:', questionnaireError);
-          toast.warning('Offre sauvegardée mais erreur avec le questionnaire');
+          toast.success(offer ? 'Offre modifiée avec succès' : 'Offre créée avec succès');
+          onSave && onSave(offerWithUpdatedQuestionnaire);
+        } catch (error) {
+          console.error('Erreur lors du rechargement de l\'offre:', error);
+          toast.success(offer ? 'Offre modifiée avec succès' : 'Offre créée avec succès');
+          onSave && onSave(savedOffer);
         }
+      } else {
+        toast.success(offer ? 'Offre modifiée avec succès' : 'Offre créée avec succès');
+        onSave && onSave(savedOffer);
       }
       
-      toast.success(offer ? 'Offre modifiée avec succès' : 'Offre créée avec succès');
-      onSave && onSave(savedOffer);
       onClose();
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
@@ -222,14 +378,6 @@ const VirtualOfferModal = ({
 
   const renderStep1 = () => (
     <div className="step-content">
-      <div className="step-header">
-        <h3>
-          <FontAwesomeIcon icon={faBriefcase} />
-          Informations de l'offre
-        </h3>
-        <p>Renseignez les détails de votre offre d'emploi</p>
-      </div>
-
       <div className="form-grid">
         <div className="form-group full-width">
           <label>Titre du poste *</label>
@@ -245,48 +393,55 @@ const VirtualOfferModal = ({
 
         <div className="form-group">
           <label>Type de contrat *</label>
-          <select
-            value={offerData.contract_type}
-            onChange={(e) => handleInputChange('contract_type', e.target.value)}
+          <Select
+            value={contracts.find(option => option.value === offerData.contract_type) || null}
+            onChange={(selectedOption) => handleSelectChange('contract_type', selectedOption)}
+            options={contracts}
+            placeholder="Sélectionnez..."
+            isClearable
+            isLoading={choicesLoading}
             className={errors.contract_type ? 'error' : ''}
-          >
-            <option value="">Sélectionnez...</option>
-            <option value="CDI">CDI</option>
-            <option value="CDD">CDD</option>
-            <option value="Stage">Stage</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Alternance">Alternance</option>
-          </select>
+            classNamePrefix="react-select"
+          />
           {errors.contract_type && <span className="error-message">{errors.contract_type}</span>}
         </div>
 
         <div className="form-group">
           <label>Secteur *</label>
-          <select
-            value={offerData.sector}
-            onChange={(e) => handleInputChange('sector', e.target.value)}
+          <Select
+            value={sectors.find(option => option.value === offerData.sector) || null}
+            onChange={(selectedOption) => handleSelectChange('sector', selectedOption)}
+            options={sectors}
+            placeholder="Sélectionnez..."
+            isClearable
+            isLoading={choicesLoading}
             className={errors.sector ? 'error' : ''}
-          >
-            <option value="">Sélectionnez...</option>
-            <option value="Informatique">Informatique</option>
-            <option value="Finance">Finance</option>
-            <option value="Marketing">Marketing</option>
-            <option value="RH">Ressources Humaines</option>
-            <option value="Commercial">Commercial</option>
-            <option value="Autre">Autre</option>
-          </select>
+            classNamePrefix="react-select"
+          />
           {errors.sector && <span className="error-message">{errors.sector}</span>}
         </div>
 
         <div className="form-group">
-          <label>Localisation</label>
-          <input
-            type="text"
-            value={offerData.location}
-            onChange={(e) => handleInputChange('location', e.target.value)}
-            placeholder="Paris, Remote, etc."
+          <label>Région *</label>
+          <Select
+            value={regions.find(option => option.value === offerData.region) || null}
+            onChange={(selectedOption) => handleSelectChange('region', selectedOption)}
+            options={regions}
+            placeholder="Sélectionnez..."
+            isClearable
+            isLoading={choicesLoading}
+            className={errors.region ? 'error' : ''}
+            classNamePrefix="react-select"
+            getOptionValue={(option) => option.value}
+            getOptionLabel={(option) => option.label}
           />
+          {errors.region && <span className="error-message">{errors.region}</span>}
+          {/* Debug: Afficher la valeur actuelle */}
+          {console.log('Debug région - offerData.region:', offerData.region)}
+          {console.log('Debug région - regions disponibles:', regions)}
+          {console.log('Debug région - valeur trouvée:', regions.find(option => option.value === offerData.region))}
         </div>
+
 
         <div className="form-group full-width">
           <label>Description du poste *</label>
@@ -349,14 +504,6 @@ const VirtualOfferModal = ({
 
   const renderStep2 = () => (
     <div className="step-content">
-      <div className="step-header">
-        <h3>
-          <FontAwesomeIcon icon={faQuestion} />
-          Questions de candidature
-        </h3>
-        <p>Ajoutez des questions personnalisées pour cette offre (optionnel)</p>
-      </div>
-
       <div className="questionnaire-section">
         <QuestionnaireBuilder
           offer={offer}

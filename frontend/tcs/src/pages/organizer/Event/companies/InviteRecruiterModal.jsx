@@ -80,12 +80,6 @@ const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, apiBase
       isOpen={open}
       onClose={onClose}
       title="Inviter un recruteur"
-      subtitle={
-        <>
-          Entreprise : <strong>{company?.name || 'Non sélectionnée'}</strong><br/>
-          Forum : <strong>{forum?.name || 'Non sélectionné'}</strong>
-        </>
-      }
       size="small"
     >
       <form className="modal-form" onSubmit={handleSubmit}>

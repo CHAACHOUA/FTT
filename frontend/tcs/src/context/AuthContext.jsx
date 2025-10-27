@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [name, setName] = useState(null);
   const [role, setRole] = useState(null);
+  const [timezone, setTimezone] = useState('Europe/Paris');
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -19,6 +20,7 @@ export function AuthProvider({ children }) {
       if (response.status === 200) {
         setName(response.data.name);
         setRole(response.data.role);
+        setTimezone(response.data.timezone || 'Europe/Paris');
         setIsAuthenticated(true);
       }
     } catch (apiError) {
@@ -34,6 +36,7 @@ export function AuthProvider({ children }) {
           if (retryResponse.status === 200) {
             setName(retryResponse.data.name);
             setRole(retryResponse.data.role);
+            setTimezone(retryResponse.data.timezone || 'Europe/Paris');
             setIsAuthenticated(true);
             return; // Sortir de la fonction si le retry réussit
           }
@@ -57,10 +60,12 @@ export function AuthProvider({ children }) {
   const login = (userData) => {
     const userName = userData.name || "User";
     const userRole = userData.role || "candidate";
+    const userTimezone = userData.timezone || "Europe/Paris";
     
     // Mode 100% sécurisé : ne pas stocker de tokens dans localStorage
     setName(userName);
     setRole(userRole);
+    setTimezone(userTimezone);
     setIsAuthenticated(true);
     
   };
@@ -69,6 +74,7 @@ export function AuthProvider({ children }) {
     // Nettoyer immédiatement le state pour éviter les appels API pendant la déconnexion
     setName(null);
     setRole(null);
+    setTimezone('Europe/Paris');
     setIsAuthenticated(false);
     
     // Vider localStorage immédiatement
@@ -112,7 +118,22 @@ export function AuthProvider({ children }) {
   };
 
   const updateName = (newName) => {
-    setName(newName);
+    console.log('🔄 updateName appelé avec:', newName);
+    // Si c'est un objet, extraire le nom et le timezone
+    if (typeof newName === 'object' && newName !== null) {
+      if (newName.name) {
+        console.log('🔄 Mise à jour du nom:', newName.name);
+        setName(newName.name);
+      }
+      if (newName.timezone) {
+        console.log('🔄 Mise à jour du timezone:', newName.timezone);
+        setTimezone(newName.timezone);
+      }
+    } else {
+      // Si c'est une chaîne, mettre à jour seulement le nom
+      console.log('🔄 Mise à jour du nom (chaîne):', newName);
+      setName(newName);
+    }
   };
 
   useEffect(() => {
