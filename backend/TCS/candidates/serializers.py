@@ -61,6 +61,7 @@ class CandidateSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, read_only=True)
     candidate_languages = CandidateLanguageSerializer(many=True, read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
+    timezone = serializers.CharField(source='user.timezone', read_only=True)
     class Meta:
         model = Candidate
         fields = [
@@ -76,6 +77,7 @@ class CandidateSerializer(serializers.ModelSerializer):
             'candidate_languages',
             'title',
             'email',
+            'timezone',
             'profile_picture',
             'public_token'
         ]

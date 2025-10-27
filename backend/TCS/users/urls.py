@@ -15,7 +15,12 @@ from users.views.password_views import (
     change_password,
 )
 from users.views.deletion_views import delete_user_account
-from users.views.user_views import get_current_user
+from users.views.user_views import (
+    get_current_user,
+    update_user_timezone,
+    get_user_profile,
+    get_available_timezones
+)
 from users.views.refresh_views import refresh_token_view
 
 
@@ -46,4 +51,7 @@ urlpatterns = [
     
     # 👤 Utilisateur
     path('auth/me/', get_current_user, name='get_current_user'),
+    path('auth/profile/', get_user_profile, name='get_user_profile'),
+    path('auth/timezone/', update_user_timezone, name='update_user_timezone'),
+    path('auth/timezones/', get_available_timezones, name='get_available_timezones'),
 ]

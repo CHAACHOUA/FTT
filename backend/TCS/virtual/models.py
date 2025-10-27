@@ -334,4 +334,4 @@ class VirtualApplication(models.Model):
         if hasattr(self.offer.recruiter, 'recruiter_profile'):
             profile = self.offer.recruiter.recruiter_profile
             return f"{profile.first_name} {profile.last_name}".strip()
-        return self.offer.recruiter.email
+        return self.offer.recruiter.user.email if hasattr(self.offer.recruiter, 'user') else "Recruteur inconnu"

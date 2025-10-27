@@ -95,7 +95,7 @@ def update_offer(request, offer_id):
             return Response(OfferSerializer(offer).data)
         except ValidationError as e:
             print(f"Erreur de validation: {e}")
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': str(e)}, status=status.HTTP_403_FORBIDDEN)
     else:
         print(f"Serializer errors: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -108,5 +108,10 @@ def delete_offer(request, offer_id):
     if not hasattr(user, 'recruiter_profile'):
         return Response({'detail': 'Seuls les recruteurs peuvent supprimer une offre.'}, status=status.HTTP_403_FORBIDDEN)
 
-    delete_offer_service(user.recruiter_profile, offer_id)
-    return Response({'detail': 'Offre supprimée avec succès.'}, status=status.HTTP_204_NO_CONTENT)
+    try:
+        delete_offer_service(user.recruiter_profile, offer_id)
+        return Response({'detail': 'Offre supprimée avec succès.'}, status=status.HTTP_204_NO_CONTENT)
+    except ValidationError as e:
+        return Response({'detail': str(e)}, status=status.HTTP_403_FORBIDDEN)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

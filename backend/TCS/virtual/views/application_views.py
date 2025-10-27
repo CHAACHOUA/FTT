@@ -23,9 +23,9 @@ class VirtualApplicationListCreateView(generics.ListCreateAPIView):
     
     def post(self, request, *args, **kwargs):
         print(f"🔍 [BACKEND] POST /api/virtual/applications/ reçu")
-        print(f"🔍 [BACKEND] Utilisateur: {request.user}")
-        print(f"🔍 [BACKEND] Données brutes: {request.data}")
-        print(f"🔍 [BACKEND] Headers: {dict(request.headers)}")
+        print(f"🔍 [BACKEND] Données reçues: {request.data}")
+        print(f"🔍 [BACKEND] selected_slot: {request.data.get('selected_slot')}")
+        print(f"🔍 [BACKEND] questionnaire_responses: {request.data.get('questionnaire_responses')}")
         
         try:
             response = super().post(request, *args, **kwargs)
@@ -33,7 +33,6 @@ class VirtualApplicationListCreateView(generics.ListCreateAPIView):
             return response
         except Exception as e:
             print(f"❌ [BACKEND] Erreur lors de la création: {e}")
-            print(f"❌ [BACKEND] Type d'erreur: {type(e)}")
             raise
     
     def get_queryset(self):
@@ -45,16 +44,38 @@ class VirtualApplicationListCreateView(generics.ListCreateAPIView):
             queryset = VirtualApplication.objects.filter(candidate=user)
             if forum_id:
                 queryset = queryset.filter(forum_id=forum_id)
-            return queryset.select_related('offer', 'offer__company', 'selected_slot')
+            return queryset.select_related(
+                'offer', 
+                'offer__company', 
+                'offer__recruiter', 
+                'offer__recruiter__user',
+                'selected_slot',
+                'selected_slot__recruiter',
+                'forum'
+            )
         
-        # Les recruteurs voient les candidatures pour leurs offres
+        # Les recruteurs voient les candidatures pour leurs offres ET les candidatures avec leurs créneaux
         elif hasattr(user, 'recruiter_profile'):
             queryset = VirtualApplication.objects.filter(
-                offer__recruiter=user.recruiter_profile
+                Q(offer__recruiter=user.recruiter_profile) |  # Candidatures pour leurs offres
+                Q(selected_slot__recruiter=user)  # Candidatures avec leurs créneaux
             )
             if forum_id:
                 queryset = queryset.filter(forum_id=forum_id)
-            return queryset.select_related('candidate', 'offer', 'selected_slot')
+            
+            queryset = queryset.select_related(
+                'candidate', 
+                'candidate__candidate_profile',
+                'offer', 
+                'offer__company',
+                'offer__recruiter',
+                'offer__recruiter__user',
+                'selected_slot',
+                'selected_slot__recruiter',
+                'forum'
+            )
+            
+            return queryset
         
         return VirtualApplication.objects.none()
 
@@ -71,12 +92,31 @@ class VirtualApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
         
         # Les candidats peuvent voir/modifier leurs propres candidatures
         if hasattr(user, 'candidate_profile'):
-            return VirtualApplication.objects.filter(candidate=user)
+            return VirtualApplication.objects.filter(candidate=user).select_related(
+                'offer', 
+                'offer__company', 
+                'offer__recruiter', 
+                'offer__recruiter__user',
+                'selected_slot',
+                'selected_slot__recruiter',
+                'forum'
+            )
         
-        # Les recruteurs peuvent voir les candidatures pour leurs offres
+        # Les recruteurs peuvent voir les candidatures pour leurs offres ET les candidatures avec leurs créneaux
         elif hasattr(user, 'recruiter_profile'):
             return VirtualApplication.objects.filter(
-                offer__recruiter=user.recruiter_profile
+                Q(offer__recruiter=user.recruiter_profile) |  # Candidatures pour leurs offres
+                Q(selected_slot__recruiter=user)  # Candidatures avec leurs créneaux
+            ).select_related(
+                'candidate',
+                'candidate__candidate_profile',
+                'offer', 
+                'offer__company',
+                'offer__recruiter',
+                'offer__recruiter__user',
+                'selected_slot',
+                'selected_slot__recruiter',
+                'forum'
             )
         
         return VirtualApplication.objects.none()
@@ -116,7 +156,7 @@ def get_candidate_applications(request, forum_id):
         forum=forum
     ).select_related('offer', 'offer__company', 'selected_slot')
     
-    serializer = VirtualApplicationSerializer(applications, many=True)
+    serializer = VirtualApplicationSerializer(applications, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -141,7 +181,8 @@ def get_recruiter_applications(request, forum_id):
         )
     
     applications = VirtualApplication.objects.filter(
-        offer__recruiter=request.user.recruiter_profile,
+        Q(offer__recruiter=request.user.recruiter_profile) |  # Candidatures pour leurs offres
+        Q(selected_slot__recruiter=request.user),  # Candidatures avec leurs créneaux
         forum=forum
     ).select_related('candidate', 'offer', 'selected_slot')
     
@@ -169,10 +210,11 @@ def validate_application(request, application_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Vérifier que le recruteur est bien le propriétaire de l'offre
-    if application.offer.recruiter != request.user.recruiter_profile:
+    # Vérifier que le recruteur est bien le propriétaire de l'offre OU du créneau
+    if (application.offer.recruiter != request.user.recruiter_profile and 
+        (not application.selected_slot or application.selected_slot.recruiter != request.user)):
         return Response(
-            {'detail': 'Vous ne pouvez valider que les candidatures pour vos propres offres.'},
+            {'detail': 'Vous ne pouvez valider que les candidatures pour vos propres offres ou créneaux.'},
             status=status.HTTP_403_FORBIDDEN
         )
     
@@ -186,7 +228,6 @@ def validate_application(request, application_id):
     # Réserver le slot si sélectionné
     if application.selected_slot:
         slot = application.selected_slot
-        print(f"🔍 [BACKEND] Slot avant validation: ID={slot.id}, Status={slot.status}, Candidate={slot.candidate}")
         
         if slot.status != 'available':
             return Response(
@@ -202,31 +243,21 @@ def validate_application(request, application_id):
         # Forcer la mise à jour du cache Django
         slot.refresh_from_db()
         
-        print(f"✅ [BACKEND] Slot mis à jour: ID={slot.id}, Status={slot.status}, Candidate={slot.candidate}")
-        print(f"✅ [BACKEND] Slot réservé pour la candidature validée: {slot}")
-        
         # Simple mise à jour du slot
-        print(f"✅ [BACKEND] Slot mis à jour avec succès")
     else:
-        print(f"ℹ️ [BACKEND] Aucun slot sélectionné pour cette candidature")
+        pass  # Aucun slot sélectionné pour cette candidature
     
     # Mettre à jour le statut de la candidature
     application.status = 'accepted'
     application.save()
     
-    print(f"✅ [BACKEND] Candidature validée: {application}")
-    print(f"✅ [BACKEND] Statut final: {application.status}")
-    
     # Vérifier l'état final du slot après validation
     if application.selected_slot:
         # Rafraîchir l'objet depuis la base de données pour s'assurer d'avoir les dernières données
         application.selected_slot.refresh_from_db()
-        slot_after = application.selected_slot
-        print(f"🔍 [BACKEND] État final du slot: ID={slot_after.id}, Status={slot_after.status}, Candidate={slot_after.candidate}")
     
     # Rafraîchir aussi l'application depuis la base de données
     application.refresh_from_db()
-    print(f"🔍 [BACKEND] Application rafraîchie: Status={application.status}")
     
     # Retourner les données mises à jour avec un flag pour indiquer la mise à jour
     serializer = VirtualApplicationSerializer(application)
@@ -234,7 +265,6 @@ def validate_application(request, application_id):
     response_data['slot_updated'] = True
     response_data['slot_id'] = application.selected_slot.id if application.selected_slot else None
     
-    print(f"✅ [BACKEND] Réponse avec données mises à jour: {response_data}")
     return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -258,10 +288,11 @@ def reject_application(request, application_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Vérifier que le recruteur est bien le propriétaire de l'offre
-    if application.offer.recruiter != request.user.recruiter_profile:
+    # Vérifier que le recruteur est bien le propriétaire de l'offre OU du créneau
+    if (application.offer.recruiter != request.user.recruiter_profile and 
+        (not application.selected_slot or application.selected_slot.recruiter != request.user)):
         return Response(
-            {'detail': 'Vous ne pouvez rejeter que les candidatures pour vos propres offres.'},
+            {'detail': 'Vous ne pouvez rejeter que les candidatures pour vos propres offres ou créneaux.'},
             status=status.HTTP_403_FORBIDDEN
         )
     
@@ -276,8 +307,6 @@ def reject_application(request, application_id):
     application.status = 'rejected'
     application.save()
     
-    print(f"✅ [BACKEND] Candidature rejetée: {application}")
-    print(f"ℹ️ [BACKEND] Slot non modifié (reste disponible): {application.selected_slot}")
     
     serializer = VirtualApplicationSerializer(application)
     return Response(serializer.data, status=status.HTTP_200_OK)

@@ -40,9 +40,13 @@ class QuestionnaireListCreateView(generics.ListCreateAPIView):
             return Questionnaire.objects.filter(offer_id=offer_id)
         
         # Par défaut, retourner tous les questionnaires de l'utilisateur
-        return Questionnaire.objects.filter(
-            offer__recruiter=self.request.user
-        ).select_related('offer', 'offer__forum')
+        try:
+            recruiter = self.request.user.recruiter_profile
+            return Questionnaire.objects.filter(
+                offer__recruiter=recruiter
+            ).select_related('offer', 'offer__forum')
+        except:
+            return Questionnaire.objects.none()
 
     def get_serializer_class(self):
         """Retourne le bon serializer selon la méthode"""
@@ -52,16 +56,29 @@ class QuestionnaireListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """Créer le questionnaire avec validation"""
+        print(f"[QUESTIONNAIRE CREATE] Début de la création du questionnaire")
+        print(f"[QUESTIONNAIRE CREATE] Données reçues: {serializer.validated_data}")
+        print(f"[QUESTIONNAIRE CREATE] Utilisateur: {self.request.user}")
+        
         # Vérifier que l'utilisateur est le recruteur de l'offre
         offer = serializer.validated_data['offer']
-        if offer.recruiter != self.request.user:
-            raise permissions.PermissionDenied("Vous n'êtes pas le recruteur de cette offre")
+        print(f"[QUESTIONNAIRE CREATE] Offre: {offer}")
+        print(f"[QUESTIONNAIRE CREATE] Offre ID: {offer.id}")
+        print(f"[QUESTIONNAIRE CREATE] Recruteur de l'offre: {offer.recruiter}")
+        print(f"[QUESTIONNAIRE CREATE] Forum: {offer.forum}")
+        print(f"[QUESTIONNAIRE CREATE] Forum type: {offer.forum.type}")
+        print(f"[QUESTIONNAIRE CREATE] Forum is_virtual: {offer.forum.is_virtual}")
+
         
         # Vérifier que l'offre appartient à un forum virtuel
         if not (offer.forum.type == 'virtuel' or offer.forum.is_virtual):
+            print(f"[QUESTIONNAIRE CREATE] ERREUR: Forum non virtuel")
             raise permissions.PermissionDenied("Le questionnaire n'est disponible que pour les forums virtuels")
         
-        serializer.save()
+        print(f"[QUESTIONNAIRE CREATE] Sauvegarde du questionnaire...")
+        questionnaire = serializer.save()
+        print(f"[QUESTIONNAIRE CREATE] Questionnaire créé avec succès: {questionnaire.id}")
+        print(f"[QUESTIONNAIRE CREATE] Questions associées: {questionnaire.questions.count()}")
 
 
 class QuestionnaireDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -73,9 +90,14 @@ class QuestionnaireDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         """Retourne les questionnaires de l'utilisateur"""
-        return Questionnaire.objects.filter(
-            offer__recruiter=self.request.user
-        ).select_related('offer', 'offer__forum')
+        # Récupérer le profil recruteur de l'utilisateur
+        try:
+            recruiter = self.request.user.recruiter_profile
+            return Questionnaire.objects.filter(
+                offer__recruiter=recruiter
+            ).select_related('offer', 'offer__forum')
+        except:
+            return Questionnaire.objects.none()
 
     def get_serializer_class(self):
         """Retourne le bon serializer selon la méthode"""
@@ -85,13 +107,30 @@ class QuestionnaireDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         """Mettre à jour le questionnaire avec validation"""
+        print(f"[QUESTIONNAIRE UPDATE] Début de la mise à jour du questionnaire")
         questionnaire = self.get_object()
+        print(f"[QUESTIONNAIRE UPDATE] Questionnaire existant: {questionnaire}")
+        print(f"[QUESTIONNAIRE UPDATE] Questionnaire ID: {questionnaire.id}")
+        print(f"[QUESTIONNAIRE UPDATE] Données reçues: {serializer.validated_data}")
+        print(f"[QUESTIONNAIRE UPDATE] Utilisateur: {self.request.user}")
+        print(f"[QUESTIONNAIRE UPDATE] Recruteur de l'offre: {questionnaire.offer.recruiter}")
         
         # Vérifier que l'utilisateur est le recruteur de l'offre
-        if questionnaire.offer.recruiter != self.request.user:
-            raise permissions.PermissionDenied("Vous n'êtes pas le recruteur de cette offre")
+        try:
+            user_recruiter = self.request.user.recruiter_profile
+            if questionnaire.offer.recruiter != user_recruiter:
+                print(f"[QUESTIONNAIRE UPDATE] ERREUR: Utilisateur non autorisé")
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("Vous n'êtes pas le recruteur de cette offre")
+        except:
+            print(f"[QUESTIONNAIRE UPDATE] ERREUR: Pas de profil recruteur")
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Vous n'avez pas de profil recruteur")
         
-        serializer.save()
+        print(f"[QUESTIONNAIRE UPDATE] Sauvegarde du questionnaire...")
+        updated_questionnaire = serializer.save()
+        print(f"[QUESTIONNAIRE UPDATE] Questionnaire mis à jour avec succès: {updated_questionnaire.id}")
+        print(f"[QUESTIONNAIRE UPDATE] Questions associées: {updated_questionnaire.questions.count()}")
 
 
 class QuestionListCreateView(generics.ListCreateAPIView):
@@ -137,11 +176,15 @@ class QuestionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         """Retourne les questions de l'utilisateur"""
-        questionnaire_id = self.kwargs['questionnaire_id']
-        return Question.objects.filter(
-            questionnaire_id=questionnaire_id,
-            questionnaire__offer__recruiter=self.request.user
-        )
+        try:
+            recruiter = self.request.user.recruiter_profile
+            questionnaire_id = self.kwargs['questionnaire_id']
+            return Question.objects.filter(
+                questionnaire_id=questionnaire_id,
+                questionnaire__offer__recruiter=recruiter
+            )
+        except:
+            return Question.objects.none()
 
 
 class QuestionnaireResponseListCreateView(generics.ListCreateAPIView):
@@ -228,29 +271,50 @@ def get_questionnaire_for_offer(request, offer_id):
     Récupérer le questionnaire d'une offre spécifique
     """
     try:
+        print(f"🔍 [API] get_questionnaire_for_offer - offer_id: {offer_id}")
+        print(f"🔍 [API] User: {request.user}")
+        print(f"🔍 [API] User type: {type(request.user)}")
+        
         offer = get_object_or_404(Offer, id=offer_id)
+        print(f"🔍 [API] Offer found: {offer.title}")
+        print(f"🔍 [API] Offer recruiter: {offer.recruiter}")
+        print(f"🔍 [API] Offer company: {offer.company}")
         
         # Vérifier que l'utilisateur a accès à cette offre
         if hasattr(request.user, 'candidate_profile'):
             # Candidat : vérifier que l'offre est dans un forum auquel il participe
-            if not offer.forum.candidates.filter(id=request.user.id).exists():
+            candidate_profile = request.user.candidate_profile
+            if not offer.forum.registrations.filter(candidate=candidate_profile).exists():
+                print(f"🔍 [API] Candidate {candidate_profile.user.id} not registered in forum {offer.forum.id}")
                 return Response({'error': 'Accès non autorisé'}, status=status.HTTP_403_FORBIDDEN)
+            print(f"🔍 [API] Candidate {candidate_profile.user.id} is registered in forum {offer.forum.id}")
         elif hasattr(request.user, 'recruiter_profile'):
-            # Recruteur : vérifier qu'il est le recruteur de l'offre
-            if offer.recruiter != request.user:
+            # Recruteur : vérifier qu'il est le recruteur de l'offre ou de la même entreprise
+            if offer.recruiter != request.user.recruiter_profile and offer.company != request.user.recruiter_profile.company:
                 return Response({'error': 'Accès non autorisé'}, status=status.HTTP_403_FORBIDDEN)
         else:
             return Response({'error': 'Type d\'utilisateur non reconnu'}, status=status.HTTP_403_FORBIDDEN)
         
         # Récupérer le questionnaire
         try:
+            print(f"🔍 [API] Looking for questionnaire for offer: {offer.id}")
             questionnaire = Questionnaire.objects.get(offer=offer)
+            print(f"🔍 [API] Questionnaire found: {questionnaire.id}")
+            print(f"🔍 [API] Questionnaire title: {questionnaire.title}")
+            print(f"🔍 [API] Questions count: {questionnaire.questions.count()}")
+            
             serializer = QuestionnaireSerializer(questionnaire)
+            print(f"🔍 [API] Serialized data: {serializer.data}")
             return Response(serializer.data)
         except Questionnaire.DoesNotExist:
+            print(f"🔍 [API] No questionnaire found for offer: {offer.id}")
             return Response({'message': 'Aucun questionnaire pour cette offre'}, status=status.HTTP_404_NOT_FOUND)
         
     except Exception as e:
+        print(f"❌ [API] Error in get_questionnaire_for_offer: {str(e)}")
+        print(f"❌ [API] Error type: {type(e)}")
+        import traceback
+        print(f"❌ [API] Traceback: {traceback.format_exc()}")
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

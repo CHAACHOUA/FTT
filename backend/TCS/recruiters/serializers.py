@@ -9,6 +9,7 @@ from forums.models import Forum
 class RecruiterSerializer(serializers.ModelSerializer):
     company= CompanySerializer( read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
+    timezone = serializers.CharField(source='user.timezone', read_only=True)
     created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
     last_login = serializers.DateTimeField(source='user.last_login', read_only=True)
     forum_offers_count = serializers.SerializerMethodField()
@@ -16,7 +17,7 @@ class RecruiterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Recruiter
-        fields = ['id', 'first_name', 'last_name','profile_picture', 'photo', 'company','title','phone','email','created_at','last_login','forum_offers_count']
+        fields = ['id', 'first_name', 'last_name','profile_picture', 'photo', 'company','title','phone','email','timezone','created_at','last_login','forum_offers_count']
     
     def get_forum_offers_count(self, obj):
         """Compter le nombre d'offres du recruteur pour le forum spécifique"""
@@ -75,6 +76,7 @@ class OfferSerializer(serializers.ModelSerializer):
     recruiter = serializers.SerializerMethodField()
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     experience_display = serializers.CharField(source='get_experience_required_display', read_only=True)
+    questionnaire = serializers.SerializerMethodField()
     
     class Meta:
         model = Offer
@@ -97,7 +99,8 @@ class OfferSerializer(serializers.ModelSerializer):
             'recruiter',
             'company_logo',
             'company_banner',
-            'recruiter_photo'
+            'recruiter_photo',
+            'questionnaire'
         ]
 
     def get_recruiter_name(self, obj):
@@ -110,6 +113,43 @@ class OfferSerializer(serializers.ModelSerializer):
             'last_name': obj.recruiter.last_name,
             'email': obj.recruiter.user.email if hasattr(obj.recruiter, 'user') else None
         }
+    
+    def get_questionnaire(self, obj):
+        """Récupérer le questionnaire associé à l'offre"""
+        try:
+            # Utiliser la relation inverse depuis le modèle Questionnaire
+            from virtual.models import Questionnaire
+            
+            try:
+                questionnaire = Questionnaire.objects.select_related('offer').prefetch_related('questions').get(offer=obj)
+                print(f"Questionnaire trouvé: {questionnaire.id} - {questionnaire.title}")
+                
+                # Retourner les données du questionnaire
+                return {
+                    'id': questionnaire.id,
+                    'title': questionnaire.title,
+                    'description': questionnaire.description,
+                    'is_active': questionnaire.is_active,
+                    'is_required': questionnaire.is_required,
+                    'questions_count': questionnaire.questions.count(),
+                    'questions': [
+                        {
+                            'id': q.id,
+                            'question_text': q.question_text,
+                            'question_type': q.question_type,
+                            'is_required': q.is_required,
+                            'order': q.order,
+                            'options': q.options
+                        } for q in questionnaire.questions.all()
+                    ]
+                }
+            except Questionnaire.DoesNotExist:
+                print("Aucun questionnaire trouvé pour cette offre")
+                return None
+                
+        except Exception as e:
+            print(f"Erreur lors de la récupération du questionnaire: {e}")
+            return None
 
 
 class OfferCandidateSerializer(serializers.ModelSerializer):
@@ -150,6 +190,7 @@ class OfferWriteSerializer(serializers.ModelSerializer):
         queryset=Forum.objects.all(),  # remplace Forum par ton modèle Forum exact
         source='forum'  # Indique que forum_id mappe vers forum en base
     )
+    questionnaire = serializers.JSONField(required=False, allow_null=True)
 
     class Meta:
         model = Offer
@@ -164,6 +205,7 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             'start_date',
             'experience_required',
             'forum_id',  # ici forum_id au lieu de forum
+            'questionnaire',  # Ajouter le questionnaire
         ]
 class FavoriteOfferSerializer(serializers.ModelSerializer):
     class Meta:

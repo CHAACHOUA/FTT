@@ -24,83 +24,43 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        """Override de la méthode list pour ajouter des logs de débogage"""
-        print(f"🔍 [BACKEND] === DÉBUT LISTE CRÉNEAUX ===")
-        print(f"🔍 [BACKEND] Forum ID: {kwargs.get('forum_id')}")
-        print(f"🔍 [BACKEND] Utilisateur: {request.user}")
-        print(f"🔍 [BACKEND] Rôle utilisateur: {request.user.role}")
-        print(f"🔍 [BACKEND] Paramètres: {dict(request.query_params)}")
-        
+        """Liste des créneaux d'agenda"""
         queryset = self.get_queryset()
-        print(f"🔍 [BACKEND] Queryset final: {queryset.count()} créneaux")
-        
-        # Afficher les détails de chaque créneau
-        if queryset.exists():
-            print(f"🔍 [BACKEND] Détails des créneaux:")
-            for slot in queryset:
-                print(f"  - ID: {slot.id}, Date: {slot.date}, Heure: {slot.start_time}-{slot.end_time}")
-                print(f"    Recruteur: {slot.recruiter} (ID: {slot.recruiter.id}, Rôle: {slot.recruiter.role})")
-                print(f"    Statut: {slot.status}, Type: {slot.type}")
-        
         serializer = self.get_serializer(queryset, many=True)
-        print(f"🔍 [BACKEND] Données sérialisées: {len(serializer.data)} éléments")
-        
-        if serializer.data:
-            print(f"🔍 [BACKEND] Premier créneau sérialisé:")
-            first_slot = serializer.data[0]
-            print(f"  - ID: {first_slot.get('id')}")
-            print(f"  - Date: {first_slot.get('date')}")
-            print(f"  - Heure: {first_slot.get('start_time')}-{first_slot.get('end_time')}")
-            print(f"  - Recruteur: {first_slot.get('recruiter_name')} ({first_slot.get('recruiter_email')})")
-            print(f"  - Statut: {first_slot.get('status')}")
-            print(f"  - Type: {first_slot.get('type')}")
-        else:
-            print(f"❌ [BACKEND] Aucune donnée sérialisée")
-        
-        print(f"🔍 [BACKEND] === FIN LISTE CRÉNEAUX ===")
         return Response(serializer.data)
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            print(f"🔍 [BACKEND] Utilisation de VirtualAgendaSlotCreateSerializer pour POST")
             return VirtualAgendaSlotCreateSerializer
-        print(f"🔍 [BACKEND] Utilisation de VirtualAgendaSlotSerializer pour GET")
         return VirtualAgendaSlotSerializer
 
     def post(self, request, *args, **kwargs):
-        print(f"🔍 [BACKEND] POST reçu pour forum {kwargs.get('forum_id')}")
-        print(f"🔍 [BACKEND] Utilisateur: {request.user}")
-        print(f"🔍 [BACKEND] Données brutes: {request.body}")
-        print(f"🔍 [BACKEND] Headers: {dict(request.headers)}")
-        print(f"🔍 [BACKEND] Cookies: {request.COOKIES}")
-        
-        # Créer le serializer manuellement
         serializer = VirtualAgendaSlotCreateSerializer(data=request.data)
-        print(f"🔍 [BACKEND] Serializer créé: {serializer}")
-        print(f"🔍 [BACKEND] Données du serializer: {serializer.initial_data}")
         
         if serializer.is_valid():
-            print(f"✅ [BACKEND] Serializer valide")
             try:
-                # Créer le créneau manuellement
                 forum_id = kwargs['forum_id']
                 forum = get_object_or_404(Forum, id=forum_id)
                 
-                # Pour l'instant, on autorise tous les recruteurs connectés
-                # TODO: Ajouter une vérification de l'appartenance à l'équipe du forum
-                print(f"🔍 [BACKEND] Création autorisée pour l'utilisateur: {request.user}")
+                recruiter_email = serializer.validated_data.get('recruiter')
+                if not recruiter_email:
+                    return Response({'error': 'Recruteur requis'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                try:
+                    recruiter_user = User.objects.get(email=recruiter_email)
+                except User.DoesNotExist:
+                    return Response({'error': 'Recruteur invalide'}, status=status.HTTP_400_BAD_REQUEST)
                 
                 # Vérifier si le créneau existe déjà
                 existing_slot = VirtualAgendaSlot.objects.filter(
                     forum=forum,
-                    recruiter=request.user,
+                    recruiter=recruiter_user,
                     date=serializer.validated_data['date'],
                     start_time=serializer.validated_data['start_time'],
                     end_time=serializer.validated_data['end_time']
                 ).first()
                 
                 if existing_slot:
-                    print(f"⚠️ [BACKEND] Créneau déjà existant: {existing_slot}")
                     return Response({
                         'id': existing_slot.id,
                         'date': existing_slot.date,
@@ -113,41 +73,24 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                         'message': 'Créneau déjà existant'
                     }, status=status.HTTP_200_OK)
                 
-                # Créer le créneau
-                print(f"🔍 [BACKEND] Données validées: {serializer.validated_data}")
-                print(f"🔍 [BACKEND] Forum: {forum}")
-                print(f"🔍 [BACKEND] User: {request.user}")
-                print(f"🔍 [BACKEND] User type: {type(request.user)}")
-                print(f"🔍 [BACKEND] User attributes: {dir(request.user)}")
+                # Vérifier que le recruteur spécifié est valide
+                if recruiter_user.role == 'candidate' or hasattr(recruiter_user, 'candidate_profile'):
+                    return Response({'error': 'Le recruteur spécifié n\'est pas un recruteur valide'}, status=status.HTTP_400_BAD_REQUEST)
                 
-                # VÉRIFICATION: S'assurer que l'utilisateur connecté est un recruteur
-                if request.user.role == 'candidate' or hasattr(request.user, 'candidate_profile'):
-                    print(f"❌ [BACKEND] L'utilisateur connecté {request.user} est un candidat, pas un recruteur")
-                    return Response({'error': 'Seuls les recruteurs peuvent créer des créneaux d\'agenda'}, status=status.HTTP_403_FORBIDDEN)
+                if not hasattr(recruiter_user, 'recruiter_profile'):
+                    return Response({'error': 'Le recruteur spécifié n\'est pas un recruteur valide'}, status=status.HTTP_400_BAD_REQUEST)
                 
-                if not hasattr(request.user, 'recruiter_profile'):
-                    print(f"❌ [BACKEND] L'utilisateur connecté {request.user} n'a pas de profil recruteur")
-                    return Response({'error': 'Vous n\'êtes pas un recruteur valide'}, status=status.HTTP_403_FORBIDDEN)
-                
-                # Utiliser l'utilisateur connecté comme recruteur (maintenant vérifié)
-                recruiter_user = request.user
-                print(f"✅ [BACKEND] Utilisateur recruteur validé: {recruiter_user}")
-                
-                # VÉRIFICATION DES CONFLITS DE CRÉNEAUX
+                # Vérification des conflits de créneaux
                 start_time = serializer.validated_data.get('start_time')
                 end_time = serializer.validated_data.get('end_time')
                 date = serializer.validated_data.get('date')
                 
-                print(f"🔍 [BACKEND] Vérification des conflits pour {recruiter_user} le {date} de {start_time} à {end_time}")
-                
-                # CORRECTION: Vérifier les conflits dans TOUS les forums pour ce recruteur
-                # Un recruteur ne peut pas avoir deux créneaux en même temps, même dans des forums différents
+                # Vérifier les conflits dans TOUS les forums pour ce recruteur
                 conflicting_slots = VirtualAgendaSlot.objects.filter(
-                    recruiter=recruiter_user,  # Même recruteur
-                    date=date,                  # Même date
-                    status__in=['available', 'booked']  # Seulement les créneaux actifs
+                    recruiter=recruiter_user,
+                    date=date,
+                    status__in=['available', 'booked']
                 ).exclude(
-                    # Exclure les créneaux qui ne se chevauchent pas
                     Q(end_time__lte=start_time) | Q(start_time__gte=end_time)
                 )
                 
@@ -159,14 +102,10 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                             'start_time': conflict.start_time,
                             'end_time': conflict.end_time,
                             'type': conflict.type,
-                            'forum_name': conflict.forum.name,  # Nom du forum en conflit
+                            'forum_name': conflict.forum.name,
                             'forum_id': conflict.forum.id
                         })
                     
-                    print(f"❌ [BACKEND] Conflit détecté avec {conflicting_slots.count()} créneau(x)")
-                    print(f"❌ [BACKEND] Créneaux en conflit: {conflicting_info}")
-                    
-                    # Message d'erreur plus informatif
                     first_conflict = conflicting_slots.first()
                     forum_name = first_conflict.forum.name
                     conflict_message = f'Le recruteur a déjà un créneau de {first_conflict.start_time} à {first_conflict.end_time} le {date} dans le forum "{forum_name}"'
@@ -177,15 +116,12 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                         'conflicting_slots': conflicting_info
                     }, status=status.HTTP_409_CONFLICT)
                 
-                print(f"✅ [BACKEND] Aucun conflit détecté, création du créneau")
-                
                 slot = VirtualAgendaSlot.objects.create(
                     forum=forum,
                     recruiter=recruiter_user,
                     **{k: v for k, v in serializer.validated_data.items() if k != 'recruiter'}
                 )
                 
-                print(f"✅ [BACKEND] Créneau créé: {slot}")
                 return Response({
                     'id': slot.id,
                     'date': slot.date,
@@ -198,24 +134,16 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                 }, status=status.HTTP_201_CREATED)
                 
             except Exception as e:
-                print(f"❌ [BACKEND] Erreur lors de la création: {e}")
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            print(f"❌ [BACKEND] Serializer invalide: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         forum_id = self.kwargs['forum_id']
         recruiter_id = self.request.query_params.get('recruiter_id')
         
-        print(f"🔍 [BACKEND] Récupération des créneaux pour forum_id: {forum_id}")
-        print(f"🔍 [BACKEND] Utilisateur connecté: {self.request.user} (rôle: {self.request.user.role})")
-        print(f"🔍 [BACKEND] Paramètres de requête: {dict(self.request.query_params)}")
-        
-        # CORRECTION: Si l'utilisateur connecté est un recruteur, filtrer par ses créneaux
+        # Si l'utilisateur connecté est un recruteur, filtrer par ses créneaux
         if hasattr(self.request.user, 'recruiter_profile') and self.request.user.role != 'candidate':
-            print(f"🔍 [BACKEND] Utilisateur est un recruteur, filtrage par ses créneaux (tous statuts)")
-            
             # Vérifier que le recruteur a accès à ce forum via RecruiterForumParticipation
             forum = get_object_or_404(Forum, id=forum_id)
             from recruiters.models import RecruiterForumParticipation
@@ -223,19 +151,23 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                 forum=forum, 
                 recruiter=self.request.user.recruiter_profile
             ).exists():
-                print(f"❌ [BACKEND] Le recruteur {self.request.user} n'a pas accès au forum {forum.name}")
                 return VirtualAgendaSlot.objects.none()
             
+            # Récupérer TOUS les slots du forum, pas seulement ceux du recruteur connecté
             queryset = VirtualAgendaSlot.objects.filter(
-                forum_id=forum_id,
-                recruiter=self.request.user
+                forum_id=forum_id
+            ).exclude(
+                # Exclure les créneaux où le recruteur est un candidat
+                recruiter__role='candidate'
+            ).exclude(
+                # Exclure les créneaux où le recruteur a un profil candidat
+                recruiter__candidate_profile__isnull=False
             )
         else:
-            print(f"🔍 [BACKEND] Utilisateur n'est pas un recruteur, récupération des créneaux DISPONIBLES uniquement")
             # Filtrer uniquement les créneaux des vrais recruteurs ET disponibles
             queryset = VirtualAgendaSlot.objects.filter(
                 forum_id=forum_id,
-                status='available'  # CORRECTION: Seulement les créneaux disponibles
+                status='available'  # Seulement les créneaux disponibles
             ).exclude(
                 # Exclure les créneaux où le recruteur est un candidat
                 recruiter__role='candidate'
@@ -244,58 +176,30 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
                 recruiter__candidate_profile__isnull=False
             )
         
-        print(f"🔍 [BACKEND] Créneaux après filtrage initial: {queryset.count()}")
-        
-        # Vérifier les statuts des créneaux
-        if queryset.exists():
-            statuses = queryset.values_list('status', flat=True).distinct()
-            print(f"🔍 [BACKEND] Statuts des créneaux trouvés: {list(statuses)}")
-        
-        # Afficher les créneaux trouvés
-        if queryset.exists():
-            print(f"🔍 [BACKEND] Créneaux trouvés:")
-            for slot in queryset:
-                print(f"  - ID: {slot.id}, Date: {slot.date}, Heure: {slot.start_time}-{slot.end_time}, Recruteur: {slot.recruiter} ({slot.recruiter.role}), Statut: {slot.status}")
-        else:
-            print(f"❌ [BACKEND] Aucun créneau trouvé dans le forum {forum_id}")
-        
         # Filtrer par recruteur si spécifié
         if recruiter_id:
-            print(f"🔍 [BACKEND] Filtrage par recruteur_id: {recruiter_id}")
-            # Vérifier que le recruteur spécifié est bien un recruteur
             from django.contrib.auth import get_user_model
             User = get_user_model()
             try:
                 recruiter_user = User.objects.get(id=recruiter_id)
                 if recruiter_user.role == 'candidate' or hasattr(recruiter_user, 'candidate_profile'):
-                    print(f"❌ [BACKEND] Le recruteur spécifié {recruiter_user} est un candidat")
-                    return VirtualAgendaSlot.objects.none()  # Retourner un queryset vide
+                    return VirtualAgendaSlot.objects.none()
             except User.DoesNotExist:
-                print(f"❌ [BACKEND] Recruteur avec l'ID {recruiter_id} non trouvé")
                 return VirtualAgendaSlot.objects.none()
             
             queryset = queryset.filter(recruiter_id=recruiter_id)
-            print(f"🔍 [BACKEND] Créneaux après filtrage par recruteur: {queryset.count()}")
         
         # Filtrer par date si spécifiée
         date = self.request.query_params.get('date')
         if date:
-            print(f"🔍 [BACKEND] Filtrage par date: {date}")
             queryset = queryset.filter(date=date)
-            print(f"🔍 [BACKEND] Créneaux après filtrage par date: {queryset.count()}")
         
         # Filtrer par statut si spécifié
         status_filter = self.request.query_params.get('status')
         if status_filter:
-            print(f"🔍 [BACKEND] Filtrage par statut: {status_filter}")
             queryset = queryset.filter(status=status_filter)
-            print(f"🔍 [BACKEND] Créneaux après filtrage par statut: {queryset.count()}")
         
-        final_queryset = queryset.order_by('date', 'start_time')
-        print(f"🔍 [BACKEND] Créneaux finaux retournés: {final_queryset.count()}")
-        
-        # Simple rafraîchissement des données
-        final_queryset = final_queryset.select_related('recruiter', 'candidate', 'forum')
+        final_queryset = queryset.order_by('date', 'start_time').select_related('recruiter', 'candidate', 'forum')
         
         return final_queryset
 
@@ -309,33 +213,19 @@ class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
         forum_id = self.kwargs['forum_id']
         forum = get_object_or_404(Forum, id=forum_id)
         
-        # Logs de débogage
-        print(f"🔍 [BACKEND] Création de créneau pour le forum {forum_id}")
-        print(f"🔍 [BACKEND] Utilisateur: {self.request.user}")
-        print(f"🔍 [BACKEND] Données reçues: {self.request.data}")
-        print(f"🔍 [BACKEND] Forum trouvé: {forum}")
-        print(f"🔍 [BACKEND] Données validées du serializer: {serializer.validated_data}")
-        
         # Vérifier que l'utilisateur est membre de l'équipe du forum via RecruiterForumParticipation
         from recruiters.models import RecruiterForumParticipation
         is_member = RecruiterForumParticipation.objects.filter(
             forum=forum, 
             recruiter=self.request.user.recruiter_profile
         ).exists()
-        print(f"🔍 [BACKEND] Utilisateur membre de l'équipe: {is_member}")
-        print(f"🔍 [BACKEND] Participations au forum: {RecruiterForumParticipation.objects.filter(forum=forum).count()}")
-        print(f"🔍 [BACKEND] ID utilisateur actuel: {self.request.user.id}")
         
         if not is_member:
-            print(f"❌ [BACKEND] Permission refusée - utilisateur pas membre de l'équipe")
             raise PermissionDenied("Vous n'êtes pas membre de l'équipe de ce forum")
         
         try:
             serializer.save(forum=forum, recruiter=self.request.user)
-            print(f"✅ [BACKEND] Créneau créé avec succès")
         except Exception as e:
-            print(f"❌ [BACKEND] Erreur lors de la création du créneau: {e}")
-            print(f"❌ [BACKEND] Type d'erreur: {type(e)}")
             raise
 
 class VirtualAgendaSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -488,14 +378,8 @@ def get_recruiter_slots(request, forum_id, recruiter_id):
     Récupérer les créneaux d'un recruteur spécifique
     """
     try:
-        print(f"🔍 [BACKEND] === RÉCUPÉRATION CRÉNEAUX RECRUTEUR ===")
-        print(f"🔍 [BACKEND] Forum ID: {forum_id}, Recruteur ID: {recruiter_id}")
-        
         forum = get_object_or_404(Forum, id=forum_id)
         recruiter = get_object_or_404(User, id=recruiter_id)
-        
-        print(f"🔍 [BACKEND] Forum trouvé: {forum}")
-        print(f"🔍 [BACKEND] Recruteur trouvé: {recruiter}")
         
         # Vérifier que le recruteur fait partie de l'équipe
         is_team_member = User.objects.filter(
@@ -504,25 +388,13 @@ def get_recruiter_slots(request, forum_id, recruiter_id):
             id=recruiter_id
         ).exists()
         
-        print(f"🔍 [BACKEND] Recruteur membre de l'équipe: {is_team_member}")
-        
         if not is_team_member:
-            print(f"❌ [BACKEND] Recruteur pas membre de l'équipe")
             return Response({
                 'error': 'Ce recruteur ne fait pas partie de l\'équipe'
             }, status=status.HTTP_403_FORBIDDEN)
         
-        # Récupérer TOUS les créneaux du forum d'abord
-        all_forum_slots = VirtualAgendaSlot.objects.filter(forum=forum)
-        print(f"🔍 [BACKEND] Tous les créneaux du forum: {all_forum_slots.count()}")
-        
-        if all_forum_slots.exists():
-            for slot in all_forum_slots:
-                print(f"  - Créneau ID: {slot.id}, Recruteur: {slot.recruiter.id} ({slot.recruiter}), Date: {slot.date}")
-        
-        # CORRECTION: Vérifier que le recruteur est bien un recruteur
+        # Vérifier que le recruteur est bien un recruteur
         if recruiter.role == 'candidate' or hasattr(recruiter, 'candidate_profile'):
-            print(f"❌ [BACKEND] L'utilisateur {recruiter} est un candidat, pas un recruteur")
             return Response({
                 'error': 'L\'utilisateur spécifié n\'est pas un recruteur'
             }, status=status.HTTP_400_BAD_REQUEST)
@@ -532,22 +404,10 @@ def get_recruiter_slots(request, forum_id, recruiter_id):
             recruiter=recruiter
         ).order_by('date', 'start_time')
         
-        print(f"🔍 [BACKEND] Créneaux du recruteur {recruiter_id}: {slots.count()}")
-        
-        if slots.exists():
-            for slot in slots:
-                print(f"  - Créneau: {slot.id}, Date: {slot.date}, Heure: {slot.start_time}-{slot.end_time}, Statut: {slot.status}")
-        else:
-            print(f"❌ [BACKEND] Aucun créneau trouvé pour ce recruteur")
-        
         serializer = VirtualAgendaSlotSerializer(slots, many=True)
-        print(f"🔍 [BACKEND] Données sérialisées: {len(serializer.data)} éléments")
-        
-        print(f"🔍 [BACKEND] === FIN RÉCUPÉRATION CRÉNEAUX RECRUTEUR ===")
         return Response(serializer.data)
         
     except Exception as e:
-        print(f"❌ [BACKEND] Erreur lors de la récupération des créneaux: {e}")
         return Response({
             'error': 'Erreur lors de la récupération des créneaux',
             'details': str(e)
@@ -668,17 +528,12 @@ def force_refresh_agenda(request, forum_id):
         from virtual.models import VirtualAgendaSlot
         slots = VirtualAgendaSlot.objects.filter(forum_id=forum_id).select_related('recruiter', 'candidate')
         
-        print(f"🔍 [BACKEND] Slots après rafraîchissement: {slots.count()}")
-        for slot in slots:
-            print(f"  - ID: {slot.id}, Status: {slot.status}, Candidate: {slot.candidate}")
-        
         return Response({
             'message': 'Agenda rafraîchi avec succès',
             'slots_count': slots.count()
         })
         
     except Exception as e:
-        print(f"❌ [BACKEND] Erreur lors du rafraîchissement: {e}")
         return Response({
             'error': 'Erreur lors du rafraîchissement',
             'details': str(e)
@@ -695,8 +550,6 @@ def get_forum_recruiters(request, forum_id):
         
         # Récupérer les recruteurs du forum via la relation ManyToMany
         recruiters = forum.recruiters.all()
-        
-        print(f"🔍 [BACKEND] Recruteurs du forum {forum_id}: {recruiters.count()}")
         
         recruiter_list = []
         for recruiter in recruiters:
@@ -783,5 +636,61 @@ def get_agenda_stats(request, forum_id):
     except Exception as e:
         return Response({
             'error': 'Erreur lors de la récupération des statistiques',
+            'details': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_slots_for_offer(request, forum_id, offer_id):
+    """
+    Récupérer les créneaux disponibles pour une offre spécifique
+    (uniquement les créneaux des recruteurs de l'entreprise de l'offre)
+    """
+    try:
+        forum = get_object_or_404(Forum, id=forum_id)
+        from recruiters.models import Offer
+        offer = get_object_or_404(Offer, id=offer_id)
+        
+        print(f"🔍 [SLOTS API] Forum: {forum.name}")
+        print(f"🔍 [SLOTS API] Offer: {offer.title}")
+        print(f"🔍 [SLOTS API] Company: {offer.company.name}")
+        
+        # Vérifier que l'utilisateur est un candidat
+        if not hasattr(request.user, 'candidate_profile'):
+            return Response({
+                'error': 'Seuls les candidats peuvent accéder à cette ressource'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        # Récupérer tous les slots du forum d'abord
+        all_slots = VirtualAgendaSlot.objects.filter(forum=forum)
+        print(f"🔍 [SLOTS API] Total slots in forum: {all_slots.count()}")
+        
+        # Récupérer les créneaux des recruteurs de l'entreprise de l'offre
+        slots = VirtualAgendaSlot.objects.filter(
+            forum=forum,
+            recruiter__recruiter_profile__company=offer.company,
+            status='available'
+        ).select_related('recruiter', 'recruiter__recruiter_profile').order_by('date', 'start_time')
+        
+        print(f"🔍 [SLOTS API] Slots for company {offer.company.name}: {slots.count()}")
+        
+        # Debug: afficher les recruteurs de l'entreprise
+        from users.models import User
+        company_recruiters = User.objects.filter(
+            recruiter_profile__company=offer.company,
+            role='recruiter'
+        )
+        print(f"🔍 [SLOTS API] Recruiters in company: {company_recruiters.count()}")
+        for recruiter in company_recruiters:
+            print(f"   - {recruiter.email}")
+        
+        serializer = VirtualAgendaSlotSerializer(slots, many=True)
+        print(f"🔍 [SLOTS API] Serialized slots: {len(serializer.data)}")
+        return Response(serializer.data)
+        
+    except Exception as e:
+        return Response({
+            'error': 'Erreur lors de la récupération des créneaux',
             'details': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

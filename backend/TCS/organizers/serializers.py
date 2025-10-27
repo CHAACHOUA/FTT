@@ -4,7 +4,8 @@ from .models import Organizer
 
 class OrganizerSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='user.email', read_only=True)
+    timezone = serializers.CharField(source='user.timezone', read_only=True)
     
     class Meta:
         model = Organizer
-        fields = ['id', 'name', 'phone_number', 'logo', 'email']
+        fields = ['id', 'name', 'phone_number', 'logo', 'email', 'timezone']

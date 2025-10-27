@@ -9,6 +9,7 @@ from candidates.views.language_views import get_languages_view
 
 from candidates.views.public_profile import public_candidate_view,get_public_token
 from candidates.views.gamification_views import forum_progress, toggle_company_visited, save_company_note
+from candidates.views.favorites_views import toggle_favorite_offer_view, get_favorite_offers_view
 
 
 urlpatterns = [
@@ -28,4 +29,9 @@ urlpatterns = [
     path('forum/<int:forum_id>/progress/', forum_progress, name='forum_progress'),
     path('forum/<int:forum_id>/company/<int:company_id>/toggle-visited/', toggle_company_visited, name='toggle_company_visited'),
     path('forum/<int:forum_id>/company/<int:company_id>/note/', save_company_note, name='save_company_note'),
+    
+    # Favoris
+    path('favorites/toggle/<int:offer_id>/', toggle_favorite_offer_view, name='toggle-favorite-offer'),
+    path('favorites/<int:offer_id>/', toggle_favorite_offer_view, name='toggle-favorite-offer-direct'),
+    path('favorites/list/', get_favorite_offers_view, name='get-favorite-offers'),
 ]

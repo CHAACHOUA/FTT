@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from datetime import datetime
 from .models import VirtualAgendaSlot, Questionnaire, Question, QuestionnaireResponse, QuestionAnswer, VirtualApplication
 from forums.models import Forum
 from recruiters.models import Offer
+from .utils.timezone_utils import format_time_for_user, get_user_timezone
 
 User = get_user_model()
 
@@ -19,6 +21,10 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
     type_icon = serializers.CharField(source='get_type_display_icon', read_only=True)
     can_be_modified = serializers.BooleanField(read_only=True)
     can_be_deleted = serializers.BooleanField(read_only=True)
+    # Champs pour la gestion des fuseaux horaires
+    start_time_display = serializers.SerializerMethodField()
+    end_time_display = serializers.SerializerMethodField()
+    timezone_info = serializers.SerializerMethodField()
 
     class Meta:
         model = VirtualAgendaSlot
@@ -27,7 +33,8 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
             'type', 'duration', 'description', 'status', 'candidate',
             'meeting_link', 'phone_number', 'notes', 'created_at', 'updated_at',
             'recruiter_name', 'recruiter_email', 'candidate_name', 'candidate_email',
-            'duration_display', 'type_icon', 'can_be_modified', 'can_be_deleted'
+            'duration_display', 'type_icon', 'can_be_modified', 'can_be_deleted',
+            'start_time_display', 'end_time_display', 'timezone_info'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -48,7 +55,11 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
                 'first_name': recruiter_profile.first_name,
                 'last_name': recruiter_profile.last_name,
                 'email': obj.recruiter.email,
-                'full_name': f"{recruiter_profile.first_name} {recruiter_profile.last_name}".strip()
+                'full_name': f"{recruiter_profile.first_name} {recruiter_profile.last_name}".strip(),
+                'company': {
+                    'id': recruiter_profile.company.id,
+                    'name': recruiter_profile.company.name
+                } if recruiter_profile.company else None
             }
         elif obj.recruiter:
             return {
@@ -56,7 +67,8 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
                 'first_name': '',
                 'last_name': '',
                 'email': obj.recruiter.email,
-                'full_name': obj.recruiter.email
+                'full_name': obj.recruiter.email,
+                'company': None
             }
         return None
 
@@ -67,6 +79,46 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
             full_name = f"{candidate_profile.first_name} {candidate_profile.last_name}".strip()
             return full_name if full_name else obj.candidate.email
         return obj.candidate.email if obj.candidate else ""
+
+    def get_start_time_display(self, obj):
+        """Retourne l'heure de début formatée dans le fuseau horaire de l'utilisateur"""
+        request = self.context.get('request')
+        if request and request.user:
+            print(f"🕐 [BACKEND] Formatage start_time pour {request.user.email} (timezone: {request.user.timezone})")
+            print(f"🕐 [BACKEND] Heure originale: {obj.start_time}")
+            formatted_time = format_time_for_user(obj.start_time, request.user, obj.date)
+            print(f"🕐 [BACKEND] Heure formatée: {formatted_time}")
+            print(f"🕐 [BACKEND] Retour de start_time_display: {formatted_time}")
+            return formatted_time
+        return obj.start_time.strftime('%H:%M')
+
+    def get_end_time_display(self, obj):
+        """Retourne l'heure de fin formatée dans le fuseau horaire de l'utilisateur"""
+        request = self.context.get('request')
+        if request and request.user:
+            print(f"🕐 [BACKEND] Formatage end_time pour {request.user.email} (timezone: {request.user.timezone})")
+            print(f"🕐 [BACKEND] Heure originale: {obj.end_time}")
+            formatted_time = format_time_for_user(obj.end_time, request.user, obj.date)
+            print(f"🕐 [BACKEND] Heure formatée: {formatted_time}")
+            print(f"🕐 [BACKEND] Retour de end_time_display: {formatted_time}")
+            return formatted_time
+        return obj.end_time.strftime('%H:%M')
+
+    def get_timezone_info(self, obj):
+        """Retourne les informations de fuseau horaire"""
+        request = self.context.get('request')
+        if request and request.user:
+            user_tz = get_user_timezone(request.user)
+            # Créer un datetime complet pour calculer l'offset
+            dt = datetime.combine(obj.date, obj.start_time)
+            # Localiser le datetime dans le fuseau horaire de l'utilisateur
+            localized_dt = user_tz.localize(dt)
+            return {
+                'user_timezone': str(user_tz),
+                'user_timezone_name': user_tz.zone,
+                'offset': localized_dt.utcoffset().total_seconds() / 3600
+            }
+        return None
 
     def validate(self, data):
         """Validation personnalisée"""
@@ -107,12 +159,18 @@ class VirtualAgendaSlotCreateSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
     description = serializers.CharField(required=False, allow_blank=True)
     status = serializers.ChoiceField(choices=[('available', 'Disponible'), ('booked', 'Réservé'), ('completed', 'Terminé'), ('cancelled', 'Annulé')])
-    recruiter = serializers.IntegerField(required=False)  # CORRECTION: Ajouter le champ recruiter
+    recruiter = serializers.EmailField(required=False)  # CORRECTION: Utiliser EmailField au lieu d'IntegerField
 
     def validate_recruiter(self, value):
-        """Validation du recruteur"""
-        if value and hasattr(value, 'candidate_profile'):
-            raise serializers.ValidationError("Un candidat ne peut pas créer de créneaux d'agenda")
+        """Validation du recruteur par email"""
+        if value:
+            try:
+                user = User.objects.get(email=value)
+                if hasattr(user, 'candidate_profile'):
+                    raise serializers.ValidationError("Un candidat ne peut pas créer de créneaux d'agenda")
+                return value
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Recruteur avec cet email non trouvé")
         return value
 
     def create(self, validated_data):
@@ -262,33 +320,52 @@ class QuestionnaireCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Créer le questionnaire avec ses questions"""
+        print(f"[SERIALIZER CREATE] Données validées: {validated_data}")
         questions_data = validated_data.pop('questions', [])
+        print(f"[SERIALIZER CREATE] Questions data: {questions_data}")
+        print(f"[SERIALIZER CREATE] Nombre de questions: {len(questions_data)}")
+        
         questionnaire = Questionnaire.objects.create(**validated_data)
+        print(f"[SERIALIZER CREATE] Questionnaire créé: {questionnaire.id}")
         
         # Créer les questions
-        for question_data in questions_data:
-            Question.objects.create(questionnaire=questionnaire, **question_data)
+        for i, question_data in enumerate(questions_data):
+            print(f"[SERIALIZER CREATE] Création question {i+1}: {question_data}")
+            question = Question.objects.create(questionnaire=questionnaire, **question_data)
+            print(f"[SERIALIZER CREATE] Question {i+1} créée: {question.id}")
         
+        print(f"[SERIALIZER CREATE] Questionnaire final avec {questionnaire.questions.count()} questions")
         return questionnaire
 
     def update(self, instance, validated_data):
         """Mettre à jour le questionnaire et ses questions"""
+        print(f"[SERIALIZER UPDATE] Instance: {instance}")
+        print(f"[SERIALIZER UPDATE] Données validées: {validated_data}")
         questions_data = validated_data.pop('questions', None)
+        print(f"[SERIALIZER UPDATE] Questions data: {questions_data}")
+        print(f"[SERIALIZER UPDATE] Nombre de questions: {len(questions_data) if questions_data else 'None'}")
         
         # Mettre à jour le questionnaire
         for attr, value in validated_data.items():
+            print(f"[SERIALIZER UPDATE] Mise à jour {attr}: {value}")
             setattr(instance, attr, value)
         instance.save()
+        print(f"[SERIALIZER UPDATE] Questionnaire mis à jour: {instance.id}")
         
         # Mettre à jour les questions si fournies
         if questions_data is not None:
-            # Supprimer les anciennes questions
+            print(f"[SERIALIZER UPDATE] Suppression des anciennes questions...")
+            old_count = instance.questions.count()
             instance.questions.all().delete()
+            print(f"[SERIALIZER UPDATE] {old_count} anciennes questions supprimées")
             
             # Créer les nouvelles questions
-            for question_data in questions_data:
-                Question.objects.create(questionnaire=instance, **question_data)
+            for i, question_data in enumerate(questions_data):
+                print(f"[SERIALIZER UPDATE] Création question {i+1}: {question_data}")
+                question = Question.objects.create(questionnaire=instance, **question_data)
+                print(f"[SERIALIZER UPDATE] Question {i+1} créée: {question.id}")
         
+        print(f"[SERIALIZER UPDATE] Questionnaire final avec {instance.questions.count()} questions")
         return instance
 
 
@@ -393,16 +470,19 @@ class VirtualApplicationSerializer(serializers.ModelSerializer):
     """
     candidate_name = serializers.CharField(read_only=True)
     candidate_email = serializers.EmailField(source='candidate.email', read_only=True)
+    candidate_photo = serializers.SerializerMethodField()
     offer_title = serializers.CharField(source='offer.title', read_only=True)
     offer_company = serializers.CharField(source='offer.company.name', read_only=True)
     recruiter_name = serializers.CharField(read_only=True)
     selected_slot_info = serializers.SerializerMethodField()
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    offer = serializers.SerializerMethodField()
+    questionnaire_responses = serializers.SerializerMethodField()
     
     class Meta:
         model = VirtualApplication
         fields = [
-            'id', 'candidate', 'candidate_name', 'candidate_email',
+            'id', 'candidate', 'candidate_name', 'candidate_email', 'candidate_photo',
             'offer', 'offer_title', 'offer_company', 'recruiter_name',
             'forum', 'selected_slot', 'selected_slot_info',
             'questionnaire_responses', 'status', 'status_display',
@@ -410,17 +490,115 @@ class VirtualApplicationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def get_candidate_photo(self, obj):
+        """Retourne la photo du candidat"""
+        if obj.candidate and hasattr(obj.candidate, 'candidate_profile'):
+            candidate_profile = obj.candidate.candidate_profile
+            if hasattr(candidate_profile, 'profile_picture') and candidate_profile.profile_picture:
+                return candidate_profile.profile_picture.url
+        return None
+
+    def get_offer(self, obj):
+        """Retourne l'objet offre complet"""
+        if obj.offer:
+            try:
+                recruiter_name = obj.recruiter_name
+            except AttributeError:
+                recruiter_name = "Recruteur inconnu"
+            
+            return {
+                'id': obj.offer.id,
+                'title': obj.offer.title,
+                'description': obj.offer.description,
+                'location': obj.offer.location,
+                'sector': obj.offer.sector,
+                'contract_type': obj.offer.contract_type,
+                'profile_recherche': obj.offer.profile_recherche,
+                'status': obj.offer.status,
+                'start_date': obj.offer.start_date,
+                'experience_required': obj.offer.experience_required,
+                'created_at': obj.offer.created_at,
+                'company': {
+                    'id': obj.offer.company.id,
+                    'name': obj.offer.company.name,
+                    'description': getattr(obj.offer.company, 'description', ''),
+                    'website': getattr(obj.offer.company, 'website', ''),
+                    'logo': obj.offer.company.logo.url if hasattr(obj.offer.company, 'logo') and obj.offer.company.logo else '',
+                    'banner': obj.offer.company.banner.url if hasattr(obj.offer.company, 'banner') and obj.offer.company.banner else ''
+                },
+                'recruiter': {
+                    'id': obj.offer.recruiter.id,
+                    'name': recruiter_name,
+                    'email': obj.offer.recruiter.user.email,
+                    'phone': getattr(obj.offer.recruiter, 'phone', ''),
+                    'profile_picture': obj.offer.recruiter.profile_picture.url if hasattr(obj.offer.recruiter, 'profile_picture') and obj.offer.recruiter.profile_picture else '',
+                    'full_name': self._get_recruiter_full_name(obj.offer.recruiter.user)
+                },
+                'forum': {
+                    'id': obj.offer.forum.id,
+                    'name': obj.offer.forum.name,
+                    'description': obj.offer.forum.description
+                }
+            }
+        return None
+
+    def get_questionnaire_responses(self, obj):
+        """Retourne les réponses au questionnaire en nettoyant les données binaires"""
+        if obj.questionnaire_responses:
+            # Créer une copie pour éviter de modifier l'original
+            responses = obj.questionnaire_responses.copy()
+            
+            # Nettoyer les données binaires dans les réponses
+            if isinstance(responses, dict) and 'answers' in responses:
+                answers = responses['answers']
+                if isinstance(answers, list):
+                    for answer in answers:
+                        if isinstance(answer, dict):
+                            # Remplacer les données binaires par des URLs ou des messages
+                            for key in ['answer_file', 'file_data']:
+                                if key in answer and answer[key]:
+                                    if isinstance(answer[key], bytes):
+                                        answer[key] = '[Fichier binaire]'
+                                    elif isinstance(answer[key], str) and len(answer[key]) > 1000:
+                                        # Si c'est une chaîne très longue, c'est probablement du base64
+                                        answer[key] = '[Fichier encodé]'
+            
+            return responses
+        return None
+
+    def _get_recruiter_full_name(self, user):
+        """Helper method to get recruiter full name"""
+        if hasattr(user, 'recruiter_profile'):
+            recruiter_profile = user.recruiter_profile
+            full_name = f"{recruiter_profile.first_name} {recruiter_profile.last_name}".strip()
+            return full_name if full_name else user.email
+        return user.email
+
     def get_selected_slot_info(self, obj):
         """Retourne les informations du créneau sélectionné"""
         if obj.selected_slot:
-            return {
-                'id': obj.selected_slot.id,
-                'date': obj.selected_slot.date,
-                'start_time': obj.selected_slot.start_time,
-                'end_time': obj.selected_slot.end_time,
-                'type': obj.selected_slot.type,
-                'status': obj.selected_slot.status
+            slot = obj.selected_slot
+            slot_info = {
+                'id': slot.id,
+                'date': slot.date.strftime('%Y-%m-%d') if slot.date else None,
+                'start_time': slot.start_time.strftime('%H:%M:%S') if slot.start_time else None,
+                'end_time': slot.end_time.strftime('%H:%M:%S') if slot.end_time else None,
+                'type': slot.type,
+                'status': slot.status,
+                'duration': slot.duration,
+                'description': slot.description,
+                'meeting_link': slot.meeting_link,
+                'phone_number': slot.phone_number,
+                'notes': slot.notes,
+                'recruiter': {
+                    'id': slot.recruiter.id,
+                    'name': slot.recruiter.email,
+                    'full_name': self._get_recruiter_full_name(slot.recruiter)
+                } if slot.recruiter else None,
+                'created_at': slot.created_at.isoformat() if slot.created_at else None,
+                'updated_at': slot.updated_at.isoformat() if slot.updated_at else None
             }
+            return slot_info
         return None
 
 
@@ -438,11 +616,6 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
         """Validation personnalisée"""
         candidate = self.context['request'].user
         
-        print(f"🔍 [BACKEND] Validation candidature pour candidat: {candidate}")
-        print(f"🔍 [BACKEND] Offre: {data['offer']}")
-        print(f"🔍 [BACKEND] Forum: {data['forum']}")
-        print(f"🔍 [BACKEND] Slot sélectionné: {data.get('selected_slot')}")
-        
         # Vérifier que le candidat n'a pas déjà postulé à cette offre
         existing_application = VirtualApplication.objects.filter(
             candidate=candidate, 
@@ -450,12 +623,9 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
         ).first()
         
         if existing_application:
-            print(f"❌ [BACKEND] Candidature existante trouvée: {existing_application}")
             raise serializers.ValidationError(
                 "Vous avez déjà postulé à cette offre."
             )
-        
-        print(f"✅ [BACKEND] Aucune candidature existante, validation OK")
         
         # Vérifier que le créneau est disponible si sélectionné
         if data.get('selected_slot'):
@@ -470,15 +640,29 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Créer la candidature"""
         candidate = self.context['request'].user
-        print(f"🔍 [BACKEND] Création de candidature pour: {candidate}")
-        print(f"🔍 [BACKEND] Données validées: {validated_data}")
-        
         validated_data['candidate'] = candidate
         
-        # CORRECTION: Ne pas réserver le slot automatiquement
-        # Le slot sera réservé seulement quand le recruteur validera la candidature
-        print(f"🔍 [BACKEND] Candidature créée en statut 'pending' - slot non réservé")
+        print(f"🔍 [SERIALIZER] Création candidature pour: {candidate.email}")
+        print(f"🔍 [SERIALIZER] Données validées: {validated_data}")
+        
+        # Réserver le slot si sélectionné
+        selected_slot = validated_data.get('selected_slot')
+        if selected_slot:
+            print(f"🔍 [SERIALIZER] Réservation du slot: {selected_slot.id}")
+            selected_slot.status = 'booked'
+            selected_slot.candidate = candidate
+            selected_slot.save()
+            print(f"✅ [SERIALIZER] Slot réservé avec succès")
+        else:
+            print(f"🔍 [SERIALIZER] Aucun slot sélectionné")
+        
+        # Vérifier les réponses au questionnaire
+        questionnaire_responses = validated_data.get('questionnaire_responses')
+        if questionnaire_responses:
+            print(f"🔍 [SERIALIZER] Réponses questionnaire: {questionnaire_responses}")
+        else:
+            print(f"🔍 [SERIALIZER] Aucune réponse au questionnaire")
         
         application = super().create(validated_data)
-        print(f"✅ [BACKEND] Candidature créée: {application}")
+        print(f"✅ [SERIALIZER] Candidature créée: {application.id}")
         return application

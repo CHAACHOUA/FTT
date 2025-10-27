@@ -40,6 +40,15 @@ class CompanyWithRecruitersSerializer(serializers.ModelSerializer):
         if not forum:
             return []
         offers = Offer.objects.filter(company=obj, forum=forum)
+        
+        # Debug: Vérifier les photos des recruteurs
+        for offer in offers:
+            print(f"🔍 [BACKEND] Offer {offer.id} - Recruiter {offer.recruiter.id}:")
+            print(f"  - profile_picture: {offer.recruiter.profile_picture}")
+            print(f"  - has profile_picture: {hasattr(offer.recruiter, 'profile_picture')}")
+            if hasattr(offer.recruiter, 'profile_picture') and offer.recruiter.profile_picture:
+                print(f"  - profile_picture.url: {offer.recruiter.profile_picture.url}")
+        
         return OfferSerializer(offers, many=True).data
 
     def get_stand(self, obj):
