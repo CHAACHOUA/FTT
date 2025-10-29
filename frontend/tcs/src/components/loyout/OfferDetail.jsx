@@ -4,6 +4,7 @@ import { FaArrowLeft, FaMapMarkerAlt, FaBriefcase, FaBuilding, FaUser, FaCalenda
 import Navbar from './NavBar';
 import Loading from './Loading';
 import logo from '../../assets/Logo-FTT.png';
+import { Button, Badge, Card, Input } from '../common';
 import './OfferDetail.css';
 
 // Imports conditionnels pour les espaces candidat et recruiter

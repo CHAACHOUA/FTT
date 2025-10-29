@@ -7,6 +7,7 @@ import ForumCompanies from '../../../../components/forum/ForumCompanies';
 import ForumOffers from '../../../../components/forum/ForumOffers';
 import Plan from '../hybrid/Plan';
 import VirtualApplications from '../virtual/VirtualApplications';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import CandidateApplications from '../virtual/CandidateApplications';
 import Loading from '../../../../components/loyout/Loading';
 import PopupQRCode from '../hybrid/PopupQRCode';

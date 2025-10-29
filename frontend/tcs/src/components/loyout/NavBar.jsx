@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-digitalio.png';
 import '../../pages/styles/common/navbar.css';

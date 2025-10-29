@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUserCircle, FaMapMarkerAlt, FaDownload, FaTimes } from 'react-icons/fa';
+import { Button, Input, Card, Badge } from '../../common';
 import '../../../pages/recruiter/event/common/CandidateListRecruiter.css';
 
 const CandidateCard = ({ 
@@ -54,9 +55,9 @@ const CandidateCard = ({
         <div className="sectors-container">
           {(candidate.search?.sector?.length ?? 0) > 0
             ? candidate.search.sector.map((sector, i) => (
-                <span key={i} className="sector-badge">{sector}</span>
+                <Badge key={i} type="sector">{sector}</Badge>
               ))
-            : <span className="sector-badge empty">Non renseigné</span>
+            : <Badge type="sector" variant="empty">Non renseigné</Badge>
           }
         </div>
 

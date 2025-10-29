@@ -1,5 +1,6 @@
 import React from 'react';
 import './Modal.css';
+import { Button } from '../../common';
 
 const Modal = ({ 
   isOpen, 

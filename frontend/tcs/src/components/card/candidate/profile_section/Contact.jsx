@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../../pages/styles/candidate/Contact.css';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
+import { Input, Button } from '../../../common';
 
 const Contact = ({ formData, onUpdate = () => {}, readOnly = false, children }) => {
   const handleFieldChange = (e) => {

@@ -4,6 +4,7 @@ import { FaArrowLeft, FaCalendarAlt, FaSearch, FaTimes, FaChevronDown } from 're
 import Navbar from '../../../../components/loyout/NavBar';
 import Offer from '../../../../components/card/offer/Offer';
 import Loading from '../../../../components/loyout/Loading';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import './OffersList.css';
 import '../../../../pages/styles/organizer/organizer-buttons.css';
 import '../../../../components/filters/offer/SearchBar.css';
@@ -327,7 +328,7 @@ const OffersList = () => {
               >
                 Entreprise <FaChevronDown />
                 {selectedCompanies.length > 0 && (
-                  <span className="counter-badge-search">{selectedCompanies.length}</span>
+                  <Badge type="counter" size="small">{selectedCompanies.length}</Badge>
                 )}
               </button>
               {showCompanyDropdown && (
@@ -384,7 +385,7 @@ const OffersList = () => {
               >
                 Contrat <FaChevronDown />
                 {selectedContracts.length > 0 && (
-                  <span className="counter-badge-search">{selectedContracts.length}</span>
+                  <Badge type="counter" size="small">{selectedContracts.length}</Badge>
                 )}
               </button>
               {showContractDropdown && (
@@ -441,7 +442,7 @@ const OffersList = () => {
               >
                 Secteur <FaChevronDown />
                 {selectedSectors.length > 0 && (
-                  <span className="counter-badge-search">{selectedSectors.length}</span>
+                  <Badge type="counter" size="small">{selectedSectors.length}</Badge>
                 )}
               </button>
               {showSectorDropdown && (

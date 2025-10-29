@@ -5,6 +5,7 @@ import ChangePassword from '../../candidate/auth/account/ChangePassword';
 import DeleteAccount from '../../candidate/auth/account/DeleteAccount';
 import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import SaveButton from '../../../components/common/SaveButton';
+import { Button, Card, Badge, Input } from '../../../components/common';
 import { toast } from 'react-toastify';
 import Loading from '../../../components/loyout/Loading';
 import { useLocation } from 'react-router-dom';
@@ -256,7 +257,7 @@ const OrganizerProfileView = () => {
                     </div>
                   </div>
 
-                  <SaveButton onClick={handleSubmit} />
+                  <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
                 </div>
               </section>
             </>

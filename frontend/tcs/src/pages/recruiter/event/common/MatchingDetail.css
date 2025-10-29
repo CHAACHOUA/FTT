@@ -2,13 +2,13 @@
 .matching-detail-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--space-xl);
 }
 
 .matching-detail-card {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   padding: 30px;
   margin-bottom: 20px;
 }
@@ -57,7 +57,7 @@
   text-align: center;
   padding: 15px 20px;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 2px solid #e2e8f0;
 }
 
@@ -93,9 +93,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: var(--space-md) 16px;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border-left: 4px solid #3b82f6;
 }
 
@@ -135,7 +135,7 @@
 .matching-candidate-card {
   background: white;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 15px;
   transition: all 0.3s ease;
   position: relative;
@@ -193,8 +193,8 @@
 .matching-sector-badge {
   background: #3b82f6;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: var(--space-xs) 8px;
+  border-radius: var(--radius-xl);
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -224,8 +224,8 @@
   right: 15px;
   background: #10b981;
   color: white;
-  padding: 8px;
-  border-radius: 6px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
   text-decoration: none;
   transition: background 0.3s ease;
 }
@@ -287,13 +287,13 @@
   flex: 1;
   height: 8px;
   background: #e5e7eb;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .matching-progress-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: width 0.3s ease;
 }
 
@@ -311,7 +311,7 @@
   gap: 8px;
   padding: 15px 20px;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   color: #64748b;
   font-size: 0.9rem;
   margin-top: 20px;
@@ -329,8 +329,8 @@
   background: #3b82f6;
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: var(--space-md) 20px;
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -349,7 +349,7 @@
   }
   
   .matching-detail-card {
-    padding: 20px;
+    padding: var(--space-xl);
   }
   
   .matching-detail-header {
@@ -376,7 +376,7 @@
 
 @media (max-width: 480px) {
   .matching-candidate-card {
-    padding: 12px;
+    padding: var(--space-md);
   }
   
   .matching-candidate-photo img,

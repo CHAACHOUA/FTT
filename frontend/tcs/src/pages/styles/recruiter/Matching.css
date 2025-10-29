@@ -23,7 +23,7 @@
   transform: translateY(-50%);
   width: 100px;
   height: 76px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: #ffffff;
   border: 5px solid #f1f5f9;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -46,8 +46,8 @@
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%) !important;
   color: white !important;
   border: none !important;
-  padding: 12px 20px !important;
-  border-radius: 8px !important;
+  padding: var(--space-md) 20px !important;
+  border-radius: var(--radius-lg) !important;
   font-weight: 600 !important;
   display: flex !important;
   align-items: center !important;

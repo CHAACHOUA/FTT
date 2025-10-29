@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import Loading from '../../../../components/loyout/Loading';
 import '../../../../pages/styles/candidate/VirtualApplications.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const VirtualApplications = ({ forum, accessToken, apiBaseUrl }) => {
   const [applications, setApplications] = useState([]);

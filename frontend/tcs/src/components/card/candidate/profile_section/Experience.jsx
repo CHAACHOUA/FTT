@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../../../pages/styles/candidate/Education.css';
 import { FaBriefcase, FaBuilding, FaRegStickyNote, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { validateEducationDates } from '../../../../utils/dateValidation';
+import { Input, Button, Badge } from '../../../common';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',

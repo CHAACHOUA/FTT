@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../../../../context/AuthContext';
 import { getSectorsForSelect, getContractsForSelect } from '../../../../constants/choices';
 import { FaMapMarkerAlt, FaBuilding, FaBriefcase, FaClock, FaRoute, FaDownload, FaUsers, FaFileAlt, FaCheckCircle, FaCircle, FaStar, FaEdit } from 'react-icons/fa';
+import { Button, Badge, Card } from '../../../../components/common';
 import LogoFTT from '../../../../assets/Logo-FTT.png';
 
 const Plan = ({ companies, forumId }) => {
@@ -731,12 +732,13 @@ const Plan = ({ companies, forumId }) => {
                       rows={3}
                     />
                     <div className="note-actions">
-                      <button 
-                        className="btn-save-note"
+                      <Button 
+                        variant="note"
+                        size="small"
                         onClick={() => saveCompanyNote(company.id, companyNotes[company.id] || '')}
                       >
                         Sauvegarder
-                      </button>
+                      </Button>
                       <button 
                         className="btn-cancel-note"
                         onClick={() => setEditingNote(null)}

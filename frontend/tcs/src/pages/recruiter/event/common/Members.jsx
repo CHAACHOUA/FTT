@@ -6,6 +6,7 @@ import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
 import InviteRecruiterModal from '../../../organizer/Event/companies/InviteRecruiterModal';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Loading from '../../../../components/loyout/Loading';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 function Members({ accessToken, apiBaseUrl }) {
   const [recruiters, setRecruiters] = useState([]);

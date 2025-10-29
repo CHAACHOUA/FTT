@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../../pages/styles/candidate/Education.css';
 import { useAuth } from '../../../../context/AuthContext';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 // import { getUserFromToken } from '../../context/decoder-jwt' // Fichier supprimé
 const DeleteAccount = () => {
   const [loading, setLoading] = useState(false);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SearchBar.css';
 import { FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { Badge, Button, Card, Input } from '../../common';
 import { getSectorsForSelect, getContractsForSelect } from '../../../constants/choices';
 
 const SearchBarOffers = ({ offers, onFilter }) => {
@@ -99,7 +100,7 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           }}>
             Contrat <FaChevronDown />
             {selectedContracts.length > 0 && (
-              <span className="counter-badge-search">{selectedContracts.length}</span>
+              <Badge type="counter" size="small">{selectedContracts.length}</Badge>
             )}
           </button>
           {showContractDropdown && (
@@ -150,7 +151,7 @@ const SearchBarOffers = ({ offers, onFilter }) => {
           }}>
             Secteur <FaChevronDown />
             {selectedSectors.length > 0 && (
-              <span className="counter-badge-search">{selectedSectors.length}</span>
+              <Badge type="counter" size="small">{selectedSectors.length}</Badge>
             )}
           </button>
           {showSectorDropdown && (

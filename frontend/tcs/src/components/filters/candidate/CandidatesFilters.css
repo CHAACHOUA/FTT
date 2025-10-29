@@ -7,8 +7,8 @@
 
 .kpi-card {
   background: white;
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   position: relative;
   min-width: 160px;
@@ -58,7 +58,7 @@
   background: rgba(24, 56, 108, 0.18);
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(24, 56, 108, 0.10);
-  padding: 24px 18px 18px 18px;
+  padding: var(--space-2xl) 18px 18px 18px;
   backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
@@ -85,7 +85,7 @@
   border: 1.5px solid #4f8cff;
   border-radius: 10px;
   color: #fff;
-  padding: 8px 12px;
+  padding: var(--space-sm) 12px;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
@@ -132,8 +132,8 @@
 /* Candidate Filters Dropdown Design */
 .candidate-filters-dropdown {
   background: #f8fafc;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
   font-family: 'Inter', sans-serif;
   width: 100% !important;
   max-width: none !important;
@@ -153,7 +153,7 @@
 }
 
 .filters-title {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: #1e293b;
   margin: 0;
@@ -165,7 +165,7 @@
   background: none;
   border: none;
   color: #3b82f6;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
@@ -187,7 +187,7 @@
 .filter-section {
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: visible;
   transition: all 0.2s ease;
   margin-bottom: 2px;
@@ -203,7 +203,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: var(--space-lg) 20px;
   cursor: pointer;
   background: white;
   transition: background-color 0.2s ease;
@@ -223,7 +223,7 @@
 
 .section-icon {
   color: #3b82f6;
-  font-size: 12px;
+  font-size: var(--text-sm);
   transition: transform 0.2s ease;
 }
 
@@ -233,7 +233,7 @@
 
 /* Filter Section Content */
 .filter-section-content {
-  padding: 16px 20px 20px 20px;
+  padding: var(--space-lg) 20px 20px 20px;
   border-top: 1px solid #f1f5f9;
   background: #fafbfc;
   position: relative;
@@ -243,10 +243,10 @@
 .filter-select,
 .filter-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-md) 16px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
   color: #374151;
   background: white;
   transition: border-color 0.2s ease;
@@ -280,7 +280,7 @@
 /* React Select Customization */
 .react-select__control {
   border: 1px solid #d1d5db !important;
-  border-radius: 8px !important;
+  border-radius: var(--radius-lg) !important;
   min-height: 44px !important;
   box-shadow: none !important;
   background: white !important;
@@ -297,7 +297,7 @@
 
 .react-select__placeholder {
   color: #9ca3af !important;
-  font-size: 14px !important;
+  font-size: var(--text-base) !important;
 }
 
 .react-select__indicator-separator {
@@ -310,7 +310,7 @@
 
 .react-select__menu {
   border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
+  border-radius: var(--radius-lg) !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
   background: white !important;
   z-index: 9999 !important;
@@ -318,12 +318,12 @@
 }
 
 .react-select__menu-list {
-  padding: 4px 0 !important;
+  padding: var(--space-xs) 0 !important;
 }
 
 .react-select__option {
-  padding: 12px 16px !important;
-  font-size: 14px !important;
+  padding: var(--space-md) 16px !important;
+  font-size: var(--text-base) !important;
   color: #374151 !important;
   background: white !important;
 }
@@ -340,13 +340,13 @@
 
 .react-select__multi-value {
   background: #e0e7ff !important;
-  border-radius: 6px !important;
+  border-radius: var(--radius-md) !important;
   margin: 2px !important;
 }
 
 .react-select__multi-value__label {
   color: #3730a3 !important;
-  font-size: 12px !important;
+  font-size: var(--text-sm) !important;
   padding: 2px 6px !important;
 }
 
@@ -362,7 +362,7 @@
 
 /* Checkbox Styles */
 .checkbox-group {
-  padding: 8px 0;
+  padding: var(--space-sm) 0;
 }
 
 .checkbox-label {
@@ -370,7 +370,7 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--text-base);
   color: #374151;
   line-height: 1.5;
 }
@@ -390,7 +390,7 @@
 @media (max-width: 1024px) {
   .candidate-filters-dropdown {
     max-width: 100%;
-    padding: 16px;
+    padding: var(--space-lg);
   }
   
   .filter-section-header {
@@ -398,11 +398,11 @@
   }
   
   .filter-section-content {
-    padding: 12px 16px 16px 16px;
+    padding: var(--space-md) 16px 16px 16px;
   }
   
   .section-label {
-    font-size: 12px;
+    font-size: var(--text-sm);
   }
   
   .filter-select,
@@ -416,7 +416,7 @@
   .candidate-filters-dropdown {
     max-width: 100%;
     margin: 0;
-    padding: 12px;
+    padding: var(--space-md);
   }
   
   .filters-header {
@@ -425,11 +425,11 @@
   }
   
   .filters-title {
-    font-size: 14px;
+    font-size: var(--text-base);
   }
   
   .filter-section-header {
-    padding: 12px 14px;
+    padding: var(--space-md) 14px;
   }
   
   .filter-section-content {
@@ -442,12 +442,12 @@
   
   .filter-select,
   .filter-input {
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: var(--space-sm) 12px;
+    font-size: var(--text-sm);
   }
   
   .checkbox-label {
-    font-size: 12px;
+    font-size: var(--text-sm);
     gap: 8px;
   }
   
@@ -476,11 +476,11 @@
   }
   
   .filter-section-content {
-    padding: 8px 12px 12px 12px;
+    padding: var(--space-sm) 12px 12px 12px;
   }
   
   .section-label {
-    font-size: 10px;
+    font-size: var(--text-xs);
   }
   
   .filter-select,

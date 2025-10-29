@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaCheck, FaFileAlt, FaUser, FaClock, FaCalendar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { Badge, Button, Card, Input } from '../common';
 import './VirtualApplicationConfirmation.css';
 
 const VirtualApplicationConfirmation = ({ 
@@ -110,10 +111,7 @@ const VirtualApplicationConfirmation = ({
         <div className="confirmation-section">
           <h4>Statut de candidature</h4>
           <div className="status-info">
-            <div className="status-badge pending">
-              <FaCheck />
-              En attente de traitement
-            </div>
+            <Badge type="status" variant="pending">En attente de traitement</Badge>
             <p>Votre candidature sera transmise au recruteur qui pourra la consulter et vous contacter.</p>
           </div>
         </div>

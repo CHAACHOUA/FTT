@@ -1,7 +1,7 @@
 /* ===== WRAPPER PRINCIPAL FORUM COMPANIES ===== */
 
 .forum-companies-wrapper {
-  padding: 24px;
+  padding: var(--space-2xl);
   background: #f8fafc;
   min-height: 100vh;
   max-width: 1200px;
@@ -21,8 +21,8 @@
 .search-bar-search {
   background: #fff;
   border: 1px solid #d1d5db;
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-md);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -53,9 +53,9 @@
 
 .search-info {
   margin-top: 16px;
-  padding: 12px 16px;
+  padding: var(--space-md) 16px;
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border-left: 4px solid #3b82f6;
   font-size: 0.9rem;
   color: #1e40af;
@@ -77,9 +77,9 @@
 .forum-detail-company-card {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: var(--space-xl);
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
@@ -134,8 +134,8 @@
 .forum-detail-company-sector {
   background: #dbeafe;
   color: #1e40af;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: var(--space-xs) 8px;
+  border-radius: var(--radius-xl);
   font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
@@ -187,7 +187,7 @@
 
 .company-card-popup {
   background: #ffffff !important;
-  border-radius: 20px !important;
+  border-radius: var(--radius-3xl) !important;
   max-width: 800px !important;
   width: 90% !important;
   max-height: 90vh !important;
@@ -198,7 +198,7 @@
   flex-direction: column !important;
   /* Centrage parfait */
   position: relative !important;
-  margin: 20px !important;
+  margin: var(--space-xl) !important;
   /* S'assurer qu'aucun autre style n'interfère */
   top: auto !important;
   left: auto !important;
@@ -225,7 +225,7 @@
   padding: 15px 20px;
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--radius-3xl) 20px 0 0;
 }
 
 .popup-header h2 {
@@ -241,7 +241,7 @@
   color: white;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-sm);
   border-radius: 50%;
   width: 35px;
   height: 35px;
@@ -279,7 +279,7 @@
 .company-logo-large {
   width: 100px;
   height: 100px;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   object-fit: contain;
   border: 3px solid #e5e7eb;
   background: #f8fafc;
@@ -319,7 +319,7 @@
   gap: 12px;
   font-size: 1rem;
   color: #6b7280;
-  padding: 8px 12px;
+  padding: var(--space-sm) 12px;
   background: #f8fafc;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
@@ -360,7 +360,7 @@
 .company-section {
   background: #f8fafc;
   border-radius: 15px;
-  padding: 20px;
+  padding: var(--space-xl);
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
 }
@@ -434,7 +434,7 @@
   }
   
   .popup-header {
-    padding: 20px 25px;
+    padding: var(--space-xl) 25px;
   }
   
   .popup-header h2 {
@@ -442,7 +442,7 @@
   }
   
   .company-card-content {
-    padding: 20px;
+    padding: var(--space-xl);
   }
   
   .company-card-header {
@@ -481,7 +481,7 @@
   align-items: center;
   gap: 16px;
   margin-top: 32px;
-  padding: 20px 0;
+  padding: var(--space-xl) 0;
 }
 
 .pagination-btn {
@@ -492,7 +492,7 @@
   border: 1px solid #d1d5db;
   background: white;
   color: #374151;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -522,7 +522,7 @@
   border: 1px solid #d1d5db;
   background: white;
   color: #374151;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;

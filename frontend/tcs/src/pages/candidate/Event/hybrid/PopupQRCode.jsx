@@ -4,6 +4,7 @@ import Modal from '../../../../components/card/common/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faShare } from '@fortawesome/free-solid-svg-icons';
 import './QRShare.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const PopupQRCode = ({ isOpen, onClose, token, forum }) => {
   const url = forum

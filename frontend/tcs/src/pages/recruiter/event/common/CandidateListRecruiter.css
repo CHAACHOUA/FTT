@@ -21,7 +21,7 @@
   padding: 2rem;
   background: #f8fafc;
   border: 1px solid #e9ecef;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   width: 100%;
@@ -52,11 +52,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: var(--space-md) 20px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -96,7 +96,7 @@
   min-width: 200px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
@@ -179,7 +179,7 @@
 .candidates-filters {
   flex: 0 0 250px;
   background: #f9fafb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1rem;
   border: 1px solid #e5e7eb;
   height: fit-content;
@@ -222,7 +222,7 @@
 .candidate-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -293,7 +293,7 @@
   background: transparent;
   color: #475569;
   padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.85rem;
   font-weight: 500;
   margin: 0.5rem 0;
@@ -305,7 +305,7 @@
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.85rem;
   font-weight: 600;
   margin: 0.5rem 0 0 0;
@@ -323,8 +323,8 @@
 .sector-badge {
   background: #dbeafeda;
   color: #1e40af;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: var(--space-xs) 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
@@ -430,7 +430,7 @@
     right: 1rem;
     width: auto;
     padding: 0.5rem;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: #f8fafc;
     border: 1px solid #e5e7eb;
   }
@@ -459,7 +459,7 @@
   background: transparent;
   color: #6b7280;
   border: 1px solid #d1d5db;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -490,7 +490,7 @@
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   font-size: 1rem;
   background: #ffffff;
   transition: all 0.3s ease;
@@ -512,7 +512,7 @@
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: transparent;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -522,7 +522,7 @@
   text-align: center;
   padding: 3rem 2rem;
   background: transparent;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 2px dashed #d1d5db;
 }
 
@@ -538,7 +538,7 @@
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -562,7 +562,7 @@
 /* Cartes des candidats */
 .candidate-card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
@@ -646,8 +646,8 @@
 .sector-badge {
   background: #dbeafeda;
   color: #1e40af;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: var(--space-xs) 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
@@ -716,7 +716,7 @@
   margin-bottom: 3rem;
   padding: 2rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -748,7 +748,7 @@
 
 .search-candidate-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
@@ -917,7 +917,7 @@
     right: 1rem;
     width: auto;
     padding: 0.5rem;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: #f8fafc;
     border: 1px solid #e5e7eb;
     font-size: 0.9rem;

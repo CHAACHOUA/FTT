@@ -16,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Badge, Button, Card, Input } from '../common';
 import QuestionForm from './QuestionForm';
 import './QuestionnaireBuilder.css';
 
@@ -355,7 +356,7 @@ const QuestionnaireBuilder = ({ offer, onSave, onCancel, apiBaseUrl }) => {
                             {QUESTION_TYPES.find(t => t.value === question.question_type)?.label}
                           </span>
                           {question.is_required && (
-                            <span className="required-badge">Obligatoire</span>
+                            <Badge type="required">Obligatoire</Badge>
                           )}
                         </div>
                       </div>

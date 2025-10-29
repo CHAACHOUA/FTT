@@ -32,7 +32,7 @@
   background: #ffffff;
   color: #3b82f6;
   border: 2px solid #3b82f6;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
@@ -54,7 +54,7 @@
   background: #fee2e2;
   color: #dc2626;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -81,7 +81,7 @@
   text-align: center;
   padding: 3rem 2rem;
   background: #f8fafc;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 2px dashed #cbd5e1;
 }
 
@@ -95,7 +95,7 @@
   background: #ffffff;
   color: #3b82f6;
   border: 2px solid #3b82f6;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
@@ -136,7 +136,7 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   padding: 0.8rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -223,7 +223,7 @@
 
 .programme-day-content .event-card {
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   transition: all 0.3s ease;
   width: 100%;
 }
@@ -254,7 +254,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   transition: all 0.3s ease;
   background: #ffffff;
@@ -286,7 +286,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background: #ffffff;
   cursor: pointer;
   display: flex;
@@ -320,7 +320,7 @@
   right: 0;
   background: #ffffff;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 10;
   max-height: 200px;
@@ -376,7 +376,7 @@
   background: rgba(59, 130, 246, 0.1);
   color: #3b82f6;
   padding: 0.25rem 0.5rem;
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   font-size: 0.85rem;
   font-weight: 500;
   gap: 0.5rem;
@@ -418,7 +418,7 @@
   background: #f8fafc;
   color: #64748b;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
@@ -434,7 +434,7 @@
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-weight: 600;
   cursor: pointer;

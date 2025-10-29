@@ -64,8 +64,8 @@
   background: transparent;
   border: 1.5px solid #3b82f6;
   color: #3b82f6;
-  padding: 8px 28px;
-  border-radius: 8px;
+  padding: var(--space-sm) 28px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
@@ -96,8 +96,8 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #dc2626;
-  padding: 16px;
-  border-radius: 12px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
   margin-bottom: 24px;
   max-width: 1200px;
   margin-left: auto;
@@ -129,8 +129,8 @@
   margin-bottom: 32px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
 }
 
 .companies-dashboard-search {
@@ -154,7 +154,7 @@
 .search-icon {
   margin-right: 16px;
   color: #18386c;
-  font-size: 20px;
+  font-size: var(--text-2xl);
   transition: color 0.3s ease;
   opacity: 0.85;
 }
@@ -179,8 +179,8 @@
   .companies-dashboard-search {
     min-width: 0;
     width: 100%;
-    padding: 12px 10px;
-    border-radius: 12px;
+    padding: var(--space-md) 10px;
+    border-radius: var(--radius-xl);
   }
   .search-icon { font-size: 17px; margin-right: 10px; }
 }
@@ -189,8 +189,8 @@
   background: transparent;
   color: #3b82f6;
   border: 1.5px solid #3b82f6;
-  border-radius: 8px;
-  padding: 8px 28px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) 28px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -224,8 +224,8 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
 
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
  
   position: relative;
@@ -261,7 +261,7 @@
 
 .company-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: var(--space-xs) 12px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
@@ -329,7 +329,7 @@
   background: none !important;
   border: none !important;
   outline: none !important;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   width: 44px;
   height: 44px;
   display: flex;
@@ -339,7 +339,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #64748b;
   box-shadow: none !important;
-  font-size: 20px;
+  font-size: var(--text-2xl);
   padding: 0 !important;
   margin: 0 !important;
   border-width: 0 !important;
@@ -405,12 +405,12 @@
 .enterprise-options-panel {
   position: fixed;
   background: white;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
   z-index: 99999;
   min-width: 200px;
-  padding: 8px 0;
+  padding: var(--space-sm) 0;
   backdrop-filter: blur(10px);
   animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -431,17 +431,17 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 20px;
+  padding: var(--space-md) 20px;
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 500;
   color: #374151;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   margin: 0 8px;
 }
 
@@ -484,7 +484,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: var(--text-xl);
   box-shadow: 0 2px 8px rgba(79, 140, 255, 0.13);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -505,7 +505,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: var(--text-xl);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -542,7 +542,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: var(--text-xl);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.13);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -597,9 +597,9 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 20px;
+  padding: var(--space-lg) 20px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 1px solid #e5e7eb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
@@ -625,7 +625,7 @@
   background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
   color: white;
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--text-lg);
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
@@ -638,7 +638,7 @@
 }
 
 .recruiter-initials {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -666,8 +666,8 @@
   color: #6b7280;
   font-size: 13px;
   background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: var(--space-xs) 8px;
+  border-radius: var(--radius-md);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -682,7 +682,7 @@
   padding: 10px 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 14px;
+  font-size: var(--text-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -763,16 +763,16 @@
   text-align: center;
   color: #6b7280;
   font-style: italic;
-  padding: 20px;
+  padding: var(--space-xl);
   background: #f9fafb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px dashed #d1d5db;
 }
 
 /* ===== RESPONSIVE DESIGN POUR CARTES ENTREPRISES ===== */
 @media (max-width: 1024px) {
   .companies-container {
-    padding: 32px 24px;
+    padding: var(--space-3xl) 24px;
   }
   
   .companies-header h1 {
@@ -793,11 +793,11 @@
   }
   
   .companies-dashboard-header {
-    padding: 20px;
+    padding: var(--space-xl);
   }
   
   .company-dashboard-card {
-    padding: 20px;
+    padding: var(--space-xl);
   }
   
   .company-name {
@@ -807,7 +807,7 @@
 
 @media (max-width: 768px) {
   .companies-container {
-    padding: 20px 16px;
+    padding: var(--space-xl) 16px;
   }
   
   .companies-header h1 {
@@ -833,14 +833,14 @@
   }
   
   .companies-dashboard-wrapper {
-    padding: 16px;
+    padding: var(--space-lg);
   }
 
   .companies-dashboard-header {
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
-    padding: 16px;
+    padding: var(--space-lg);
   }
 
   .companies-dashboard-search {
@@ -856,11 +856,11 @@
   .add-company-button {
     width: 100%;
     justify-content: center;
-    padding: 12px 20px;
+    padding: var(--space-md) 20px;
   }
 
   .company-dashboard-card {
-    padding: 16px;
+    padding: var(--space-lg);
   }
 
   .company-header {
@@ -886,7 +886,7 @@
   }
 
   .company-badge {
-    font-size: 12px;
+    font-size: var(--text-sm);
     padding: 3px 10px;
   }
 
@@ -901,7 +901,7 @@
   }
 
   .recruiter-item {
-    padding: 12px 16px;
+    padding: var(--space-md) 16px;
     min-width: auto;
     max-width: none;
   }
@@ -909,22 +909,22 @@
   .recruiter-avatar {
     width: 40px;
     height: 40px;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
 
   .recruiter-name {
-    font-size: 14px;
+    font-size: var(--text-base);
   }
 
   .recruiter-email {
-    font-size: 12px;
+    font-size: var(--text-sm);
     max-width: 150px;
   }
 
   .resend-invitation-button {
     width: 36px;
     height: 36px;
-    font-size: 12px;
+    font-size: var(--text-sm);
   }
 
   .company-actions {
@@ -934,14 +934,14 @@
   .add-recruiter-button {
     width: 36px;
     height: 36px;
-    font-size: 16px;
+    font-size: var(--text-lg);
   }
 
   .toggle-approval-button,
   .reject-company-button {
     width: 36px;
     height: 36px;
-    font-size: 16px;
+    font-size: var(--text-lg);
   }
 }
 
@@ -968,7 +968,7 @@
 
 @media (max-width: 480px) {
   .companies-container {
-    padding: 16px 12px;
+    padding: var(--space-lg) 12px;
   }
   
   .companies-header h1 {
@@ -984,18 +984,18 @@
   }
   
   .filter-btn {
-    padding: 8px 12px;
+    padding: var(--space-sm) 12px;
     font-size: 0.85rem;
     min-width: 100px;
   }
   
   .companies-dashboard-header {
-    padding: 12px;
+    padding: var(--space-md);
     gap: 12px;
   }
   
   .companies-dashboard-search {
-    padding: 12px 16px;
+    padding: var(--space-md) 16px;
   }
   
   .dashboard-search-bar {
@@ -1008,7 +1008,7 @@
   }
   
   .company-dashboard-card {
-    padding: 12px;
+    padding: var(--space-md);
   }
   
   .company-header {
@@ -1042,21 +1042,21 @@
   }
   
   .recruiter-item {
-    padding: 8px 12px;
+    padding: var(--space-sm) 12px;
   }
   
   .recruiter-avatar {
     width: 32px;
     height: 32px;
-    font-size: 12px;
+    font-size: var(--text-sm);
   }
   
   .recruiter-name {
-    font-size: 12px;
+    font-size: var(--text-sm);
   }
   
   .recruiter-email {
-    font-size: 10px;
+    font-size: var(--text-xs);
   }
   
   .company-actions {
@@ -1066,14 +1066,14 @@
   .add-recruiter-button {
     width: 32px;
     height: 32px;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
   
   .toggle-approval-button,
   .reject-company-button {
     width: 32px;
     height: 32px;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
   
   .resend-invitation-button {
@@ -1085,7 +1085,7 @@
 .company-logo {
   width: 70px !important;
   height: 70px !important;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   object-fit: cover;
   border: none !important;
   transition: all 0.3s ease;
@@ -1101,7 +1101,7 @@
   .company-logo {
     width: 70px !important;
     height: 70px !important;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
 }
 
@@ -1117,12 +1117,12 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--space-xl);
 }
 
 .modal-content {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 2rem;
   max-width: 500px;
   width: 100%;
@@ -1151,7 +1151,7 @@
   align-items: center;
   justify-content: center;
   background: #f3f4f6;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   color: #4f8cff;
 }
 
@@ -1196,9 +1196,9 @@
 
 .invite-input {
   width: 100%;
-  padding: 16px 16px 16px 48px;
+  padding: var(--space-lg) 16px 16px 48px;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: #f9fafb;
   color: #1f2937;
   font-size: 1rem;
@@ -1216,8 +1216,8 @@
   background: linear-gradient(135deg, #4f8cff 0%, #38e8ff 100%);
   color: white;
   border: none;
-  padding: 16px 24px;
-  border-radius: 12px;
+  padding: var(--space-lg) 24px;
+  border-radius: var(--radius-xl);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -1242,8 +1242,8 @@
 }
 
 .invite-status {
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: var(--space-md) 16px;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
   text-align: center;
 }
@@ -1269,7 +1269,7 @@
   color: #6b7280;
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-sm);
   border-radius: 50%;
   transition: all 0.3s ease;
   width: 40px;
@@ -1287,7 +1287,7 @@
 /* ===== RESPONSIVE POUR MODALES ===== */
 @media (max-width: 768px) {
   .modal-overlay {
-    padding: 16px;
+    padding: var(--space-lg);
   }
   
   .modal-content {
@@ -1320,7 +1320,7 @@
 
 @media (max-width: 480px) {
   .modal-overlay {
-    padding: 12px;
+    padding: var(--space-md);
   }
   
   .modal-content {
@@ -1350,7 +1350,7 @@
   }
   
   .invite-input {
-    padding: 12px 12px 12px 40px;
+    padding: var(--space-md) 12px 12px 40px;
     font-size: 0.9rem;
   }
   
@@ -1359,7 +1359,7 @@
   }
   
   .invite-btn {
-    padding: 12px 16px;
+    padding: var(--space-md) 16px;
     font-size: 0.9rem;
   }
   

@@ -7,6 +7,7 @@ import Contact from '../../../components/card/candidate/profile_section/Contact'
 import EducationProfile from '../../../components/card/candidate/public_profile/EducationProfile';
 import ExperienceProfile from '../../../components/card/candidate/public_profile/ExperienceProfile';
 import LanguageProfile from '../../../components/card/candidate/public_profile/LanguageProfile';
+import { Button, Input, Card, Badge } from '../../../components/common';
 import SkillProfile from '../../../components/card/candidate/public_profile/SkillProfile';
 
 const CandidateProfile = ({ candidateData, onClose }) => {

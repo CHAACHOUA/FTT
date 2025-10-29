@@ -3,6 +3,7 @@ import { Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
+import Badge from '../../common/Badge';
 import '../../../pages/styles/forum/ForumList.css';
 import defaultImage from '../../../assets/forum-base.webp';
 import axios from 'axios';
@@ -117,15 +118,9 @@ const dashboardPath =
             {ongoing && (
               <>
                 {role === 'recruiter' && recruiterStatus === 'pending' ? (
-                  <span className="forum-status-badge-pending">
-                    <FontAwesomeIcon icon={faClock} style={{ marginRight: '6px' }} />
-                    En attente
-                  </span>
+                  <Badge type="forum" variant="pending">En attente</Badge>
                 ) : (
-                  <span className="forum-status-badge-registered">
-                    <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '6px' }} />
-                    Inscrit
-                  </span>
+                  <Badge type="forum" variant="registered">Inscrit</Badge>
                 )}
               </>
             )}

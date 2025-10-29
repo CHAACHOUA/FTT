@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import {
   FaTimes,
   FaMapMarkerAlt,
@@ -13,6 +14,7 @@ import {
   FaInfoCircle
 } from 'react-icons/fa';
 import { MdLocationOn, MdBusiness, MdPerson, MdInfo } from 'react-icons/md';
+import { Button, Badge, Card, Input } from '../../common';
 import '../../pages/styles/forum/ForumOffer.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 

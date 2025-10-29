@@ -16,6 +16,7 @@ import {
   faCalendarDay
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../../context/AuthContext';
+import { Button } from '../../../../components/common';
 import Modal from '../../../../components/card/common/Modal';
 import EventCard from '../../../../components/card/common/EventCard';
 import './ProgrammeManager.css';
@@ -580,10 +581,11 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
                 <button type="button" className="cancel-btn" onClick={resetForm}>
                   Annuler
                 </button>
-                <button 
+                <Button 
                   type="submit" 
-                  className={`save-btn ${dateErrors.length > 0 ? 'disabled' : ''}`}
+                  variant="save"
                   disabled={dateErrors.length > 0}
+                  icon={<FontAwesomeIcon icon={faSave} />}
                   onClick={(e) => {
                     if (dateErrors.length > 0) {
                       e.preventDefault();
@@ -591,9 +593,8 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
                     }
                   }}
                 >
-                  <FontAwesomeIcon icon={faSave} />
                   {editingProgramme ? 'Modifier' : 'Ajouter'}
-                </button>
+                </Button>
               </div>
         </form>
       </Modal>

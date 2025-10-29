@@ -17,6 +17,7 @@ import { MdBusiness, MdLocationOn } from 'react-icons/md';
 import LogoCompany from '../../../assets/Logo-FTT.png';
 import CandidateApplicationPage from '../../../pages/candidate/Event/virtual/CandidateApplicationPage';
 import './Offer.css';
+import { Button, Input, Card, Badge } from '../../common';
 
 const Offer = ({ 
   offer, 

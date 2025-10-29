@@ -25,7 +25,7 @@
 
 .offer-popup-content {
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   max-width: 900px;
   width: 100%;
   max-height: 90vh;
@@ -55,7 +55,7 @@
   right: 18px;
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border: none;
-  font-size: 20px;
+  font-size: var(--text-2xl);
   color: #ffffff;
   cursor: pointer;
   padding: 6px;
@@ -83,7 +83,7 @@
   border-bottom: 1px solid rgba(24, 56, 108, 0.1);
   background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 50%, #e8f2ff 100%);
   color: #18386c;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-2xl) 16px 0 0;
   position: relative;
   overflow: hidden;
 }
@@ -172,7 +172,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: var(--space-lg);
   background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
   border-radius: 10px;
   border-left: 3px solid #18386c;
@@ -242,7 +242,7 @@
   margin-bottom: 12px;
   padding: 10px;
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   transition: all 0.3s ease;
 }
 
@@ -273,7 +273,7 @@
   background: linear-gradient(135deg, #e8f2ff 0%, #f0f4ff 100%);
   color: #18386c;
   padding: 6px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   font-size: 0.85rem;
   font-weight: 500;
   box-shadow: 0 1px 4px rgba(24, 56, 108, 0.15);
@@ -313,7 +313,7 @@
   background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
   color: #6b7c93;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -332,7 +332,7 @@
   background: linear-gradient(135deg, #e8f2ff 0%, #d1e7ff 100%);
   color: #4a5568;
   border: 1px solid #c6d9f0;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -351,16 +351,16 @@
   .offer-popup-content {
     max-width: 95%;
     margin: 10px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
 
   .offer-popup-header {
     padding: 25px 20px 15px;
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-xl) 12px 0 0;
   }
 
   .offer-popup-body {
-    padding: 20px;
+    padding: var(--space-xl);
   }
 
   .offer-popup-footer {
@@ -392,7 +392,7 @@
   }
 
   .offer-popup-header {
-    padding: 20px 15px 12px;
+    padding: var(--space-xl) 15px 12px;
   }
 
   .offer-popup-body {

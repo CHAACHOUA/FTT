@@ -8,6 +8,7 @@ import {
   faCalendarDays,
   faUser
 } from '@fortawesome/free-solid-svg-icons';
+import { Button, Input, Card, Badge } from '../../common';
 import './EventCard.css';
 
 const EventCard = ({

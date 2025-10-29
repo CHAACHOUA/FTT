@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import Select from 'react-select';
 import QuestionnaireBuilder from '../questionnaire/QuestionnaireBuilder';
 import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect } from '../../constants/choices';
+import { Button, Badge, Card, Input } from '../common';
 import './VirtualOfferModal.css';
 
 const VirtualOfferModal = ({ 

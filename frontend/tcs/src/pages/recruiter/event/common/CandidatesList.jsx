@@ -7,6 +7,7 @@ import CandidateCard from '../../../../components/card/candidate/CandidateCard';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Loading from '../../../../components/loyout/Loading';
 import '../../../organizer/Event/candidates/CandidatesList.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
   const [candidates, setCandidates] = useState([]);

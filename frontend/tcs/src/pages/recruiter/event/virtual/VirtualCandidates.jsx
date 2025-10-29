@@ -17,6 +17,7 @@ import {
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Loading from '../../../../components/loyout/Loading';
 import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const VirtualCandidates = ({ forum, accessToken, apiBaseUrl }) => {
   const [candidates, setCandidates] = useState([]);

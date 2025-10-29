@@ -1,0 +1,199 @@
+/* ===== CARD COMPONENT STYLES ===== */
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-header {
+  padding: var(--space-lg) var(--space-lg) 0 var(--space-lg);
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: var(--space-lg);
+}
+
+.card-footer {
+  padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);
+  border-top: 1px solid #e5e7eb;
+  margin-top: var(--space-lg);
+}
+
+/* ===== TAILLES ===== */
+
+.card-sm {
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  margin: var(--space-sm);
+}
+
+.card-md {
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  margin: var(--space-md);
+}
+
+.card-lg {
+  padding: var(--space-2xl);
+  border-radius: var(--radius-2xl);
+  margin: var(--space-lg);
+}
+
+.card-xl {
+  padding: var(--space-3xl);
+  border-radius: var(--radius-3xl);
+  margin: var(--space-xl);
+}
+
+/* ===== VARIANTS ===== */
+
+.card-elevated {
+  border: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.card-outlined {
+  border: 2px solid #e5e7eb;
+  background-color: transparent;
+}
+
+.card-filled {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+}
+
+/* ===== PADDING PERSONNALISÉ ===== */
+
+.card-p-none { padding: 0 !important; }
+.card-p-sm { padding: var(--space-sm) !important; }
+.card-p-md { padding: var(--space-md) !important; }
+.card-p-lg { padding: var(--space-lg) !important; }
+.card-p-xl { padding: var(--space-xl) !important; }
+
+/* ===== MARGIN PERSONNALISÉ ===== */
+
+.card-m-none { margin: 0 !important; }
+.card-m-sm { margin: var(--space-sm) !important; }
+.card-m-md { margin: var(--space-md) !important; }
+.card-m-lg { margin: var(--space-lg) !important; }
+.card-m-xl { margin: var(--space-xl) !important; }
+
+/* ===== BORDER RADIUS PERSONNALISÉ ===== */
+
+.card-rounded-none { border-radius: var(--radius-none) !important; }
+.card-rounded-sm { border-radius: var(--radius-sm) !important; }
+.card-rounded-md { border-radius: var(--radius-md) !important; }
+.card-rounded-lg { border-radius: var(--radius-lg) !important; }
+.card-rounded-xl { border-radius: var(--radius-xl) !important; }
+.card-rounded-full { border-radius: var(--radius-full) !important; }
+
+/* ===== OMBRES PERSONNALISÉES ===== */
+
+.card-shadow-none { box-shadow: var(--shadow-none) !important; }
+.card-shadow-sm { box-shadow: var(--shadow-sm) !important; }
+.card-shadow-md { box-shadow: var(--shadow-md) !important; }
+.card-shadow-lg { box-shadow: var(--shadow-lg) !important; }
+.card-shadow-xl { box-shadow: var(--shadow-xl) !important; }
+.card-shadow-2xl { box-shadow: var(--shadow-2xl) !important; }
+
+/* ===== ÉTATS ===== */
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-clickable:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.card-clickable:active {
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .card-lg {
+    padding: var(--space-lg);
+    margin: var(--space-md);
+  }
+  
+  .card-xl {
+    padding: var(--space-2xl);
+    margin: var(--space-lg);
+  }
+  
+  .card-header {
+    padding: var(--space-md) var(--space-md) 0 var(--space-md);
+  }
+  
+  .card-footer {
+    padding: 0 var(--space-md) var(--space-md) var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .card-md {
+    padding: var(--space-md);
+    margin: var(--space-sm);
+  }
+  
+  .card-lg {
+    padding: var(--space-lg);
+    margin: var(--space-md);
+  }
+  
+  .card-header {
+    padding: var(--space-sm) var(--space-sm) 0 var(--space-sm);
+  }
+  
+  .card-footer {
+    padding: 0 var(--space-sm) var(--space-sm) var(--space-sm);
+  }
+}
+
+/* ===== ACCESSIBILITÉ ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+  
+  .card-hover:hover,
+  .card-clickable:hover {
+    transform: none;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+
+@media print {
+  .card {
+    background: transparent !important;
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: var(--space-md) !important;
+  }
+  
+  .card-header,
+  .card-footer {
+    border-color: #000000 !important;
+  }
+}

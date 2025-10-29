@@ -7,6 +7,7 @@ import Modal from '../../../../components/card/common/Modal';
 import VirtualQuestionnaireForm from '../../../../components/application/VirtualQuestionnaireForm';
 import VirtualSlotSelection from '../../../../components/application/VirtualSlotSelection';
 import VirtualApplicationConfirmation from '../../../../components/application/VirtualApplicationConfirmation';
+import { Button, Badge, Card, Input } from '../../../../components/common';
 import '../../../../pages/styles/candidate/VirtualApplicationPage.css';
 
 const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: propOffer = null, forum: propForum = null }) => {

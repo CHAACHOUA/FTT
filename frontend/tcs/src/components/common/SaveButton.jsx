@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import Loading from '../loyout/Loading';
 import './SaveButton.css';
 

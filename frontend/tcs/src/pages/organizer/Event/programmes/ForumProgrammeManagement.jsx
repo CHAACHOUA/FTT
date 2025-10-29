@@ -7,6 +7,7 @@ import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
 import { useAuth } from '../../../../context/AuthContext';
 import ProgrammeManager from './ProgrammeManager';
 import SpeakerManager from './SpeakerManager';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import Navbar from '../../../../components/loyout/NavBar';
 import Loading from '../../../../components/loyout/Loading';
 import './ForumProgrammeManagement.css';

@@ -3,6 +3,7 @@ import '../../../pages/styles/forum/ForumCompany.css';
 import logo from '../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faBuilding, faUsers, faEnvelope, faPhone, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { Button, Input, Card, Badge } from '../../common';
 
 const CompanyCardPopup = ({ isOpen, onClose, company }) => {
   const API = process.env.REACT_APP_API_BASE_URL;

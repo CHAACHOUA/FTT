@@ -1,5 +1,5 @@
 .virtual-applications {
-  padding: 20px;
+  padding: var(--space-xl);
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -24,7 +24,7 @@
   text-align: center;
   padding: 60px 20px;
   background: #f8f9fa;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 2px dashed #dee2e6;
 }
 
@@ -54,8 +54,8 @@
 .application-card {
   background: white;
   border: 1px solid #e9ecef;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
   transition: all 0.3s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -91,7 +91,7 @@
 
 .status-badge {
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -128,9 +128,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: var(--space-sm) 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -184,7 +184,7 @@
 
 .application-modal {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
@@ -194,7 +194,7 @@
 
 .modal-header {
   background: #f8f9fa;
-  padding: 20px;
+  padding: var(--space-xl);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -224,7 +224,7 @@
 }
 
 .modal-body {
-  padding: 20px;
+  padding: var(--space-xl);
   max-height: 60vh;
   overflow-y: auto;
 }
@@ -243,7 +243,7 @@
 .slot-info,
 .questionnaire-info {
   background: #f8f9fa;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 15px;
   margin-top: 15px;
 }
@@ -257,7 +257,7 @@
 
 .modal-footer {
   background: #f8f9fa;
-  padding: 20px;
+  padding: var(--space-xl);
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid #e9ecef;
@@ -269,7 +269,7 @@
   padding: 40px 20px;
   background: #f8d7da;
   border: 1px solid #f5c6cb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   color: #721c24;
 }
 
@@ -315,7 +315,7 @@
   
   .application-modal {
     width: 95%;
-    margin: 20px;
+    margin: var(--space-xl);
   }
   
   .modal-body {

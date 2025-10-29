@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import '../../pages/styles/forum/ForumInfos.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays, faBuilding, faVideo, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';

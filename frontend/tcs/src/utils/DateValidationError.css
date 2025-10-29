@@ -1,9 +1,9 @@
 .date-validation-error {
   background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
   border: 1px solid #feb2b2;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 12px 0;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin: var(--space-md) 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: slideIn 0.3s ease-out;
 }
@@ -17,12 +17,12 @@
 
 .error-icon {
   margin-right: 8px;
-  font-size: 16px;
+  font-size: var(--text-lg);
 }
 
 .error-title {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--text-base);
 }
 
 .error-list {
@@ -64,8 +64,8 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .date-validation-error {
-    padding: 12px;
-    margin: 8px 0;
+    padding: var(--space-md);
+    margin: var(--space-sm) 0;
   }
   
   .error-title {
@@ -73,6 +73,6 @@
   }
   
   .error-item {
-    font-size: 12px;
+    font-size: var(--text-sm);
   }
 } 

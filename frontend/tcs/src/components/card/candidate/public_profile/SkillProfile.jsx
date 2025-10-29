@@ -2,6 +2,7 @@
 import React from 'react';
 import { FaStar } from 'react-icons/fa';
 import '../../../../pages/styles/candidate/Education.css';
+import { Button, Input, Card, Badge } from '../../../common';
 
 const SkillProfile = ({ formData }) => {
   const skills = (formData.skills && formData.skills.length > 0)

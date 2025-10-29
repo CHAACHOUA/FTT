@@ -6,7 +6,7 @@
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
 }
@@ -78,7 +78,7 @@
 /* Section informations entreprise */
 .company-info-section {
   background: white;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
@@ -100,7 +100,7 @@
   width: 80px;
   height: 80px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #e5e7eb;
   padding: 0.5rem;
   background: #f9fafb;
@@ -137,7 +137,7 @@
   background: #ffffff;
   color: #111827;
   padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.85rem;
   font-weight: 500;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -165,7 +165,7 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #e5e7eb;
   flex: 1;
   min-width: 200px;
@@ -208,7 +208,7 @@
 /* Section recruteurs avec PersonCard */
 .company-recruiters-section {
   background: white;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: relative;
@@ -224,7 +224,7 @@
 .recruiters-person-cards-container .person-card {
   background: #f8fafc;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -240,7 +240,7 @@
   /* Section offres */
 .company-offers-section {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
@@ -265,7 +265,7 @@
   text-align: center;
   padding: 3rem;
   background: #f9fafb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 2px dashed #d1d5db;
 }
 

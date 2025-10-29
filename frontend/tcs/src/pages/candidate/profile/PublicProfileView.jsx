@@ -7,6 +7,7 @@ import EducationProfile from '../../../components/card/candidate/public_profile/
 import ExperienceProfile from '../../../components/card/candidate/public_profile/ExperienceProfile';
 import LanguageProfile from '../../../components/card/candidate/public_profile/LanguageProfile';
 import SkillProfile from '../../../components/card/candidate/public_profile/SkillProfile';
+import { Button, Input, Card, Badge } from '../../../components/common';
 import axios from 'axios';
 import Loading from '../../../components/loyout/Loading';
 import './ProfileView.css';

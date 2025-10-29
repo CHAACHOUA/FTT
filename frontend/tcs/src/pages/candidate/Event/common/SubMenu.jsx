@@ -6,8 +6,10 @@ import {
   FaShareAlt,
   FaPrint,
   FaMap,
-  FaFileAlt
+  FaFileAlt,
+  FaCalendarAlt
 } from 'react-icons/fa';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import '../../profile/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
@@ -24,7 +26,6 @@ const SubMenu = ({ active, setActive, forumType }) => {
     ...(showPhysicalFeatures ? [
       { id: 'plan', label: 'Plan du Forum', icon: <FaMap /> },
       { id: 'partager', label: 'Partager mon profil', icon: <FaShareAlt /> },
-    
     ] : [])
   ];
 
@@ -35,7 +36,7 @@ const SubMenu = ({ active, setActive, forumType }) => {
           <li key={item.id}>
             <button
               onClick={() => setActive(item.id)}
-              className="sidebar-link"
+              className={`sidebar-link ${active === item.id ? 'active' : ''}`}
             >
               <div className="sidebar-icon">{item.icon}</div>
               <span className="sidebar-label">{item.label}</span>

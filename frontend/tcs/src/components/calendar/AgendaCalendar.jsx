@@ -11,6 +11,7 @@ import {
 import { toast } from 'react-toastify';
 import { formatTimeForUser } from '../../utils/timezoneUtils';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Badge, Card, Input } from '../common';
 
 const AgendaCalendar = ({ 
   timeSlots: agendaSlots = [], 

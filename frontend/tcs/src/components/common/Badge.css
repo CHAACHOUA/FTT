@@ -1,0 +1,262 @@
+/* ===== BADGE COMPONENT STYLES ===== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+  
+  /* ===== SIZES ===== */
+  .badge--small {
+    padding: 2px 6px;
+    font-size: 11px;
+    gap: 3px;
+  }
+  
+  .badge--medium {
+    padding: var(--space-xs) 8px;
+    font-size: var(--text-sm);
+    gap: 4px;
+  }
+  
+  .badge--large {
+    padding: 6px 12px;
+    font-size: var(--text-base);
+    gap: 6px;
+  }
+  
+  /* ===== ICON STYLES ===== */
+  .badge__icon {
+    font-size: 0.8em;
+    opacity: 0.8;
+  }
+  
+  .badge--small .badge__icon {
+    font-size: 0.7em;
+  }
+  
+  .badge--large .badge__icon {
+    font-size: 0.9em;
+  }
+  
+  /* ===== TEXT STYLES ===== */
+  .badge__text {
+    font-weight: inherit;
+  }
+  
+  /* ===== INTERACTION STATES ===== */
+  .badge--clickable {
+    cursor: pointer;
+  }
+  
+  .badge--clickable:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .badge--clickable:active {
+    transform: translateY(0);
+  }
+  
+  .badge--clickable:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  .badge--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  /* ===== TYPE: STATUS BADGES ===== */
+  .badge--status {
+    font-weight: 600;
+  }
+  
+/* Status variants */
+.badge--status.badge--pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge--status.badge--accepted,
+.badge--status.badge--approved,
+.badge--status.badge--success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge--status.badge--rejected,
+.badge--status.badge--error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge--status.badge--confirmed {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge--status.badge--available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge--status.badge--booked {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge--status.badge--completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge--status.badge--cancelled {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge--status.badge--warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge--status.badge--info {
+  background: #dbeafe;
+  color: #2563eb;
+}
+  
+/* ===== TYPE: COUNTER BADGES ===== */
+.badge--counter {
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+  min-width: 20px;
+  justify-content: center;
+}
+  
+  .badge--counter.badge--small {
+    min-width: 16px;
+  }
+  
+  .badge--counter.badge--large {
+    min-width: 24px;
+  }
+  
+/* ===== TYPE: SECTOR BADGES ===== */
+.badge--sector {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.badge--sector.badge--empty {
+  background: #fef2f2;
+  color: #dc2626;
+}
+  
+/* ===== TYPE: COMPANY BADGES ===== */
+.badge--company {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.badge--company.badge--offers {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge--company.badge--recruiters {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge--company.badge--date {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+  
+/* ===== TYPE: USER BADGES ===== */
+.badge--user {
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+}
+  
+/* ===== TYPE: FORUM BADGES ===== */
+.badge--forum {
+  font-weight: 500;
+}
+
+.badge--forum.badge--registered {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.badge--forum.badge--pending {
+  background: #f7cc61;
+  color: #9a6f00;
+}
+  
+/* ===== TYPE: REQUIRED BADGES ===== */
+.badge--required {
+  background: #fee2e2;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 11px;
+}
+  
+/* ===== TYPE: MATCHING BADGES ===== */
+.badge--matching {
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.badge--matching.badge--empty {
+  background: #94a3b8;
+  color: #ffffff;
+}
+  
+  /* ===== RESPONSIVE DESIGN ===== */
+  @media (max-width: 768px) {
+    .badge--medium {
+      padding: 3px 6px;
+      font-size: 11px;
+    }
+    
+    .badge--large {
+      padding: var(--space-xs) 8px;
+      font-size: var(--text-sm);
+    }
+  }
+  
+  /* ===== ACCESSIBILITY ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .badge {
+      transition: none;
+    }
+    
+    .badge--clickable:hover {
+      transform: none;
+    }
+  }
+  
+/* ===== PRINT STYLES ===== */
+@media print {
+  .badge {
+    background: transparent !important;
+    color: #000000 !important;
+    border: none !important;
+  }
+}
+  

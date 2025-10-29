@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import SpeakerManager from './SpeakerManager';
 import Navbar from '../../../../components/loyout/NavBar';
 import './SpeakerManagementPage.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const SpeakerManagementPage = () => {
   const navigate = useNavigate();

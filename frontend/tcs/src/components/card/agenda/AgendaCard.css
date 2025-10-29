@@ -1,258 +1,271 @@
+/* Base card */
 .agenda-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  margin-bottom: 16px;
-  transition: all 0.2s ease;
-  overflow: visible;
   position: relative;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  padding: 16px;
+  transition: box-shadow .2s ease, transform .2s ease;
 }
 
 .agenda-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 
 .agenda-card.past {
-  opacity: 0.6;
-  background: #f9fafb;
+  opacity: .85;
 }
 
 .agenda-card.conflict {
-  border: 2px solid #DC2626;
-  background: #FEF2F2;
-  position: relative;
+  border-color: #fca5a5;
 }
 
-.agenda-card.conflict .agenda-card-header {
-  background: #FECACA;
-  border-bottom-color: #DC2626;
-}
-
-.conflict-indicator {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #DC2626;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  z-index: 10;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
-}
-
-/* Actions en bas à droite - style programme */
-.agenda-actions {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  display: flex;
-  gap: 0.4rem;
-  z-index: 3;
-}
-
-.agenda-edit-btn,
-.agenda-start-btn,
-.agenda-delete-btn {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.7rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.agenda-edit-btn {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.agenda-edit-btn:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.2) 100%);
-  transform: scale(1.15);
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-}
-
-.agenda-start-btn {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.agenda-start-btn:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.2) 100%);
-  transform: scale(1.15);
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-}
-
-.agenda-delete-btn {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.agenda-delete-btn:hover {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0.2) 100%);
-  transform: scale(1.15);
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-}
-
+/* Header */
 .agenda-card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .agenda-card-type {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .agenda-card-type .type-label {
-  font-weight: 500;
-  color: #374151;
   font-size: 14px;
 }
 
 .agenda-card-status {
-  display: flex;
-  align-items: center;
 }
 
-.status-badge {
-  padding: 2px 8px; /* py-0.5 px-2 */
-  border-radius: 6px; /* rounded-md */
-  font-size: 12px; /* text-xs */
-  font-weight: 500; /* font-medium */
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* Actions (bottom-right) */
+.agenda-actions {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.agenda-actions button {
   display: inline-flex;
   align-items: center;
-  white-space: nowrap;
-  width: fit-content;
-  height: auto;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
 }
 
+.agenda-edit-btn {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.agenda-edit-btn:hover {
+  background: #bfdbfe;
+  transform: translateY(-1px);
+}
+
+.agenda-delete-btn {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.agenda-delete-btn:hover {
+  background: #fca5a5;
+  transform: translateY(-1px);
+}
+
+/* Content */
 .agenda-card-content {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .agenda-card-time,
-.agenda-card-date,
-.agenda-card-candidate {
+.agenda-card-date {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.agenda-card-time {
-  color: #1f2937;
-  font-weight: 600;
-  font-size: 16px;
+  gap: 8px;
+  color: #111827;
 }
 
 .agenda-card-time .time-range {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
-.agenda-card-candidate {
-  background: #f3f4f6;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.candidate-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.candidate-info strong {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.candidate-info span {
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.agenda-card-description {
-  margin-bottom: 16px;
+  font-weight: 700;
+  color: #2563eb;
 }
 
 .agenda-card-description p {
-  color: #6b7280;
-  font-size: 14px;
-  line-height: 1.5;
   margin: 0;
+  color: #4b5563;
 }
 
-.agenda-card-link {
-  margin-bottom: 16px;
+/* Conflict indicator */
+.conflict-indicator {
+  box-shadow: 0 2px 6px rgba(220,38,38,0.25);
 }
 
-.meeting-link {
-  display: inline-flex;
+/* Grid wrapper (used by parent) */
+.agenda-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .agenda-card {
+    padding: 12px;
+  }
+}
+
+/* Styles pour les fonctionnalités Jitsi dans AgendaCard */
+
+.agenda-card-meeting {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.meeting-link-section,
+.create-meeting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.meeting-link-header,
+.create-meeting-header {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.meeting-label {
+  font-size: 0.875rem;
+}
+
+.meeting-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.join-meeting-link,
+.create-meeting-btn,
+.external-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.join-meeting-link {
   background: #3b82f6;
   color: white;
+  flex: 1;
+  justify-content: center;
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
 }
 
-.meeting-link:hover {
+.join-meeting-link:hover {
   background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   color: white;
+  text-decoration: none;
+}
+
+.create-meeting-btn {
+  background: #10b981;
+  color: white;
+}
+
+.create-meeting-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.external-link-btn {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.5rem;
+}
+
+.external-link-btn:hover {
+  background: #e5e7eb;
+}
+
+.meeting-link-text {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 0.875rem;
+  display: block;
+  pointer-events: auto;
+  z-index: 1;
+  position: relative;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.meeting-link-text:hover {
+  color: #2563eb;
+  text-decoration: underline;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .agenda-card-header {
+@media (max-width: 640px) {
+  .meeting-actions {
     flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
   }
+  
+  .join-meeting-link,
+  .create-meeting-btn {
+    justify-content: center;
+  }
+}
 
-  .agenda-actions {
-    bottom: 0.5rem;
-    right: 0.5rem;
-  }
+/* Styles pour les créneaux avec réunion */
+.agenda-card:has(.meeting-link-section) {
+  border-left: 4px solid #3b82f6;
+}
 
-  .agenda-edit-btn,
-  .agenda-start-btn,
-  .agenda-delete-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 0.6rem;
-  }
+.agenda-card:has(.create-meeting-section) {
+  border-left: 4px solid #f59e0b;
+}
+
+/* Indicateur visuel pour les réunions */
+.agenda-card-meeting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+  border-radius: 1px;
 }

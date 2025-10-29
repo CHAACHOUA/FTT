@@ -7,6 +7,7 @@ import logo from '../../../assets/Logo-FTT.png';
 import '../../../pages/styles/forum/ForumList.css';
 import '../../../pages/candidate/Event/hybrid/Popup.css';
 import axios from 'axios';
+import { Button, Input, Card, Badge } from '../../common';
 import { toast } from 'react-toastify';
 
 const ForumCard = ({ forum, role, isRegistered, onRegistered }) => {

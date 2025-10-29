@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaTrash, FaPlus } from 'react-icons/fa';
+import { Button, Card, Badge, Input } from '../../../components/common';
 
 const Sectors = ({ sectors, onUpdate, readOnly }) => {
   const handleChange = (index, value) => {

@@ -11,7 +11,7 @@
 .popup-content {
   background: white;
   padding: 30px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   width: 90%;
   max-width: 400px;
   display: flex;
@@ -28,13 +28,13 @@
 .popup-buttons button {
   padding: 10px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background-color: #27a5df;
   color: white;
   cursor: pointer;
 }
 .react-select__control {
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #d1d5db;
   padding: 2px;
 }
@@ -48,7 +48,7 @@
   background-color: #3b82f6;
   color: white;
   border-radius: 9999px;
-  padding: 4px 8px;
+  padding: var(--space-xs) 8px;
 }
 
 .react-select__multi-value__label {

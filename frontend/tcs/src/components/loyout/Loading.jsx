@@ -1,4 +1,5 @@
 import React from 'react';
+import { SIZE_CONSTANTS } from '../../constants/sizeConstants';
 
 const Loading = () => {
   return (

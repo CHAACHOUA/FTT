@@ -1,6 +1,7 @@
 // src/pages/candidate/section/Skill.jsx
 import React from 'react';
 import { FaStar, FaTrash, FaPlusCircle } from 'react-icons/fa';
+import { Input, Button, Badge } from '../../../common';
 
 const Skill = ({ formData, onUpdate, children }) => {
   const handleListChange = (index, value) => {

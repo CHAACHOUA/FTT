@@ -1,7 +1,7 @@
 .timezone-settings {
   background: #fff;
-  border-radius: 16px;
-  margin: 20px auto;
+  border-radius: var(--radius-2xl);
+  margin: var(--space-xl) auto;
   padding: 40px 36px 32px 36px;
   width: 90%;
   max-width: 1200px;
@@ -18,14 +18,14 @@
 .timezone-header h3 {
   margin: 0 0 8px 0;
   color: #1f2937;
-  font-size: 24px;
+  font-size: var(--text-3xl);
   font-weight: 700;
 }
 
 .timezone-header p {
   margin: 0;
   color: #6b7280;
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 
@@ -42,17 +42,17 @@
   margin-bottom: 12px;
   color: #374151;
   font-weight: 600;
-  font-size: 16px;
+  font-size: var(--text-lg);
 }
 
 .timezone-selector select {
   width: 100%;
-  padding: 16px 20px;
+  padding: var(--space-lg) 20px;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: #ffffff;
   color: #374151;
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 500;
   transition: all 0.3s ease;
 }
@@ -72,15 +72,15 @@
 
 .timezone-preview {
   margin-bottom: 16px;
-  padding: 12px;
+  padding: var(--space-md);
   background: #f8fafc;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
 }
 
 .preview-label {
   color: #64748b;
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 500;
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -89,7 +89,7 @@
 
 .preview-time {
   color: #1e293b;
-  font-size: 18px;
+  font-size: var(--text-xl);
   font-weight: 600;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
@@ -102,12 +102,12 @@
 }
 
 .save-button {
-  padding: 16px 32px;
+  padding: var(--space-lg) 32px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #ffffff;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: var(--radius-xl);
+  font-size: var(--text-lg);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -127,9 +127,9 @@
 }
 
 .timezone-info {
-  padding: 16px;
+  padding: var(--space-lg);
   background: #f0f9ff;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 1px solid #bae6fd;
   margin-top: 20px;
 }
@@ -137,7 +137,7 @@
 .timezone-info h4 {
   margin: 0 0 8px 0;
   color: #0369a1;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -155,9 +155,9 @@
 
 .loading {
   text-align: center;
-  padding: 20px;
+  padding: var(--space-xl);
   color: #6b7280;
-  font-size: 14px;
+  font-size: var(--text-base);
 }
 
 /* Responsive */

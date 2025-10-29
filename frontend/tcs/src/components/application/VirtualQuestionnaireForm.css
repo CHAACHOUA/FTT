@@ -22,7 +22,7 @@
   text-align: center;
   padding: 40px 20px;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 2px dashed #dee2e6;
 }
 
@@ -51,8 +51,8 @@
 .question-item {
   background: white;
   border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
   margin-bottom: 20px;
   transition: all 0.2s;
 }
@@ -82,9 +82,9 @@
 .question-input textarea,
 .question-input select {
   width: 100%;
-  padding: 12px;
+  padding: var(--space-md);
   border: 1px solid #ced4da;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   transition: border-color 0.2s;
 }
@@ -115,7 +115,7 @@
   align-items: center;
   padding: 10px;
   background: #f8f9fa;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -139,8 +139,8 @@
 
 .file-upload {
   border: 2px dashed #ced4da;
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
   text-align: center;
   transition: all 0.2s;
 }
@@ -180,9 +180,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: var(--space-md) 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -235,6 +235,6 @@
   
   .radio-option,
   .checkbox-option {
-    padding: 8px;
+    padding: var(--space-sm);
   }
 }

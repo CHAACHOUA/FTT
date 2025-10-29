@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaDownload, FaUserCircle, FaMapMarkerAlt, FaTrophy } from 'react-icons/fa';
+import Badge from '../../../../components/common/Badge';
 import CandidateProfile from '../../../candidate/profile/CandidateProfile';
 import './CandidateListRecruiter.css'; // On reprend le même style CSS
 
@@ -87,9 +88,9 @@ const MatchingCandidates = ({ candidates: candidatesProp, onClose }) => {
                 <div className="sectors-container">
                   {(candidate.search?.sector?.length ?? 0) > 0
                     ? candidate.search.sector.map((sector, i) => (
-                        <span key={i} className="sector-badge">{sector}</span>
+                        <Badge key={i} type="sector">{sector}</Badge>
                       ))
-                    : <span className="sector-badge empty">Non renseigné</span>
+                    : <Badge type="sector" variant="empty">Non renseigné</Badge>
                   }
                 </div>
 

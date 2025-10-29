@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../../../pages/styles/candidate/Education.css';
 import { useAuth } from '../../../context/AuthContext';
 import { jwtDecode } from "jwt-decode";
+import { Button, Input, Card, Badge } from '../../../components/common';
 
 const CompleteRecruiterSetup = () => {
   const navigate = useNavigate();

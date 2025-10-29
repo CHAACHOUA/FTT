@@ -3,6 +3,7 @@ import Modal from '../common/Modal';
 import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect } from '../../../constants/choices';
 import { FaBriefcase, FaIndustry, FaMapMarkerAlt, FaFileAlt, FaUser, FaCalendarAlt, FaClock, FaFlag } from 'react-icons/fa';
 import Loading from '../../loyout/Loading';
+import { Button, Input, Card, Badge } from '../../common';
 const OfferModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',

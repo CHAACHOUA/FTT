@@ -7,8 +7,9 @@ import { useAuth } from '../../context/AuthContext';
 import '../styles/common/login.css';
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import logo from '../../assets/logo-digitalio.png';
-import Loading from '../../components/loyout/Loading'; // ✅ import
+import Loading from '../../components/loyout/Loading';
 import { jwtDecode } from "jwt-decode";
+import { Input, Button, Card } from '../../components/common';
 
 export default function Login() {
   const navigate = useNavigate();

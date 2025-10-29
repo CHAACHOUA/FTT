@@ -7,6 +7,7 @@ import Navbar from '../../../../components/loyout/NavBar';
 import Loading from '../../../../components/loyout/Loading';
 import './CandidatesList.css';
 import '../../../../pages/styles/organizer/organizer-buttons.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import CandidateFilters from '../../../../components/filters/candidate/CandidateFilters';
 import { useAuth } from '../../../../context/AuthContext';
 import axios from 'axios';

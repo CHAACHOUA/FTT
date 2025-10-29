@@ -3,9 +3,9 @@ import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { 
-  faCheck, 
-  faTimes, 
-  faClock, 
+  faCheck,
+  faTimes,
+  faClock,
   faUser, 
   faCalendar,
   faBuilding,
@@ -14,7 +14,6 @@ import {
   faVideo,
   faQuestion,
   faFileText,
-  faCheckCircle,
   faEllipsisV,
   faBookmark,
   faEye,
@@ -24,6 +23,7 @@ import {
   faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import './RecruiterApplications.css';
 import Loading from '../../../../components/loyout/Loading';
 
@@ -180,21 +180,18 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
   };
 
   const getStatusBadge = (status) => {
-    const badges = {
-      pending: { color: 'bg-yellow-100', icon: faClock, text: 'En Attente' },
-      accepted: { color: 'bg-green-100', icon: faCheck, text: 'Acceptée' },
-      rejected: { color: 'bg-red-100', icon: faTimes, text: 'Rejetée' },
-      confirmed: { color: 'bg-blue-100', icon: faCheckCircle, text: 'Confirmée' },
-      waiting: { color: 'bg-orange-100', icon: faClock, text: 'Attente retour' }
+    const statusTexts = {
+      pending: 'En Attente',
+      accepted: 'Acceptée',
+      rejected: 'Rejetée',
+      confirmed: 'Confirmée',
+      waiting: 'Attente retour'
     };
     
-    const badge = badges[status] || badges.pending;
-    
     return (
-      <span className={`status-badge ${badge.color}`}>
-        <FontAwesomeIcon icon={badge.icon} className="status-icon" />
-        {badge.text}
-      </span>
+      <Badge type="status" variant={status}>
+        {statusTexts[status] || statusTexts.pending}
+      </Badge>
     );
   };
 

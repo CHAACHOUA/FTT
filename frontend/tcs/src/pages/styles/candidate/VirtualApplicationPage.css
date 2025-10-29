@@ -38,7 +38,7 @@
 /* Modal Content - MÊME LARGEUR que ForumRegistrationPopup */
 .application-modal {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   position: relative;
   max-height: 90vh;
@@ -95,7 +95,7 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   color: #6b7280;
   transition: all 0.2s ease;
   z-index: 10;
@@ -141,7 +141,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -282,7 +282,7 @@
 
 .modal-btn {
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 500;
   font-size: 0.8rem;
   transition: all 0.2s ease;
@@ -387,7 +387,7 @@
   
   .application-modal {
     max-height: 95vh;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
   
   .modal-header {
@@ -437,7 +437,7 @@
   }
   
   .application-modal {
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
   
   .modal-header {
@@ -496,7 +496,7 @@
   padding: 0.75rem 1.5rem;
   background: white;
   border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   color: #374151;
   text-decoration: none;
   font-weight: 500;
@@ -543,7 +543,7 @@
   gap: 1rem;
   padding: 1rem 1.5rem;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
@@ -624,7 +624,7 @@
   margin: 0 auto;
   padding: 0 2rem;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
   min-height: 500px;
@@ -646,7 +646,7 @@
   gap: 0.5rem;
   padding: 0.75rem 2rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -700,7 +700,7 @@
   padding: 3rem;
   text-align: center;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 

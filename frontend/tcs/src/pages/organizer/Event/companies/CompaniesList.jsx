@@ -7,6 +7,7 @@ import defaultLogo from '../../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faXmark, faToggleOn, faToggleOff, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import InviteRecruiterModal from './InviteRecruiterModal';
 import PersonCard from '../../../../components/card/common/PersonCard';
 import { useAuth } from '../../../../context/AuthContext';
@@ -519,13 +520,13 @@ const CompaniesList = (props) => {
                   <div className="company-details">
                     <h3 className="company-name">{company.name}</h3>
                     <div className="company-stats-row">
-                      <span className="company-badge offers-badge">{company.offers?.length || 0} Offre(s)</span>
-                      <span className="company-badge recruiters-badge">{company.recruiters?.length || 0} Recruteur(s)</span>
-                      <span className={`company-badge status-badge ${company.approved ? 'approved' : 'pending'}`}>
+                      <Badge type="company" variant="offers">{company.offers?.length || 0} Offre(s)</Badge>
+                      <Badge type="company" variant="recruiters">{company.recruiters?.length || 0} Recruteur(s)</Badge>
+                      <Badge type="company" variant={company.approved ? 'approved' : 'pending'}>
                         {company.approved ? 'Approuvée' : 'En attente'}
-                      </span>
+                      </Badge>
                       {company.added_at && (
-                        <span className="company-badge date-badge">{company.added_at}</span>
+                        <Badge type="company" variant="date">{company.added_at}</Badge>
                       )}
                     </div>
                   </div>

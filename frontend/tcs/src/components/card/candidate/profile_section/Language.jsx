@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaGlobe, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdLeaderboard } from 'react-icons/md';
+import { Input, Button, Badge } from '../../../common';
 
 const Language = ({ formData, onUpdate, children }) => {
   const [allLanguages, setAllLanguages] = useState([]);

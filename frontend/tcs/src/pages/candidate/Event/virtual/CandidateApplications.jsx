@@ -3,9 +3,6 @@ import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { 
-  faCheck, 
-  faTimes, 
-  faClock, 
   faUser, 
   faCalendar,
   faBuilding,
@@ -15,7 +12,9 @@ import {
   faEye
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Badge from '../../../../components/common/Badge';
 import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
+import './CandidateApplications.css';
 import Loading from '../../../../components/loyout/Loading';
 
 const CandidateApplications = ({ forumId: propForumId }) => {
@@ -53,34 +52,16 @@ const CandidateApplications = ({ forumId: propForumId }) => {
   };
 
   const getStatusBadge = (status) => {
-    const badges = {
-      pending: { 
-        color: 'bg-yellow-100 text-yellow-800 border-yellow-200', 
-        icon: faClock, 
-        text: 'En attente de validation',
-        description: 'Votre candidature est en cours d\'examen'
-      },
-      accepted: { 
-        color: 'bg-green-100 text-green-800 border-green-200', 
-        icon: faCheck, 
-        text: 'Acceptée',
-        description: 'Félicitations ! Votre candidature a été acceptée'
-      },
-      rejected: { 
-        color: 'bg-red-100 text-red-800 border-red-200', 
-        icon: faTimes, 
-        text: 'Rejetée',
-        description: 'Votre candidature n\'a pas été retenue'
-      }
+    const statusTexts = {
+      pending: 'En attente de validation',
+      accepted: 'Acceptée',
+      rejected: 'Rejetée'
     };
     
-    const badge = badges[status] || badges.pending;
-    
     return (
-      <div className={`status-badge ${badge.color}`}>
-        <FontAwesomeIcon icon={badge.icon} className="status-icon" />
-        {badge.text}
-      </div>
+      <Badge type="status" variant={status}>
+        {statusTexts[status] || statusTexts.pending}
+      </Badge>
     );
   };
 
@@ -131,6 +112,7 @@ const CandidateApplications = ({ forumId: propForumId }) => {
   };
 
 
+
   if (loading) {
     return <Loading />;
   }
@@ -160,6 +142,7 @@ const CandidateApplications = ({ forumId: propForumId }) => {
                   <th>TITRE OFFRE</th>
                   <th>CRÉNEAU CHOISI</th>
                   <th>STATUT</th>
+                  <th>REJOINDRE RÉUNION</th>
                   <th>DATE CANDIDATURE</th>
                 </tr>
               </thead>
@@ -227,6 +210,23 @@ const CandidateApplications = ({ forumId: propForumId }) => {
                     </td>
                     <td className="status-cell">
                       {getStatusBadge(application.status)}
+                    </td>
+                    <td className="join-meeting-cell">
+                      {application.status === 'accepted' && 
+                       application.selected_slot_info?.type === 'video' && 
+                       application.selected_slot_info?.meeting_link ? (
+                        <a 
+                          href={application.selected_slot_info.meeting_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="join-meeting-link simple-link"
+                          title="Rejoindre la réunion"
+                        >
+                          Rejoindre réunion
+                        </a>
+                      ) : (
+                        <span className="no-meeting">-</span>
+                      )}
                     </td>
                     <td className="date-added">
                       {formatDate(application.created_at)}

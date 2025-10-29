@@ -7,6 +7,7 @@ import Loading from '../../../../components/loyout/Loading';
 import { useNavigate } from 'react-router-dom';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Offer from '../../../../components/card/offer/Offer';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const MatchingOffers = ({ forum, accessToken, apiBaseUrl }) => {
   const [offers, setOffers] = useState([]);

@@ -7,6 +7,7 @@ import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import Presentation from '../../../components/card/candidate/profile_section/Presentation';
 import Contact from '../../../components/card/candidate/profile_section/Contact';
 import SaveButton from '../../../components/common/SaveButton';
+import { Button, Card, Badge, Input } from '../../../components/common';
 import { toast } from 'react-toastify';
 import Loading from '../../../components/loyout/Loading';
 import { useLocation } from 'react-router-dom';
@@ -117,12 +118,12 @@ const RecruiterProfileView = () => {
           <>
             <section id="profile">
               <Presentation formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Presentation>
             </section>
             <section id="contact">
               <Contact formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Contact>
             </section>
           

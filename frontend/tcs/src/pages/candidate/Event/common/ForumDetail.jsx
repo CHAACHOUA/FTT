@@ -7,6 +7,7 @@ import '../../../../pages/styles/forum/ForumDetail.css';
 import Navbar from '../../../../components/loyout/NavBar';
 import Logo from '../../../../assets/Logo-FTT.png';
 import Photo from '../../../../assets/forum-base.webp';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faBuilding, faBriefcase, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 

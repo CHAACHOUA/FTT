@@ -4,6 +4,7 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import './CandidatesFilters.css';
 import { getSectorsForSelect, getContractsForSelect, getRegionsForSelect, getLanguagesForSelect } from '../../../constants/choices';
+import { Button, Input, Card, Badge } from '../../common';
 
 export default function CandidateFilters({ filters, onChange, options }) {
   const [expandedSections, setExpandedSections] = useState({});

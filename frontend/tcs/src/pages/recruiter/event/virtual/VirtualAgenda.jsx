@@ -11,7 +11,8 @@ import {
   faList,
   faCalendar,
   faChevronDown,
-  faUsers
+  faUsers,
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -19,11 +20,13 @@ import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Loading from '../../../../components/loyout/Loading';
 import AgendaCard from '../../../../components/card/agenda/AgendaCard';
 import AgendaCalendar from '../../../../components/calendar/AgendaCalendar';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
 import '../../../../components/card/agenda/AgendaCard.css';
 import '../../../../components/calendar/AgendaCalendar.css';
 import { useAuth } from '../../../../context/AuthContext';
 import { formatAgendaSlots } from '../../../../utils/timezoneUtils';
+import ZoomService from '../../../../services/ZoomService';
 
 // Styles pour les contrôles d'agenda
 const agendaStyles = `
@@ -32,9 +35,9 @@ const agendaStyles = `
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
-    padding: 16px;
+    padding: var(--space-lg);
     background: #f8fafc;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     border: 1px solid #e5e7eb;
   }
 
@@ -47,14 +50,14 @@ const agendaStyles = `
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
+    padding: var(--space-sm) 16px;
     border: 1px solid #d1d5db;
     background: white;
     color: #6b7280;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 14px;
+    font-size: var(--text-base);
     font-weight: 500;
   }
 
@@ -78,27 +81,27 @@ const agendaStyles = `
   .agenda-filters label {
     font-weight: 500;
     color: #374151;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
 
   .agenda-filters input,
   .agenda-filters select {
-    padding: 8px 12px;
+    padding: var(--space-sm) 12px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
   }
 
   .interview-period-info {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: var(--space-sm) 12px;
     background: #f0f9ff;
     border: 1px solid #bae6fd;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     color: #0369a1;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
 
   .period-label {
@@ -131,7 +134,7 @@ const agendaStyles = `
   .add-slot-section-above-filters {
     display: flex;
     justify-content: flex-end;
-    margin: 16px 0;
+    margin: var(--space-lg) 0;
     padding: 0 16px;
   }
 
@@ -139,14 +142,14 @@ const agendaStyles = `
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
+    padding: var(--space-sm) 12px;
     background: #3b82f6;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: var(--text-sm);
     font-weight: 500;
     white-space: nowrap;
   }
@@ -173,10 +176,10 @@ const agendaStyles = `
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 16px;
+    padding: var(--space-md) 16px;
     background: white;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
@@ -195,7 +198,7 @@ const agendaStyles = `
     right: 0;
     background: white;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     margin-top: 4px;
@@ -205,7 +208,7 @@ const agendaStyles = `
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: var(--space-md) 16px;
     border: none;
     background: white;
     cursor: pointer;
@@ -231,11 +234,11 @@ const agendaStyles = `
 
   .recruiter-name {
     font-weight: 500;
-    font-size: 14px;
+    font-size: var(--text-base);
   }
 
   .recruiter-role {
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: #6b7280;
   }
 
@@ -243,7 +246,7 @@ const agendaStyles = `
         background: #3b82f6;
         color: white;
         padding: 2px 8px;
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         font-size: 11px;
         font-weight: 500;
         margin-left: 8px;
@@ -259,8 +262,8 @@ const agendaStyles = `
         background: #3b82f6;
         color: white;
         padding: 2px 6px;
-        border-radius: 8px;
-        font-size: 10px;
+        border-radius: var(--radius-lg);
+        font-size: var(--text-xs);
         font-weight: 600;
         margin-left: 4px;
       }
@@ -277,7 +280,7 @@ const agendaStyles = `
       .modal-header h3 {
         margin: 0;
         color: #1f2937;
-        font-size: 20px;
+        font-size: var(--text-2xl);
         font-weight: 600;
       }
 
@@ -320,6 +323,8 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showRecruiterDropdown, setShowRecruiterDropdown] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingSlot, setEditingSlot] = useState(null);
   const { isAuthenticated, user } = useAuth(); // Use isAuthenticated and user from AuthContext
   
   // Debug pour voir le timezone actuel
@@ -691,8 +696,59 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   };
 
   const handleEditSlot = (slot) => {
-    // TODO: Implémenter l'édition
-    console.log('Edit slot:', slot);
+    setEditingSlot(slot);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEditSlot = async () => {
+    if (!editingSlot) return;
+
+    try {
+      console.log('🔍 Modification du créneau:', editingSlot.id);
+      
+      await axios.put(`${apiBaseUrl}/virtual/forums/${forum.id}/agenda/${editingSlot.id}/`, {
+        date: editingSlot.date,
+        start_time: editingSlot.start_time,
+        end_time: editingSlot.end_time,
+        type: editingSlot.type,
+        description: editingSlot.description || ''
+      }, {
+        withCredentials: true
+      });
+
+      console.log('✅ Créneau modifié');
+      
+      // Rafraîchir depuis l'API
+      fetchTimeSlots();
+      
+      // Fermer le modal
+      setShowEditModal(false);
+      setEditingSlot(null);
+      
+      toast.success('✅ Créneau modifié avec succès', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de la modification du créneau:', error);
+      toast.error('❌ Erreur lors de la modification du créneau', {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleCancelEditSlot = () => {
+    setShowEditModal(false);
+    setEditingSlot(null);
   };
 
   const handleDeleteSlot = async (slot) => {
@@ -741,6 +797,82 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   const handleStartInterview = (slot) => {
     // TODO: Implémenter le démarrage d'entretien
     console.log('Start interview:', slot);
+  };
+
+  const handleCreateMeetingLink = async (slot) => {
+    try {
+      console.log('🔍 Création du lien de réunion pour le créneau:', slot.id);
+      
+      const response = await ZoomService.createMeeting(forum.id, slot.id);
+      
+      console.log('✅ Lien de réunion créé:', response);
+      
+      // Rafraîchir les créneaux pour afficher le nouveau lien
+      fetchTimeSlots();
+      
+      toast.success('✅ Lien de visioconférence créé avec succès', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de la création du lien de réunion:', error);
+      
+      let errorMessage = 'Erreur lors de la création du lien de réunion';
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      
+      toast.error(`❌ ${errorMessage}`, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleJoinMeeting = async (slot) => {
+    try {
+      console.log('🔍 Tentative de connexion à la réunion:', slot.id);
+      
+      // Utiliser directement le lien Zoom
+      if (slot.meeting_link) {
+        await ZoomService.joinMeeting(slot.meeting_link);
+      } else {
+        throw new Error('Aucun lien de réunion disponible');
+      }
+      
+      toast.success('✅ Ouverture de la réunion Zoom...', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de la connexion à la réunion Zoom:', error);
+      
+      let errorMessage = 'Erreur lors de la connexion à la réunion Zoom';
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      
+      toast.error(`❌ ${errorMessage}`, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   const handleCalendarDateClick = (date) => {
@@ -893,7 +1025,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                             {selectedRecruiter.full_name}
                             {console.log('🔍 selectedRecruiter.is_current_user:', selectedRecruiter.is_current_user)}
                             {selectedRecruiter.is_current_user && (
-                              <span className="you-badge" style={{ marginLeft: '8px' }}>Vous</span>
+                              <Badge type="user" size="small">Vous</Badge>
                             )}
                           </>
                         ) : (
@@ -917,7 +1049,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                                 <div className="recruiter-name">
                                   <span>{member.full_name}</span>
                                   {member.is_current_user && (
-                                    <span className="you-badge">Vous</span>
+                                    <Badge type="user" size="small">Vous</Badge>
                                   )}
                                 </div>
                                 <span className="recruiter-role">{member.email}</span>
@@ -1037,6 +1169,8 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                           onEdit={handleEditSlot}
                           onDelete={handleDeleteSlot}
                           onStartInterview={handleStartInterview}
+                          onCreateMeetingLink={handleCreateMeetingLink}
+                          onJoinMeeting={handleJoinMeeting}
                           isPast={new Date(slot.date) < new Date()}
                           isInConflict={isInConflict}
                         />
@@ -1212,6 +1346,94 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                 </button>
                 <button type="submit" className="btn-primary">
                   Ajouter
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal d'édition de créneau */}
+      {showEditModal && editingSlot && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Modifier le créneau</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={handleCancelEditSlot}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+            
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveEditSlot(); }}>
+              <div className="form-group">
+                <label>Date :</label>
+                <input
+                  type="date"
+                  value={editingSlot.date}
+                  onChange={(e) => setEditingSlot({...editingSlot, date: e.target.value})}
+                  min={getInterviewStartDate().toISOString().split('T')[0]}
+                  max={getInterviewEndDate().toISOString().split('T')[0]}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Heure de début :</label>
+                <input
+                  type="time"
+                  value={editingSlot.start_time}
+                  onChange={(e) => setEditingSlot({...editingSlot, start_time: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Heure de fin :</label>
+                <input
+                  type="time"
+                  value={editingSlot.end_time}
+                  onChange={(e) => setEditingSlot({...editingSlot, end_time: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Type d'entretien :</label>
+                <select
+                  value={editingSlot.type}
+                  onChange={(e) => setEditingSlot({...editingSlot, type: e.target.value})}
+                >
+                  <option value="video">Visioconférence</option>
+                  <option value="phone">Téléphone</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Description (optionnel) :</label>
+                <textarea
+                  value={editingSlot.description || ''}
+                  onChange={(e) => setEditingSlot({...editingSlot, description: e.target.value})}
+                  rows="3"
+                  placeholder="Ajouter une description..."
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={handleCancelEditSlot}
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  Sauvegarder
                 </button>
               </div>
             </form>

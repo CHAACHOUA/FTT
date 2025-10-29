@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import '../../../../pages/styles/candidate/signup.css';
 import logo from '../../../../assets/logo-digitalio.png';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import Loading from '../../../../components/loyout/Loading'; // ✅ import du composant de chargement
 
 const API = process.env.REACT_APP_API_BASE_URL;

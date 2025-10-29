@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../../pages/styles/candidate/Presentation.css';
 import { FaUser, FaVenusMars, FaCamera, FaFileAlt } from 'react-icons/fa';
+import { Input, Button } from '../../../common';
 
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 

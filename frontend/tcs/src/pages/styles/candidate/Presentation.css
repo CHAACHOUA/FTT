@@ -1,8 +1,8 @@
 /* Modern card style for Presentation section */
 .presentation-section {
   background: #fff;
-  border-radius: 16px;
-  margin: 20px auto;
+  border-radius: var(--radius-2xl);
+  margin: var(--space-xl) auto;
   padding: 40px 36px 32px 36px;
   width: 90%;
   max-width: 1200px;
@@ -14,7 +14,7 @@
 @media (max-width: 1024px) {
   .presentation-section {
     width: 95%;
-    padding: 32px 28px 24px 28px;
+    padding: var(--space-3xl) 28px 24px 28px;
   }
   
   .presentation-title {
@@ -26,9 +26,9 @@
 @media (max-width: 768px) {
   .presentation-section {
     width: 100%;
-    margin: 16px 0;
-    padding: 24px 20px 20px 20px;
-    border-radius: 12px;
+    margin: var(--space-lg) 0;
+    padding: var(--space-2xl) 20px 20px 20px;
+    border-radius: var(--radius-xl);
   }
   
   .presentation-title {
@@ -44,7 +44,7 @@
   .input-wrapper-modern input,
   .input-wrapper-modern select {
     font-size: 1.05em;
-    padding: 20px 14px 6px 14px;
+    padding: var(--space-xl) 14px 6px 14px;
   }
   
   .floating-label {
@@ -76,7 +76,7 @@
   
   .upload-photo-btn {
     font-size: 0.9rem;
-    padding: 8px 16px;
+    padding: var(--space-sm) 16px;
   }
   
 
@@ -88,8 +88,8 @@
 
 @media (max-width: 480px) {
   .presentation-section {
-    padding: 20px 16px 16px 16px;
-    margin: 12px 0;
+    padding: var(--space-xl) 16px 16px 16px;
+    margin: var(--space-md) 0;
   }
   
   .presentation-title {
@@ -328,7 +328,7 @@
 .modern-textarea {
   width: 100%;
   min-height: 120px;
-  padding: 16px;
+  padding: var(--space-lg);
   border: none;
   background: transparent;
   font-size: 1em;

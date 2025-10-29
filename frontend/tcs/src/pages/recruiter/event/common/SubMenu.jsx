@@ -10,6 +10,7 @@ import {
   FaUserTie
 } from 'react-icons/fa';
 import '../../../candidate/profile/SidebarMenu.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const SubMenu = ({ active, setActive, forum }) => {
   // Vérifier si c'est un forum virtuel
@@ -48,7 +49,7 @@ const SubMenu = ({ active, setActive, forum }) => {
           <li key={item.id}>
             <button
               onClick={() => setActive(item.id)}
-              className="sidebar-link"
+              className={`sidebar-link ${active === item.id ? 'active' : ''}`}
             >
               <div className="sidebar-icon">{item.icon}</div>
               <span className="sidebar-label">{item.label}</span>

@@ -13,7 +13,7 @@ body {
   margin: 5% auto;
   padding: 30px 26px;
   background-color: #fff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
 }
 .logo-container{
@@ -109,11 +109,11 @@ body {
 /* Login Button */
 .login-button {
   width: 100%;
-  padding: 8px 28px;
+  padding: var(--space-sm) 28px;
   background: transparent;
   color: #3b82f6;
   border: 1.5px solid #3b82f6;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -195,7 +195,7 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
   .login-container {
-    padding: 20px;
+    padding: var(--space-xl);
   }
 
   .logo-container img {

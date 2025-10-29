@@ -10,6 +10,7 @@ import { getForumTypesForSelect } from '../../../../constants/choices';
 import { validateEventDates } from '../../../../utils/dateValidation';
 import DateValidationError from '../../../../utils/DateValidationError';
 import { useAuth } from '../../../../context/AuthContext';
+import { Button } from '../../../../components/common';
 
 const ForumInfoEdit = () => {
   const location = useLocation();
@@ -577,17 +578,17 @@ const ForumInfoEdit = () => {
 
                          {/* Bouton d'action */}
              <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '30px' }}>
-               <button
+               <Button
                  type="submit"
+                 variant="save"
                  disabled={loading}
-                 className="organizer-save-btn"
                  style={{
                    cursor: loading ? 'not-allowed' : 'pointer',
                    opacity: loading ? 0.7 : 1,
                  }}
                >
                  {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}
-               </button>
+               </Button>
              </div>
           </form>
                   </div>

@@ -6,7 +6,7 @@
     margin-bottom: 20px;
     background-color: #f9f9f9;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
   
@@ -27,9 +27,9 @@
   .experience-item input[type="text"],
   .experience-item textarea {
     width: 100%;
-    padding: 8px;
+    padding: var(--space-sm);
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     outline: none;
     transition: border-color 0.3s ease;
     resize: vertical;
@@ -49,7 +49,7 @@
     background-color: transparent;
     border: none;
     color: #d9534f;
-    font-size: 14px;
+    font-size: var(--text-base);
     cursor: pointer;
     transition: color 0.3s ease;
   }
@@ -63,7 +63,7 @@
     color: white;
     padding: 10px 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     font-weight: bold;
     cursor: pointer;
     display: inline-flex;

@@ -7,6 +7,7 @@ import VirtualOfferModal from '../../../../components/offers/VirtualOfferModal';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Offer from '../../../../components/card/offer/Offer';
 import Loading from '../../../../components/loyout/Loading';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import RecruiterOfferFilters from '../../../../components/filters/offer/RecruiterOfferFilters';
 
 const OffersList = ({ forum, accessToken, apiBaseUrl }) => {

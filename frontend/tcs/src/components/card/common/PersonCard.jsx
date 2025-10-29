@@ -10,6 +10,7 @@ import {
   faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 import './PersonCard.css';
+import { Button, Input, Card, Badge } from '../../common';
 
 const PersonCard = ({
   person,

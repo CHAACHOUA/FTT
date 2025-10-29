@@ -11,7 +11,7 @@
 .dashboard-action-card {
   flex: 1;
   min-width: 320px;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 36px 24px 28px 24px;
   display: flex;
   flex-direction: column;

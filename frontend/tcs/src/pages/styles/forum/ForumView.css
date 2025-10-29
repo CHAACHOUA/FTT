@@ -7,16 +7,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   height: 300px;
-  margin: 20px;
+  margin: var(--space-xl);
   position: relative;
 }
 
 .forum-hero-content {
   max-width: 600px;
-  padding: 20px 30px;
-  border-radius: 12px;
+  padding: var(--space-xl) 30px;
+  border-radius: var(--radius-xl);
 }
 
 .forum-hero h1 {
@@ -26,6 +26,6 @@
 }
 
 .forum-hero p {
-  font-size: 18px;
+  font-size: var(--text-xl);
   font-weight: 500;
 }

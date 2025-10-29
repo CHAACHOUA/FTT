@@ -7,6 +7,7 @@ import { FaArrowLeft, FaBuilding, FaMapMarkerAlt, FaGlobe, FaPhone, FaEnvelope, 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faUserTie, faMapMarkerAlt as faMapMarker } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../../../assets/Logo-FTT.png';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import '../../../../pages/styles/candidate/Dashboard.css';
 import '../../../../pages/styles/forum/ForumOffer.css';
 import './CompanyDetail.css';

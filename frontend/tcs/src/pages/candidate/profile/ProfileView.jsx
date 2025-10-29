@@ -8,6 +8,7 @@ import Experience from '../../../components/card/candidate/profile_section/Exper
 import Language from '../../../components/card/candidate/profile_section/Language';
 import Skill from '../../../components/card/candidate/profile_section/Skill';
 import SaveButton from '../../../components/common/SaveButton';
+import { Button, Card } from '../../../components/common';
 import SidebarMenu from './SidebarMenu';
 import axios from 'axios';
 import { useAuth } from '../../../context/AuthContext';
@@ -17,7 +18,7 @@ import ChangePassword from '../auth/account/ChangePassword';
 import TimezoneSettings from '../../../components/settings/TimezoneSettings';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loading from '../../../components/loyout/Loading'; // ✅ Import du composant de chargement
+import Loading from '../../../components/loyout/Loading';
 import Navbar from '../../../components/loyout/NavBar';
 import { validateEducationDates } from '../../../utils/dateValidation';
 
@@ -191,32 +192,32 @@ const ProfileView = () => {
             </section>
             <section id="presentation">
               <Presentation formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Presentation>
             </section>
             <section id="contact">
               <Contact formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Contact>
             </section>
             <section id="education">
               <Education formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Education>
             </section>
             <section id="experience">
               <Experience formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Experience>
             </section>
             <section id="language">
               <Language formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Language>
             </section>
             <section id="skill">
               <Skill formData={formData} onUpdate={handleUpdate}>
-                <SaveButton onClick={handleSubmit} />
+                <Button variant="save" type="button" onClick={handleSubmit}>Enregistrer</Button>
               </Skill>
             </section>
           </>

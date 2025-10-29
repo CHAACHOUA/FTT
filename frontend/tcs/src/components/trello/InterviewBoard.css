@@ -1,0 +1,365 @@
+/* Interview Board - Style Kanban moderne */
+.interview-board {
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.board-header {
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.board-header h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.board-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.board-columns {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 600px;
+  padding: 0 20px;
+}
+
+.board-column {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  min-width: 300px;
+  max-width: 350px;
+  flex: 1;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.column-icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: #495057;
+}
+
+.column-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.column-count {
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.column-cards {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cards - Style identique à AgendaCard */
+.interview-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  padding: 16px;
+  transition: box-shadow .2s ease, transform .2s ease;
+  cursor: grab;
+}
+
+.interview-card:hover {
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.interview-card:active {
+  cursor: grabbing;
+}
+
+.interview-card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+}
+
+/* Card Header - Style AgendaCard */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.card-type .type-label {
+  font-size: 14px;
+}
+
+.card-status {
+  font-size: 0.7rem;
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin: 2px 4px;
+}
+
+.status-scheduled {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-in-progress {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+
+/* Card Content - Style AgendaCard */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Participants - Style AgendaCard */
+.card-participants {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.participant {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.participant-icon {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.participant-name {
+  color: #374151;
+}
+
+/* Slot Info - Style AgendaCard */
+.card-slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slot-date, .slot-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #111827;
+  font-size: 13px;
+}
+
+.slot-time .time-range {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.slot-date .fa-calendar, .slot-time .fa-clock {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Card Actions - Style AgendaCard */
+.card-actions {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+}
+
+.join-meeting-btn, .complete-meeting-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.join-meeting-btn:hover {
+  background: #2563eb;
+}
+
+.complete-meeting-btn {
+  background: #10b981;
+}
+
+.complete-meeting-btn:hover {
+  background: #059669;
+}
+
+.completed-meeting-badge {
+  background: #d1fae5;
+  color: #059669;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+
+/* Loading */
+.interview-board-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty column styling */
+.empty-column {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-style: italic;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+}
+
+.empty-column p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Drag and drop visual feedback */
+.interview-card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.board-column.drag-over {
+  background: transparent;
+  border: none;
+  position: relative;
+}
+
+.board-column.drag-over::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .board-columns {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .board-column {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .interview-board {
+    padding: 10px;
+  }
+  
+  .board-column {
+    min-width: 280px;
+    max-width: 100%;
+  }
+  
+  .interview-card {
+    padding: 12px;
+  }
+  
+  .board-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .board-header p {
+    font-size: 1rem;
+  }
+}

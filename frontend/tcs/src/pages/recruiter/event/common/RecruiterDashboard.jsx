@@ -13,7 +13,7 @@ import MatchingOffers from './MatchingOffers';
 // Pages virtuelles
 import VirtualAgenda from '../virtual/VirtualAgenda';
 import VirtualCandidates from '../virtual/VirtualCandidates';
-import VirtualInterviews from '../virtual/VirtualInterviews';
+import InterviewBoard from '../../../../components/trello/InterviewBoard';
 import RecruiterApplications from '../virtual/RecruiterApplications';
 import '../../../../pages/styles/recruiter/RecruiterDashboard.css';
 
@@ -55,7 +55,7 @@ const RecruiterDashboard = () => {
           {/* Pages virtuelles */}
           {active === 'virtual-agenda' && <VirtualAgenda forum={forum} accessToken={accessToken} apiBaseUrl={API} />}
           {active === 'virtual-candidates' && <RecruiterApplications forumId={forumId} />}
-          {active === 'virtual-interviews' && <VirtualInterviews forum={forum} accessToken={accessToken} apiBaseUrl={API} />}
+          {active === 'virtual-interviews' && <InterviewBoard forumId={forumId} />}
         </div>
       </div>
     </div>

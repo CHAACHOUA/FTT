@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../pages/styles/forum/ForumCompany.css';
 import logo from '../../assets/Logo-FTT.png';

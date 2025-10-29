@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { FaTimes, FaBuilding, FaMapMarkerAlt, FaCalendarAlt, FaUser, FaFileAlt, FaSearch, FaStar, FaClock, FaCheckCircle } from 'react-icons/fa';
 import './OfferDetailPopup.css';
 

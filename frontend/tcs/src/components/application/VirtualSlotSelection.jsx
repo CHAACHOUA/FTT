@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { FaClock, FaCalendar, FaUser, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import './VirtualSlotSelection.css';

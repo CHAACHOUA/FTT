@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../../pages/styles/common/login.css';
 import logo from '../../../../assets/logo-digitalio.png';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const ResetPassword = () => {
   const { token } = useParams();

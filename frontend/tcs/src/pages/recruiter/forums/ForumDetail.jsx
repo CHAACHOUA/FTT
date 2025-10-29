@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { useLocation } from 'react-router-dom';
 import ForumInfos from '../../../components/forum/ForumInfos';
 import ForumCompanies from '../../../components/forum/ForumCompanies';

@@ -6,6 +6,7 @@ import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import CandidateCard from '../../../../components/card/candidate/CandidateCard';
 import Loading from '../../../../components/loyout/Loading';
 import './RencontresList.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const RencontresList = ({ forumId, apiBaseUrl }) => {
   const [allCandidates, setAllCandidates] = useState([]); // Tous les candidats du forum

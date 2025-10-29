@@ -7,6 +7,7 @@ import './MatchingDetail.css';
 
 // Imports conditionnels pour les espaces candidat et recruiter
 import CandidateSubMenu from '../../../candidate/Event/common/SubMenu';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 import RecruiterSubMenu from './SubMenu';
 import '../../../../pages/styles/candidate/Dashboard.css';
 

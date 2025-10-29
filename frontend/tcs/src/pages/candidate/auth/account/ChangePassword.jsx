@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from 'react-toastify';
+import { Button } from '../../../../components/common';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../../pages/styles/candidate/Education.css';
 
@@ -125,9 +126,9 @@ const ChangePassword = () => {
           <p className={passwordValidations.match ? 'valid' : 'invalid'}>• Les deux mots de passe sont identiques</p>
         </div>
 
-        <button type="submit" className="save-button-modern" disabled={loading}>
+        <Button type="submit" variant="modern" size="large" disabled={loading}>
           {loading ? 'Chargement...' : 'Changer le mot de passe'}
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Input, Card, Badge } from '../common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faQuestion,
@@ -12,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Badge, Button, Card, Input } from '../common';
 import QuestionnaireBuilder from '../questionnaire/QuestionnaireBuilder';
 import './OfferQuestionnaire.css';
 
@@ -227,7 +229,7 @@ const OfferQuestionnaire = ({ offer, onUpdate, accessToken, apiBaseUrl }) => {
                       <div className="question-meta">
                         <span className="question-type">{question.question_type}</span>
                         {question.is_required && (
-                          <span className="required-badge">Obligatoire</span>
+                          <Badge type="required">Obligatoire</Badge>
                         )}
                       </div>
                     </div>

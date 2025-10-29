@@ -2,6 +2,7 @@ import React from 'react';
 import '../../../../pages/styles/candidate/Education.css';
 import { FaUniversity } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
+import { Button, Input, Card, Badge } from '../../../common';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',

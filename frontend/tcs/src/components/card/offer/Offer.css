@@ -4,7 +4,7 @@
 
 .forum-offer-card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -54,11 +54,11 @@
 .forum-offer-logo {
   width: 45px;
   height: 45px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   object-fit: contain;
   border: 1px solid #e5e7eb;
   background: #f8fafc;
-  padding: 4px;
+  padding: var(--space-xs);
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
@@ -150,7 +150,7 @@
   color: #6b7280;
   padding: 0.25rem 0.4rem;
   background: #f8fafc;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 1px solid #e5e7eb;
 }
 
@@ -177,7 +177,7 @@
   gap: 0.75rem;
   padding: 0.5rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #e5e7eb;
   flex-shrink: 0;
   margin-top: auto;
@@ -238,7 +238,7 @@
 .forum-offer-action-button {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #007bff;
   background: #ffffff;
   color: #007bff;
@@ -294,8 +294,8 @@
 
 /* Bouton Postuler avec texte */
 .forum-offer-apply-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: var(--space-sm) 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid #007bff;
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
@@ -460,7 +460,7 @@
   }
   
   .forum-offer-apply-btn {
-    padding: 8px 14px;
+    padding: var(--space-sm) 14px;
     font-size: 0.75rem;
     min-width: 75px;
   }

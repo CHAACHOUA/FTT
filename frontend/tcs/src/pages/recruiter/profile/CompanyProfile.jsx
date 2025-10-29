@@ -5,6 +5,7 @@ import { FaBuilding, FaImage, FaGlobe, FaFileAlt, FaTrash } from 'react-icons/fa
 import { toast } from 'react-toastify';
 import Sectors from './Sectors';
 import Loading from '../../../components/loyout/Loading';
+import { Button, Card, Badge, Input } from '../../../components/common';
 
 const CompanyProfile = ({ accessToken, readOnly = false }) => {
   const [formData, setFormData] = useState({

@@ -7,7 +7,7 @@
   color: white;
   border: none;
   padding: 18px 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   font-size: 1.3rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -27,8 +27,8 @@
   background: linear-gradient(135deg, #3872cf 0%, #06b6d4 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: var(--space-md) 24px;
+  border-radius: var(--radius-xl);
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -51,8 +51,8 @@
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: var(--space-sm) 16px;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -71,8 +71,8 @@
   background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: var(--space-md) 24px;
+  border-radius: var(--radius-xl);
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -91,8 +91,8 @@
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: var(--space-md) 24px;
+  border-radius: var(--radius-xl);
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -111,8 +111,8 @@
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: var(--space-md) 24px;
+  border-radius: var(--radius-xl);
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -130,8 +130,8 @@
 .organizer-header-block {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
   margin-bottom: 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   position: relative;
@@ -196,7 +196,7 @@
 
 /* Style pour la section du titre de la page */
 .page-title-section {
-  margin: 32px 0;
+  margin: var(--space-3xl) 0;
   text-align: left;
 }
 
@@ -218,7 +218,7 @@
 /* ===== RESPONSIVE DESIGN POUR LE PREMIER BLOC ===== */
 @media (max-width: 1024px) {
   .organizer-header-block {
-    padding: 20px;
+    padding: var(--space-xl);
     margin-bottom: 24px;
   }
   
@@ -251,9 +251,9 @@
 
 @media (max-width: 768px) {
   .organizer-header-block {
-    padding: 16px;
+    padding: var(--space-lg);
     margin-bottom: 20px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
   
   .organizer-header-block h1 {
@@ -291,13 +291,13 @@
   }
   
   .organizer-btn-back {
-    padding: 8px 16px;
+    padding: var(--space-sm) 16px;
     font-size: 0.9rem;
     gap: 6px;
   }
   
   .page-title-section {
-    margin: 24px 0;
+    margin: var(--space-2xl) 0;
   }
   
   .page-title-section h1 {
@@ -311,7 +311,7 @@
 
 @media (max-width: 480px) {
   .organizer-header-block {
-    padding: 12px;
+    padding: var(--space-md);
     margin-bottom: 16px;
     border-radius: 10px;
   }
@@ -352,11 +352,11 @@
     padding: 6px 12px;
     font-size: 0.85rem;
     gap: 4px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
   
   .page-title-section {
-    margin: 20px 0;
+    margin: var(--space-xl) 0;
   }
   
   .page-title-section h1 {

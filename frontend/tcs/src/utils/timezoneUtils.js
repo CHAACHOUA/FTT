@@ -132,10 +132,12 @@ export const formatAgendaSlot = (slot, userTimezone) => {
   }
   
   try {
+    // Ne pas convertir les heures si elles sont déjà dans le bon format
+    // Les heures sont stockées en local time dans la base de données
     const formattedSlot = {
       ...slot,
-      start_time_display: formatTimeForUser(slot.start_time, userTimezone, slot.date),
-      end_time_display: formatTimeForUser(slot.end_time, userTimezone, slot.date),
+      start_time_display: slot.start_time, // Utiliser directement l'heure stockée
+      end_time_display: slot.end_time,     // Utiliser directement l'heure stockée
       timezone_info: {
         user_timezone: userTimezone,
         offset: getTimezoneOffset(userTimezone)

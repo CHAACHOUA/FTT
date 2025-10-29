@@ -1,7 +1,7 @@
 /* Styles pour les cartes de personnes */
 .person-card {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #3b82f6;
@@ -136,7 +136,7 @@
   background: transparent;
   border: none;
   padding: 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;

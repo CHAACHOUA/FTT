@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Button } from '../common';
 import './TimezoneSettings.css';
 
 const TimezoneSettings = ({ user, onUpdate }) => {
@@ -172,13 +173,13 @@ const TimezoneSettings = ({ user, onUpdate }) => {
         </div>
 
         <div className="timezone-actions">
-          <button
+          <Button
             onClick={handleSave}
             disabled={saving || selectedTimezone === user?.timezone}
-            className="save-button"
+            loading={saving}
           >
             {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-          </button>
+          </Button>
         </div>
       </div>
 

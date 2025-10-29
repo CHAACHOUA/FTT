@@ -4,6 +4,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { FileCheck, Loader2, AlertCircle, Upload, Eye } from 'lucide-react';
 import toast from '../../../../utils/toast';
 import '../../../../pages/styles/candidate/uploadCV.css';
+import { Button, Badge } from '../../../common';
 
 const UploadCV = ({ onUpload, formData }) => {
   const { accessToken } = useAuth();

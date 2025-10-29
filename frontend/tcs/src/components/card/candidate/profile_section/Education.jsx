@@ -3,6 +3,7 @@ import '../../../../pages/styles/candidate/Education.css';
 import { FaUniversity, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
 import { validateEducationDates } from '../../../../utils/dateValidation';
+import { Input, Button, Badge } from '../../../common';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',

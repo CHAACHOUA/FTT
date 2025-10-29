@@ -1,9 +1,9 @@
 /* Modern input style for Contact section */
 .contact-section {
   background: #fff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 40px 36px 32px 36px;
-  margin: 32px auto;
+  margin: var(--space-3xl) auto;
   width: 90%;
   max-width: 1200px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.06);
@@ -14,7 +14,7 @@
 @media (max-width: 1024px) {
   .contact-section {
     width: 95% !important;
-    padding: 32px 28px 24px 28px;
+    padding: var(--space-3xl) 28px 24px 28px;
   }
   
   .contact-title {
@@ -26,9 +26,9 @@
 @media (max-width: 768px) {
   .contact-section {
     width: 100% !important;
-    margin: 16px 0;
-    padding: 24px 20px 20px 20px;
-    border-radius: 12px;
+    margin: var(--space-lg) 0;
+    padding: var(--space-2xl) 20px 20px 20px;
+    border-radius: var(--radius-xl);
   }
   
   .contact-title {
@@ -43,7 +43,7 @@
   
   .input-wrapper-modern input {
     font-size: 1.05em;
-    padding: 20px 14px 6px 14px;
+    padding: var(--space-xl) 14px 6px 14px;
   }
   
   .floating-label {
@@ -70,8 +70,8 @@
 
 @media (max-width: 480px) {
   .contact-section {
-    padding: 20px 16px 16px 16px;
-    margin: 12px 0;
+    padding: var(--space-xl) 16px 16px 16px;
+    margin: var(--space-md) 0;
   }
   
   .contact-title {

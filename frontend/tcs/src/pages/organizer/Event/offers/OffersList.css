@@ -57,7 +57,7 @@
 /* Filtres avec le style du dashboard */
 .organizer-offers-filters {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
   margin-bottom: 2rem;
   display: flex;
@@ -78,7 +78,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: #ffffff;
   color: #374151;
   font-size: 0.9rem;
@@ -106,7 +106,7 @@
   padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -134,7 +134,7 @@
   gap: 0.5rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 0.75rem 1.5rem;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   color: #374151;
   font-weight: 600;
   border: 1px solid #e2e8f0;
@@ -210,7 +210,7 @@
   object-fit: contain;
   background: #fff;
   border: 1px solid #e5e7eb;
-  padding: 4px;
+  padding: var(--space-xs);
 }
 
 .company-group-info {
@@ -272,7 +272,7 @@
 /* Cartes d'offres avec le style du dashboard */
 .organizer-offer-card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
   box-shadow: 0 2px 12px 0 rgba(24, 56, 108, 0.05);
   transition: all 0.3s ease;
@@ -345,7 +345,7 @@
   height: 100%;
   object-fit: contain;
   padding: 10px 12px; /* respirations autour du logo */
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
 }
 
 .offer-right-content {
@@ -382,7 +382,7 @@
 }
 
 .offer-title.large {
-  margin: 8px 0 6px 0;
+  margin: var(--space-sm) 0 6px 0;
   font-size: 1.25rem;
 }
 
@@ -444,11 +444,11 @@
 .company-logo {
   width: 50px;
   height: 50px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   object-fit: contain;
   border: 2px solid #e2e8f0;
   background: #ffffff;
-  padding: 4px;
+  padding: var(--space-xs);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
@@ -555,7 +555,7 @@
   text-align: center;
   padding: 3rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   color: #6b7280;
   border: 1px solid #e2e8f0;
   box-shadow: 0 2px 12px 0 rgba(80, 0, 120, 0.05);
@@ -580,7 +580,7 @@
   font-size: 1.1rem;
   background: rgba(255, 88, 88, 0.1);
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid #ff5858;
 }
 
@@ -596,7 +596,7 @@
   font-size: 1.1rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 1rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid #e2e8f0;
 }
 
@@ -605,7 +605,7 @@
   padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -731,11 +731,11 @@
   .company-logo {
     width: 60px;
     height: 60px;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
     object-fit: contain;
     border: 2px solid #e2e8f0;
     background: #ffffff;
-    padding: 4px;
+    padding: var(--space-xs);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
@@ -746,7 +746,7 @@
     height: 60px;
     margin: 0 auto 1rem auto;
     border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
   
   .offer-right-content {
@@ -755,7 +755,7 @@
   
   .offer-sector-line {
     font-size: 0.85rem;
-    margin: 4px 0;
+    margin: var(--space-xs) 0;
   }
 }
 

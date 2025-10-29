@@ -13,6 +13,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import Modal from '../../../../components/card/common/Modal';
 import PersonCard from '../../../../components/card/common/PersonCard';
 import './SpeakerManager.css';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 const SpeakerManager = () => {
   const [speakers, setSpeakers] = useState([]);

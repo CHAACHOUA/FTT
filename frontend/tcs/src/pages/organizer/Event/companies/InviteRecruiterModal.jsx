@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Modal from '../../../../components/card/common/Modal';
 import { FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import axios from 'axios';
+import { Button, Input, Card, Badge } from '../../../../components/common';
 
 
 const InviteRecruiterModal = ({ open, onClose, onInvite, company, forum, apiBaseUrl }) => {

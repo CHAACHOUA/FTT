@@ -17,7 +17,7 @@
   gap: 0.5rem;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 0.75rem 1rem;
   color: #374151;
   font-size: 0.9rem;
@@ -35,7 +35,7 @@
 
 .offer-detail-card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
@@ -61,9 +61,9 @@
   width: 80px;
   height: 80px;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: white;
-  padding: 8px;
+  padding: var(--space-sm);
   border: 2px solid #e5e7eb;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -106,7 +106,7 @@
   width: 48px;
   height: 48px;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: white;
   color: #6b7280;
   font-size: 1.2rem;
@@ -147,7 +147,7 @@
   gap: 0.75rem;
   padding: 1rem;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid #e5e7eb;
   transition: all 0.2s ease;
 }
@@ -201,7 +201,7 @@
   text-align: justify;
   background: #f8fafc;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border-left: 4px solid #3b82f6;
 }
 
@@ -218,7 +218,7 @@
   gap: 0.75rem;
   padding: 1rem;
   background: #f8fafc;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid #e5e7eb;
   transition: all 0.2s ease;
 }
@@ -257,7 +257,7 @@
   width: 100%;
   background: #f8fafc;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }

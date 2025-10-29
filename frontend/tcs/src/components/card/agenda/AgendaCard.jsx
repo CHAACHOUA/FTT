@@ -6,16 +6,23 @@ import {
   faClock, 
   faCalendarAlt,
   faEdit,
-  faTrash
+  faTrash,
+  faVideoCamera,
+  faExternalLinkAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { formatTimeForUser } from '../../../utils/timezoneUtils';
 import { useAuth } from '../../../context/AuthContext';
+import { Badge, Button, Card } from '../../common';
+import ZoomService from '../../../services/ZoomService';
+import './AgendaCard.css';
 
 const AgendaCard = ({ 
   slot, 
   onEdit, 
   onDelete, 
   onStartInterview,
+  onCreateMeetingLink,
+  onJoinMeeting,
   isPast = false,
   isInConflict = false
 }) => {
@@ -26,26 +33,6 @@ const AgendaCard = ({
 
   const getTypeColor = (type) => {
     return type === 'video' ? '#3b82f6' : '#10b981';
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'available': return '#166534'; // text-green-800
-      case 'booked': return '#854d0e'; // text-yellow-800
-      case 'completed': return '#166534'; // text-green-800
-      case 'cancelled': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  const getStatusBackgroundColor = (status) => {
-    switch (status) {
-      case 'available': return '#dcfce7'; // bg-green-100
-      case 'booked': return '#fef9c3'; // bg-yellow-100
-      case 'completed': return '#dcfce7'; // bg-green-100
-      case 'cancelled': return '#ef4444';
-      default: return '#6b7280';
-    }
   };
 
   const getStatusText = (status) => {
@@ -74,6 +61,30 @@ const AgendaCard = ({
     });
   };
 
+  const handleCreateMeetingLink = () => {
+    if (onCreateMeetingLink) {
+      onCreateMeetingLink(slot);
+    }
+  };
+
+  const canCreateMeetingLink = () => {
+    return slot.type === 'video' && 
+           slot.status === 'booked' && 
+           slot.candidate && 
+           !slot.meeting_link &&
+           !isPast;
+  };
+
+  const canJoinMeeting = () => {
+    return slot.meeting_link && 
+           slot.status === 'booked' && 
+           !isPast &&
+           user && // Vérifier que user existe
+           (user.id === slot.recruiter?.id || user.id === slot.candidate?.id);
+  };
+
+
+
   return (
     <div className={`agenda-card ${isPast ? 'past' : ''} ${isInConflict ? 'conflict' : ''}`}>
       {isInConflict && (
@@ -95,35 +106,21 @@ const AgendaCard = ({
 
       {/* Actions en haut à droite */}
       <div className="agenda-actions">
-        {slot.status === 'available' && !isPast && (
-          <button 
-            className="agenda-edit-btn"
-            onClick={() => onEdit(slot)}
-            title="Modifier"
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </button>
-        )}
+        <button 
+          className="agenda-edit-btn"
+          onClick={() => onEdit(slot)}
+          title="Modifier"
+        >
+          <FontAwesomeIcon icon={faEdit} />
+        </button>
 
-        {slot.status === 'booked' && !isPast && (
-          <button 
-            className="agenda-start-btn"
-            onClick={() => onStartInterview(slot)}
-            title="Démarrer"
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </button>
-        )}
-
-        {!isPast && (
-          <button 
-            className="agenda-delete-btn"
-            onClick={() => onDelete(slot)}
-            title="Supprimer"
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-        )}
+        <button 
+          className="agenda-delete-btn"
+          onClick={() => onDelete(slot)}
+          title="Supprimer"
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
       </div>
 
       <div className="agenda-card-header">
@@ -138,15 +135,9 @@ const AgendaCard = ({
         </div>
         
         <div className="agenda-card-status">
-          <span 
-            className="status-badge"
-            style={{ 
-              backgroundColor: getStatusBackgroundColor(slot.status),
-              color: getStatusColor(slot.status)
-            }}
-          >
+          <Badge type="status" variant={slot.status}>
             {getStatusText(slot.status)}
-          </span>
+          </Badge>
         </div>
       </div>
 
@@ -173,16 +164,40 @@ const AgendaCard = ({
           </div>
         )}
 
-        {slot.meeting_link && (
-          <div className="agenda-card-link">
-            <a 
-              href={slot.meeting_link} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="meeting-link"
-            >
-              Rejoindre la réunion
-            </a>
+        {/* Section Jitsi Meeting */}
+        {slot.type === 'video' && (
+          <div className="agenda-card-meeting">
+            {slot.meeting_link ? (
+              <div className="meeting-link-section">
+                <div className="meeting-link-header">
+                  <a 
+                    href={slot.meeting_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="meeting-link-text"
+                    title="Rejoindre la réunion"
+                  >
+                    Rejoindre réunion
+                  </a>
+                </div>
+              </div>
+            ) : canCreateMeetingLink() && (
+              <div className="create-meeting-section">
+                <div className="create-meeting-header">
+                  <FontAwesomeIcon icon={faVideoCamera} style={{ color: '#6b7280' }} />
+                  <span className="meeting-label">Aucun lien de réunion</span>
+                </div>
+                
+                <button 
+                  className="create-meeting-btn"
+                  onClick={handleCreateMeetingLink}
+                  title="Créer un lien de visioconférence"
+                >
+                  <FontAwesomeIcon icon={faVideoCamera} />
+                  Créer le lien
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
