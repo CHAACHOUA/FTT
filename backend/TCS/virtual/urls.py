@@ -37,9 +37,16 @@ from .views.application_views import (
     get_candidate_applications,
     get_recruiter_applications,
     update_application_status,
+    update_interview_status,
     get_application_stats,
     validate_application,
     reject_application
+)
+from .views.zoom_views import (
+    create_zoom_meeting,
+    get_zoom_meeting_info,
+    delete_zoom_meeting,
+    get_user_zoom_meetings
 )
 
 urlpatterns = [
@@ -81,7 +88,14 @@ urlpatterns = [
     path('forums/<int:forum_id>/applications/candidate/', get_candidate_applications, name='candidate-applications'),
     path('forums/<int:forum_id>/applications/recruiter/', get_recruiter_applications, name='recruiter-applications'),
     path('applications/<int:application_id>/status/', update_application_status, name='update-application-status'),
+    path('applications/<int:application_id>/interview-status/', update_interview_status, name='update-interview-status'),
     path('applications/<int:application_id>/validate/', validate_application, name='validate-application'),
     path('applications/<int:application_id>/reject/', reject_application, name='reject-application'),
     path('forums/<int:forum_id>/applications/stats/', get_application_stats, name='application-stats'),
+    
+    # Réunions Zoom
+    path('forums/<int:forum_id>/agenda/<int:slot_id>/zoom/', create_zoom_meeting, name='create-zoom-meeting'),
+    path('forums/<int:forum_id>/agenda/<int:slot_id>/zoom/info/', get_zoom_meeting_info, name='get-zoom-meeting-info'),
+    path('forums/<int:forum_id>/agenda/<int:slot_id>/zoom/delete/', delete_zoom_meeting, name='delete-zoom-meeting'),
+    path('forums/<int:forum_id>/zoom/meetings/', get_user_zoom_meetings, name='get-user-zoom-meetings'),
 ]

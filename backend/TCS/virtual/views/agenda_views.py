@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.db import transaction
+import logging
 from forums.models import Forum
 from ..models import VirtualAgendaSlot
 from ..serializers import (
@@ -15,6 +17,9 @@ from ..serializers import (
 )
 
 User = get_user_model()
+
+# Configuration du logger
+logger = logging.getLogger(__name__)
 
 class VirtualAgendaSlotListCreateView(generics.ListCreateAPIView):
     """
@@ -248,11 +253,71 @@ class VirtualAgendaSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
             forum_id=forum_id
         )
 
+    def put(self, request, *args, **kwargs):
+        """Override PUT method to provide better error handling"""
+        logger.info(f"🔍 PUT request received for slot {kwargs.get('slot_id')} in forum {kwargs.get('forum_id')}")
+        logger.info(f"🔍 Request data: {request.data}")
+        logger.info(f"🔍 Request user: {request.user}")
+        
+        try:
+            # Vérifier que le slot existe
+            slot = self.get_object()
+            logger.info(f"🔍 Slot found: {slot}")
+            logger.info(f"🔍 Slot recruiter: {slot.recruiter}")
+            logger.info(f"🔍 Slot can be modified: {slot.can_be_modified()}")
+            
+            # Vérifier les permissions
+            if slot.recruiter != request.user:
+                logger.error(f"❌ Permission denied: User {request.user} cannot modify slot owned by {slot.recruiter}")
+                return Response({'error': 'Vous ne pouvez modifier que vos propres créneaux'}, status=status.HTTP_403_FORBIDDEN)
+            
+            if not slot.can_be_modified():
+                logger.error(f"❌ Slot cannot be modified: status={slot.status}")
+                return Response({'error': 'Ce créneau ne peut pas être modifié'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Sérialiser les données (partial=True pour permettre la mise à jour partielle)
+            serializer = self.get_serializer(slot, data=request.data, partial=True)
+            logger.info(f"🔍 Serializer created: {serializer}")
+            
+            if serializer.is_valid():
+                logger.info(f"✅ Serializer is valid, saving...")
+                serializer.save()
+                logger.info(f"✅ Slot updated successfully")
+                return Response(serializer.data)
+            else:
+                logger.error(f"❌ Serializer validation failed: {serializer.errors}")
+                return Response({'error': 'Données invalides', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                
+        except PermissionError as e:
+            logger.error(f"❌ Permission error: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except ValueError as e:
+            logger.error(f"❌ Value error: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"❌ Unexpected error: {str(e)}", exc_info=True)
+            return Response({'error': f'Erreur lors de la mise à jour: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, *args, **kwargs):
+        """Override PATCH method to provide better error handling"""
+        try:
+            return super().patch(request, *args, **kwargs)
+        except PermissionError as e:
+            return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': f'Erreur lors de la mise à jour: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_update(self, serializer):
         # Vérifier que l'utilisateur peut modifier ce créneau
         slot = self.get_object()
         if slot.recruiter != self.request.user:
             raise PermissionError("Vous ne pouvez modifier que vos propres créneaux")
+        
+        # Vérifier que le créneau peut être modifié
+        if not slot.can_be_modified():
+            raise ValueError("Ce créneau ne peut pas être modifié")
         
         serializer.save()
 

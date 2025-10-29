@@ -29,6 +29,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TCS.settings')
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
 
+# Zoom Configuration
+ZOOM_ACCOUNT_ID = config('ZOOM_ACCOUNT_ID')
+ZOOM_CLIENT_ID = config('ZOOM_CLIENT_ID')
+ZOOM_CLIENT_SECRET = config('ZOOM_CLIENT_SECRET')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -88,6 +88,30 @@ class VirtualAgendaSlot(models.Model):
     def get_type_display_icon(self):
         """Retourne l'icône correspondant au type"""
         return "📹" if self.type == 'video' else "📞"
+    
+    def has_meeting_link(self):
+        """Vérifie si le créneau a un lien de réunion"""
+        return bool(self.meeting_link)
+    
+    def can_create_meeting_link(self):
+        """Vérifie si un lien de réunion peut être créé"""
+        return (self.type == 'video' and 
+                self.status == 'booked' and 
+                self.candidate is not None and 
+                not self.has_meeting_link())
+    
+    def get_meeting_status(self):
+        """Retourne le statut de la réunion"""
+        if not self.has_meeting_link():
+            return 'no_meeting'
+        elif self.status == 'booked':
+            return 'scheduled'
+        elif self.status == 'completed':
+            return 'completed'
+        elif self.status == 'cancelled':
+            return 'cancelled'
+        else:
+            return 'unknown'
 
 
 class Questionnaire(models.Model):
@@ -308,6 +332,11 @@ class VirtualApplication(models.Model):
                                     related_name='applications')
     questionnaire_responses = models.JSONField(blank=True, null=True, help_text="Réponses au questionnaire")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    interview_status = models.CharField(max_length=20, choices=[
+        ('scheduled', 'Programmé'),
+        ('inProgress', 'En cours'),
+        ('completed', 'Terminé'),
+    ], default='scheduled', help_text="Statut de l'entretien")
     notes = models.TextField(blank=True, null=True, help_text="Notes du recruteur")
     
     created_at = models.DateTimeField(auto_now_add=True)

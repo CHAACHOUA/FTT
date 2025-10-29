@@ -1,12 +1,16 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from datetime import datetime
+import logging
 from .models import VirtualAgendaSlot, Questionnaire, Question, QuestionnaireResponse, QuestionAnswer, VirtualApplication
 from forums.models import Forum
 from recruiters.models import Offer
 from .utils.timezone_utils import format_time_for_user, get_user_timezone
 
 User = get_user_model()
+
+# Configuration du logger
+logger = logging.getLogger(__name__)
 
 class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
     """
@@ -81,27 +85,13 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
         return obj.candidate.email if obj.candidate else ""
 
     def get_start_time_display(self, obj):
-        """Retourne l'heure de début formatée dans le fuseau horaire de l'utilisateur"""
-        request = self.context.get('request')
-        if request and request.user:
-            print(f"🕐 [BACKEND] Formatage start_time pour {request.user.email} (timezone: {request.user.timezone})")
-            print(f"🕐 [BACKEND] Heure originale: {obj.start_time}")
-            formatted_time = format_time_for_user(obj.start_time, request.user, obj.date)
-            print(f"🕐 [BACKEND] Heure formatée: {formatted_time}")
-            print(f"🕐 [BACKEND] Retour de start_time_display: {formatted_time}")
-            return formatted_time
+        """Retourne l'heure de début formatée pour l'utilisateur"""
+        # Utiliser directement l'heure stockée sans conversion pour éviter les décalages
         return obj.start_time.strftime('%H:%M')
 
     def get_end_time_display(self, obj):
-        """Retourne l'heure de fin formatée dans le fuseau horaire de l'utilisateur"""
-        request = self.context.get('request')
-        if request and request.user:
-            print(f"🕐 [BACKEND] Formatage end_time pour {request.user.email} (timezone: {request.user.timezone})")
-            print(f"🕐 [BACKEND] Heure originale: {obj.end_time}")
-            formatted_time = format_time_for_user(obj.end_time, request.user, obj.date)
-            print(f"🕐 [BACKEND] Heure formatée: {formatted_time}")
-            print(f"🕐 [BACKEND] Retour de end_time_display: {formatted_time}")
-            return formatted_time
+        """Retourne l'heure de fin formatée pour l'utilisateur"""
+        # Utiliser directement l'heure stockée sans conversion pour éviter les décalages
         return obj.end_time.strftime('%H:%M')
 
     def get_timezone_info(self, obj):
@@ -126,13 +116,13 @@ class VirtualAgendaSlotSerializer(serializers.ModelSerializer):
         if data['start_time'] >= data['end_time']:
             raise serializers.ValidationError("L'heure de fin doit être après l'heure de début")
         
-        # Vérifier que la durée correspond
+        # Calculer la durée réelle basée sur les heures
         start_minutes = data['start_time'].hour * 60 + data['start_time'].minute
         end_minutes = data['end_time'].hour * 60 + data['end_time'].minute
         actual_duration = end_minutes - start_minutes
         
-        if actual_duration != data['duration']:
-            raise serializers.ValidationError("La durée ne correspond pas aux heures de début et fin")
+        # Mettre à jour la durée pour qu'elle corresponde aux heures saisies
+        data['duration'] = actual_duration
         
         return data
 
@@ -187,13 +177,42 @@ class VirtualAgendaSlotUpdateSerializer(serializers.ModelSerializer):
             'date', 'start_time', 'end_time', 'type', 'duration', 
             'description', 'status', 'meeting_link', 'phone_number', 'notes'
         ]
+        # Rendre les champs optionnels pour la mise à jour
+        extra_kwargs = {
+            'date': {'required': False},
+            'start_time': {'required': False},
+            'end_time': {'required': False},
+            'type': {'required': False},
+            'duration': {'required': False},
+            'description': {'required': False},
+            'status': {'required': False},
+            'meeting_link': {'required': False},
+            'phone_number': {'required': False},
+            'notes': {'required': False}
+        }
 
     def validate(self, data):
         """Validation personnalisée"""
-        if 'start_time' in data and 'end_time' in data:
-            if data['start_time'] >= data['end_time']:
-                raise serializers.ValidationError("L'heure de fin doit être après l'heure de début")
+        logger.info(f"🔍 VirtualAgendaSlotUpdateSerializer.validate called with data: {data}")
         
+        if 'start_time' in data and 'end_time' in data:
+            logger.info(f"🔍 Validating time range: {data['start_time']} - {data['end_time']}")
+            
+            if data['start_time'] >= data['end_time']:
+                logger.error(f"❌ End time must be after start time")
+                raise serializers.ValidationError("L'heure de fin doit être après l'heure de début")
+            
+            # Calculer la durée réelle basée sur les heures
+            start_minutes = data['start_time'].hour * 60 + data['start_time'].minute
+            end_minutes = data['end_time'].hour * 60 + data['end_time'].minute
+            actual_duration = end_minutes - start_minutes
+
+            logger.info(f"🔍 Calculated duration: {actual_duration} minutes")
+            
+            # Mettre à jour la durée pour qu'elle corresponde aux heures saisies
+            data['duration'] = actual_duration
+        
+        logger.info(f"✅ Validation successful, returning data: {data}")
         return data
 
 class TeamMemberSerializer(serializers.ModelSerializer):
