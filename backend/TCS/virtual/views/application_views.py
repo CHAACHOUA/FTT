@@ -60,11 +60,13 @@ class VirtualApplicationListCreateView(generics.ListCreateAPIView):
                 'forum'
             )
         
-        # Les recruteurs voient les candidatures pour leurs offres ET les candidatures avec leurs créneaux
+        # Les recruteurs voient uniquement les candidatures où ils ont été sélectionnés dans le slot
+        # et uniquement pour leur entreprise
         elif hasattr(user, 'recruiter_profile'):
+            recruiter_company = user.recruiter_profile.company
             queryset = VirtualApplication.objects.filter(
-                Q(offer__recruiter=user.recruiter_profile) |  # Candidatures pour leurs offres
-                Q(selected_slot__recruiter=user)  # Candidatures avec leurs créneaux
+                selected_slot__recruiter=user,  # Candidatures avec leurs créneaux uniquement
+                offer__company=recruiter_company  # Uniquement pour son entreprise
             )
             if forum_id:
                 queryset = queryset.filter(forum_id=forum_id)
@@ -108,11 +110,13 @@ class VirtualApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
                 'forum'
             )
         
-        # Les recruteurs peuvent voir les candidatures pour leurs offres ET les candidatures avec leurs créneaux
+        # Les recruteurs peuvent voir uniquement les candidatures où ils ont été sélectionnés dans le slot
+        # et uniquement pour leur entreprise
         elif hasattr(user, 'recruiter_profile'):
+            recruiter_company = user.recruiter_profile.company
             return VirtualApplication.objects.filter(
-                Q(offer__recruiter=user.recruiter_profile) |  # Candidatures pour leurs offres
-                Q(selected_slot__recruiter=user)  # Candidatures avec leurs créneaux
+                selected_slot__recruiter=user,  # Candidatures avec leurs créneaux uniquement
+                offer__company=recruiter_company  # Uniquement pour son entreprise
             ).select_related(
                 'candidate',
                 'candidate__candidate_profile',
@@ -129,7 +133,10 @@ class VirtualApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     def perform_destroy(self, instance):
         """Annuler la réservation du créneau si nécessaire"""
-        if instance.selected_slot and instance.selected_slot.candidate == instance.candidate:
+        # Ne libérer le slot que s'il est effectivement réservé (booked) par ce candidat
+        if (instance.selected_slot and 
+            instance.selected_slot.status == 'booked' and 
+            instance.selected_slot.candidate == instance.candidate):
             instance.selected_slot.status = 'available'
             instance.selected_slot.candidate = None
             instance.selected_slot.save()
@@ -170,7 +177,9 @@ def get_candidate_applications(request, forum_id):
 @permission_classes([IsAuthenticated])
 def get_recruiter_applications(request, forum_id):
     """
-    Récupère les candidatures reçues par un recruteur pour un forum spécifique
+    Récupère les candidatures reçues par un recruteur pour un forum spécifique.
+    Affiche uniquement les candidatures où le recruteur a été sélectionné dans le slot
+    et uniquement pour son entreprise.
     """
     if not hasattr(request.user, 'recruiter_profile'):
         return Response(
@@ -186,11 +195,17 @@ def get_recruiter_applications(request, forum_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
+    # Récupérer l'entreprise du recruteur
+    recruiter_company = request.user.recruiter_profile.company
+    
+    # Filtrer uniquement les candidatures où :
+    # 1. Le recruteur connecté est celui sélectionné dans le slot
+    # 2. L'offre appartient à l'entreprise du recruteur
     applications = VirtualApplication.objects.filter(
-        Q(offer__recruiter=request.user.recruiter_profile) |  # Candidatures pour leurs offres
-        Q(selected_slot__recruiter=request.user),  # Candidatures avec leurs créneaux
+        selected_slot__recruiter=request.user,  # Candidatures avec leurs créneaux uniquement
+        offer__company=recruiter_company,  # Uniquement pour son entreprise
         forum=forum
-    ).select_related('candidate', 'offer', 'selected_slot')
+    ).select_related('candidate', 'offer', 'offer__company', 'selected_slot', 'selected_slot__recruiter')
     
     serializer = VirtualApplicationSerializer(applications, many=True)
     return Response(serializer.data)
@@ -260,9 +275,11 @@ def update_interview_status(request, application_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def validate_application(request, application_id):
     """
     Valider une candidature (recruteur accepte et réserve le slot)
+    Le slot reste disponible jusqu'à la validation par le recruteur
     """
     logger.info(f"🔍 validate_application called for application_id: {application_id}")
     logger.info(f"🔍 Request user: {request.user}")
@@ -276,7 +293,7 @@ def validate_application(request, application_id):
         )
     
     try:
-        application = VirtualApplication.objects.get(id=application_id)
+        application = VirtualApplication.objects.select_for_update().get(id=application_id)
         logger.info(f"🔍 Application found: {application}")
         logger.info(f"🔍 Application status: {application.status}")
         logger.info(f"🔍 Application offer: {application.offer}")
@@ -289,22 +306,25 @@ def validate_application(request, application_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Vérifier que le recruteur est bien le propriétaire de l'offre OU du créneau
+    # Vérifier que le recruteur est celui sélectionné dans le slot ET que l'offre appartient à son entreprise
     logger.info(f"🔍 Checking permissions...")
-    logger.info(f"🔍 Offer recruiter: {application.offer.recruiter}")
+    logger.info(f"🔍 Offer company: {application.offer.company}")
     logger.info(f"🔍 Request user recruiter profile: {request.user.recruiter_profile}")
+    logger.info(f"🔍 Request user recruiter company: {request.user.recruiter_profile.company}")
     logger.info(f"🔍 Selected slot recruiter: {application.selected_slot.recruiter if application.selected_slot else None}")
     
-    if (application.offer.recruiter != request.user.recruiter_profile and 
-        (not application.selected_slot or application.selected_slot.recruiter != request.user)):
+    recruiter_company = request.user.recruiter_profile.company
+    if (not application.selected_slot or 
+        application.selected_slot.recruiter != request.user or
+        application.offer.company != recruiter_company):
         logger.error(f"❌ Permission denied: User cannot validate this application")
         return Response(
-            {'detail': 'Vous ne pouvez valider que les candidatures pour vos propres offres ou créneaux.'},
+            {'detail': 'Vous ne pouvez valider que les candidatures où vous avez été sélectionné dans le slot et pour votre entreprise.'},
             status=status.HTTP_403_FORBIDDEN
         )
     
-    # Vérifier que la candidature est en attente
-    if application.status != 'pending':
+    # Vérifier que la candidature est en attente ou consultée (reviewed)
+    if application.status not in ['pending', 'reviewed']:
         logger.error(f"❌ Application already processed: status={application.status}")
         return Response(
             {'detail': 'Cette candidature a déjà été traitée.'},
@@ -313,9 +333,10 @@ def validate_application(request, application_id):
     
     logger.info(f"✅ Permission check passed, processing validation...")
     
-    # Réserver le slot si sélectionné
+    # Réserver le slot si sélectionné (transaction atomique pour éviter les conditions de course)
     if application.selected_slot:
-        slot = application.selected_slot
+        # Recharger le slot avec select_for_update pour verrouiller la ligne
+        slot = VirtualAgendaSlot.objects.select_for_update().get(id=application.selected_slot.id)
         logger.info(f"🔍 Processing slot reservation for slot: {slot}")
         logger.info(f"🔍 Slot status: {slot.status}")
         
@@ -336,7 +357,7 @@ def validate_application(request, application_id):
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            # Mettre à jour le slot
+            # Mettre à jour le slot (dans la transaction atomique)
             logger.info(f"🔍 Updating slot status to 'booked'...")
             slot.status = 'booked'
             slot.candidate = application.candidate
@@ -385,6 +406,39 @@ def validate_application(request, application_id):
     application.save()
     logger.info(f"✅ Application status updated")
     
+    # Créer les notifications
+    try:
+        from notifications.services.notification_service import NotificationService
+        
+        # Notification pour le candidat
+        NotificationService.create_notification(
+            user=application.candidate,
+            notification_type='application_accepted',
+            title='Candidature acceptée',
+            message=f'Votre candidature pour le poste "{application.offer.title}" a été acceptée.',
+            priority='high',
+            related_object_type='application',
+            related_object_id=application.id,
+            action_url=f'/forums/{application.forum.id}/applications/candidate'
+        )
+        
+        # Notification pour le recruteur (confirmation)
+        NotificationService.create_notification(
+            user=application.offer.recruiter.user,
+            notification_type='application_validated',
+            title='Candidature validée',
+            message=f'Vous avez validé la candidature de {application.candidate.email} pour "{application.offer.title}".',
+            priority='medium',
+            related_object_type='application',
+            related_object_id=application.id,
+            action_url=f'/forums/{application.forum.id}/applications/recruiter'
+        )
+        
+        logger.info(f"✅ Notifications créées pour la candidature {application.id}")
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de la création des notifications: {str(e)}")
+        # Ne pas bloquer la validation si les notifications échouent
+    
     # Vérifier l'état final du slot après validation
     if application.selected_slot:
         # Rafraîchir l'objet depuis la base de données pour s'assurer d'avoir les dernières données
@@ -425,11 +479,13 @@ def reject_application(request, application_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Vérifier que le recruteur est bien le propriétaire de l'offre OU du créneau
-    if (application.offer.recruiter != request.user.recruiter_profile and 
-        (not application.selected_slot or application.selected_slot.recruiter != request.user)):
+    # Vérifier que le recruteur est celui sélectionné dans le slot ET que l'offre appartient à son entreprise
+    recruiter_company = request.user.recruiter_profile.company
+    if (not application.selected_slot or 
+        application.selected_slot.recruiter != request.user or
+        application.offer.company != recruiter_company):
         return Response(
-            {'detail': 'Vous ne pouvez rejeter que les candidatures pour vos propres offres ou créneaux.'},
+            {'detail': 'Vous ne pouvez rejeter que les candidatures où vous avez été sélectionné dans le slot et pour votre entreprise.'},
             status=status.HTTP_403_FORBIDDEN
         )
     
@@ -461,10 +517,12 @@ def update_application_status(request, application_id):
             status=status.HTTP_403_FORBIDDEN
         )
     
+    recruiter_company = request.user.recruiter_profile.company
     try:
         application = VirtualApplication.objects.get(
             id=application_id,
-            offer__recruiter=request.user.recruiter_profile
+            selected_slot__recruiter=request.user,  # Le recruteur est celui du slot
+            offer__company=recruiter_company  # L'offre appartient à son entreprise
         )
     except VirtualApplication.DoesNotExist:
         return Response(
@@ -519,9 +577,11 @@ def get_application_stats(request, forum_id):
         }
     
     elif hasattr(request.user, 'recruiter_profile'):
-        # Statistiques pour le recruteur
+        # Statistiques pour le recruteur (uniquement celles où il a été sélectionné dans le slot et pour son entreprise)
+        recruiter_company = request.user.recruiter_profile.company
         applications = VirtualApplication.objects.filter(
-            offer__recruiter=request.user.recruiter_profile,
+            selected_slot__recruiter=request.user,  # Le recruteur est celui du slot
+            offer__company=recruiter_company,  # L'offre appartient à son entreprise
             forum=forum
         )
         

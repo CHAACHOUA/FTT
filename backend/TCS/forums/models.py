@@ -94,6 +94,8 @@ class Programme(models.Model):
     end_time = models.TimeField(default='17:00')
     location = models.CharField(max_length=200)
     speakers = models.ManyToManyField(Speaker, blank=True, related_name='programmes')
+    enable_zoom = models.BooleanField(default=False, help_text="Générer automatiquement un lien Zoom pour cette conférence")
+    meeting_link = models.URLField(blank=True, null=True, help_text="Lien de la réunion Zoom")
     
     class Meta:
         ordering = ['start_date', 'start_time']
@@ -106,6 +108,66 @@ class Programme(models.Model):
         # Vérifier que les dates du programme sont dans la plage du forum
         if self.start_date < self.forum.start_date or self.end_date > self.forum.end_date:
             raise ValidationError("Les dates du programme doivent être dans la plage de dates du forum")
+    
+    def should_show_zoom_link_to_candidate(self, user=None):
+        """
+        Vérifie si le lien Zoom doit être visible pour un candidat
+        Le lien est visible seulement si :
+        1. Le candidat est inscrit au programme
+        2. 10 minutes avant le début de la conférence
+        """
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if not self.meeting_link:
+            return False
+        
+        # Vérifier si le candidat est inscrit
+        if user and hasattr(user, 'candidate_profile'):
+            is_registered = ProgrammeRegistration.objects.filter(
+                programme=self,
+                candidate=user.candidate_profile
+            ).exists()
+            if not is_registered:
+                return False
+        
+        # Combiner date et heure de début
+        start_datetime = timezone.make_aware(
+            timezone.datetime.combine(self.start_date, self.start_time)
+        )
+        
+        # 10 minutes avant
+        ten_minutes_before = start_datetime - timedelta(minutes=10)
+        now = timezone.now()
+        
+        return now >= ten_minutes_before
+    
+    def get_participants_count(self):
+        """Retourne le nombre de participants inscrits"""
+        return ProgrammeRegistration.objects.filter(programme=self).count()
+    
+    def is_candidate_registered(self, user):
+        """Vérifie si un candidat est inscrit au programme"""
+        if not user or not hasattr(user, 'candidate_profile'):
+            return False
+        return ProgrammeRegistration.objects.filter(
+            programme=self,
+            candidate=user.candidate_profile
+        ).exists()
+
+
+class ProgrammeRegistration(models.Model):
+    """Modèle pour les inscriptions aux programmes"""
+    programme = models.ForeignKey(Programme, on_delete=models.CASCADE, related_name='registrations')
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='programme_registrations')
+    registered_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('programme', 'candidate')
+        ordering = ['-registered_at']
+    
+    def __str__(self):
+        return f"{self.candidate} inscrit à {self.programme.title}"
 
 
 class ForumRegistration(models.Model):

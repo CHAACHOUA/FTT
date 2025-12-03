@@ -44,6 +44,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=lambda v: v.sp
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',  # Doit être en premier pour ASGI
     'jazzmin',
     'django_extensions',
     'django.contrib.admin',
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
+    'channels',
     'users.apps.UsersConfig',
     'candidates.apps.CandidatesConfig',
     'forums.apps.ForumsConfig',
@@ -62,7 +64,9 @@ INSTALLED_APPS = [
     'recruiters.apps.RecruitersConfig',
     'company.apps.CompanyConfig',
     'matching.apps.MatchingConfig',
-    'virtual.apps.VirtualConfig'
+    'virtual.apps.VirtualConfig',
+    'notifications.apps.NotificationsConfig',
+    'chat.apps.ChatConfig'
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -97,6 +101,32 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = 'TCS.urls'
+
+# ASGI Configuration pour WebSocket
+ASGI_APPLICATION = 'TCS.asgi.application'
+
+# Configuration Channels pour WebSocket
+# Pour le développement, on peut utiliser InMemoryChannelLayer si Redis n'est pas disponible
+# Pour la production, utiliser RedisChannelLayer
+import os
+
+if os.environ.get('USE_REDIS', 'false').lower() == 'true':
+    # Utiliser Redis si explicitement demandé
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('localhost', 6379)],
+            },
+        },
+    }
+else:
+    # Utiliser InMemoryChannelLayer pour le développement (pas besoin de Redis)
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 
 TEMPLATES = [

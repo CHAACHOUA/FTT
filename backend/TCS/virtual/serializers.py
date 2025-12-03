@@ -490,6 +490,7 @@ class VirtualApplicationSerializer(serializers.ModelSerializer):
     candidate_name = serializers.CharField(read_only=True)
     candidate_email = serializers.EmailField(source='candidate.email', read_only=True)
     candidate_photo = serializers.SerializerMethodField()
+    candidate_profile = serializers.SerializerMethodField()
     offer_title = serializers.CharField(source='offer.title', read_only=True)
     offer_company = serializers.CharField(source='offer.company.name', read_only=True)
     recruiter_name = serializers.CharField(read_only=True)
@@ -501,7 +502,7 @@ class VirtualApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = VirtualApplication
         fields = [
-            'id', 'candidate', 'candidate_name', 'candidate_email', 'candidate_photo',
+            'id', 'candidate', 'candidate_name', 'candidate_email', 'candidate_photo', 'candidate_profile',
             'offer', 'offer_title', 'offer_company', 'recruiter_name',
             'forum', 'selected_slot', 'selected_slot_info',
             'questionnaire_responses', 'status', 'status_display',
@@ -515,6 +516,78 @@ class VirtualApplicationSerializer(serializers.ModelSerializer):
             candidate_profile = obj.candidate.candidate_profile
             if hasattr(candidate_profile, 'profile_picture') and candidate_profile.profile_picture:
                 return candidate_profile.profile_picture.url
+        return None
+
+    def get_candidate_profile(self, obj):
+        """Retourne le profil complet du candidat"""
+        if obj.candidate and hasattr(obj.candidate, 'candidate_profile'):
+            candidate_profile = obj.candidate.candidate_profile
+            
+            # Récupérer le secteur et la région depuis ForumRegistration pour ce forum
+            search_sector = []
+            search_region = ''
+            if obj.forum:
+                try:
+                    from forums.models import ForumRegistration
+                    registration = ForumRegistration.objects.filter(
+                        forum=obj.forum,
+                        candidate=candidate_profile
+                    ).select_related('search').first()
+                    
+                    if registration and registration.search:
+                        # sector est un JSONField (liste)
+                        search_sector = registration.search.sector if isinstance(registration.search.sector, list) else []
+                        search_region = registration.search.region or ''
+                except Exception as e:
+                    logger.warning(f"Erreur lors de la récupération du search: {e}")
+            
+            return {
+                'id': candidate_profile.id if hasattr(candidate_profile, 'id') else None,
+                'first_name': candidate_profile.first_name if hasattr(candidate_profile, 'first_name') else '',
+                'last_name': candidate_profile.last_name if hasattr(candidate_profile, 'last_name') else '',
+                'email': obj.candidate.email,
+                'phone': candidate_profile.phone if hasattr(candidate_profile, 'phone') else '',
+                'profile_picture': candidate_profile.profile_picture.url if hasattr(candidate_profile, 'profile_picture') and candidate_profile.profile_picture else None,
+                'cv_file': candidate_profile.cv_file.url if hasattr(candidate_profile, 'cv_file') and candidate_profile.cv_file else None,
+                'birth_date': candidate_profile.birth_date.isoformat() if hasattr(candidate_profile, 'birth_date') and candidate_profile.birth_date else None,
+                'address': candidate_profile.address if hasattr(candidate_profile, 'address') else '',
+                'city': candidate_profile.city if hasattr(candidate_profile, 'city') else '',
+                'postal_code': candidate_profile.postal_code if hasattr(candidate_profile, 'postal_code') else '',
+                'country': candidate_profile.country if hasattr(candidate_profile, 'country') else '',
+                'linkedin': candidate_profile.linkedin if hasattr(candidate_profile, 'linkedin') else '',
+                'github': candidate_profile.github if hasattr(candidate_profile, 'github') else '',
+                'portfolio': candidate_profile.portfolio if hasattr(candidate_profile, 'portfolio') else '',
+                'bio': candidate_profile.bio if hasattr(candidate_profile, 'bio') else '',
+                'search': {
+                    'sector': search_sector,
+                    'region': search_region,
+                },
+                'educations': [{
+                    'id': edu.id,
+                    'degree': edu.degree,
+                    'institution': edu.institution,
+                    'start_date': edu.start_date.isoformat() if edu.start_date else None,
+                    'end_date': edu.end_date.isoformat() if edu.end_date else None,
+                } for edu in candidate_profile.educations.all()] if hasattr(candidate_profile, 'educations') else [],
+                'experiences': [{
+                    'id': exp.id,
+                    'job_title': exp.job_title,
+                    'company': exp.company,
+                    'start_date': exp.start_date.isoformat() if exp.start_date else None,
+                    'end_date': exp.end_date.isoformat() if exp.end_date else None,
+                    'description': exp.description,
+                } for exp in candidate_profile.experiences.all()] if hasattr(candidate_profile, 'experiences') else [],
+                'candidate_languages': [{
+                    'id': lang.id,
+                    'language': lang.language.name if hasattr(lang, 'language') and lang.language else lang.language_name if hasattr(lang, 'language_name') else '',
+                    'level': lang.level,
+                } for lang in candidate_profile.candidate_languages.all()] if hasattr(candidate_profile, 'candidate_languages') else [],
+                'skills': [{
+                    'id': skill.id,
+                    'name': skill.name,
+                    'level': skill.level if hasattr(skill, 'level') else '',
+                } for skill in candidate_profile.skills.all()] if hasattr(candidate_profile, 'skills') else [],
+            }
         return None
 
     def get_offer(self, obj):
@@ -625,6 +698,12 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
     """
     Serializer pour créer une candidature virtuelle
     """
+    selected_slot = serializers.PrimaryKeyRelatedField(
+        queryset=VirtualAgendaSlot.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    
     class Meta:
         model = VirtualApplication
         fields = [
@@ -647,9 +726,11 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
             )
         
         # Vérifier que le créneau est disponible si sélectionné
-        if data.get('selected_slot'):
-            slot = data['selected_slot']
-            if slot.status != 'available':
+        selected_slot = data.get('selected_slot')
+        if selected_slot:
+            # PrimaryKeyRelatedField convertit déjà l'ID en objet, donc selected_slot est un objet VirtualAgendaSlot
+            # Vérifier que le slot est disponible
+            if selected_slot.status != 'available':
                 raise serializers.ValidationError(
                     "Ce créneau n'est plus disponible."
                 )
@@ -664,14 +745,11 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
         print(f"🔍 [SERIALIZER] Création candidature pour: {candidate.email}")
         print(f"🔍 [SERIALIZER] Données validées: {validated_data}")
         
-        # Réserver le slot si sélectionné
+        # Ne pas réserver le slot lors de la création de la candidature
+        # Le slot reste disponible jusqu'à ce que le recruteur valide la candidature
         selected_slot = validated_data.get('selected_slot')
         if selected_slot:
-            print(f"🔍 [SERIALIZER] Réservation du slot: {selected_slot.id}")
-            selected_slot.status = 'booked'
-            selected_slot.candidate = candidate
-            selected_slot.save()
-            print(f"✅ [SERIALIZER] Slot réservé avec succès")
+            print(f"🔍 [SERIALIZER] Slot sélectionné: {selected_slot.id} (restera disponible jusqu'à validation)")
         else:
             print(f"🔍 [SERIALIZER] Aucun slot sélectionné")
         
@@ -684,4 +762,24 @@ class VirtualApplicationCreateSerializer(serializers.ModelSerializer):
         
         application = super().create(validated_data)
         print(f"✅ [SERIALIZER] Candidature créée: {application.id}")
+        
+        # Créer une notification pour le recruteur
+        try:
+            from notifications.services.notification_service import NotificationService
+            
+            NotificationService.create_notification(
+                user=application.offer.recruiter.user,
+                notification_type='new_application',
+                title='Nouvelle candidature',
+                message=f'Vous avez reçu une nouvelle candidature pour le poste "{application.offer.title}".',
+                priority='high',
+                related_object_type='application',
+                related_object_id=application.id,
+                action_url=f'/forums/{application.forum.id}/applications/recruiter'
+            )
+            print(f"✅ [SERIALIZER] Notification créée pour le recruteur")
+        except Exception as e:
+            print(f"❌ [SERIALIZER] Erreur lors de la création de la notification: {str(e)}")
+            # Ne pas bloquer la création de la candidature si les notifications échouent
+        
         return application

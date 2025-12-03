@@ -199,6 +199,115 @@ class ZoomService:
             logger.error(f"❌ Response text: {getattr(e.response, 'text', 'N/A')}")
             raise Exception(f"Erreur lors de la création de la réunion Zoom: {str(e)}")
     
+    def create_meeting_for_programme(self, programme):
+        """
+        Crée une réunion Zoom pour un programme de conférence
+        
+        Args:
+            programme: Instance du Programme
+            
+        Returns:
+            dict: Informations de la réunion créée
+        """
+        logger.info(f"🔗 ZoomService.create_meeting_for_programme called for programme {programme.id}")
+        
+        try:
+            logger.info(f"🔍 Getting Zoom access token...")
+            access_token = self._get_access_token()
+            logger.info(f"✅ Access token obtained successfully")
+        except Exception as e:
+            logger.error(f"❌ Failed to get Zoom access token: {str(e)}")
+            logger.warning(f"⚠️ Creating fallback meeting link instead...")
+            return self._create_fallback_meeting_link_for_programme(programme)
+        
+        # Calculer la durée en minutes
+        start_datetime = datetime.combine(programme.start_date, programme.start_time)
+        end_datetime = datetime.combine(programme.end_date, programme.end_time)
+        duration_minutes = int((end_datetime - start_datetime).total_seconds() / 60)
+        
+        # Préparer les données de la réunion
+        logger.info(f"🔍 Meeting start time: {start_datetime}")
+        
+        meeting_data = {
+            'topic': f'{programme.title} - {programme.forum.name}',
+            'type': 2,  # Réunion planifiée
+            'start_time': start_datetime.isoformat(),
+            'duration': max(duration_minutes, 30),  # Minimum 30 minutes
+            'timezone': 'Europe/Paris',
+            'agenda': programme.description or f'Conférence: {programme.title}',
+            'settings': {
+                'host_video': True,
+                'participant_video': True,
+                'cn_meeting': False,
+                'in_meeting': False,
+                'join_before_host': True,
+                'mute_upon_entry': False,
+                'watermark': False,
+                'use_pmi': False,
+                'approval_type': 0,  # Automatique
+                'audio': 'voip',
+                'auto_recording': 'none',
+                'enforce_login': False,
+                'enforce_login_domains': '',
+                'alternative_hosts': '',
+                'close_registration': False,
+                'show_share_button': True,
+                'allow_multiple_devices': True,
+                'registrants_confirmation_email': False,
+                'waiting_room': False,
+                'request_permission_to_unmute_participants': False,
+                'registrants_email_notification': False
+            }
+        }
+        
+        logger.info(f"🔍 Meeting data prepared: {json.dumps(meeting_data, indent=2)}")
+        
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        try:
+            logger.info(f"🔍 Sending request to Zoom API...")
+            response = requests.post(
+                f'{self.base_url}/users/me/meetings',
+                headers=headers,
+                json=meeting_data,
+                timeout=10
+            )
+            
+            logger.info(f"🔍 Zoom API response status: {response.status_code}")
+            response.raise_for_status()
+            
+            meeting_info = response.json()
+            logger.info(f"🔍 Raw Zoom API response: {json.dumps(meeting_info, indent=2)}")
+            
+            # Retourner les informations formatées
+            result = {
+                'meeting_id': meeting_info['id'],
+                'meeting_link': meeting_info['join_url'],
+                'host_link': meeting_info['start_url'],
+                'password': meeting_info.get('password', ''),
+                'topic': meeting_info['topic'],
+                'start_time': meeting_info['start_time'],
+                'duration': meeting_info['duration'],
+                'timezone': meeting_info['timezone'],
+                'created_at': meeting_info['created_at'],
+                'settings': meeting_info['settings']
+            }
+            
+            logger.info(f"✅ Zoom meeting created successfully for programme!")
+            logger.info(f"🔗 Meeting ID: {result['meeting_id']}")
+            logger.info(f"🔗 Meeting Link: {result['meeting_link']}")
+            
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ Zoom API request failed: {str(e)}")
+            logger.error(f"❌ Response status: {getattr(e.response, 'status_code', 'N/A')}")
+            logger.error(f"❌ Response text: {getattr(e.response, 'text', 'N/A')}")
+            raise Exception(f"Erreur lors de la création de la réunion Zoom: {str(e)}")
+    
     def _create_fallback_meeting_link(self, slot):
         """
         Crée un lien de réunion de fallback quand l'API Zoom échoue
@@ -227,6 +336,41 @@ class ZoomService:
         
         logger.info(f"✅ Fallback meeting link created: {fallback_link}")
         logger.warning(f"⚠️ This is a fallback link - the recruiter will need to create the actual Zoom meeting")
+        
+        return result
+    
+    def _create_fallback_meeting_link_for_programme(self, programme):
+        """
+        Crée un lien de réunion de fallback pour un programme quand l'API Zoom échoue
+        """
+        logger.info(f"🔗 Creating fallback meeting link for programme {programme.id}")
+        
+        # Générer un ID de réunion unique basé sur le programme
+        meeting_id = f"tcs-prog-{programme.id}-{programme.start_date.strftime('%Y%m%d')}-{programme.start_time.strftime('%H%M')}"
+        
+        # Créer un lien Zoom générique
+        fallback_link = f"https://zoom.us/j/{meeting_id}"
+        
+        start_datetime = datetime.combine(programme.start_date, programme.start_time)
+        end_datetime = datetime.combine(programme.end_date, programme.end_time)
+        duration_minutes = int((end_datetime - start_datetime).total_seconds() / 60)
+        
+        result = {
+            'meeting_id': meeting_id,
+            'meeting_link': fallback_link,
+            'host_link': fallback_link,
+            'password': '',
+            'topic': f'{programme.title} - {programme.forum.name}',
+            'start_time': start_datetime.isoformat(),
+            'duration': max(duration_minutes, 30),
+            'timezone': 'Europe/Paris',
+            'created_at': datetime.now().isoformat(),
+            'settings': {},
+            'fallback': True
+        }
+        
+        logger.info(f"✅ Fallback meeting link created: {fallback_link}")
+        logger.warning(f"⚠️ This is a fallback link - the organizer will need to create the actual Zoom meeting")
         
         return result
     

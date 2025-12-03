@@ -1,4 +1,5 @@
 from django.urls import path
+from virtual.views.dashboard_views import get_virtual_dashboard_stats
 from .views.virtual_forum_views import (
     get_virtual_forums,
     get_forums_by_phase,
@@ -69,6 +70,7 @@ urlpatterns = [
     path('forums/<int:forum_id>/agenda/stats/', get_agenda_stats, name='virtual-agenda-stats'),
     path('forums/<int:forum_id>/agenda/refresh/', force_refresh_agenda, name='virtual-agenda-refresh'),
     path('forums/<int:forum_id>/recruiters/', get_forum_recruiters, name='virtual-forum-recruiters'),
+    path('forums/<int:forum_id>/dashboard/stats/', get_virtual_dashboard_stats, name='virtual-dashboard-stats'),
     
     # Questionnaires
     path('questionnaires/', QuestionnaireListCreateView.as_view(), name='questionnaire-list'),

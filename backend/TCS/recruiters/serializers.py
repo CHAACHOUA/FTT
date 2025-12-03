@@ -9,6 +9,7 @@ from forums.models import Forum
 class RecruiterSerializer(serializers.ModelSerializer):
     company= CompanySerializer( read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
     timezone = serializers.CharField(source='user.timezone', read_only=True)
     created_at = serializers.DateTimeField(source='user.created_at', read_only=True)
     last_login = serializers.DateTimeField(source='user.last_login', read_only=True)
@@ -17,7 +18,7 @@ class RecruiterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Recruiter
-        fields = ['id', 'first_name', 'last_name','profile_picture', 'photo', 'company','title','phone','email','timezone','created_at','last_login','forum_offers_count']
+        fields = ['id', 'first_name', 'last_name','profile_picture', 'photo', 'company','title','phone','email','user_id','timezone','created_at','last_login','forum_offers_count']
     
     def get_forum_offers_count(self, obj):
         """Compter le nombre d'offres du recruteur pour le forum spécifique"""

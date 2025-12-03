@@ -649,45 +649,55 @@ def get_agenda_stats(request, forum_id):
     Récupérer les statistiques de l'agenda
     """
     try:
+        print(f"[AGENDA_STATS] forum_id={forum_id}")
         forum = get_object_or_404(Forum, id=forum_id)
+        print(f"[AGENDA_STATS] forum={forum.name}")
         
         # Statistiques globales - CORRECTION: Exclure les créneaux des candidats
-        base_queryset = VirtualAgendaSlot.objects.filter(forum=forum).exclude(
+        base_queryset = VirtualAgendaSlot.objects.filter(forum=forum)
+        print(f"[AGENDA_STATS] total_slots_all={base_queryset.count()}")
+        base_queryset = base_queryset.exclude(
             recruiter__role='candidate'
         ).exclude(
             recruiter__candidate_profile__isnull=False
         )
+        print(f"[AGENDA_STATS] total_slots_filtered={base_queryset.count()}")
         
         total_slots = base_queryset.count()
         available_slots = base_queryset.filter(status='available').count()
         booked_slots = base_queryset.filter(status='booked').count()
         completed_slots = base_queryset.filter(status='completed').count()
         cancelled_slots = base_queryset.filter(status='cancelled').count()
+        print(f"[AGENDA_STATS] totals: total={total_slots} available={available_slots} booked={booked_slots} completed={completed_slots} cancelled={cancelled_slots}")
         
-        # Statistiques par recruteur - CORRECTION: Filtrer uniquement les vrais recruteurs
+        # Statistiques par recruteur - basé sur les slots existants (plus robuste)
         recruiter_stats = []
-        recruiters = User.objects.filter(
-            Q(recruiter__company=forum.company) | 
-            Q(recruiter__forums=forum)
-        ).exclude(
-            role='candidate'
-        ).exclude(
-            candidate_profile__isnull=False
-        ).distinct()
-        
-        for recruiter in recruiters:
-            # Vérifier que c'est bien un recruteur
-            if recruiter.role != 'candidate' and not hasattr(recruiter, 'candidate_profile'):
-                recruiter_slots = VirtualAgendaSlot.objects.filter(forum=forum, recruiter=recruiter)
-                recruiter_stats.append({
-                    'recruiter_id': recruiter.id,
-                    'recruiter_name': recruiter.get_full_name(),
-                    'total_slots': recruiter_slots.count(),
-                    'available_slots': recruiter_slots.filter(status='available').count(),
-                    'booked_slots': recruiter_slots.filter(status='booked').count(),
-                    'completed_slots': recruiter_slots.filter(status='completed').count(),
-                    'cancelled_slots': recruiter_slots.filter(status='cancelled').count()
-                })
+        recruiter_ids = base_queryset.values_list('recruiter', flat=True).distinct()
+        print(f"[AGENDA_STATS] recruiter_ids={list(recruiter_ids)}")
+        for rid in recruiter_ids:
+            try:
+                recruiter = User.objects.get(id=rid)
+            except User.DoesNotExist:
+                print(f"[AGENDA_STATS] recruiter {rid} does not exist")
+                continue
+            # Exclure les comptes candidats
+            if hasattr(recruiter, 'candidate_profile') or getattr(recruiter, 'role', None) == 'candidate':
+                print(f"[AGENDA_STATS] skip candidate-like user id={rid}")
+                continue
+            recruiter_slots = VirtualAgendaSlot.objects.filter(forum=forum, recruiter=recruiter)
+            full_name = getattr(recruiter, 'first_name', '')
+            last_name = getattr(recruiter, 'last_name', '')
+            full_name = f"{full_name} {last_name}".strip() or getattr(recruiter, 'username', '')
+            recruiter_stats.append({
+                'recruiter_id': recruiter.id,
+                'recruiter_name': full_name,
+                'total_slots': recruiter_slots.count(),
+                'available_slots': recruiter_slots.filter(status='available').count(),
+                'booked_slots': recruiter_slots.filter(status='booked').count(),
+                'completed_slots': recruiter_slots.filter(status='completed').count(),
+                'cancelled_slots': recruiter_slots.filter(status='cancelled').count()
+            })
+        print(f"[AGENDA_STATS] recruiter_stats_len={len(recruiter_stats)}")
         
         return Response({
             'total_slots': total_slots,
@@ -699,6 +709,9 @@ def get_agenda_stats(request, forum_id):
         })
         
     except Exception as e:
+        import traceback
+        print("[AGENDA_STATS][ERROR]", str(e))
+        traceback.print_exc()
         return Response({
             'error': 'Erreur lors de la récupération des statistiques',
             'details': str(e)

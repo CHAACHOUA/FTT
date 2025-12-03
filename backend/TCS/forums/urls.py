@@ -4,7 +4,8 @@ from forums.views.registration_views import register_to_forum, register_recruite
 from forums.views.forum_views import organizer_my_forums,recruiter_my_forums,my_forums
 from forums.views.programme_views import (
     programme_list, programme_detail, create_programme, update_programme, delete_programme,
-    speaker_list, create_speaker, update_speaker, delete_speaker
+    speaker_list, create_speaker, update_speaker, delete_speaker,
+    programme_register, programme_unregister
 )
 
 
@@ -28,6 +29,8 @@ urlpatterns = [
     path('<int:forum_id>/programmes/create/', create_programme, name='create-programme'),
     path('<int:forum_id>/programmes/<int:programme_id>/update/', update_programme, name='update-programme'),
     path('<int:forum_id>/programmes/<int:programme_id>/delete/', delete_programme, name='delete-programme'),
+    path('<int:forum_id>/programmes/<int:programme_id>/register/', programme_register, name='programme-register'),
+    path('<int:forum_id>/programmes/<int:programme_id>/unregister/', programme_unregister, name='programme-unregister'),
     
     # URLs pour les speakers
     path('speakers/', speaker_list, name='speaker-list'),
