@@ -13,6 +13,25 @@ import { formatTimeForUser } from '../../utils/timezoneUtils';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Badge, Card, Input } from '../common';
 
+const normalizeTimeString = (timeStr = '') => {
+  if (!timeStr) return '';
+  const parts = timeStr.split(':');
+  const hours = (parts[0] || '00').padStart(2, '0');
+  const minutes = (parts[1] || '00').padStart(2, '0');
+  const seconds = (parts[2] || '00').padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+};
+
+const getFormattedSlotTime = (timeStr, slotDate, timezone) => {
+  if (!timeStr) return '--:--';
+  const normalized = normalizeTimeString(timeStr);
+  const formatted = formatTimeForUser(normalized, timezone || 'Europe/Paris', slotDate);
+  if (!formatted || formatted.toString().includes('Invalid')) {
+    return normalized.slice(0, 5);
+  }
+  return formatted;
+};
+
 const AgendaCalendar = ({ 
   timeSlots: agendaSlots = [], 
   onDateClick, 
@@ -177,133 +196,88 @@ const AgendaCalendar = ({
   };
 
 
+
+
+  const createTimeSlotsWithDuration = () => {
+    if (!newSlot.startTime || !newSlot.endTime || !newSlot.date || !newSlot.duration) {
+      toast.error('Veuillez sélectionner une plage horaire et une durée valides');
+      return;
+    }
+
+    const [startHour, startMinute] = newSlot.startTime.split(':').map(Number);
+    const [endHour, endMinute] = newSlot.endTime.split(':').map(Number);
+
+    if (
+      [startHour, startMinute, endHour, endMinute].some(
+        value => Number.isNaN(value) || value < 0
+      )
+    ) {
+      toast.error('Heures de début ou de fin invalides');
+      return;
+    }
+
+    const duration = parseInt(newSlot.duration, 10);
+    if (Number.isNaN(duration) || duration <= 0) {
+      toast.error('Durée invalide');
+      return;
+    }
+
+    const date = newSlot.date;
+    const type = newSlot.type;
+  
+    const slots = [];
+  
+    let currentMinutes = startHour * 60 + startMinute;
+    let endMinutes = endHour * 60 + endMinute;
+
+    // Permettre la sélection inversée (glisser du bas vers le haut)
+    if (endMinutes < currentMinutes) {
+      [currentMinutes, endMinutes] = [endMinutes, currentMinutes];
+    }
+
+    if (endMinutes === currentMinutes) {
+      toast.error('La plage horaire sélectionnée doit être supérieure à 0 minute');
+      return;
+    }
+  
+    while (currentMinutes < endMinutes) {
+      const slotStartHour = Math.floor(currentMinutes / 60);
+      const slotStartMinute = currentMinutes % 60;
+  
+      let slotEndMinutes = currentMinutes + duration;
+      if (slotEndMinutes > endMinutes) slotEndMinutes = endMinutes;
+  
+      // Stop si créneau nul
+      if (slotEndMinutes <= currentMinutes) break;
+  
+      const slotEndHour = Math.floor(slotEndMinutes / 60);
+      const slotEndMinute = slotEndMinutes % 60;
+  
+      slots.push({
+        id: Date.now() + Math.random(),
+        date,
+        start_time: `${slotStartHour.toString().padStart(2, '0')}:${slotStartMinute.toString().padStart(2, '0')}`,
+        end_time: `${slotEndHour.toString().padStart(2, '0')}:${slotEndMinute.toString().padStart(2, '0')}`,
+        type,
+        duration: slotEndMinutes - currentMinutes,
+        status: 'available'
+      });
+  
+      currentMinutes = slotEndMinutes; // avancer
+    }
+  
+    slots.forEach(slot => onAddSlot(slot));
+  
+    if (slots.length > 0) {
+      toast.success(`${slots.length} créneau(x) créé(s) avec succès`);
+    }
+  };
+  
   const handleCreateSlot = () => {
     // Créer les créneaux selon la configuration de la popup
     createTimeSlotsWithDuration();
     setShowSlotModal(false);
   };
-
-  const createTimeSlotsWithDuration = () => {
-    const startHour = parseInt(newSlot.startTime.split(':')[0]);
-    const endHour = parseInt(newSlot.endTime.split(':')[0]);
-    const date = newSlot.date;
-    const duration = newSlot.duration;
-    const type = newSlot.type;
-    
-    const slots = [];
-    
-    // CORRECTION: Créer des créneaux selon la durée sélectionnée dans la popup
-    for (let hour = startHour; hour <= endHour; hour++) {
-      // Calculer le nombre de créneaux par heure selon la durée choisie
-      const slotsPerHour = 60 / duration; // 60 minutes divisées par la durée
-      
-      for (let i = 0; i < slotsPerHour; i++) {
-        const startMinutes = i * duration;
-        const endMinutes = startMinutes + duration;
-        
-        // Ne pas créer de créneaux au-delà de l'heure de fin
-        if (hour === endHour && startMinutes >= 60) {
-          break;
-        }
-        
-        const startTime = `${hour.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')}`;
-        
-        let endTime;
-        if (endMinutes >= 60) {
-          // Le créneau se termine à l'heure suivante
-          const nextHour = hour + 1;
-          const remainingMinutes = endMinutes - 60;
-          endTime = `${nextHour.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}`;
-        } else {
-          endTime = `${hour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-        }
-        
-        // Ne pas créer de créneaux au-delà de l'heure de fin
-        if (hour > endHour || (hour === endHour && startMinutes >= 60)) {
-          break;
-        }
-        
-        slots.push({
-          id: Date.now() + Math.random() + i,
-          date,
-          start_time: startTime,
-          end_time: endTime,
-          type,
-          duration, // Utiliser la durée sélectionnée
-          status: 'available'
-        });
-      }
-    }
-    
-    // Créer tous les créneaux
-    slots.forEach(slot => {
-      onAddSlot(slot);
-    });
-    
-    // Afficher une seule notification pour tous les créneaux créés
-    if (slots.length > 0) {
-      toast.success(`${slots.length} créneau(x) créé(s) avec succès`);
-    }
-  };
-
-  const createTimeSlotsAutomatically = (start, end) => {
-    const startHour = start.timeSlot.hour;
-    const endHour = end.timeSlot.hour;
-    const date = start.day.dateStr;
-    const duration = 30; // Durée par défaut de 30 minutes (bloc unifié)
-    const type = 'video'; // Type par défaut
-    
-    const slots = [];
-    
-    // CORRECTION: Créer des blocs unifiés de 30 minutes (9h-9h30, 9h30-10h, etc.)
-    for (let hour = startHour; hour <= endHour; hour++) {
-      // Créer 2 blocs de 30 minutes par heure (00-30 et 30-60)
-      const timeBlocks = [
-        { start: '00', end: '30' },
-        { start: '30', end: '00' } // 30-60 devient 30-00 de l'heure suivante
-      ];
-      
-      timeBlocks.forEach((timeBlock, index) => {
-        const startTime = `${hour.toString().padStart(2, '0')}:${timeBlock.start}`;
-        let endTime;
-        
-        if (timeBlock.end === '00') {
-          // 30-60 devient 30-00 de l'heure suivante
-          endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
-        } else {
-          endTime = `${hour.toString().padStart(2, '0')}:${timeBlock.end}`;
-        }
-        
-        // Ne pas créer de bloc au-delà de l'heure de fin
-        if (hour === endHour && timeBlock.start === '30') {
-          return; // Skip le bloc 30-60 de la dernière heure
-        }
-        
-        slots.push({
-          id: Date.now() + Math.random() + index,
-          date,
-          start_time: startTime,
-          end_time: endTime,
-          type,
-          duration,
-          status: 'available'
-        });
-      });
-    }
-    
-    // Créer tous les créneaux automatiquement
-    slots.forEach(slot => {
-      onAddSlot(slot);
-    });
-    
-    // Afficher une seule notification pour tous les créneaux créés
-    if (slots.length > 0) {
-      toast.success(`${slots.length} créneau(x) créé(s) avec succès`);
-    }
-  };
-
-
-
   const getSlotIcon = (type) => {
     return type === 'video' ? faVideo : faPhone;
   };
@@ -337,14 +311,16 @@ const AgendaCalendar = ({
 
   
   // Générer les heures de la journée (8h à 18h)
+  const PIXELS_PER_MINUTE = 2;
+  const CELL_INTERVAL_MINUTES = 5;
+
   const generateTimeSlots = () => {
     const hours = [];
     for (let hour = 8; hour <= 18; hour++) {
       const hourStr = hour.toString().padStart(2, '0');
-      const display = hourStr + ':00';
       hours.push({
         hour,
-        display: display
+        display: `${hourStr}:00`
       });
     }
     return hours;
@@ -352,10 +328,6 @@ const AgendaCalendar = ({
 
   const hourSlots = generateTimeSlots();
   
-  // Debug pour voir les heures générées
-  console.log('🔍 Heures générées:', hourSlots);
-  console.log('🔍 Premier élément:', hourSlots[0]);
-  console.log('🔍 Type du display:', typeof hourSlots[0]?.display);
 
   return (
     <div className="agenda-calendar-container">
@@ -418,10 +390,12 @@ const AgendaCalendar = ({
                   {/* Grille horaire pour ce jour */}
                   <div className="day-time-grid">
                     {hourSlots.map((timeSlot, timeIndex) => {
-                      // Créer 4 cellules de 15 minutes pour chaque heure
-                      const quarterHours = [0, 15, 30, 45];
+                      const minuteIntervals = Array.from(
+                        { length: 60 / CELL_INTERVAL_MINUTES },
+                        (_, idx) => idx * CELL_INTERVAL_MINUTES
+                      );
                       
-                      return quarterHours.map((quarterMinute, quarterIndex) => {
+                      return minuteIntervals.map((quarterMinute, quarterIndex) => {
                         const quarterTime = {
                           hour: timeSlot.hour,
                           minute: quarterMinute,
@@ -439,7 +413,14 @@ const AgendaCalendar = ({
                         return (
                           <div
                             key={`${timeIndex}-${quarterIndex}`}
-                            className="time-cell"
+                            className={`time-cell ${
+                              quarterMinute === 0
+                                ? 'hour-boundary'
+                                : quarterMinute % 15 === 0
+                                  ? 'quarter-boundary'
+                                  : ''
+                            }`}
+                            style={{ height: `${CELL_INTERVAL_MINUTES * PIXELS_PER_MINUTE}px` }}
                             onClick={(e) => handleCellClick(day, quarterTime, e)}
                             onMouseDown={(e) => handleMouseDown(day, quarterTime, e)}
                             onMouseEnter={() => handleMouseEnter(day, quarterTime)}
@@ -450,12 +431,12 @@ const AgendaCalendar = ({
                               const endTime = slot.end_time_display || slot.end_time;
                               const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
                               const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
-                              const duration = endMinutes - startMinutes;
+                              const duration = Math.max(endMinutes - startMinutes, 0);
                               
-                              // Calculer la position verticale dans la cellule (0-30px)
-                              const slotStartMinutes = parseInt(startTime.split(':')[1]);
-                              const topPosition = (slotStartMinutes / 60) * 30; // Position en pixels
-                              const height = Math.max((duration / 60) * 30, 10); // Hauteur minimale de 10px
+                              const cellStartMinute = quarterMinute;
+                              const relativeStart = Math.max(parseInt(startTime.split(':')[1]) - cellStartMinute, 0);
+                              const topPosition = relativeStart * PIXELS_PER_MINUTE;
+                              const height = Math.max(duration * PIXELS_PER_MINUTE, CELL_INTERVAL_MINUTES * PIXELS_PER_MINUTE * 0.4);
                               
                               return (
                                 <div
@@ -476,7 +457,8 @@ const AgendaCalendar = ({
                                     style={{ color: getSlotColor(slot.status) }}
                                   />
                                   <span className="slot-time">
-                                    {startTime} - {endTime}
+                                  {getFormattedSlotTime(startTime, slot.date || day.dateStr, user?.timezone)} - {getFormattedSlotTime(endTime, slot.date || day.dateStr, user?.timezone)}
+
                                   </span>
                                 </div>
                               );

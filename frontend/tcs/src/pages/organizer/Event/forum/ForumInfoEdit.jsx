@@ -7,7 +7,7 @@ import Navbar from '../../../../components/loyout/NavBar';
 import '../../../../pages/styles/candidate/Presentation.css';
 import '../common/Dashboard.css';
 import { getForumTypesForSelect } from '../../../../constants/choices';
-import { validateEventDates } from '../../../../utils/dateValidation';
+import { validateEventDates, validateVirtualForumDates } from '../../../../utils/dateValidation';
 import DateValidationError from '../../../../utils/DateValidationError';
 import { useAuth } from '../../../../context/AuthContext';
 import { Button } from '../../../../components/common';
@@ -26,7 +26,13 @@ const ForumInfoEdit = () => {
     start_time: '',
     end_time: '',
     type: 'presentiel',
-    photo: null
+    photo: null,
+    // Dates pour forums virtuels
+    preparation_start: '',
+    preparation_end: '',
+    jobdating_start: '',
+    interview_start: '',
+    interview_end: ''
   });
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -96,6 +102,21 @@ const ForumInfoEdit = () => {
         console.log('Forum reçu:', forum);
         console.log('Photo du forum:', forum.photo);
         setForumData(forum);
+        
+        // Fonction helper pour convertir DateTimeField en format datetime-local
+        const formatDateTimeForInput = (dateTimeString) => {
+          if (!dateTimeString) return '';
+          const date = new Date(dateTimeString);
+          if (isNaN(date.getTime())) return '';
+          // Format: YYYY-MM-DDTHH:mm
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${year}-${month}-${day}T${hours}:${minutes}`;
+        };
+        
         setFormData({
           name: forum.name || '',
           description: forum.description || '',
@@ -104,7 +125,13 @@ const ForumInfoEdit = () => {
           start_time: forum.start_time || '09:00',
           end_time: forum.end_time || '17:00',
           type: forum.type || 'presentiel',
-          photo: null
+          photo: null,
+          // Dates pour forums virtuels
+          preparation_start: formatDateTimeForInput(forum.preparation_start),
+          preparation_end: formatDateTimeForInput(forum.preparation_end),
+          jobdating_start: formatDateTimeForInput(forum.jobdating_start),
+          interview_start: formatDateTimeForInput(forum.interview_start),
+          interview_end: formatDateTimeForInput(forum.interview_end)
         });
         setInitialLoading(false);
         return;
@@ -119,6 +146,21 @@ const ForumInfoEdit = () => {
           const fetchedForum = response.data;
           console.log('Forum récupéré via API:', fetchedForum);
           setForumData(fetchedForum);
+          
+          // Fonction helper pour convertir DateTimeField en format datetime-local
+          const formatDateTimeForInput = (dateTimeString) => {
+            if (!dateTimeString) return '';
+            const date = new Date(dateTimeString);
+            if (isNaN(date.getTime())) return '';
+            // Format: YYYY-MM-DDTHH:mm
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+          };
+          
           setFormData({
             name: fetchedForum.name || '',
             description: fetchedForum.description || '',
@@ -127,7 +169,13 @@ const ForumInfoEdit = () => {
             start_time: fetchedForum.start_time || '09:00',
             end_time: fetchedForum.end_time || '17:00',
             type: fetchedForum.type || 'presentiel',
-            photo: null
+            photo: null,
+            // Dates pour forums virtuels
+            preparation_start: formatDateTimeForInput(fetchedForum.preparation_start),
+            preparation_end: formatDateTimeForInput(fetchedForum.preparation_end),
+            jobdating_start: formatDateTimeForInput(fetchedForum.jobdating_start),
+            interview_start: formatDateTimeForInput(fetchedForum.interview_start),
+            interview_end: formatDateTimeForInput(fetchedForum.interview_end)
           });
         } catch (error) {
           console.error('Erreur lors de la récupération du forum:', error);
@@ -209,6 +257,19 @@ const ForumInfoEdit = () => {
         return;
       }
       
+      // Validation des dates virtuelles si le forum est virtuel
+      if (formData.type === 'virtuel') {
+        const virtualDatesValidation = validateVirtualForumDates(formData);
+        if (!virtualDatesValidation.isValid) {
+          virtualDatesValidation.errors.forEach(error => {
+            toast.error(error);
+          });
+          setDateErrors([...dateErrors, ...virtualDatesValidation.errors]);
+          setLoading(false);
+          return;
+        }
+      }
+      
       // Effacer les erreurs si validation OK
       setDateErrors([]);
 
@@ -220,6 +281,25 @@ const ForumInfoEdit = () => {
       formPayload.append('start_time', formData.start_time);
       formPayload.append('end_time', formData.end_time);
       formPayload.append('type', formData.type);
+      
+      // Ajouter les dates pour forums virtuels si le forum est virtuel
+      if (formData.type === 'virtuel') {
+        if (formData.preparation_start) {
+          formPayload.append('preparation_start', formData.preparation_start);
+        }
+        if (formData.preparation_end) {
+          formPayload.append('preparation_end', formData.preparation_end);
+        }
+        if (formData.jobdating_start) {
+          formPayload.append('jobdating_start', formData.jobdating_start);
+        }
+        if (formData.interview_start) {
+          formPayload.append('interview_start', formData.interview_start);
+        }
+        if (formData.interview_end) {
+          formPayload.append('interview_end', formData.interview_end);
+        }
+      }
 
       console.log('Photo dans formData:', formData.photo);
       console.log('Type de photo:', typeof formData.photo);
@@ -575,6 +655,111 @@ const ForumInfoEdit = () => {
                 />
               </div>
             </div>
+
+            {/* Dates pour forums virtuels */}
+            {formData.type === 'virtuel' && (
+              <>
+                <div style={{ 
+                  marginTop: '30px', 
+                  padding: '24px', 
+                  background: '#ffffff', 
+                  borderRadius: '12px', 
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+                }} className="virtual-dates-section">
+                  <h3 style={{ 
+                    marginBottom: '24px', 
+                    color: '#1e293b', 
+                    fontSize: '1.2rem', 
+                    fontWeight: '700',
+                    paddingBottom: '16px',
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    Dates clés du forum virtuel
+                  </h3>
+                  
+                  {/* Début de la phase de préparation */}
+                  <div className="input-modern">
+                    <span className="input-icon"><FaCalendarAlt /></span>
+                    <div className="input-wrapper-modern">
+                      <label className={`floating-label ${formData.preparation_start ? 'filled' : ''}`}>
+                        Début de la phase de préparation
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="preparation_start"
+                        value={formData.preparation_start}
+                        onChange={handleFieldChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Fin de la phase de préparation */}
+                  <div className="input-modern">
+                    <span className="input-icon"><FaCalendarAlt /></span>
+                    <div className="input-wrapper-modern">
+                      <label className={`floating-label ${formData.preparation_end ? 'filled' : ''}`}>
+                        Fin de la phase de préparation
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="preparation_end"
+                        value={formData.preparation_end}
+                        onChange={handleFieldChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Début de la phase jobdating/traitement */}
+                  <div className="input-modern">
+                    <span className="input-icon"><FaCalendarAlt /></span>
+                    <div className="input-wrapper-modern">
+                      <label className={`floating-label ${formData.jobdating_start ? 'filled' : ''}`}>
+                        Début de la phase jobdating/traitement
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="jobdating_start"
+                        value={formData.jobdating_start}
+                        onChange={handleFieldChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Début de la phase des entretiens */}
+                  <div className="input-modern">
+                    <span className="input-icon"><FaCalendarAlt /></span>
+                    <div className="input-wrapper-modern">
+                      <label className={`floating-label ${formData.interview_start ? 'filled' : ''}`}>
+                        Début de la phase des entretiens
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="interview_start"
+                        value={formData.interview_start}
+                        onChange={handleFieldChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Fin de la phase des entretiens */}
+                  <div className="input-modern">
+                    <span className="input-icon"><FaCalendarAlt /></span>
+                    <div className="input-wrapper-modern">
+                      <label className={`floating-label ${formData.interview_end ? 'filled' : ''}`}>
+                        Fin de la phase des entretiens
+                      </label>
+                      <input
+                        type="datetime-local"
+                        name="interview_end"
+                        value={formData.interview_end}
+                        onChange={handleFieldChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
                          {/* Bouton d'action */}
              <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '30px' }}>

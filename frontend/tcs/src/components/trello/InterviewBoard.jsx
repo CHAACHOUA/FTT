@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faPhone, 
   faClock,
-  faUser,
   faBuilding,
   faPlay,
   faCheck,
@@ -14,7 +13,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import './InterviewBoard.css';
 
-const InterviewBoard = ({ forumId }) => {
+const InterviewBoard = ({ forumId, onCardClick, onInterviewsChange }) => {
   console.log('🎯 InterviewBoard loaded with forumId:', forumId);
   
   const { role } = useAuth();
@@ -62,7 +61,13 @@ const InterviewBoard = ({ forumId }) => {
         .map(app => ({
           id: `interview-${app.id}`,
           applicationId: app.id,
-          candidate: app.candidate_profile,
+          application: app, // Garder la référence complète à l'application
+          candidate: app.candidate || {
+            first_name: app.candidate_name?.split(' ')[0] || '',
+            last_name: app.candidate_name?.split(' ').slice(1).join(' ') || '',
+            profile_picture: app.candidate_photo || null
+          },
+          candidate_photo: app.candidate_photo,
           recruiter: app.selected_slot_info?.recruiter,
           company: app.offer?.company,
           offerTitle: app.offer?.title,
@@ -94,6 +99,16 @@ const InterviewBoard = ({ forumId }) => {
 
       console.log('🔍 Organized interviews:', organizedInterviews);
       setInterviews(organizedInterviews);
+      
+      // Notifier le parent des interviews chargés
+      if (onInterviewsChange) {
+        const allInterviews = [
+          ...organizedInterviews.scheduled,
+          ...organizedInterviews.inProgress,
+          ...organizedInterviews.completed
+        ];
+        onInterviewsChange(allInterviews);
+      }
 
     } catch (error) {
       console.error('Erreur lors du chargement des entretiens:', error);
@@ -105,8 +120,10 @@ const InterviewBoard = ({ forumId }) => {
 
   // Gérer le drag & drop HTML5
   const [draggedItem, setDraggedItem] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e, interview) => {
+    setIsDragging(true);
     setDraggedItem(interview);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.target.outerHTML);
@@ -116,6 +133,8 @@ const InterviewBoard = ({ forumId }) => {
   const handleDragEnd = (e) => {
     e.target.style.opacity = '1';
     setDraggedItem(null);
+    // Réinitialiser isDragging immédiatement pour permettre les clics
+    setIsDragging(false);
   };
 
   const handleDragOver = (e) => {
@@ -136,17 +155,32 @@ const InterviewBoard = ({ forumId }) => {
     
     const updatedInterview = {
       ...draggedItem,
-      status: targetStatus
+      status: targetStatus,
+      application: draggedItem.application || draggedItem // S'assurer que application est préservé
     };
 
     const newSourceColumn = sourceColumn.filter(item => item.id !== draggedItem.id);
     const newDestColumn = [...destColumn, updatedInterview];
 
-    setInterviews(prev => ({
-      ...prev,
-      [draggedItem.status]: newSourceColumn,
-      [targetStatus]: newDestColumn
-    }));
+    setInterviews(prev => {
+      const updated = {
+        ...prev,
+        [draggedItem.status]: newSourceColumn,
+        [targetStatus]: newDestColumn
+      };
+      
+      // Notifier le parent du changement
+      if (onInterviewsChange) {
+        const allInterviews = [
+          ...updated.scheduled,
+          ...updated.inProgress,
+          ...updated.completed
+        ];
+        onInterviewsChange(allInterviews);
+      }
+      
+      return updated;
+    });
 
     // Sauvegarder le changement d'état côté backend
     updateInterviewStatus(draggedItem.applicationId, targetStatus);
@@ -183,17 +217,32 @@ const InterviewBoard = ({ forumId }) => {
         
         const updatedInterview = {
           ...interview,
-          status: 'inProgress'
+          status: 'inProgress',
+          application: interview.application || interview // S'assurer que application est préservé
         };
 
         const newSourceColumn = sourceColumn.filter(item => item.id !== interview.id);
         const newDestColumn = [...destColumn, updatedInterview];
 
-        setInterviews(prev => ({
-          ...prev,
-          scheduled: newSourceColumn,
-          inProgress: newDestColumn
-        }));
+        setInterviews(prev => {
+          const updated = {
+            ...prev,
+            scheduled: newSourceColumn,
+            inProgress: newDestColumn
+          };
+          
+          // Notifier le parent du changement
+          if (onInterviewsChange) {
+            const allInterviews = [
+              ...updated.scheduled,
+              ...updated.inProgress,
+              ...updated.completed
+            ];
+            onInterviewsChange(allInterviews);
+          }
+          
+          return updated;
+        });
 
         // Sauvegarder côté backend
         await updateInterviewStatus(interview.applicationId, 'inProgress');
@@ -214,17 +263,32 @@ const InterviewBoard = ({ forumId }) => {
       
       const updatedInterview = {
         ...interview,
-        status: 'completed'
+        status: 'completed',
+        application: interview.application || interview // S'assurer que application est préservé
       };
 
       const newSourceColumn = sourceColumn.filter(item => item.id !== interview.id);
       const newDestColumn = [...destColumn, updatedInterview];
 
-      setInterviews(prev => ({
-        ...prev,
-        [interview.status]: newSourceColumn,
-        completed: newDestColumn
-      }));
+      setInterviews(prev => {
+        const updated = {
+          ...prev,
+          [interview.status]: newSourceColumn,
+          completed: newDestColumn
+        };
+        
+        // Notifier le parent du changement
+        if (onInterviewsChange) {
+          const allInterviews = [
+            ...updated.scheduled,
+            ...updated.inProgress,
+            ...updated.completed
+          ];
+          onInterviewsChange(allInterviews);
+        }
+        
+        return updated;
+      });
 
       // Sauvegarder côté backend
       await updateInterviewStatus(interview.applicationId, 'completed');
@@ -246,40 +310,87 @@ const InterviewBoard = ({ forumId }) => {
     return labels[status] || status;
   };
 
+  // Fonction pour obtenir les initiales du candidat
+  const getCandidateInitials = (candidate) => {
+    if (!candidate) return '??';
+    const firstName = candidate.first_name || '';
+    const lastName = candidate.last_name || '';
+    return `${firstName.charAt(0) || ''}${lastName.charAt(0) || ''}`.toUpperCase() || '??';
+  };
+
+  // Fonction pour obtenir l'URL de la photo du candidat
+  const getCandidatePhotoUrl = (candidate, candidatePhoto) => {
+    // Essayer d'abord candidate_photo direct, puis profile_picture du candidat
+    const photo = candidatePhoto || candidate?.profile_picture;
+    if (!photo) return null;
+    if (photo.startsWith('http')) {
+      return photo;
+    }
+    return `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${photo}`;
+  };
+
   // Rendu d'une carte d'entretien
-  const renderInterviewCard = (interview, index) => (
+  const renderInterviewCard = (interview, index) => {
+    const candidatePhotoUrl = getCandidatePhotoUrl(interview.candidate, interview.candidate_photo);
+    const candidateInitials = getCandidateInitials(interview.candidate);
+    
+    return (
     <div
       key={interview.id}
       draggable
       onDragStart={(e) => handleDragStart(e, interview)}
       onDragEnd={handleDragEnd}
+      onClick={(e) => {
+        // Ne pas déclencher si on clique sur un bouton
+        if (e.target.closest('button')) {
+          return;
+        }
+        
+        // Ne pas déclencher si on vient de faire un drag
+        if (isDragging) {
+          return;
+        }
+        
+        if (onCardClick) {
+          const applicationData = interview.application || interview;
+          if (applicationData) {
+            console.log('✅ Card clicked, calling onCardClick with:', applicationData);
+            onCardClick(applicationData);
+          } else {
+            console.error('❌ No application data available');
+          }
+        }
+      }}
       className="interview-card"
+      style={{ cursor: onCardClick ? 'pointer' : 'grab' }}
     >
-      {/* Header avec type et statut */}
-      <div className="card-header">
-        <div className="card-type">
-          <span>Visioconférence</span>
-        </div>
-        <div className={`card-status status-${interview.status === 'scheduled' ? 'scheduled' : interview.status === 'inProgress' ? 'in-progress' : 'completed'}`}>
-          {interview.status === 'scheduled' ? 'Programmé' : 
-           interview.status === 'inProgress' ? 'En cours' : 'Terminé'}
-        </div>
-      </div>
-
       {/* Informations de l'entretien */}
       <div className="card-content">
-        {/* Participants */}
-        <div className="card-participants">
-          <div className="participant">
-            <FontAwesomeIcon icon={faUser} className="participant-icon" />
-            <span className="participant-name">
-              {interview.candidate?.first_name} {interview.candidate?.last_name}
-            </span>
+        {/* Candidat avec photo/initiales */}
+        <div className="card-candidate">
+          <div className="candidate-avatar">
+            {candidatePhotoUrl ? (
+              <img
+                src={candidatePhotoUrl}
+                alt={`${interview.candidate?.first_name} ${interview.candidate?.last_name}`}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div 
+              className="candidate-initials"
+              style={{ display: candidatePhotoUrl ? 'none' : 'flex' }}
+            >
+              {candidateInitials}
+            </div>
           </div>
-          <div className="participant">
-            <FontAwesomeIcon icon={faUser} className="participant-icon" />
+          <div className="candidate-name">
             <span className="participant-name">
-              {interview.recruiter?.first_name} {interview.recruiter?.last_name}
+              {interview.candidate?.first_name && interview.candidate?.last_name
+                ? `${interview.candidate.first_name} ${interview.candidate.last_name}`
+                : interview.application?.candidate_name || 'Candidat'}
             </span>
           </div>
         </div>
@@ -303,7 +414,10 @@ const InterviewBoard = ({ forumId }) => {
         {interview.status === 'scheduled' && (
           <button 
             className="join-meeting-btn"
-            onClick={() => handleJoinMeeting(interview)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleJoinMeeting(interview);
+            }}
             title="Rejoindre la réunion"
           >
             <FontAwesomeIcon icon={faPlay} />
@@ -314,7 +428,10 @@ const InterviewBoard = ({ forumId }) => {
         {interview.status === 'inProgress' && (
           <button 
             className="complete-meeting-btn"
-            onClick={() => handleCompleteInterview(interview)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCompleteInterview(interview);
+            }}
             title="Marquer comme terminé"
           >
             <FontAwesomeIcon icon={faCheck} />
@@ -331,7 +448,8 @@ const InterviewBoard = ({ forumId }) => {
       </div>
 
     </div>
-  );
+    );
+  };
 
   // Rendu d'une colonne
   const renderColumn = (columnId, title, interviews, icon) => (

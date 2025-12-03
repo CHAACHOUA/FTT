@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaCalendarAlt } from 'react-icons/fa';
+import { FaUserFriends, FaFileAlt, FaUniversalAccess, FaBriefcase, FaCalendarAlt, FaSearch } from 'react-icons/fa';
 import axios from 'axios';
 import CandidateProfile from '../../../candidate/profile/CandidateProfile';
 import CandidateFilters from '../../../../components/filters/candidate/CandidateFilters';
 import CandidateCard from '../../../../components/card/candidate/CandidateCard';
 import CompanyApprovalCheck from '../../../../utils/CompanyApprovalCheck';
 import Loading from '../../../../components/loyout/Loading';
+import MatchingOffers from './MatchingOffers';
 import '../../../organizer/Event/candidates/CandidatesList.css';
 import { Button, Input, Card, Badge } from '../../../../components/common';
 
-const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
+const CandidatesList = ({ forumId, apiBaseUrl, forum, accessToken }) => {
   const [candidates, setCandidates] = useState([]);
   const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [filters, setFilters] = useState({});
+  const [isIntelligentSearch, setIsIntelligentSearch] = useState(false);
 
   // Options pour les filtres
   const filterOptions = {
@@ -210,24 +212,9 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
           <div className="candidates-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div className="recruiter-header-block">
               <div className="organizer-header-with-forum">
-                {forum && (
-                  <div className="forum-details">
-                    <h2 className="forum-title">{forum.name}</h2>
-                    <div className="forum-date-range">
-                      <FaCalendarAlt className="calendar-icon" />
-                      <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
-                    </div>
-                  </div>
-                )}
-                {!forum && (
-                  <div className="forum-details">
-                    <h2 className="forum-title">CVthèque</h2>
-                    <div className="forum-date-range">
-                      <FaCalendarAlt className="calendar-icon" />
-                      <span>Consultez les candidats disponibles pour votre forum</span>
-                    </div>
-                  </div>
-                )}
+                <div className="forum-details">
+                  <h2 className="forum-title">Liste des candidats (0 candidat trouvé!)</h2>
+                </div>
               </div>
             </div>
             <div className="kpi-section">
@@ -281,6 +268,74 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
     );
   }
 
+  // Si recherche intelligente activée, afficher MatchingOffers
+  if (isIntelligentSearch) {
+    return (
+      <CompanyApprovalCheck 
+        forumId={forumId} 
+        apiBaseUrl={apiBaseUrl}
+        fallbackMessage="L'accès à la recherche intelligente n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
+      >
+        <div className="candidates-list">
+          <div className="candidates-container" style={{ margin: '0 auto', padding: '0 20px' }}>
+            <div className="recruiter-header-block">
+              <div className="organizer-header-with-forum">
+                <div className="forum-details">
+                  <h2 className="forum-title">CVthèque</h2>
+                </div>
+              </div>
+              <div className="header-actions">
+                <div className="toggle-switch-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>CVthèque</span>
+                  <label className="toggle-switch" style={{ 
+                    position: 'relative', 
+                    display: 'inline-block', 
+                    width: '50px', 
+                    height: '26px',
+                    cursor: 'pointer'
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={isIntelligentSearch}
+                      onChange={() => setIsIntelligentSearch(!isIntelligentSearch)}
+                      style={{ opacity: 0, width: 0, height: 0 }}
+                    />
+                    <span className="toggle-slider" style={{
+                      position: 'absolute',
+                      cursor: 'pointer',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: '#3b82f6',
+                      transition: '0.3s',
+                      borderRadius: '26px'
+                    }}>
+                      <span style={{
+                        position: 'absolute',
+                        height: '20px',
+                        width: '20px',
+                        left: '3px',
+                        bottom: '3px',
+                        backgroundColor: 'white',
+                        transition: '0.3s',
+                        borderRadius: '50%',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        transform: isIntelligentSearch ? 'translateX(24px)' : 'translateX(0)'
+                      }}></span>
+                    </span>
+                  </label>
+                  <span style={{ fontSize: '0.9rem', color: '#3b82f6', fontWeight: '600' }}>Recherche intelligente</span>
+                </div>
+              </div>
+            </div>
+            <MatchingOffers forum={forum} accessToken={accessToken} apiBaseUrl={apiBaseUrl} />
+          </div>
+        </div>
+      </CompanyApprovalCheck>
+    );
+  }
+
   return (
     <CompanyApprovalCheck 
       forumId={forumId} 
@@ -288,29 +343,56 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
       fallbackMessage="L'accès à la CVthèque n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
       <div className="candidates-list">
-        <div className="candidates-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+        <div className="candidates-container" style={{ margin: '0 auto', padding: '0 20px' }}>
           <div className="recruiter-header-block">
             <div className="organizer-header-with-forum">
-              {forum && (
-                <div className="forum-details">
-                  <h2 className="forum-title">{forum.name}</h2>
-                  <div className="forum-date-range">
-                    <FaCalendarAlt className="calendar-icon" />
-                    <span>{forum.start_date && forum.end_date ? `${forum.start_date} - ${forum.end_date}` : 'Dates non définies'}</span>
-                  </div>
-                </div>
-              )}
-              {!forum && (
-                <div className="forum-details">
-                  <h2 className="forum-title">CVthèque</h2>
-                  <div className="forum-date-range">
-                    <FaCalendarAlt className="calendar-icon" />
-                    <span>Consultez les candidats disponibles pour votre forum</span>
-                  </div>
-                </div>
-              )}
+              <div className="forum-details">
+                <h2 className="forum-title">Liste des candidats ({filteredCandidates.length} candidat{filteredCandidates.length > 1 ? 's' : ''} trouvé{filteredCandidates.length > 1 ? 's' : ''})</h2>
+              </div>
             </div>
             <div className="header-actions">
+              <div className="toggle-switch-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginRight: '0.75rem' }}>
+                <span style={{ fontSize: '0.9rem', color: isIntelligentSearch ? '#6b7280' : '#1f2937', fontWeight: isIntelligentSearch ? '500' : '600' }}>CVthèque</span>
+                <label className="toggle-switch" style={{ 
+                  position: 'relative', 
+                  display: 'inline-block', 
+                  width: '50px', 
+                  height: '26px',
+                  cursor: 'pointer'
+                }}>
+                  <input
+                    type="checkbox"
+                    checked={isIntelligentSearch}
+                    onChange={() => setIsIntelligentSearch(!isIntelligentSearch)}
+                    style={{ opacity: 0, width: 0, height: 0 }}
+                  />
+                  <span className="toggle-slider" style={{
+                    position: 'absolute',
+                    cursor: 'pointer',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: isIntelligentSearch ? '#3b82f6' : '#cbd5e1',
+                    transition: '0.3s',
+                    borderRadius: '26px'
+                  }}>
+                    <span style={{
+                      position: 'absolute',
+                      height: '20px',
+                      width: '20px',
+                      left: '3px',
+                      bottom: '3px',
+                      backgroundColor: 'white',
+                      transition: '0.3s',
+                      borderRadius: '50%',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      transform: isIntelligentSearch ? 'translateX(24px)' : 'translateX(0)'
+                    }}></span>
+                  </span>
+                </label>
+                <span style={{ fontSize: '0.9rem', color: isIntelligentSearch ? '#3b82f6' : '#6b7280', fontWeight: isIntelligentSearch ? '600' : '500' }}>Recherche intelligente</span>
+              </div>
               <button 
                 className="export-candidates-btn"
                 onClick={handleExportCandidates}
@@ -370,7 +452,37 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
               <CandidateFilters filters={filters} onChange={handleFiltersChange} options={filterOptions} />
             </aside>
             <div className="candidates-main">
-              <h2>Liste des candidats ({filteredCandidates.length} candidat{filteredCandidates.length > 1 ? 's' : ''} trouvé{filteredCandidates.length > 1 ? 's' : ''})</h2>
+              <div className="search-bar-container" style={{ marginBottom: '0' }}>
+                <div className="search-bar" style={{ position: 'relative', maxWidth: '500px' }}>
+                  <FaSearch className="search-icon" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1.1rem', zIndex: 1 }} />
+                  <input
+                    type="text"
+                    placeholder="Nom, prénom ou email..."
+                    value={filters.text || ''}
+                    onChange={e => handleFiltersChange({ ...filters, text: e.target.value })}
+                    className="search-input"
+                    style={{ 
+                      width: '100%', 
+                      padding: '0.6rem 1rem 0.6rem 3rem', 
+                      border: '2px solid #e5e7eb', 
+                      borderRadius: 'var(--radius-xl)', 
+                      fontSize: '0.9rem', 
+                      background: '#ffffff', 
+                      transition: 'all 0.3s ease', 
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                      outline: 'none'
+                    }}
+                    onFocus={e => {
+                      e.target.style.borderColor = '#3b82f6';
+                      e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.2)';
+                    }}
+                    onBlur={e => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
+                    }}
+                  />
+                </div>
+              </div>
               {filteredCandidates.length === 0 ? (
                 <div style={{ 
                   textAlign: 'center', 
@@ -418,6 +530,7 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
                       onRemoveFromMeetings={null}
                       showRemoveButton={false}
                       className="candidate-card"
+                      forum={forum}
                     />
                   ))}
                 </div>
@@ -428,6 +541,7 @@ const CandidatesList = ({ forumId, apiBaseUrl, forum }) => {
           <CandidateProfile
             candidateData={selectedCandidate}
             onClose={() => setSelectedCandidate(null)}
+            forum={forum}
           />
         )}
         </div>

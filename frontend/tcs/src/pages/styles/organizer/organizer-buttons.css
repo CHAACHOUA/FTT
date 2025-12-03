@@ -48,22 +48,23 @@
 
 /* Bouton effacer les filtres avec style personnalisé */
 .organizer-btn-clear-filters {
-  background: linear-gradient(135deg, #18386c 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  padding: var(--space-sm) 16px;
+  padding: 0.4rem 12px;
   border-radius: var(--radius-lg);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.3);
+  box-shadow: none;
 }
 
 .organizer-btn-clear-filters:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 56, 108, 0.4);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: none;
 }
 
 /* Bouton secondaire pour les actions moins importantes */
@@ -174,10 +175,11 @@
 
 .forum-title {
   color: #1f2937;
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   font-family: 'Poppins', sans-serif;
-  margin: 0;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
 .forum-date-range {

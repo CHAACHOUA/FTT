@@ -39,7 +39,8 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
     start_time: '',
     end_time: '',
     location: '',
-    speakers: []
+    speakers: [],
+    enable_zoom: false
   });
   const [isSpeakerDropdownOpen, setIsSpeakerDropdownOpen] = useState(false);
   const [dateErrors, setDateErrors] = useState([]);
@@ -170,7 +171,8 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
       start_time: '',
       end_time: '',
       location: '',
-      speakers: []
+      speakers: [],
+      enable_zoom: false
     });
     setEditingProgramme(null);
     setShowAddForm(false);
@@ -216,6 +218,7 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
       formDataToSend.append('start_time', formData.start_time);
       formDataToSend.append('end_time', formData.end_time);
       formDataToSend.append('location', formData.location);
+      formDataToSend.append('enable_zoom', formData.enable_zoom ? 'true' : 'false');
       formData.speakers.forEach(speakerId => {
         formDataToSend.append('speakers', speakerId);
       });
@@ -258,7 +261,8 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
       start_time: programme.start_time,
       end_time: programme.end_time,
       location: programme.location,
-      speakers: programme.speakers.map(s => s.id)
+      speakers: programme.speakers.map(s => s.id),
+      enable_zoom: programme.meeting_link ? true : false // Si un lien existe déjà, la case est cochée
     });
     setShowAddForm(true);
   };
@@ -521,6 +525,23 @@ const ProgrammeManager = ({ forumId, forumName, forumDates }) => {
                   <FontAwesomeIcon icon={faUser} />
                   Speakers
                 </label>
+                <div className="modal-form-group" style={{ marginTop: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      name="enable_zoom"
+                      checked={formData.enable_zoom}
+                      onChange={(e) => setFormData({ ...formData, enable_zoom: e.target.checked })}
+                      style={{ marginRight: '0.5rem', width: 'auto' }}
+                    />
+                    <span>Générer automatiquement un lien Zoom pour cette conférence</span>
+                  </label>
+                  {formData.enable_zoom && (
+                    <small style={{ display: 'block', color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                      Le lien Zoom sera visible pour les organisateurs et recruteurs immédiatement, et pour les candidats 10 minutes avant le début de la conférence.
+                    </small>
+                  )}
+                </div>
                 <div className="multiselect-container">
                   <button
                     type="button"

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaEnvelope, FaDownload } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaTimes, FaEnvelope, FaDownload, FaComments } from 'react-icons/fa';
 import '../../../pages/styles/candidate/CandidateProfile.css';
+import ChatService from '../../../services/ChatService';
 
 import Presentation from '../../../components/card/candidate/profile_section/Presentation';
 import Contact from '../../../components/card/candidate/profile_section/Contact';
@@ -10,8 +12,10 @@ import LanguageProfile from '../../../components/card/candidate/public_profile/L
 import { Button, Input, Card, Badge } from '../../../components/common';
 import SkillProfile from '../../../components/card/candidate/public_profile/SkillProfile';
 
-const CandidateProfile = ({ candidateData, onClose }) => {
+const CandidateProfile = ({ candidateData, onClose, forum = null }) => {
+  const navigate = useNavigate();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isContacting, setIsContacting] = useState(false);
 
   useEffect(() => {
     // Animation d'entrée - pas besoin de timer
@@ -34,11 +38,66 @@ const CandidateProfile = ({ candidateData, onClose }) => {
     }
   };
 
-  const handleContact = () => {
-    if (candidateData.email) {
-      window.open(`mailto:${candidateData.email}`, '_blank');
+  const handleContact = async () => {
+    // Si c'est un forum virtuel, créer une conversation
+    if (forum && (forum.type === 'virtuel' || forum.is_virtual)) {
+      try {
+        setIsContacting(true);
+        
+        // Récupérer l'ID du candidat (dans le modèle Candidate, user est la clé primaire)
+        const candidateId = candidateData.user || candidateData.user_id || candidateData.id;
+        
+        if (!candidateId) {
+          console.error('❌ [CandidateProfile] Structure candidateData:', candidateData);
+          alert('ID du candidat introuvable');
+          return;
+        }
+
+        console.log('📤 [CandidateProfile] Création conversation:', {
+          forumId: forum.id,
+          candidateId: candidateId
+        });
+        
+        // Créer ou récupérer la conversation
+        const conversation = await ChatService.createConversation(
+          forum.id,
+          null,
+          candidateId
+        );
+
+        console.log('✅ [CandidateProfile] Conversation créée:', conversation);
+
+        // Fermer le popup
+        onClose();
+
+        // Rediriger vers le dashboard recruteur avec le chat ouvert
+        navigate('/event/recruiter/dashboard/', {
+          state: {
+            forum: forum,
+            openChat: true,
+            conversationId: conversation.id
+          }
+        });
+      } catch (error) {
+        console.error('❌ [CandidateProfile] Erreur lors de la création de la conversation:', error);
+        console.error('❌ [CandidateProfile] Détails erreur:', error.response?.data);
+        const errorMessage = error.response?.data?.error 
+          || error.response?.data?.detail
+          || (typeof error.response?.data === 'object' ? JSON.stringify(error.response.data) : error.message)
+          || 'Erreur lors de la création de la conversation';
+        alert(errorMessage);
+      } finally {
+        setIsContacting(false);
+      }
+    } else {
+      // Pour les forums non virtuels, utiliser l'email
+      if (candidateData.email) {
+        window.open(`mailto:${candidateData.email}`, '_blank');
+      }
     }
   };
+
+  const isVirtualForum = forum && (forum.type === 'virtuel' || forum.is_virtual);
 
 
   if (!candidateData) return null;
@@ -92,9 +151,32 @@ const CandidateProfile = ({ candidateData, onClose }) => {
           <button className="btn-secondary" onClick={handleClose}>
             Fermer
           </button>
-          <button className="btn-primary" onClick={handleContact}>
-            <FaEnvelope />
-            Contacter
+          {candidateData.cv_file && (
+            <button 
+              className="btn-secondary" 
+              onClick={handleDownloadCV}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <FaDownload />
+              Voir CV
+            </button>
+          )}
+          <button 
+            className="btn-primary" 
+            onClick={handleContact}
+            disabled={isContacting}
+          >
+            {isVirtualForum ? (
+              <>
+                <FaComments />
+                {isContacting ? 'Création...' : 'Contacter'}
+              </>
+            ) : (
+              <>
+                <FaEnvelope />
+                Contacter
+              </>
+            )}
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import { Button, Input, Card, Badge } from '../common';
-import { FaQuestion, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaQuestion, FaCheck, FaTimes, FaChevronDown } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import './VirtualQuestionnaireForm.css';
@@ -154,6 +154,152 @@ const VirtualQuestionnaireForm = forwardRef(({
     }
   };
 
+  // Composant dropdown personnalisé avec checkboxes
+  const CustomCheckboxDropdown = ({ question, answer, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);
+
+    const getSelectedLabels = () => {
+      if (!answer || answer.length === 0) return 'Sélectionnez...';
+      if (answer.length === 1) {
+        const option = question.options?.find(opt => {
+          const optValue = typeof opt === 'object' ? opt.value : opt;
+          return optValue === answer[0];
+        });
+        return typeof option === 'object' ? option.label : option;
+      }
+      return `${answer.length} sélectionné(s)`;
+    };
+
+    const handleToggle = (optionValue) => {
+      const newAnswer = answer.includes(optionValue)
+        ? answer.filter(item => item !== optionValue)
+        : [...answer, optionValue];
+      onChange(newAnswer);
+    };
+
+    return (
+      <div className="custom-dropdown" ref={dropdownRef}>
+        <button
+          type="button"
+          className="custom-dropdown-toggle"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className={!answer || answer.length === 0 ? 'placeholder' : ''}>
+            {getSelectedLabels()}
+          </span>
+          <FaChevronDown className={`chevron ${isOpen ? 'open' : ''}`} />
+        </button>
+        {isOpen && (
+          <div className="custom-dropdown-menu">
+            {question.options?.map((option, index) => {
+              const optionValue = typeof option === 'object' ? option.value : option;
+              const optionLabel = typeof option === 'object' ? option.label : option;
+              const isChecked = answer.includes(optionValue);
+              return (
+                <label key={index} className="custom-dropdown-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggle(optionValue)}
+                  />
+                  <span>{optionLabel}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Composant dropdown personnalisé avec radio (sélection unique)
+  const CustomRadioDropdown = ({ question, answer, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);
+
+    const getSelectedLabel = () => {
+      if (!answer) return 'Sélectionnez...';
+      const option = question.options?.find(opt => {
+        const optValue = typeof opt === 'object' ? opt.value : opt;
+        return optValue === answer;
+      });
+      return typeof option === 'object' ? option.label : option || 'Sélectionnez...';
+    };
+
+    const handleSelect = (optionValue) => {
+      onChange(optionValue);
+      setIsOpen(false);
+    };
+
+    return (
+      <div className="custom-dropdown" ref={dropdownRef}>
+        <button
+          type="button"
+          className="custom-dropdown-toggle"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className={!answer ? 'placeholder' : ''}>
+            {getSelectedLabel()}
+          </span>
+          <FaChevronDown className={`chevron ${isOpen ? 'open' : ''}`} />
+        </button>
+        {isOpen && (
+          <div className="custom-dropdown-menu">
+            {question.options?.map((option, index) => {
+              const optionValue = typeof option === 'object' ? option.value : option;
+              const optionLabel = typeof option === 'object' ? option.label : option;
+              const isSelected = answer === optionValue;
+              return (
+                <label key={index} className="custom-dropdown-item">
+                  <input
+                    type="radio"
+                    name={`question_${question.id}`}
+                    checked={isSelected}
+                    onChange={() => handleSelect(optionValue)}
+                  />
+                  <span>{optionLabel}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderQuestion = (question) => {
     const answer = answers[question.id] || getDefaultAnswer(question);
 
@@ -233,51 +379,20 @@ const VirtualQuestionnaireForm = forwardRef(({
 
       case 'radio':
         return (
-          <div className="radio-group">
-            {question.options?.map((option, index) => {
-              const optionValue = typeof option === 'object' ? option.value : option;
-              const optionLabel = typeof option === 'object' ? option.label : option;
-              return (
-                <label key={index} className="radio-option">
-                  <input
-                    type="radio"
-                    name={`question_${question.id}`}
-                    value={optionValue}
-                    checked={answer === optionValue}
-                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                    required={question.is_required}
-                  />
-                  <span>{optionLabel}</span>
-                </label>
-              );
-            })}
-          </div>
+          <CustomRadioDropdown
+            question={question}
+            answer={answer}
+            onChange={(value) => handleAnswerChange(question.id, value)}
+          />
         );
 
       case 'checkbox':
         return (
-          <div className="checkbox-group">
-            {question.options?.map((option, index) => {
-              const optionValue = typeof option === 'object' ? option.value : option;
-              const optionLabel = typeof option === 'object' ? option.label : option;
-              return (
-                <label key={index} className="checkbox-option">
-                  <input
-                    type="checkbox"
-                    value={optionValue}
-                    checked={answer.includes(optionValue)}
-                    onChange={(e) => {
-                      const newAnswer = e.target.checked
-                        ? [...answer, optionValue]
-                        : answer.filter(item => item !== optionValue);
-                      handleAnswerChange(question.id, newAnswer);
-                    }}
-                  />
-                  <span>{optionLabel}</span>
-                </label>
-              );
-            })}
-          </div>
+          <CustomCheckboxDropdown
+            question={question}
+            answer={answer}
+            onChange={(value) => handleAnswerChange(question.id, value)}
+          />
         );
 
       case 'file':
@@ -347,24 +462,16 @@ const VirtualQuestionnaireForm = forwardRef(({
 
   return (
     <div className="questionnaire-step">
-      <div className="questionnaire-header">
-        <h3>Questionnaire de candidature</h3>
-        <p>Répondez aux questions pour compléter votre candidature</p>
-      </div>
+  
 
-      <div className="questions-list">
+      <div className="form-grid">
         {questionnaire.questions?.map((question, index) => (
-          <div key={question.id} className="question-item">
-            <div className="question-header">
-              <h4>
-                {index + 1}. {question.question_text}
-                {question.is_required && <span className="required"> *</span>}
-              </h4>
-            </div>
-            
-            <div className="question-input">
-              {renderQuestion(question)}
-            </div>
+          <div key={question.id} className="form-group">
+            <label>
+              {question.question_text}
+              {question.is_required && <span className="required"> *</span>}
+            </label>
+            {renderQuestion(question)}
           </div>
         ))}
       </div>

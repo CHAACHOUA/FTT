@@ -653,52 +653,53 @@ const Plan = ({ companies, forumId }) => {
         </div>
                 
         {/* Barre de progression */}
-        {filteredCompanies.length > 0 && (
-          <div className="progress-section">
-            <div className="progress-header">
-              <h3 className="progress-title">Votre progression</h3>
-              <span className="progress-percentage">{progressPercentage}%</span>
-                    </div>
-            <div className="progress-bar-container">
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-            <div className="progress-stats">
-              <span className="progress-text">
-                {visitedCompanies.size} sur {filteredCompanies.length} entreprises visitées
-              </span>
+        <div className="progress-section">
+          <div className="progress-header">
+            <h3 className="progress-title">Votre progression</h3>
+            <span className="progress-percentage">{progressPercentage}%</span>
+          </div>
+          <div className="progress-bar-container">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
             </div>
           </div>
-        )}
+          <div className="progress-stats">
+            <span className="progress-text">
+              {filteredCompanies.length > 0 
+                ? `${visitedCompanies.size} sur ${filteredCompanies.length} entreprises visitées`
+                : 'Aucune entreprise dans votre parcours'
+              }
+            </span>
+          </div>
+        </div>
 
 
       {/* Parcours détaillé */}
-      <div className="route-details">
-        <h3 className="section-title">Votre itinéraire recommandé</h3>
-        <div className="route-steps">
+      <div className="plan-route-details">
+        <h3 className="plan-section-title">Votre itinéraire recommandé</h3>
+        <div className="plan-route-steps">
           {filteredCompanies.map((company, idx) => (
-            <div key={company.id || idx} className={`route-step ${visitedCompanies.has(company.id) ? 'visited' : ''}`}>
-              <div className="step-indicator">
-                <div className="step-number-large">{idx + 1}</div>
-                {idx < filteredCompanies.length - 1 && <div className="step-connector"></div>}
+            <div key={company.id || idx} className={`plan-route-step ${visitedCompanies.has(company.id) ? 'plan-visited' : ''}`}>
+              <div className="plan-step-indicator">
+                <div className="plan-step-number-large">{idx + 1}</div>
+                {idx < filteredCompanies.length - 1 && <div className="plan-step-connector"></div>}
               </div>
-              <div className="step-content">
-                <div className="step-header">
+              <div className="plan-step-content">
+                <div className="plan-step-header">
                 <h4>{company.name}</h4>
-                  <div className="step-actions">
+                  <div className="plan-step-actions">
                     <button 
-                      className={`visit-toggle ${visitedCompanies.has(company.id) ? 'visited' : ''}`}
+                      className={`plan-visit-toggle ${visitedCompanies.has(company.id) ? 'plan-visited' : ''}`}
                       onClick={() => toggleCompanyVisited(company.id)}
                       title={visitedCompanies.has(company.id) ? 'Marquer comme non visitée' : 'Marquer comme visitée'}
                     >
                       {visitedCompanies.has(company.id) ? <FaCheckCircle /> : <FaCircle />}
                     </button>
                     <button 
-                      className="note-toggle"
+                      className="plan-note-toggle"
                       onClick={() => setEditingNote(editingNote === company.id ? null : company.id)}
                       title="Ajouter une note"
                     >
@@ -706,32 +707,32 @@ const Plan = ({ companies, forumId }) => {
                     </button>
                   </div>
                 </div>
-                <p className="step-location">
-                  <FaMapMarkerAlt className="location-icon" />
+                <p className="plan-step-location">
+                  <FaMapMarkerAlt className="plan-location-icon" />
                   Stand {company.stand}
                 </p>
                 {company.sectors && company.sectors.length > 0 && (
-                  <div className="step-sectors">
+                  <div className="plan-step-sectors">
                     {company.sectors.map((sector, sectorIdx) => (
-                      <span key={sectorIdx} className="sector-tag">
+                      <span key={sectorIdx} className="plan-sector-tag">
                         {sector}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="step-duration">~10 minutes</p>
+                <p className="plan-step-duration">~10 minutes</p>
                 
                 {/* Zone de note */}
                 {editingNote === company.id && (
-                  <div className="note-section">
+                  <div className="plan-note-section">
                     <textarea
-                      className="note-input"
+                      className="plan-note-input"
                       placeholder="Ajoutez vos notes sur cette entreprise..."
                       value={companyNotes[company.id] || ''}
                       onChange={(e) => setCompanyNotes({...companyNotes, [company.id]: e.target.value})}
                       rows={3}
                     />
-                    <div className="note-actions">
+                    <div className="plan-note-actions">
                       <Button 
                         variant="note"
                         size="small"
@@ -740,7 +741,7 @@ const Plan = ({ companies, forumId }) => {
                         Sauvegarder
                       </Button>
                       <button 
-                        className="btn-cancel-note"
+                        className="plan-btn-cancel-note"
                         onClick={() => setEditingNote(null)}
                       >
                         Annuler
@@ -751,9 +752,9 @@ const Plan = ({ companies, forumId }) => {
                 
                 {/* Affichage de la note existante */}
                 {companyNotes[company.id] && editingNote !== company.id && (
-                  <div className="note-display">
-                    <div className="note-content">
-                      <FaStar className="note-icon" />
+                  <div className="plan-note-display">
+                    <div className="plan-note-content">
+                      <FaStar className="plan-note-icon" />
                       <span>{companyNotes[company.id]}</span>
                     </div>
                   </div>

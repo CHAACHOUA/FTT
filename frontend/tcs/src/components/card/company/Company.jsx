@@ -29,13 +29,17 @@ const Company = ({
     email: company?.email || null,
     phone: company?.phone || null,
     address: company?.address || null,
-    banner: company?.banner ? getMediaUrl(company.banner) : null
+    banner: company?.banner ? getMediaUrl(company.banner) : null,
+    offers: company?.offers || [] // Ajouter les offres
   };
 
 
   const handleCardClick = () => {
     if (onClick) {
-      onClick(companyData);
+      // Passer l'objet company original complet pour préserver toutes les données (y compris les offres)
+      // Si company n'existe pas, utiliser companyData avec les offres ajoutées
+      const companyToPass = company ? company : { ...companyData, offers: company?.offers || [] };
+      onClick(companyToPass);
     }
   };
 

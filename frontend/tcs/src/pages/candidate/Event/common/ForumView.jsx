@@ -48,12 +48,78 @@ const ForumView = () => {
     fetchForums();
   }, [fetchForums]);
 
-  const isOngoing = forum => new Date(forum.start_date) >= new Date();
-  const isEnded = forum => new Date(forum.start_date) < new Date();
+  // Un forum est en cours/à venir si sa date de fin (avec heure) est dans le futur
+  const isOngoing = forum => {
+    if (!forum.end_date) return false;
+    
+    // Normaliser le format de la date (enlever l'heure si présente)
+    let dateStr = forum.end_date;
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+    
+    // Normaliser le format de l'heure (ajouter les secondes si manquantes)
+    let timeStr = '23:59:59';
+    if (forum.end_time) {
+      const timeParts = forum.end_time.split(':');
+      if (timeParts.length === 2) {
+        // Format HH:MM -> ajouter :00 pour les secondes
+        timeStr = `${timeParts[0]}:${timeParts[1]}:00`;
+      } else if (timeParts.length === 3) {
+        // Format HH:MM:SS -> utiliser tel quel
+        timeStr = forum.end_time;
+      }
+    }
+    
+    const endDateTime = new Date(`${dateStr}T${timeStr}`);
+    const now = new Date();
+    
+    // Vérifier que la date est valide
+    if (isNaN(endDateTime.getTime())) {
+      return false;
+    }
+    
+    return endDateTime >= now;
+  };
+  
+  // Un forum est terminé si sa date de fin (avec heure) est passée
+  const isEnded = forum => {
+    if (!forum.end_date) return false;
+    
+    // Normaliser le format de la date
+    let dateStr = forum.end_date;
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+    
+    // Normaliser le format de l'heure
+    let timeStr = '23:59:59';
+    if (forum.end_time) {
+      const timeParts = forum.end_time.split(':');
+      if (timeParts.length === 2) {
+        timeStr = `${timeParts[0]}:${timeParts[1]}:00`;
+      } else if (timeParts.length === 3) {
+        timeStr = forum.end_time;
+      }
+    }
+    
+    const endDateTime = new Date(`${dateStr}T${timeStr}`);
+    const now = new Date();
+    
+    if (isNaN(endDateTime.getTime())) {
+      return false;
+    }
+    
+    return endDateTime < now;
+  };
 
   const filteredRegisteredForums = registeredForums.filter(forum =>
     statusFilter === 'ongoing' ? isOngoing(forum) : isEnded(forum)
   );
+
+  // Calculer le nombre de forums en cours et terminés (basé sur date de fin)
+  const ongoingCount = registeredForums.filter(forum => isOngoing(forum)).length;
+  const endedCount = registeredForums.filter(forum => isEnded(forum)).length;
 
   // ✅ Affichage du loader si la page est en chargement
   if (isLoading) {
@@ -88,8 +154,12 @@ const ForumView = () => {
                     onChange={e => setStatusFilter(e.target.value)}
                     className="status-dropdown"
                   >
-                    <option value="ongoing">En ce moment</option>
-                    <option value="ended">Terminés</option>
+                    <option value="ongoing" disabled={statusFilter !== 'ongoing' && ongoingCount === 0}>
+                      En ce moment {ongoingCount > 0 && `(${ongoingCount})`}
+                    </option>
+                    <option value="ended" disabled={statusFilter !== 'ended' && endedCount === 0}>
+                      Terminés {endedCount > 0 && `(${endedCount})`}
+                    </option>
                   </select>
                 </div>
 

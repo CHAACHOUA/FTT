@@ -11,9 +11,12 @@ import {
   FaRegHeart,
   FaSearch,
   FaFilter,
-  FaTimes
+  FaTimes,
+  FaChevronDown
 } from 'react-icons/fa';
-import '../../pages/styles/forum/ForumOffer.css';
+import '../../pages/organizer/Event/offers/OffersList.css';
+import '../../pages/styles/organizer/organizer-buttons.css';
+import '../../components/filters/offer/SearchBar.css';
 import LogoCompany from '../../assets/Logo-FTT.png';
 import SearchBarOffers from '../filters/offer/SearchBarOffers';
 import Offer from '../card/offer/Offer';
@@ -39,8 +42,10 @@ const ForumOffers = ({ companies, forum = null }) => {
   const [isCompanyPopupOpen, setIsCompanyPopupOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSector, setSelectedSector] = useState('');
-  const [selectedContractType, setSelectedContractType] = useState('');
+  const [selectedSectors, setSelectedSectors] = useState([]);
+  const [selectedContractTypes, setSelectedContractTypes] = useState([]);
+  const [showSectorDropdown, setShowSectorDropdown] = useState(false);
+  const [showContractDropdown, setShowContractDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Mettre à jour les offres filtrées quand les entreprises changent
@@ -83,14 +88,14 @@ const ForumOffers = ({ companies, forum = null }) => {
       );
     }
 
-    // Filtrage par secteur
-    if (selectedSector) {
-      offers = offers.filter(offer => offer.sector === selectedSector);
+    // Filtrage par secteurs (sélection multiple)
+    if (selectedSectors.length > 0) {
+      offers = offers.filter(offer => selectedSectors.includes(offer.sector));
     }
 
-    // Filtrage par type de contrat
-    if (selectedContractType) {
-      offers = offers.filter(offer => offer.contract_type === selectedContractType);
+    // Filtrage par types de contrat (sélection multiple)
+    if (selectedContractTypes.length > 0) {
+      offers = offers.filter(offer => selectedContractTypes.includes(offer.contract_type));
     }
 
     return offers;
@@ -159,115 +164,182 @@ const ForumOffers = ({ companies, forum = null }) => {
     return contractTypes;
   };
 
+  // Fonction pour toggle une valeur dans une liste
+  const toggleValue = (list, value, setter) => {
+    setter(
+      list.includes(value)
+        ? list.filter(v => v !== value)
+        : [...list, value]
+    );
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
-    <div className="offers-list-wrapper">
-      {/* En-tête avec titre et filtres */}
-      <div className="offers-list-header">
-        <h2>Offres d'emploi ({getVisibleOffers().length})</h2>
-        
-        {/* Boutons de filtrage */}
-        <div className="offers-filter-buttons">
-          <button
-            className={`filter-btn ${!showOnlyFavorites ? 'active' : ''}`}
-            onClick={() => setShowOnlyFavorites(false)}
-          >
-            Tous
-          </button>
-          <button
-            className={`filter-btn ${showOnlyFavorites ? 'active' : ''}`}
-            onClick={() => setShowOnlyFavorites(true)}
-          >
-            <FaHeart /> Favoris
-          </button>
-        </div>
-      </div>
+    <div className="organizer-offers-container" >
+      <div className="organizer-offers-content">
+        {/* Conteneur centré pour la recherche et les offres */}
+        <div className="offers-main-container">
+          <div className="page-title-section">
+            <h1>Liste des Offres</h1>
+            <p>Consultez toutes les offres postées par les recruteurs</p>
+          </div>
+          
+          {/* Filtres avec le style des forums */}
+          <div className="search-bar-wrapper-search">
+            <div className="search-bar-search">
+              <input
+                className="search-input-search"
+                type="text"
+                placeholder="Cherchez un job par intitulé, mot clé ou entreprise"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <FaTimes className="clear-icon-search" onClick={() => setSearchTerm('')} />
+              )}
 
-      {/* Barre de recherche et filtres */}
-      <div className="offers-search-section">
-        <div className="search-bar-container">
-          <div className="search-input-wrapper">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Rechercher une offre..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-            {searchTerm && (
-              <button 
-                className="clear-search-btn"
-                onClick={() => setSearchTerm('')}
-              >
-                <FaTimes />
+              {/* Bouton Favoris */}
+              <div className="dropdown-wrapper-search">
+                <button
+                  className={`dropdown-toggle-search ${showOnlyFavorites ? 'active' : ''}`}
+                  onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+                >
+                  <FaHeart /> Favoris
+                </button>
+              </div>
+
+              {/* Secteur avec sélection multiple */}
+              <div className="dropdown-wrapper-search">
+                <button
+                  className="dropdown-toggle-search"
+                  onClick={() => {
+                    setShowSectorDropdown(prev => !prev);
+                    setShowContractDropdown(false);
+                  }}
+                >
+                  Secteur <FaChevronDown />
+                </button>
+                {showSectorDropdown && (
+                  <div className="dropdown-menu-search">
+                    <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                      <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Secteurs</strong>
+                    </div>
+                    {getUniqueSectors().map(sector => (
+                      <label key={sector} className="dropdown-item-search">
+                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedSectors.includes(sector)}
+                            onChange={() => toggleValue(selectedSectors, sector, setSelectedSectors)}
+                            style={{ marginRight: '12px' }}
+                          />
+                          <span style={{ flex: 1 }}>{sector}</span>
+                        </div>
+                      </label>
+                    ))}
+                    {selectedSectors.length > 0 && (
+                      <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                        <button
+                          onClick={() => setSelectedSectors([])}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
+                          }}
+                        >
+                          Effacer la sélection
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Contrat avec sélection multiple */}
+              <div className="dropdown-wrapper-search">
+                <button
+                  className="dropdown-toggle-search"
+                  onClick={() => {
+                    setShowContractDropdown(prev => !prev);
+                    setShowSectorDropdown(false);
+                  }}
+                >
+                  Contrat <FaChevronDown />
+                </button>
+                {showContractDropdown && (
+                  <div className="dropdown-menu-search">
+                    <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '8px' }}>
+                      <strong style={{ color: '#374151', fontSize: '0.9rem' }}>Types de contrats</strong>
+                    </div>
+                    {getUniqueContractTypes().map(type => (
+                      <label key={type} className="dropdown-item-search">
+                        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedContractTypes.includes(type)}
+                            onChange={() => toggleValue(selectedContractTypes, type, setSelectedContractTypes)}
+                            style={{ marginRight: '12px' }}
+                          />
+                          <span style={{ flex: 1 }}>{type}</span>
+                        </div>
+                      </label>
+                    ))}
+                    {selectedContractTypes.length > 0 && (
+                      <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
+                        <button
+                          onClick={() => setSelectedContractTypes([])}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
+                          }}
+                        >
+                          Effacer la sélection
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <button className="search-btn-search">
+                <FaSearch />
               </button>
-            )}
+            </div>
           </div>
         </div>
 
-        <div className="filters-container">
-          <div className="filter-group">
-            <label className="filter-label">Secteur</label>
-            <select
-              value={selectedSector}
-              onChange={(e) => setSelectedSector(e.target.value)}
-              className="filter-select"
-            >
-              <option value="">Tous les secteurs</option>
-              {getUniqueSectors().map(sector => (
-                <option key={sector} value={sector}>{sector}</option>
-              ))}
-            </select>
+        {/* Liste des offres */}
+        {getVisibleOffers().length === 0 ? (
+          <div className="no-offers">
+            <p>Aucune offre ne correspond à vos critères de recherche.</p>
           </div>
-
-          <div className="filter-group">
-            <label className="filter-label">Type de contrat</label>
-            <select
-              value={selectedContractType}
-              onChange={(e) => setSelectedContractType(e.target.value)}
-              className="filter-select"
-            >
-              <option value="">Tous les types</option>
-              {getUniqueContractTypes().map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
+        ) : (
+          <div className="organizer-offers-grid">
+            {getVisibleOffers().map(offer => (
+              <Offer
+                key={offer.id} 
+                offer={offer}
+                onClick={handleOfferClick}
+                onToggleFavorite={toggleFavorite}
+                space="candidate"
+                isFavorite={favoriteOfferIds.includes(offer.id)}
+                forum={forum}
+                activeTab="offres"
+              />
+            ))}
           </div>
-        </div>
+        )}
       </div>
-
-      {/* Liste des offres */}
-      {getVisibleOffers().length === 0 ? (
-        <div className="no-offers-message">
-          <FaBuilding className="no-offers-icon" />
-          <h3>Aucune offre trouvée</h3>
-          <p>
-            {showOnlyFavorites 
-              ? "Vous n'avez pas encore d'offres en favoris."
-              : "Aucune offre ne correspond à vos critères de recherche."
-            }
-          </p>
-        </div>
-      ) : (
-        <div className="forum-offers-container">
-          {getVisibleOffers().map(offer => (
-            <Offer
-              key={offer.id} 
-              offer={offer}
-              onClick={handleOfferClick}
-              onToggleFavorite={toggleFavorite}
-              space="candidate"
-              isFavorite={favoriteOfferIds.includes(offer.id)}
-              forum={forum}
-              activeTab="offres"
-            />
-          ))}
-        </div>
-      )}
 
       {/* Popup pour les détails de l'entreprise */}
       {isCompanyPopupOpen && selectedCompany && (

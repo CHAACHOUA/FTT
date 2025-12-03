@@ -11,14 +11,16 @@
   }
   
   .company-profile-content {
-  padding: 2rem;
+  padding: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
   .company-profile-title {
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #2b3a5a;
-    margin-bottom: 32px;
+    color: #1f2937;
+    margin-bottom: var(--space-lg);
     padding: 0;
   }
   .company-input-icon {
@@ -33,7 +35,7 @@
   .company-input-modern {
     display: flex;
     align-items: stretch;
-    background: #f9fbfd;
+    background: #fff;
     border: 1.2px solid #b5c6d6;
     border-radius: 9px;
     margin-bottom: 22px;
@@ -129,6 +131,38 @@
     transform: translateY(-1px);
     box-shadow: 0 6px 24px rgba(24, 56, 108, 0.18);
   }
+
+  /* Bouton Ajouter secteur - style standardisé */
+  .btn-add-sector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    border-radius: var(--radius-lg);
+    padding: var(--space-sm) 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-add-sector:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .btn-add-sector:active {
+    transform: translateY(0);
+  }
+
+  .btn-add-sector svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .required {
     color: #e53935;
     font-size: 1em;
@@ -166,25 +200,31 @@
     margin-top: 1rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: #ffffff;
     color: #3b82f6;
     border: 2px solid #3b82f6;
     border-radius: var(--radius-lg);
-    padding: var(--space-md) 20px;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: var(--space-sm) 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
   }
   
   .upload-logo-btn:hover {
-   
-    transform: translateY(-4px);
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
   }
   
   .upload-logo-btn:active {
     transform: translateY(0);
+  }
+
+  .upload-logo-btn svg {
+    width: 14px;
+    height: 14px;
   }
   
   .photo-hint {
@@ -271,25 +311,31 @@
   .upload-banner-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: #ffffff;
     color: #3b82f6;
     border: 2px solid #3b82f6;
     border-radius: var(--radius-lg);
-    padding: var(--space-md) 20px;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: var(--space-sm) 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
   }
 
   .upload-banner-btn:hover {
-   
-    transform: translateY(-4px);
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
   }
   
   .upload-banner-btn:active {
     transform: translateY(0);
+  }
+
+  .upload-banner-btn svg {
+    width: 14px;
+    height: 14px;
   }
 
   .remove-banner-btn {

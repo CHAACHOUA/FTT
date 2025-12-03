@@ -1,14 +1,8 @@
 /* Styles pour la page de détails d'entreprise */
 .company-detail-header {
   display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
+  align-items: center;
   margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: var(--radius-xl);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
 }
 
 .forum-info {
@@ -75,81 +69,178 @@
   gap: 2rem;
 }
 
-/* Section informations entreprise */
-.company-info-section {
-  background: white;
-  border-radius: var(--radius-2xl);
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
+/* Banner section avec bloc entreprise et infos clés */
+.company-banner-section {
   position: relative;
-}
-
-.company-header {
+  width: 100%;
+  margin-bottom: var(--space-lg);
+  border-radius: 10px;
+  overflow: visible;
+  padding: 0;
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  align-items: flex-start;
+  flex-direction: column;
 }
 
-.company-logo-container {
+.company-banner-background {
+  width: 100%;
+  height: 350px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.company-banner-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: var(--space-lg);
+  width: 100%;
+  max-width: 1200px;
+  margin: -60px auto 0 auto;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 var(--space-lg);
   flex-shrink: 0;
 }
 
-.company-logo {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  border-radius: var(--radius-lg);
+.company-main-block {
+  flex: 1;
+  background: white;
+  border-radius: 10px;
+  padding: var(--space-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
-  padding: 0.5rem;
-  background: #f9fafb;
+  min-height: 350px;
+  max-width: 700px;
+}
+
+.company-header-horizontal {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.company-logo-container-large {
+  flex-shrink: 0;
+}
+
+.company-logo-large {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 6px;
+  background: transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .company-basic-info {
   flex: 1;
+  text-align: left;
 }
 
 .company-name {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.5rem;
+  margin: 0 0 var(--space-md) 0;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #111827;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1f2937;
+  line-height: 1.2;
 }
 
 .company-description {
-  color: #6b7280;
-  line-height: 1.5;
+  color: #1e293b;
+  line-height: 1.6;
+  margin-bottom: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: transparent;
+  border-left: none;
+  padding-left: 0;
+  box-shadow: none;
+}
+
+.company-about-section {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  text-align: left;
+}
+
+.about-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: var(--space-md);
+  line-height: 1.2;
+}
+
+.company-meta-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 1rem;
-  font-size: 0.95rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  align-items: center;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.meta-icon {
+  color: #3b82f6;
+  font-size: 0.75rem;
+  width: 14px;
+  height: 14px;
+}
+
+.company-website {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.website-icon {
+  color: #3b82f6;
+  font-size: 0.75rem;
+  width: 14px;
+  height: 14px;
+}
+
+.website-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.website-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
 }
 
 .company-sectors {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.sector-tag {
-  background: #ffffff;
-  color: #111827;
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-lg);
-  font-size: 0.85rem;
-  font-weight: 500;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border: 2px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.sector-tag:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-  transform: translateY(-1px);
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
 }
 
 /* Informations de contact en bas */
@@ -162,10 +253,10 @@
 .contact-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 10px;
+  padding: 10px;
   background: #f8fafc;
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   border: 1px solid #e5e7eb;
   flex: 1;
   min-width: 200px;
@@ -173,7 +264,9 @@
 
 .contact-icon {
   color: #3b82f6;
-  font-size: 1rem;
+  font-size: 0.75rem;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
@@ -200,34 +293,136 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-  .contact-value:hover {
-    color: #3b82f6;
-    text-decoration: underline;
-  }
+.contact-value:hover {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+/* Section Informations clés dans le banner */
+.company-key-info-section {
+  background: white;
+  border-radius: 10px;
+  padding: var(--space-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  width: 320px;
+  flex-shrink: 0;
+  min-height: 350px;
+  align-self: flex-end;
+}
+
+.key-info-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 var(--space-md) 0;
+  line-height: 1.2;
+}
+
+.key-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.key-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.key-info-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.key-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.key-info-icon.collaborators {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: white;
+}
+
+.key-info-icon.year {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  color: white;
+}
+
+.key-info-icon.offers {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+  color: white;
+}
+
+.key-info-icon.recruiters {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  color: white;
+}
+
+.key-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.key-info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.key-info-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
 
 /* Section recruteurs avec PersonCard */
 .company-recruiters-section {
   background: white;
-  border-radius: var(--radius-2xl);
-  padding: 2rem;
+  border-radius: 10px;
+  padding: var(--space-lg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
   position: relative;
+  max-width: 1044px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 250px;
 }
 
 .recruiters-person-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-md);
 }
 
 .recruiters-person-cards-container .person-card {
   background: #f8fafc;
   border: 1px solid #e5e7eb;
-  border-radius: var(--radius-xl);
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: var(--space-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .recruiters-person-cards-container .person-card:hover {
@@ -236,24 +431,115 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+/* Standardisation des éléments internes des cartes recruteurs */
+.recruiters-person-cards-container .person-card .person-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.recruiters-person-cards-container .person-card .person-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.recruiters-person-cards-container .person-card .person-company {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.recruiters-person-cards-container .person-card .person-photo img,
+.recruiters-person-cards-container .person-card .person-photo-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+}
+
+.recruiters-person-cards-container .person-card .person-photo-placeholder {
+  font-size: 0.85rem;
+}
   
-  /* Section offres */
+/* Section offres */
 .company-offers-section {
   background: white;
-  border-radius: var(--radius-xl);
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: var(--space-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e7eb;
+  max-width: 1044px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.offers-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.forum-offers-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* Pagination des offres */
+.offers-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid #e5e7eb;
+}
+
+.pagination-btn {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #3b82f6;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1.5rem 0;
-  font-size: 1.5rem;
-  font-weight: 700;
+  gap: 8px;
+  margin: 0 0 var(--space-md) 0;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #1f2937;
+  line-height: 1.2;
 }
 
 .section-icon {
@@ -282,6 +568,22 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .company-banner-content {
+    flex-direction: column;
+    padding: var(--space-md);
+    margin-top: -40px;
+  }
+  
+  .company-main-block {
+    max-width: 100%;
+  }
+  
+  .company-key-info-section {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .company-detail-header {
     flex-direction: column;
@@ -293,15 +595,26 @@
     font-size: 1.5rem;
   }
   
-  .company-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .company-banner-background {
+    height: 150px;
   }
   
-  .company-logo {
-    width: 70px;
-    height: 70px;
+  .company-banner-content {
+    padding: var(--space-md);
+    margin-top: -30px;
+  }
+  
+  .company-main-block {
+    padding: var(--space-md);
+  }
+  
+  .company-logo-large {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .company-name {
+    font-size: 0.9rem;
   }
   
   .company-contact-info {
@@ -312,16 +625,24 @@
     min-width: auto;
   }
   
-  
-  .company-info-section,
   .company-offers-section,
   .company-recruiters-section {
-    padding: 1.5rem;
+    padding: var(--space-md);
   }
   
   .recruiters-person-cards-container {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+  
+  .key-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .key-info-item:not(:last-child) {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
   }
 }
 

@@ -258,4 +258,56 @@ const getMonthIndex = (monthName) => {
 export const formatDateErrors = (errors) => {
   if (errors.length === 0) return '';
   return errors.join('\n');
+};
+
+/**
+ * Valide les dates virtuelles d'un forum pour qu'elles soient entre start_date et end_date
+ * @param {Object} formData - Données du formulaire avec les dates virtuelles
+ * @returns {Object} - { isValid: boolean, errors: Array }
+ */
+export const validateVirtualForumDates = (formData) => {
+  const errors = [];
+  
+  // Vérifier que start_date et end_date sont définies
+  if (!formData.start_date || !formData.end_date) {
+    return { isValid: true, errors: [] }; // Pas de validation si les dates de base ne sont pas définies
+  }
+  
+  const forumStartDate = new Date(formData.start_date);
+  const forumEndDate = new Date(formData.end_date);
+  
+  // Liste des champs de dates virtuelles à valider
+  const virtualDateFields = [
+    { name: 'preparation_start', label: 'Début de la phase de préparation' },
+    { name: 'preparation_end', label: 'Fin de la phase de préparation' },
+    { name: 'jobdating_start', label: 'Début de la phase jobdating/traitement' },
+    { name: 'interview_start', label: 'Début de la phase des entretiens' },
+    { name: 'interview_end', label: 'Fin de la phase des entretiens' }
+  ];
+  
+  // Vérifier chaque date virtuelle
+  virtualDateFields.forEach(field => {
+    const fieldValue = formData[field.name];
+    
+    if (fieldValue) {
+      // Convertir la date virtuelle (format datetime-local: YYYY-MM-DDTHH:MM)
+      const virtualDate = new Date(fieldValue);
+      
+      // Extraire seulement la date (sans l'heure) pour la comparaison
+      const virtualDateOnly = new Date(virtualDate.getFullYear(), virtualDate.getMonth(), virtualDate.getDate());
+      const forumStartDateOnly = new Date(forumStartDate.getFullYear(), forumStartDate.getMonth(), forumStartDate.getDate());
+      const forumEndDateOnly = new Date(forumEndDate.getFullYear(), forumEndDate.getMonth(), forumEndDate.getDate());
+      
+      if (virtualDateOnly < forumStartDateOnly) {
+        errors.push(`${field.label} doit être après ou égale à la date de début du forum (${formData.start_date})`);
+      } else if (virtualDateOnly > forumEndDateOnly) {
+        errors.push(`${field.label} doit être avant ou égale à la date de fin du forum (${formData.end_date})`);
+      }
+    }
+  });
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 }; 

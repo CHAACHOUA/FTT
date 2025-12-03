@@ -6,6 +6,7 @@ import '../../pages/styles/common/navbar.css';
 import { useAuth } from '../../context/AuthContext';
 import { BsPerson, BsGear, BsBoxArrowRight } from 'react-icons/bs';
 import { MdEventAvailable } from 'react-icons/md';
+import NotificationIcon from '../notifications/NotificationIcon';
 // import { getUserFromToken } from "../../context/decoder-jwt"; // Fichier supprimé
 
 const Navbar = () => {
@@ -80,11 +81,13 @@ const Navbar = () => {
             <Link to="/login" className="navbar-login-btn">Se connecter</Link>
           </>
         ) :  (
-          <div className="dropdown">
-            <button className="navbar-user" onClick={toggleDropdown}>
-              <div className="user-circle">{getInitials(name || 'User')}</div>
-              <span className="user-name">{name || 'Utilisateur'}</span> ▾
-            </button>
+          <>
+            <NotificationIcon />
+            <div className="dropdown">
+              <button className="navbar-user" onClick={toggleDropdown}>
+                <div className="user-circle">{getInitials(name || 'User')}</div>
+                <span className="user-name">{name || 'Utilisateur'}</span> ▾
+              </button>
 
             {showDropdown && (
               <div className="dropdown-menu">
@@ -132,6 +135,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
+          </>
         )}
       </div>
     </nav>

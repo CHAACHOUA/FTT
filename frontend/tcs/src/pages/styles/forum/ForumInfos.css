@@ -72,6 +72,76 @@
   border-left: 4px solid #3b82f6;
 }
 
+/* Section dates clés */
+.forum-key-dates-section {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.key-dates-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.key-dates-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.key-dates-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #3b82f6;
+}
+
+.key-date-item {
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.key-date-item:last-child {
+  margin-bottom: 0;
+}
+
+.key-date-dot {
+  position: absolute;
+  left: -13px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #3b82f6;
+  z-index: 1;
+}
+
+.key-date-content {
+  flex: 1;
+}
+
+.key-date-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.key-date-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
 .forum-infos-right-title {
   font-size: 1.3rem;
   font-weight: 700;

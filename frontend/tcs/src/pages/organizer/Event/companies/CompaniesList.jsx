@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../../../components/loyout/NavBar';
 import Loading from '../../../../components/loyout/Loading';
 import './CompaniesList.css';
+import '../../../../pages/styles/recruiter/CompanyRecruiter.css';
 import defaultLogo from '../../../../assets/Logo-FTT.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faChevronDown, faChevronRight, faTimes, faPaperPlane, faXmark, faToggleOn, faToggleOff, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +13,7 @@ import InviteRecruiterModal from './InviteRecruiterModal';
 import PersonCard from '../../../../components/card/common/PersonCard';
 import { useAuth } from '../../../../context/AuthContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const CompaniesList = (props) => {
   const location = useLocation();
@@ -41,6 +43,8 @@ const CompaniesList = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // all, approved, pending
+  const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+  const [selectedRecruiterCompany, setSelectedRecruiterCompany] = useState(null);
 
   // Fonction pour charger les entreprises du forum
   const fetchForumCompanies = async () => {
@@ -80,6 +84,23 @@ const CompaniesList = (props) => {
       fetchForumCompanies();
     }
   }, [isAuthenticated, isAuthLoading, forumId, apiBaseUrl]);
+
+  // Fermer le menu quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (selectedRecruiter && 
+          !event.target.closest('.actions-dropdown') && 
+          !event.target.closest('.actions-menu')) {
+        setSelectedRecruiter(null);
+        setSelectedRecruiterCompany(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [selectedRecruiter]);
 
   // Attendre que l'authentification soit vérifiée
   if (isAuthLoading) {
@@ -304,6 +325,29 @@ const CompaniesList = (props) => {
     } else {
       console.error('Entreprise non trouvée pour le recruteur:', recruiter);
     }
+  };
+
+  // Fonction pour gérer le menu d'actions des recruteurs
+  const handleRecruiterMenuToggle = (recruiter, company) => {
+    const recruiterKey = recruiter.id || recruiter.email || JSON.stringify(recruiter);
+    const currentKey = selectedRecruiter?.id || selectedRecruiter?.email || JSON.stringify(selectedRecruiter);
+    
+    if (currentKey === recruiterKey) {
+      setSelectedRecruiter(null);
+      setSelectedRecruiterCompany(null);
+    } else {
+      setSelectedRecruiter(recruiter);
+      setSelectedRecruiterCompany(company);
+    }
+  };
+
+  // Fonction pour relancer l'invitation depuis le menu
+  const handleResendInvitationFromMenu = async () => {
+    if (!selectedRecruiter || !selectedRecruiterCompany) return;
+    
+    await handleResendInvitation(selectedRecruiter, selectedRecruiterCompany);
+    setSelectedRecruiter(null);
+    setSelectedRecruiterCompany(null);
   };
 
   // Fonction pour approuver/désapprouver une entreprise
@@ -587,25 +631,93 @@ const CompaniesList = (props) => {
                   </div>
                 </div>
 
-                {/* Liste des recruteurs avec PersonCard */}
+                {/* Liste des recruteurs avec tableau */}
                 {expandedIndex === index && (
                   <div className="recruiters-list">
                     {(!company.recruiters || company.recruiters.length === 0) ? (
                       <p className="no-recruiter">Aucun recruteur</p>
                     ) : (
-                      <div className="person-cards-grid">
-                        {company.recruiters.map((recruiter, idx) => (
-                          <PersonCard
-                            key={recruiter.id || idx}
-                            person={recruiter}
-                            type="recruiter"
-                            onSend={handleResendInvitationFromCard}
-                            showActions={true}
-                            showSend={true}
-                            showContact={false}
-                            showView={false}
-                          />
-                        ))}
+                      <div className="members-table-container">
+                        <table className="members-table">
+                          <thead>
+                            <tr>
+                              <th>RECRUITERS</th>
+                              <th>DATE D'AJOUT</th>
+                              <th>DERNIÈRE CONNEXION</th>
+                              <th>EMAIL</th>
+                              <th>NOMBRE D'OFFRES</th>
+                              <th>ACTIONS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {company.recruiters.map((recruiter, idx) => (
+                              <tr key={recruiter.id || idx}>
+                                <td className="recruiter-info">
+                                  <div className="recruiter-avatar">
+                                    {recruiter.photo || recruiter.profile_picture ? (
+                                      <img 
+                                        src={(recruiter.photo || recruiter.profile_picture).startsWith('http') 
+                                          ? (recruiter.photo || recruiter.profile_picture)
+                                          : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${recruiter.photo || recruiter.profile_picture}`} 
+                                        alt={recruiter.first_name || recruiter.full_name} 
+                                        onError={(e) => {
+                                          e.target.style.display = 'none';
+                                          e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                      />
+                                    ) : null}
+                                    <div 
+                                      className="avatar-placeholder" 
+                                      style={{ display: (recruiter.photo || recruiter.profile_picture) ? 'none' : 'flex' }}
+                                    >
+                                      {recruiter.first_name?.charAt(0)?.toUpperCase() || 
+                                       recruiter.last_name?.charAt(0)?.toUpperCase() || 
+                                       recruiter.full_name?.charAt(0)?.toUpperCase() ||
+                                       recruiter.email?.charAt(0)?.toUpperCase() || 
+                                       '?'}
+                                    </div>
+                                  </div>
+                                  <div className="recruiter-details">
+                                    <div className="recruiter-name">
+                                      {recruiter.first_name && recruiter.last_name 
+                                        ? `${recruiter.first_name} ${recruiter.last_name}` 
+                                        : recruiter.full_name || recruiter.first_name || recruiter.last_name || 'Nom non disponible'
+                                      }
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="date-added">
+                                  {recruiter.created_at 
+                                    ? new Date(recruiter.created_at).toLocaleDateString('fr-FR') 
+                                    : 'Date inconnue'
+                                  }
+                                </td>
+                                <td className="last-login">
+                                  {recruiter.last_login 
+                                    ? new Date(recruiter.last_login).toLocaleDateString('fr-FR') 
+                                    : 'Jamais connecté'
+                                  }
+                                </td>
+                                <td className="email">
+                                  {recruiter.email || '-'}
+                                </td>
+                                <td className="offers-count">
+                                  {recruiter.forum_offers_count || recruiter.offers_count || 0}
+                                </td>
+                                <td className="actions">
+                                  <div className="actions-dropdown">
+                                    <button 
+                                      className="actions-trigger"
+                                      onClick={() => handleRecruiterMenuToggle(recruiter, company)}
+                                    >
+                                      ⋯
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     )}
                   </div>
@@ -614,6 +726,27 @@ const CompaniesList = (props) => {
             ))
           )}
         </div>
+
+        {/* Menu des actions pour les recruteurs */}
+        {selectedRecruiter && (
+          <div className="actions-menu" 
+               style={{
+                 position: 'fixed',
+                 top: '100px',
+                 right: '50px',
+                 zIndex: 10000,
+                 background: 'white',
+                 border: '2px solid #3b82f6',
+                 borderRadius: '8px',
+                 boxShadow: '0 8px 25px rgba(0, 0, 0, 0.25)',
+                 minWidth: '200px',
+                 padding: '8px 0'
+               }}>
+            <div className="action-item" onClick={handleResendInvitationFromMenu} style={{ display: 'block', padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}>
+              Renvoyer l'invitation
+            </div>
+          </div>
+        )}
 
         {/* Modal d'invitation */}
         <InviteRecruiterModal

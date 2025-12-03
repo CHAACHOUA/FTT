@@ -3,6 +3,7 @@
   display: flex;
   background-color: #f9fafb;
   min-height: 100vh;
+
 }
 
 .profile-content {
@@ -10,6 +11,7 @@
   padding: 40px;
   width: 100%;
   background-color: #f9fafb;
+  
 }
 
 .profile-save-button {
@@ -31,6 +33,7 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
+
 
 /* ===== RESPONSIVE DESIGN POUR PROFIL ORGANIZATEUR ===== */
 @media (max-width: 1024px) {

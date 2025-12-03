@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaCheck, FaClock, FaUser, FaFileAlt, FaTimes, FaDownload } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Modal from '../../../../components/card/common/Modal';
@@ -9,6 +11,7 @@ import VirtualSlotSelection from '../../../../components/application/VirtualSlot
 import VirtualApplicationConfirmation from '../../../../components/application/VirtualApplicationConfirmation';
 import { Button, Badge, Card, Input } from '../../../../components/common';
 import '../../../../pages/styles/candidate/VirtualApplicationPage.css';
+import '../../../../components/offers/VirtualOfferModal.css';
 
 const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: propOffer = null, forum: propForum = null }) => {
   const location = useLocation();
@@ -222,11 +225,22 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
   };
 
   const handleSlotSelect = (slot) => {
-    setApplicationData(prev => ({ ...prev, slot }));
-    handleNext();
+    console.log('🔍 [CANDIDAT] Slot selected:', slot);
+    setApplicationData(prev => {
+      const newData = { ...prev, slot };
+      console.log('🔍 [CANDIDAT] Updated applicationData with slot:', newData);
+      return newData;
+    });
+    // Ne pas passer automatiquement à l'étape suivante - l'utilisateur doit cliquer sur "Candidater"
   };
 
-  const handleApplicationSubmit = async () => {
+  const handleApplicationSubmit = async (e) => {
+    // Empêcher le comportement par défaut et la propagation
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     try {
       setLoading(true);
       
@@ -244,16 +258,16 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
         console.log('🔍 [CANDIDAT] Created empty questionnaire data:', questionnaireData);
       }
       
-      // Si pas de slot mais des slots disponibles, prendre le premier
-      if (!slotData && availableSlots && availableSlots.length > 0) {
-        slotData = availableSlots[0];
-        console.log('🔍 [CANDIDAT] Selected first available slot:', slotData);
-      }
+      // Ne pas prendre automatiquement le premier slot - l'utilisateur doit sélectionner
+      // if (!slotData && availableSlots && availableSlots.length > 0) {
+      //   slotData = availableSlots[0];
+      //   console.log('🔍 [CANDIDAT] Selected first available slot:', slotData);
+      // }
       
       const applicationPayload = {
         offer: offer.id,
         forum: forum.id,
-        selected_slot: slotData?.id,
+        selected_slot: slotData?.id || null,
         status: 'pending'
       };
       
@@ -264,6 +278,7 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
       console.log('🚀 [FRONTEND] Payload final:', applicationPayload);
       console.log('🚀 [FRONTEND] Questionnaire data:', questionnaireData);
       console.log('🚀 [FRONTEND] Slot data:', slotData);
+      console.log('🚀 [FRONTEND] Selected slot ID:', slotData?.id);
       
       const applicationResponse = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/virtual/applications/`,
@@ -271,6 +286,7 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
         { withCredentials: true }
       );
       
+      console.log('✅ [FRONTEND] Response from backend:', applicationResponse.data);
       toast.success('Candidature envoyée avec succès !');
       
       if (isModal && onClose) {
@@ -288,8 +304,11 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
       }
       
     } catch (error) {
-      console.error('Erreur lors de la candidature:', error);
-      toast.error('Erreur lors de la soumission de la candidature');
+      console.error('❌ [FRONTEND] Erreur lors de la candidature:', error);
+      console.error('❌ [FRONTEND] Error response:', error.response?.data);
+      console.error('❌ [FRONTEND] Error status:', error.response?.status);
+      const errorMessage = error.response?.data?.detail || error.response?.data?.error || 'Erreur lors de la soumission de la candidature';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -425,65 +444,81 @@ const CandidateApplicationPage = ({ isModal = false, onClose = null, offer: prop
     </div>
   );
 
-  // Si c'est un modal, utiliser le composant Modal comme ForumRegistrationPopup
+  // Si c'est un modal, utiliser la même structure que VirtualOfferModal
   if (isModal) {
     return (
-      <Modal
-        isOpen={isModal}
-        onClose={onClose}
-        title={`Candidature - ${offer?.title}`}
-        subtitle={`Étape ${currentStep}/${steps.length}`}
-        size="medium"
-      >
-        <div className="modal-steps">
-          <div className={`modal-step ${currentStep >= 1 ? (currentStep === 1 ? 'modal-step-active' : 'modal-step-completed') : 'modal-step-pending'}`}>
-            <div className="modal-step-number">1</div>
-            <span>Questions</span>
-          </div>
-          <div className={`modal-step ${currentStep >= 2 ? (currentStep === 2 ? 'modal-step-active' : 'modal-step-completed') : 'modal-step-pending'}`}>
-            <div className="modal-step-number">2</div>
-            <span>Créneau</span>
-          </div>
-        </div>
-
-        <form className="modal-form">
-          {renderStepContent()}
-        </form>
-
-        <div className="modal-actions">
-          {currentStep > 1 ? (
-            <button 
-              type="button"
-              onClick={handlePrevious} 
-              disabled={loading} 
-              className="modal-btn modal-btn-secondary"
-            >
-              Précédent
-            </button>
-          ) : (
-            <div></div>
-          )}
-          {currentStep < steps.length ? (
+      <div className="virtual-offer-modal-overlay" onClick={onClose}>
+        <div className="virtual-offer-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <div className="modal-title">
+              <h2>Candidature</h2>
+              <span className="step-indicator">Étape {currentStep}/{steps.length}</span>
+            </div>
             <button
               type="button"
-              onClick={handleNext}
-              disabled={loading}
-              className="modal-btn modal-btn-primary"
+              className="btn-close"
+              onClick={onClose}
             >
-              Suivant
+              <FontAwesomeIcon icon={faTimes} />
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleApplicationSubmit}
-              disabled={loading}
-              className="modal-btn modal-btn-primary"
-            >
-              {loading ? 'Envoi...' : 'Candidater'}
-            </button>
-          )}
+          </div>
+
+          <div className="step-navigation">
+            <div className={`step-tab ${currentStep === 1 ? 'active' : ''}`}>
+              <div className="step-number">1</div>
+              <div className="step-label">Questions</div>
+            </div>
+            <div className={`step-tab ${currentStep === 2 ? 'active' : ''}`}>
+              <div className="step-number">2</div>
+              <div className="step-label">Créneau</div>
+            </div>
+          </div>
+
+          <div className="modal-body">
+            {renderStepContent()}
+          </div>
+
+          <div className="modal-footer">
+            <div className="footer-left">
+              {currentStep > 1 && (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handlePrevious}
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} />
+                  Précédent
+                </button>
+              )}
+            </div>
+            <div className="footer-right" style={{ position: 'relative', zIndex: 1000 }}>
+              {currentStep === steps.length ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleApplicationSubmit(e);
+                  }}
+                  disabled={loading}
+                  className="btn-primary"
+                >
+                  {loading ? 'Envoi...' : 'Candidater'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={loading}
+                  className="btn-primary"
+                >
+                  Suivant
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      </Modal>
+      </div>
     );
   }
 

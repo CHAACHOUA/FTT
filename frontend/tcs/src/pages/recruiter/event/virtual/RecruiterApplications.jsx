@@ -24,6 +24,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input, Card, Badge } from '../../../../components/common';
+import CandidateProfile from '../../../../pages/candidate/profile/CandidateProfile';
+import '../common/CandidateListRecruiter.css';
 import './RecruiterApplications.css';
 import Loading from '../../../../components/loyout/Loading';
 
@@ -35,6 +37,8 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
   const [activeTab, setActiveTab] = useState('pending'); // pending, confirmed, waiting, rejected
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCandidateProfile, setShowCandidateProfile] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   // Récupérer le forumId depuis les props, params ou depuis le state
   const currentForumId = propForumId || paramForumId || location.state?.forum?.id;
@@ -224,7 +228,7 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
   const getTabCount = (tab) => {
     switch (tab) {
       case 'pending':
-        return applications.filter(app => app.status === 'pending').length;
+        return applications.filter(app => app.status === 'pending' || app.status === 'reviewed').length;
       case 'confirmed':
         return applications.filter(app => app.status === 'accepted').length;
       case 'waiting':
@@ -288,7 +292,8 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
     let statusMatch = false;
     switch (activeTab) {
       case 'pending':
-        statusMatch = app.status === 'pending';
+        // Afficher les candidatures en attente ou consultées (pas encore acceptées/rejetées)
+        statusMatch = app.status === 'pending' || app.status === 'reviewed';
         break;
       case 'confirmed':
         statusMatch = app.status === 'accepted';
@@ -320,6 +325,11 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
         <Loading />
       ) : (
         <>
+          {/* Titre */}
+          <div className="applications-title-section">
+            <h2 className="applications-title">Liste des candidatures ({applications.length} candidature{applications.length > 1 ? 's' : ''})</h2>
+          </div>
+          
           {/* Header avec onglets */}
           <div className="applications-header">
         <div className="header-tabs">
@@ -360,9 +370,6 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
-          </div>
-          <div className="results-count">
-            {filteredApplications.length} Résultat{filteredApplications.length > 1 ? 's' : ''} sur {applications.length} Participants
           </div>
         </div>
       </div>
@@ -461,34 +468,103 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
               {/* Informations du candidat */}
               <div className="candidate-section">
                 <h3 className="section-title">Informations du candidat</h3>
-                <div className="candidate-details">
-                  <div className="candidate-name-section">
-                    <h4 className="candidate-full-name">
-                      {selectedApplication.candidate_name || selectedApplication.candidate_email}
-                    </h4>
-                    <div className="candidate-email">
-                      <FontAwesomeIcon icon={faEnvelope} className="detail-icon" />
+                <div className="candidate-card-detail-wrapper">
+                  <div className="candidate-photo">
+                    {getCandidatePhoto(selectedApplication) ? (
+                      <img 
+                        src={getCandidatePhoto(selectedApplication)} 
+                        alt={selectedApplication.candidate_name}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="default-avatar"
+                      style={{ display: getCandidatePhoto(selectedApplication) ? 'none' : 'flex' }}
+                    >
+                      <FontAwesomeIcon icon={faUser} />
+                    </div>
+                  </div>
+                  
+                  <div className="candidate-info">
+                    <div className="candidate-name-row">
+                      <h3 className="candidate-full-name">
+                        {selectedApplication.candidate_name || selectedApplication.candidate_email}
+                      </h3>
+                      {selectedApplication.candidate?.cv_file && (
+                        <a
+                          className="cv-download-inline"
+                          href={
+                            selectedApplication.candidate.cv_file.startsWith('http')
+                              ? selectedApplication.candidate.cv_file
+                              : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${selectedApplication.candidate.cv_file}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Télécharger le CV"
+                        >
+                          <FontAwesomeIcon icon={faFileText} />
+                        </a>
+                      )}
+                      <button 
+                        className="primary-action-view"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (selectedApplication) {
+                            const candidateProfile = selectedApplication.candidate_profile || {};
+                            const candidateData = {
+                              ...candidateProfile,
+                              id: candidateProfile.id || selectedApplication.candidate?.id || selectedApplication.candidate,
+                              first_name: candidateProfile.first_name || selectedApplication.candidate_name?.split(' ')[0] || 'Candidat',
+                              last_name: candidateProfile.last_name || selectedApplication.candidate_name?.split(' ').slice(1).join(' ') || '',
+                              email: candidateProfile.email || selectedApplication.candidate_email,
+                              profile_picture: candidateProfile.profile_picture || selectedApplication.candidate_photo || selectedApplication.candidate?.profile_picture,
+                              cv_file: candidateProfile.cv_file || selectedApplication.candidate?.cv_file,
+                              search: candidateProfile.search || {},
+                              phone: candidateProfile.phone || selectedApplication.candidate?.phone,
+                              birth_date: candidateProfile.birth_date || selectedApplication.candidate?.birth_date,
+                              address: candidateProfile.address || selectedApplication.candidate?.address,
+                              city: candidateProfile.city || selectedApplication.candidate?.city,
+                              postal_code: candidateProfile.postal_code || selectedApplication.candidate?.postal_code,
+                              country: candidateProfile.country || selectedApplication.candidate?.country,
+                              linkedin: candidateProfile.linkedin || selectedApplication.candidate?.linkedin,
+                              github: candidateProfile.github || selectedApplication.candidate?.github,
+                              portfolio: candidateProfile.portfolio || selectedApplication.candidate?.portfolio,
+                              bio: candidateProfile.bio || selectedApplication.candidate?.bio,
+                              educations: candidateProfile.educations || selectedApplication.candidate?.educations || [],
+                              experiences: candidateProfile.experiences || selectedApplication.candidate?.experiences || [],
+                              candidate_languages: candidateProfile.candidate_languages || selectedApplication.candidate?.candidate_languages || [],
+                              skills: candidateProfile.skills || selectedApplication.candidate?.skills || [],
+                            };
+                            setSelectedCandidate(candidateData);
+                            setShowCandidateProfile(true);
+                          }
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faEye} />
+                        Voir le profil
+                      </button>
+                    </div>
+
+                    <div className="candidate-email-row">
+                      <FontAwesomeIcon icon={faEnvelope} className="email-icon" />
                       {selectedApplication.candidate_email}
                     </div>
-                    {selectedApplication.candidate && (
-                      <div className="candidate-profile-info">
-                        <div className="candidate-position">
-                          {selectedApplication.candidate.current_position || 'Candidat'}
-                        </div>
-                        {selectedApplication.candidate.location && (
-                          <div className="candidate-location">
-                            <FontAwesomeIcon icon={faBuilding} className="detail-icon" />
-                            {selectedApplication.candidate.location}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="candidate-actions">
-                    <button className="primary-action">
-                      <FontAwesomeIcon icon={faEye} />
-                      Voir le profil
-                    </button>
+
+                    <div className="sectors-container">
+                      {(selectedApplication.candidate_profile?.search?.sector?.length ?? 0) > 0
+                        ? selectedApplication.candidate_profile.search.sector.map((sector, i) => (
+                            <Badge key={i} type="sector">{sector}</Badge>
+                          ))
+                        : (selectedApplication.candidate?.search?.sector?.length ?? 0) > 0
+                        ? selectedApplication.candidate.search.sector.map((sector, i) => (
+                            <Badge key={i} type="sector">{sector}</Badge>
+                          ))
+                        : <Badge type="sector" variant="empty">Non renseigné</Badge>
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
@@ -542,68 +618,96 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
               {/* Créneau sélectionné */}
               {selectedApplication.selected_slot_info && (
                 <div className="slot-section">
-                  <h3 className="section-title">Créneau sélectionné</h3>
-                  <div className="slot-info">
-                    <div className="slot-date">
-                      <FontAwesomeIcon icon={faCalendar} className="detail-icon" />
-                      {formatDate(selectedApplication.selected_slot_info.date)}
+                  <div className="slot-header">
+                    <div className="slot-header-icon">
+                      <FontAwesomeIcon icon={faCalendar} />
                     </div>
-                    <div className="slot-time">
-                      <FontAwesomeIcon icon={faClock} className="detail-icon" />
-                      {formatTime(selectedApplication.selected_slot_info.start_time)} - {formatTime(selectedApplication.selected_slot_info.end_time)}
-                    </div>
-                    <div className="slot-type">
-                      <FontAwesomeIcon icon={getTypeIcon(selectedApplication.selected_slot_info.type)} className="detail-icon" />
-                      {selectedApplication.selected_slot_info.type === 'video' ? 'Visioconférence' : 
-                       selectedApplication.selected_slot_info.type === 'phone' ? 'Téléphone' : 'Présentiel'}
-                    </div>
-                    {selectedApplication.selected_slot_info.description && (
-                      <div className="slot-description">
-                        <FontAwesomeIcon icon={faFileText} className="detail-icon" />
-                        {selectedApplication.selected_slot_info.description}
-                      </div>
-                    )}
+                    <h3 className="slot-title">Créneau d'entretien</h3>
                   </div>
+                  <div className="slot-info-grid">
+                    <div className="slot-info-panel date-panel">
+                      <div className="panel-icon date-icon-bg">
+                        <FontAwesomeIcon icon={faCalendar} />
+                      </div>
+                      <div className="panel-content">
+                        <div className="panel-label">Date</div>
+                        <div className="panel-value">{formatDate(selectedApplication.selected_slot_info.date)}</div>
+                      </div>
+                    </div>
+                    <div className="slot-info-panel time-panel">
+                      <div className="panel-icon time-icon-bg">
+                        <FontAwesomeIcon icon={faClock} />
+                      </div>
+                      <div className="panel-content">
+                        <div className="panel-label">Horaire</div>
+                        <div className="panel-value">
+                          {formatTime(selectedApplication.selected_slot_info.start_time)} - {formatTime(selectedApplication.selected_slot_info.end_time)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="slot-info-panel type-panel">
+                      <div className="panel-icon type-icon-bg">
+                        <FontAwesomeIcon icon={getTypeIcon(selectedApplication.selected_slot_info.type)} />
+                      </div>
+                      <div className="panel-content">
+                        <div className="panel-label">Type</div>
+                        <div className="panel-value">
+                          {selectedApplication.selected_slot_info.type === 'video' ? 'Visioconférence' : 
+                           selectedApplication.selected_slot_info.type === 'phone' ? 'Téléphone' : 'Présentiel'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {selectedApplication.selected_slot_info.description && (
+                    <div className="slot-description">
+                      <FontAwesomeIcon icon={faFileText} className="detail-icon" />
+                      {selectedApplication.selected_slot_info.description}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Réponses au questionnaire */}
               {selectedApplication.questionnaire_responses && selectedApplication.questionnaire_responses.answers && (
                 <div className="questionnaire-section">
-                  <h3 className="section-title">Questionnaire</h3>
-                  <div className="questionnaire-info">
-                    <div className="responses-count">
-                      {selectedApplication.questionnaire_responses.answers.length} question(s) répondue(s)
+                  <div className="questionnaire-header">
+                    <div className="questionnaire-header-icon">
+                      <FontAwesomeIcon icon={faQuestion} />
                     </div>
+                    <h3 className="questionnaire-title">Réponses au questionnaire</h3>
+                  </div>
+                  <div className="questionnaire-info">
                     <div className="responses-list">
                       {selectedApplication.questionnaire_responses.answers.map((answer, index) => (
                         <div key={index} className="response-item">
-                          <div className="response-question">
-                            <strong>Question {index + 1} :</strong> {answer.question_text || `Question ${index + 1}`}
-                          </div>
-                          <div className="response-answer">
-                            <strong>Réponse :</strong>
-                            {answer.answer_text && (
-                              <div className="answer-text">
-                                {answer.answer_text}
-                              </div>
-                            )}
-                            {answer.answer_number !== null && answer.answer_number !== undefined && (
-                              <div className="answer-number">
-                                {answer.answer_number}
-                              </div>
-                            )}
-                            {answer.answer_choices && answer.answer_choices.length > 0 && (
-                              <div className="answer-choices">
-                                {answer.answer_choices.join(', ')}
-                              </div>
-                            )}
-                            {answer.answer_file && (
-                              <div className="answer-file">
-                                <FontAwesomeIcon icon={faFileText} className="file-icon" />
-                                {answer.answer_file.name || 'Fichier joint'}
-                              </div>
-                            )}
+                          <div className="question-badge">{index + 1}</div>
+                          <div className="response-content">
+                            <div className="response-question">
+                              {answer.question_text || `Question ${index + 1}`}
+                            </div>
+                            <div className="response-answer-bubble">
+                              {answer.answer_text && (
+                                <div className="answer-text">
+                                  {answer.answer_text}
+                                </div>
+                              )}
+                              {answer.answer_number !== null && answer.answer_number !== undefined && (
+                                <div className="answer-number">
+                                  {answer.answer_number}
+                                </div>
+                              )}
+                              {answer.answer_choices && answer.answer_choices.length > 0 && (
+                                <div className="answer-choices">
+                                  {answer.answer_choices.join(', ')}
+                                </div>
+                              )}
+                              {answer.answer_file && (
+                                <div className="answer-file">
+                                  <FontAwesomeIcon icon={faFileText} className="file-icon" />
+                                  {answer.answer_file.name || 'Fichier joint'}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -627,6 +731,18 @@ const RecruiterApplications = ({ forumId: propForumId }) => {
         </div>
       </div>
         </>
+      )}
+
+      {/* Popup profil candidat */}
+      {showCandidateProfile && selectedCandidate && (
+        <CandidateProfile
+          candidateData={selectedCandidate}
+          onClose={() => {
+            setShowCandidateProfile(false);
+            setSelectedCandidate(null);
+          }}
+          forum={location.state?.forum || null}
+        />
       )}
     </div>
   );

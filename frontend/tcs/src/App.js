@@ -31,6 +31,7 @@ import MatchingCandidates from './pages/recruiter/event/common/MatchingCandidate
 import OrganizerDashboard from './pages/organizer/Event/common/OrganizerDashboard';
 import OrganizerProfileView from './pages/organizer/profile/OrganizerProfileView';
 import ForumInfoEdit from './pages/organizer/Event/forum/ForumInfoEdit';
+import VirtualStatistics from './pages/organizer/Event/virtual/VirtualStatistics';
 import OfferDetail from './components/loyout/OfferDetail';
 import MatchingDetail from './pages/recruiter/event/common/MatchingDetail';
 import CompleteRecruiterSetup from './pages/recruiter/profile/CompleteRecruiterSetup';
@@ -99,6 +100,7 @@ function App() {
           <Route path="/organizer/forum-info" element={<ForumInfoEdit />} />
           <Route path="/organizer/programmes" element={<ForumProgrammeManagement />} />
           <Route path="/organizer/speakers" element={<SpeakerManagementPage />} />
+          <Route path="/organizer/statistics" element={<VirtualStatistics />} />
           <Route path="/complete-recruiter-setup/:token" element={<CompleteRecruiterSetup />} />
 
         </Routes>

@@ -1,55 +1,81 @@
-/* Container principal avec le même style que le dashboard */
+/* Overlay de chargement qui couvre toute la page (navbar, submenu, etc.) */
+.offers-list-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.offers-list-loading-overlay > div {
+  background-color: transparent !important;
+}
+
+/* Container principal avec le même style que InterviewManagement */
 .offers-list-wrapper {
-  min-height: 100vh;
+  padding: var(--space-lg);
   background: #f8fafc;
-  color: #111827;
+  min-height: 100vh;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.offers-list-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .offers-list-content {
-  padding: 3rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .offers-list-header {
-  text-align: left;
-  margin-bottom: 2rem;
-  color: #111827;
-  position: relative;
+  margin-bottom: var(--space-2xl);
 }
 
 .header-content {
-  padding-top: 4rem;
+  padding-top: 0;
 }
 
 .offers-list-header h1 {
-  font-size: 2.7rem;
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #111827;
+  color: #1f2937;
 }
 
 .offers-list-header p {
-  font-size: 1.2rem;
+  font-size: 0.85rem;
   color: #6b7280;
 }
 
 .page-title-section {
-  text-align: left;
-  margin-bottom: 2rem;
-  color: #111827;
-  position: relative;
+  margin-bottom: var(--space-2xl);
 }
 
 .page-title-section h1 {
-  font-size: 2.7rem;
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
   margin-bottom: 0.5rem;
-  color: #111827;
 }
 
 .page-title-section p {
-  font-size: 1.2rem;
+  font-size: 0.85rem;
   color: #6b7280;
 }
 
@@ -57,29 +83,41 @@
   background: #ffffff;
   color: #3b82f6;
   border: 2px solid #3b82f6;
-  padding: var(--space-md) 20px;
   border-radius: var(--radius-lg);
-  font-weight: 600;
+  padding: var(--space-sm) 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1rem;
 }
 
 .btn-add-offer:hover {
-  transform: translateY(-4px);
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-add-offer:active {
+  transform: translateY(0);
+}
+
+.btn-add-offer svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Grille des offres - Style organisateur optimisé */
 .offers-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: var(--space-lg);
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
+  margin-top: 0;
 }
 
 .offers-grid > * {
@@ -91,7 +129,7 @@
 .offers-list-horizontal {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: var(--space-lg);
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
@@ -511,10 +549,11 @@
 }
 
 .offer-title {
-  margin: var(--space-xs) 0 10px 0;
-  font-size: 1.25rem;
+  margin: var(--space-xs) 0 6px 0;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #222;
+  color: #1f2937;
+  line-height: 1.2;
 }
 
 .location-list {
@@ -577,10 +616,10 @@
 }
 
 .matching-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 32px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: var(--space-lg);
   text-align: center;
 }
 
@@ -647,11 +686,11 @@
 }
 
 .matching-offer-card .offer-title {
-  margin: 0 0 8px 0;
-  font-size: 1.3rem;
+  margin: 0 0 6px 0;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #111827;
-  line-height: 1.4;
+  color: #1f2937;
+  line-height: 1.2;
 }
 
 .matching-offer-card .offer-description {
@@ -806,16 +845,17 @@
 /* Message d'absence d'offres */
 .no-offers {
   text-align: center;
-  padding: 3rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
+  background: white;
+  border-radius: var(--radius-xl);
   color: #6b7280;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 12px 0 rgba(24, 56, 108, 0.05);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-top: 0;
 }
 
 .no-offers p {
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   margin: 0;
 }
 
@@ -873,12 +913,12 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .offers-list-content {
-    padding: 1rem;
+  .offers-list-wrapper {
+    padding: var(--space-md);
   }
   
   .offers-list-header h1 {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
   
   /* Grille responsive - géré par les media queries ci-dessus */
@@ -939,7 +979,7 @@
 
 @media (max-width: 480px) {
   .offers-list-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.25rem;
   }
   
   .offer-card {

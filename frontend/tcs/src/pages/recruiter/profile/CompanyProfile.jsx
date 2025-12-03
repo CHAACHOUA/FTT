@@ -305,18 +305,18 @@ const handleSectorsChange = (newSectors) => {
             style={{
               background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
               color: 'white',
-              padding: '12px 24px',
+              padding: 'var(--space-sm) 16px',
               border: 'none',
-              borderRadius: 8,
+              borderRadius: 'var(--radius-lg)',
               cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: '1rem',
+              fontWeight: 500,
+              fontSize: '0.75rem',
               transition: 'all 0.3s ease',
               boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
             }}
             onMouseEnter={(e) => {
               e.target.style.background = 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)';
-              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.transform = 'translateY(-1px)';
               e.target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
             }}
             onMouseLeave={(e) => {

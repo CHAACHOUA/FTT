@@ -569,19 +569,26 @@
 }
 
 /* Section itinéraire détaillé */
-.route-details {
-  margin-top: 32px;
-  padding-top: 32px;
+.plan-route-details {
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 2px solid #f1f5f9;
 }
 
-.route-steps {
+.plan-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+}
+
+.plan-route-steps {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.route-step {
+.plan-route-step {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -595,7 +602,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.route-step::before {
+.plan-route-step::before {
   content: '';
   position: absolute;
   top: 0;
@@ -607,25 +614,30 @@
   transition: opacity 0.3s ease;
 }
 
-.route-step:hover {
+.plan-route-step:hover {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   transform: translateX(4px) translateY(-2px);
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
   border-color: #3b82f6;
 }
 
-.route-step:hover::before {
+.plan-route-step:hover::before {
   opacity: 1;
 }
 
-.step-indicator {
+.plan-route-step.plan-visited {
+  opacity: 0.7;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.plan-step-indicator {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
 }
 
-.step-number-large {
+.plan-step-number-large {
   width: 40px;
   height: 40px;
   background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
@@ -638,25 +650,57 @@
   font-size: 1.1rem;
 }
 
-.step-connector {
+.plan-step-connector {
   width: 2px;
   height: 40px;
   background: linear-gradient(180deg, #3b82f6 0%, #06b6d4 100%);
   margin-top: 8px;
 }
 
-.step-content {
+.plan-step-content {
   flex: 1;
 }
 
-.step-content h4 {
+.plan-step-content h4 {
   font-size: 1.1rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0 0 8px 0;
 }
 
-.step-location {
+.plan-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.plan-step-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.plan-visit-toggle,
+.plan-note-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1rem;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.plan-visit-toggle:hover,
+.plan-note-toggle:hover {
+  color: #3b82f6;
+}
+
+.plan-visit-toggle.plan-visited {
+  color: #10b981;
+}
+
+.plan-step-location {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -665,19 +709,19 @@
   margin: 0 0 4px 0;
 }
 
-.location-icon {
+.plan-location-icon {
   color: #3b82f6;
   font-size: 0.875rem;
 }
 
-.step-sectors {
+.plan-step-sectors {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin: 0 0 8px 0;
 }
 
-.step-sectors .sector-tag {
+.plan-step-sectors .plan-sector-tag {
   padding: var(--space-xs) 8px;
   background: #dbeafe;
   color: #1e40af;
@@ -689,12 +733,28 @@
   white-space: nowrap;
 }
 
-
-.step-duration {
+.plan-step-duration {
   font-size: 0.875rem;
   color: #10b981;
   font-weight: 500;
   margin: 0;
+}
+
+.plan-note-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.plan-note-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
 }
 
 /* Section de progression */
@@ -702,9 +762,12 @@
   background: #ffffff;
   border-radius: var(--radius-2xl);
   padding: var(--space-2xl);
-  margin: var(--space-2xl) 0;
+  margin: var(--space-2xl) 0 var(--space-md) 0;
   border: 1px solid #e5e7eb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .progress-header {
@@ -729,21 +792,32 @@
 
 .progress-bar-container {
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .progress-bar {
   width: 100%;
-  height: 12px;
-  background: #f3f4f6;
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  height: 20px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: visible;
+  position: relative;
+  border: 1px solid #d1d5db;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   transition: width 0.5s ease;
+  min-width: 4px;
+  display: block !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .progress-stats {
@@ -757,34 +831,21 @@
 }
 
 /* Styles pour les étapes visitées */
-.route-step.visited {
+.plan-route-step.plan-visited {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border-color: #3b82f6;
 }
 
-.route-step.visited::before {
+.plan-route-step.plan-visited::before {
   opacity: 1;
 }
 
-.route-step.visited .step-number-large {
+.plan-route-step.plan-visited .plan-step-number-large {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-/* Header des étapes avec actions */
-.step-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
-.step-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.visit-toggle, .note-toggle {
+/* Header des étapes avec actions - déjà défini plus haut */
+.plan-visit-toggle, .plan-note-toggle {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border: 1px solid #e2e8f0;
   cursor: pointer;
@@ -800,7 +861,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.visit-toggle:hover, .note-toggle:hover {
+.plan-visit-toggle:hover, .plan-note-toggle:hover {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   transform: translateY(-1px);
@@ -808,21 +869,21 @@
   border-color: #3b82f6;
 }
 
-.visit-toggle.visited {
+.plan-visit-toggle.plan-visited {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border-color: #10b981;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
-.visit-toggle.visited:hover {
+.plan-visit-toggle.plan-visited:hover {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
-/* Section de notes */
-.note-section {
+/* Section de notes - déjà défini plus haut */
+.plan-note-section {
   margin-top: 12px;
   padding: var(--space-md);
   background: #f8fafc;
@@ -830,7 +891,7 @@
   border: 1px solid #e5e7eb;
 }
 
-.note-input {
+.plan-note-input {
   width: 100%;
   padding: var(--space-sm) 12px;
   border: 1px solid #d1d5db;
@@ -842,19 +903,13 @@
   margin-bottom: 8px;
 }
 
-.note-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.note-actions {
+.plan-note-actions {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
 }
 
-.btn-save-note, .btn-cancel-note {
+.btn-save-note, .plan-btn-cancel-note {
   padding: 6px 12px;
   border: none;
   border-radius: var(--radius-md);
@@ -873,21 +928,21 @@
   background: #2563eb;
 }
 
-.btn-cancel-note {
+.plan-btn-cancel-note {
   background: #f3f4f6;
   color: #6b7280;
 }
 
-.btn-cancel-note:hover {
+.plan-btn-cancel-note:hover {
   background: #e5e7eb;
 }
 
 /* Affichage des notes existantes */
-.note-display {
+.plan-note-display {
   margin-top: 12px;
 }
 
-.note-content {
+.plan-note-content {
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -897,14 +952,14 @@
   border-left: 3px solid #f59e0b;
 }
 
-.note-icon {
+.plan-note-icon {
   color: #f59e0b;
   font-size: 0.875rem;
   margin-top: 2px;
   flex-shrink: 0;
 }
 
-.note-content span {
+.plan-note-content span {
   font-size: 0.875rem;
   color: #92400e;
   line-height: 1.4;
@@ -998,13 +1053,13 @@
     grid-template-columns: 1fr;
   }
   
-  .route-step {
+  .plan-route-step {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
   
-  .step-connector {
+  .plan-step-connector {
     display: none;
   }
 }
@@ -1054,19 +1109,19 @@
     padding: var(--space-lg);
   }
   
-  .route-step {
+  .plan-route-step {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
   }
   
-  .step-content {
+  .plan-step-content {
     flex: 1;
     min-width: 0;
   }
   
-  .step-actions {
+  .plan-step-actions {
     flex-shrink: 0;
     margin-left: 12px;
     display: flex;
@@ -1079,16 +1134,16 @@
     padding: var(--space-md);
   }
   
-  .route-step {
+  .plan-route-step {
     gap: 8px;
   }
   
-  .step-actions {
+  .plan-step-actions {
     margin-left: 8px;
     gap: 6px;
   }
   
-  .visit-toggle, .note-toggle {
+  .plan-visit-toggle, .plan-note-toggle {
     padding: 6px 8px;
     font-size: 0.8rem;
   }

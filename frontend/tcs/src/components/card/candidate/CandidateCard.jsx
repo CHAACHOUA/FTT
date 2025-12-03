@@ -9,7 +9,8 @@ const CandidateCard = ({
   onCandidateClick, 
   onRemoveFromMeetings, 
   showRemoveButton = false,
-  className = "candidate-card"
+  className = "candidate-card",
+  forum = null
 }) => {
   const handleCandidateClick = () => {
     if (onCandidateClick) {
@@ -50,7 +51,25 @@ const CandidateCard = ({
       </div>
       
       <div className="candidate-info">
-        <h3>{candidate.first_name} {candidate.last_name}</h3>
+        <div className="candidate-name-row">
+          <h3>{candidate.first_name} {candidate.last_name}</h3>
+          {candidate.cv_file && (
+            <a
+              className="cv-download-inline"
+              href={
+                candidate.cv_file.startsWith('http')
+                  ? candidate.cv_file
+                  : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.cv_file}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Télécharger le CV"
+              onClick={handleCvDownload}
+            >
+              <FaDownload />
+            </a>
+          )}
+        </div>
 
         <div className="sectors-container">
           {(candidate.search?.sector?.length ?? 0) > 0
@@ -67,23 +86,6 @@ const CandidateCard = ({
         </p>
       </div>
 
-      {/* Bouton de téléchargement CV - toujours affiché */}
-      {candidate.cv_file && (
-        <a
-          className="cv-download"
-          href={
-            candidate.cv_file.startsWith('http')
-              ? candidate.cv_file
-              : `${process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000'}${candidate.cv_file}`
-          }
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Télécharger le CV"
-          onClick={handleCvDownload}
-        >
-          <FaDownload />
-        </a>
-      )}
 
       {/* Bouton de suppression - seulement si showRemoveButton est true */}
       {showRemoveButton && (

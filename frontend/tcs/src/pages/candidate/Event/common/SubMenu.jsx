@@ -7,14 +7,16 @@ import {
   FaPrint,
   FaMap,
   FaFileAlt,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaComments
 } from 'react-icons/fa';
 import { Button, Input, Card, Badge } from '../../../../components/common';
 import '../../profile/SidebarMenu.css';
 
 const SubMenu = ({ active, setActive, forumType }) => {
   const showPhysicalFeatures = forumType === 'hybride' || forumType === 'presentiel';
-  const showVirtualFeatures = forumType === 'virtuel' || forumType === 'hybride';
+  // Mes candidatures ne doit apparaître que pour les forums 100% virtuels
+  const showVirtualFeatures = forumType === 'virtuel';
 
   const menuItems = [
     { id: 'info', label: 'Informations générales', icon: <FaInfoCircle /> },
@@ -22,6 +24,7 @@ const SubMenu = ({ active, setActive, forumType }) => {
     { id: 'offres', label: 'Offres', icon: <FaBriefcase /> },
     ...(showVirtualFeatures ? [
       { id: 'candidatures', label: 'Mes candidatures', icon: <FaFileAlt /> },
+      { id: 'chat', label: 'Messages', icon: <FaComments /> },
     ] : []),
     ...(showPhysicalFeatures ? [
       { id: 'plan', label: 'Plan du Forum', icon: <FaMap /> },

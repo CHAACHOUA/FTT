@@ -30,6 +30,7 @@ body.modal-open .main-content {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 100%;
   max-width: 900px;
+  min-height: 500px;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
@@ -570,9 +571,9 @@ body.modal-open .main-content {
 }
 
 .btn-secondary:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-  color: #374151;
+  background: white;
+  border-color: #d1d5db;
+  color: #6b7280;
 }
 
 /* Responsive */

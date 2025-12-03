@@ -142,29 +142,39 @@ const agendaStyles = `
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: var(--space-sm) 12px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
+    padding: var(--space-sm) 16px;
+    background: #ffffff;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: var(--text-sm);
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
     font-weight: 500;
     white-space: nowrap;
   }
 
   .invite-recruiter-btn-small:hover:not(:disabled) {
-    background: #2563eb;
+    background: #3b82f6;
+    color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  .invite-recruiter-btn-small:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   .invite-recruiter-btn-small:disabled {
-    background: #9ca3af;
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #d1d5db;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
+  }
+
+  .invite-recruiter-btn-small svg {
+    width: 14px;
+    height: 14px;
   }
 
   .recruiter-dropdown {
@@ -318,7 +328,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [viewMode, setViewMode] = useState('list'); // 'list' ou 'calendar'
+  const [viewMode, setViewMode] = useState('calendar'); // 'list' ou 'calendar'
   const [filterType, setFilterType] = useState('all');
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -606,16 +616,6 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
         recruiter: selectedRecruiter.email // CORRECTION: Associer le créneau au recruteur sélectionné (utiliser l'email)
       };
 
-      console.log('🔍 Création d\'un nouveau créneau:', newSlotData);
-      console.log('🔍 Données du formulaire:', newSlot);
-      console.log('🔍 selectedRecruiter au moment de la création:', selectedRecruiter);
-      console.log('🔍 selectedRecruiter.id:', selectedRecruiter?.id);
-      console.log('🔑 AccessToken disponible:', accessToken ? 'OUI' : 'NON');
-      console.log('🌐 API Base URL:', apiBaseUrl);
-      console.log('📋 Forum ID:', forum?.id);
-      console.log('📋 URL complète:', `${apiBaseUrl}/virtual/forums/${forum.id}/agenda/`);
-      console.log('📋 Données envoyées (JSON):', JSON.stringify(newSlotData, null, 2));
-
       const response = await axios.post(`${apiBaseUrl}/virtual/forums/${forum.id}/agenda/`, newSlotData, {
         withCredentials: true
       });
@@ -676,12 +676,6 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
           return;
         }
         
-        console.error('📋 Headers de la réponse:', error.response.headers);
-        console.error('📋 Configuration de la requête:', error.config);
-        console.error('📋 Données d\'erreur du serveur:', JSON.stringify(error.response.data, null, 2));
-        console.error('📋 URL de la requête:', error.config?.url);
-        console.error('📋 Méthode de la requête:', error.config?.method);
-        console.error('📋 Données envoyées dans la requête:', JSON.stringify(error.config?.data, null, 2));
       }
       console.error('📋 Erreur complète:', error);
       toast.error('❌ Erreur lors de la création du créneau. Veuillez réessayer.', {
@@ -946,21 +940,11 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
     const slotRecruiterEmail = typeof slot.recruiter === 'object' ? slot.recruiter?.email : slot.recruiter;
     const matchesRecruiter = selectedRecruiter ? slotRecruiterEmail === selectedRecruiter.email : true;
     
-    console.log('--- DEBUG FILTRE RECRUTEUR ---');
-    console.log('Slot:', slot.id, 'Date:', slot.date);
-    console.log('slot.recruiter (raw):', slot.recruiter);
-    console.log('slotRecruiterEmail (extracted):', slotRecruiterEmail);
-    console.log('selectedRecruiter.email:', selectedRecruiter?.email);
-    console.log('Comparison (slotRecruiterEmail === selectedRecruiter.email):', slotRecruiterEmail === selectedRecruiter?.email);
-    console.log('isInPeriod:', isInPeriod, 'matchesType:', matchesType, 'matchesRecruiter:', matchesRecruiter);
-    console.log('------------------------------');
-    
+  
     return isInPeriod && matchesType && matchesRecruiter;
   });
   
-  console.log('🔍 Slots après filtrage:', filteredSlots);
-  console.log('🔍 Nombre de slots après filtrage:', filteredSlots.length);
-
+  
 
 
   // Fonction pour détecter les conflits de créneaux
@@ -1078,18 +1062,18 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
           <div className="agenda-controls">
             <div className="view-toggle">
               <button 
-                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-              >
-                <FontAwesomeIcon icon={faList} />
-                Liste
-              </button>
-              <button 
                 className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
                 onClick={() => setViewMode('calendar')}
               >
                 <FontAwesomeIcon icon={faCalendar} />
                 Calendrier
+              </button>
+              <button 
+                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+              >
+                <FontAwesomeIcon icon={faList} />
+                Liste
               </button>
             </div>
 
@@ -1135,51 +1119,7 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
           </div>
 
           <div className="agenda-content">
-            {viewMode === 'list' ? (
-              <div className="agenda-list">
-                {filteredSlots.length === 0 ? (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    padding: '3rem', 
-                    color: '#6b7280',
-                    background: '#f9fafb',
-                    borderRadius: '12px',
-                    border: '2px dashed #d1d5db',
-                    margin: '2rem 0'
-                  }}>
-                    <h3 style={{ marginBottom: '1rem', color: '#374151' }}>
-                      Aucun créneau dans la période d'entretiens
-                    </h3>
-                    <p style={{ fontSize: '1rem' }}>
-                      Ajoutez des créneaux d'entretien pour la période du {getInterviewStartDate().toLocaleDateString('fr-FR')} au {getInterviewEndDate().toLocaleDateString('fr-FR')}.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="agenda-cards-grid">
-                    {filteredSlots.map(slot => {
-                      // Vérifier si ce créneau est en conflit
-                      const isInConflict = conflicts.some(conflict => 
-                        conflict.slot1.id === slot.id || conflict.slot2.id === slot.id
-                      );
-                      
-                      return (
-                        <AgendaCard
-                          key={slot.id}
-                          slot={slot}
-                          onEdit={handleEditSlot}
-                          onDelete={handleDeleteSlot}
-                          onStartInterview={handleStartInterview}
-                          onCreateMeetingLink={handleCreateMeetingLink}
-                          onJoinMeeting={handleJoinMeeting}
-                          isPast={new Date(slot.date) < new Date()}
-                          isInConflict={isInConflict}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ) : (
+            {viewMode === 'calendar' ? (
               <div className="agenda-calendar">
                 <AgendaCalendar
                   key={`calendar-${user?.timezone || 'Europe/Paris'}`}
@@ -1260,6 +1200,50 @@ const VirtualAgenda = ({ forum, accessToken, apiBaseUrl }) => {
                         }
                       }}
                 />
+              </div>
+            ) : (
+              <div className="agenda-list">
+                {filteredSlots.length === 0 ? (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: '3rem', 
+                    color: '#6b7280',
+                    background: '#f9fafb',
+                    borderRadius: '12px',
+                    border: '2px dashed #d1d5db',
+                    margin: '2rem 0'
+                  }}>
+                    <h3 style={{ marginBottom: '1rem', color: '#374151' }}>
+                      Aucun créneau dans la période d'entretiens
+                    </h3>
+                    <p style={{ fontSize: '1rem' }}>
+                      Ajoutez des créneaux d'entretien pour la période du {getInterviewStartDate().toLocaleDateString('fr-FR')} au {getInterviewEndDate().toLocaleDateString('fr-FR')}.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="agenda-cards-grid">
+                    {filteredSlots.map(slot => {
+                      // Vérifier si ce créneau est en conflit
+                      const isInConflict = conflicts.some(conflict => 
+                        conflict.slot1.id === slot.id || conflict.slot2.id === slot.id
+                      );
+                      
+                      return (
+                        <AgendaCard
+                          key={slot.id}
+                          slot={slot}
+                          onEdit={handleEditSlot}
+                          onDelete={handleDeleteSlot}
+                          onStartInterview={handleStartInterview}
+                          onCreateMeetingLink={handleCreateMeetingLink}
+                          onJoinMeeting={handleJoinMeeting}
+                          isPast={new Date(slot.date) < new Date()}
+                          isInConflict={isInConflict}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>

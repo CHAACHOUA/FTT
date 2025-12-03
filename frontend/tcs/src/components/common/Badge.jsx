@@ -101,7 +101,8 @@ const Badge = ({
     }
   };
 
-  const iconToUse = icon || getDefaultIcon();
+  // Si icon est explicitement null, ne pas utiliser l'icône par défaut
+  const iconToUse = icon === null ? null : (icon || getDefaultIcon());
   const text = children || getDefaultText();
 
   const handleClick = (e) => {

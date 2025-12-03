@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaArrowLeft, FaMapMarkerAlt, FaBriefcase, FaBuilding, FaUser, FaCalendarAlt, FaGlobe, FaPhone, FaEnvelope, FaUserTie, FaInfoCircle, FaHeart, FaShare } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaBriefcase, FaBuilding, FaUser, FaCalendarAlt, FaUserTie, FaInfoCircle, FaHeart, FaShare, FaClock } from 'react-icons/fa';
 import Navbar from './NavBar';
 import Loading from './Loading';
 import logo from '../../assets/Logo-FTT.png';
@@ -10,8 +11,9 @@ import './OfferDetail.css';
 // Imports conditionnels pour les espaces candidat et recruiter
 import CandidateSubMenu from '../../pages/candidate/Event/common/SubMenu';
 import RecruiterSubMenu from '../../pages/recruiter/event/common/SubMenu';
-import PersonCard from '../card/common/PersonCard';
+import CandidateApplicationPage from '../../pages/candidate/Event/virtual/CandidateApplicationPage';
 import '../../pages/styles/candidate/Dashboard.css';
+import axios from 'axios';
 
 const OfferDetail = () => {
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ const OfferDetail = () => {
   const [activeTab, setActiveTab] = useState('offres');
   const [forum, setForum] = useState(null);
   const [space, setSpace] = useState(null);
+  const [favoriteOfferIds, setFavoriteOfferIds] = useState([]);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
   useEffect(() => {
     // Récupérer les données depuis l'état de navigation uniquement
@@ -37,6 +41,28 @@ const OfferDetail = () => {
       navigate(-1);
     }
   }, [location.state, navigate]);
+
+  // Récupérer les favoris
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/list/`, {
+          withCredentials: true
+        });
+        const ids = response.data.map(offer => offer.id);
+        setFavoriteOfferIds(ids);
+        if (offer && ids.includes(offer.id)) {
+          setIsFavorite(true);
+        }
+      } catch (error) {
+        console.log('Aucun favori trouvé ou erreur:', error);
+        setFavoriteOfferIds([]);
+      }
+    };
+    if (space === 'candidate') {
+      fetchFavorites();
+    }
+  }, [space, offer]);
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -60,16 +86,6 @@ const OfferDetail = () => {
       .replace(/\//g, '&#x2F;');
   };
 
-  // Validation d'URL pour éviter les injections
-  const isValidUrl = (url) => {
-    if (!url) return false;
-    try {
-      const urlObj = new URL(url);
-      return ['http:', 'https:'].includes(urlObj.protocol);
-    } catch {
-      return false;
-    }
-  };
 
   const handleBack = () => {
     // Navigation conditionnelle selon l'espace
@@ -113,10 +129,42 @@ const OfferDetail = () => {
     }
   };
 
-  const handleToggleFavorite = () => {
-    // Logique pour ajouter/retirer des favoris
-    setIsFavorite(!isFavorite);
-    // Ici vous pouvez ajouter l'appel API pour sauvegarder les favoris
+  // Fonction pour construire l'URL des fichiers média
+  const getMediaUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    const mediaBaseUrl = process.env.REACT_APP_API_BASE_URL_MEDIA || 'http://localhost:8000';
+    return `${mediaBaseUrl}${url}`;
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!offer || space !== 'candidate') return;
+    
+    try {
+      const wasFavorite = favoriteOfferIds.includes(offer.id);
+      
+      if (wasFavorite) {
+        // Supprimer des favoris
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offer.id}/`, {
+          action: 'remove'
+        }, {
+          withCredentials: true
+        });
+        setFavoriteOfferIds(prev => prev.filter(id => id !== offer.id));
+        setIsFavorite(false);
+      } else {
+        // Ajouter aux favoris
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidates/favorites/${offer.id}/`, {
+          action: 'add'
+        }, {
+          withCredentials: true
+        });
+        setFavoriteOfferIds(prev => [...prev, offer.id]);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la gestion des favoris:', error);
+    }
   };
 
   const handleShare = () => {
@@ -141,152 +189,168 @@ const OfferDetail = () => {
   // Déterminer si on doit afficher le layout avec submenu
   const shouldShowSubmenu = (space === 'candidate' || space === 'recruiter') && forum;
 
-  // Contenu de l'offre
+  // Vérifier si c'est un forum virtuel ou hybride pour afficher le bouton postuler
+  const isVirtualOrHybrid = forum && (forum.type === 'virtuel' || forum.type === 'hybrid');
+  
+  // Contenu de l'offre avec le même design que CompanyDetail
   const offerContent = (
-    <div className="offer-detail-card">
-      {/* Header de l'offre */}
-      <div className="offer-detail-header">
-        <div className="offer-company-section">
-          <img
-            src={offer.company?.logo || logo}
-            alt={offer.company?.name || 'Entreprise'}
-            className="offer-company-logo"
-            onError={(e) => {
-              e.target.src = logo;
-            }}
-          />
-          <div className="offer-company-info">
-            <h1 className="offer-title" dangerouslySetInnerHTML={{ __html: sanitizeText(offer.title) }}></h1>
-            <div className="offer-company-name">
-              <FaBuilding className="icon" />
-              <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.company?.name || 'Entreprise non spécifiée') }}></span>
+    <div className="offer-detail-content-wrapper">
+      {/* Banner avec bloc offre et infos clés */}
+      <div className="offer-banner-section">
+        <div className="offer-banner-background">
+          {offer.company?.banner ? (
+            <img src={getMediaUrl(offer.company.banner)} alt="Banner" className="banner-image" />
+          ) : offer.company?.logo ? (
+            <div className="banner-placeholder" style={{ background: 'linear-gradient(135deg, #18386c 0%, #06b6d4 100%)' }}></div>
+          ) : null}
+        </div>
+        <div className="offer-banner-content">
+          {/* Bloc offre principal */}
+          <div className="offer-main-block">
+            <div className="offer-header-horizontal">
+              <div className="offer-logo-container-large">
+                <img
+                  src={offer.company?.logo ? getMediaUrl(offer.company.logo) : logo}
+                  alt={offer.company?.name || 'Entreprise'}
+                  className="offer-logo-large"
+                  onError={(e) => {
+                    e.target.src = logo;
+                  }}
+                />
+              </div>
+              <div className="offer-basic-info">
+                <h2 className="offer-name">{offer.title}</h2>
+                <div className="offer-company-name">
+                  <FaBuilding className="meta-icon" />
+                  <span>{offer.company?.name || 'Entreprise non spécifiée'}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Description */}
+            {offer.description && (
+              <div className="offer-description-section">
+                <h3 className="offer-description-title">Description</h3>
+                <div className="offer-description">
+                  {offer.description}
+                </div>
+              </div>
+            )}
+            
+            {/* Profil recherché */}
+            {offer.profile_recherche && (
+              <div className="offer-description-section">
+                <h3 className="offer-description-title">Profil recherché</h3>
+                <div className="offer-description">
+                  {offer.profile_recherche}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Bloc infos clés à droite */}
+          <div className="offer-key-info-section">
+            <h3 className="key-info-title">Informations clés</h3>
+            <div className="key-info-items">
+              {offer.location && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaMapMarkerAlt />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Localisation</div>
+                    <div className="key-info-value">{offer.location}</div>
+                  </div>
+                </div>
+              )}
+              {offer.contract_type && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaBriefcase />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Type de contrat</div>
+                    <div className="key-info-value">{offer.contract_type}</div>
+                  </div>
+                </div>
+              )}
+              {offer.sector && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaBuilding />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Secteur</div>
+                    <div className="key-info-value">{offer.sector}</div>
+                  </div>
+                </div>
+              )}
+              {offer.start_date && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaCalendarAlt />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Date de début</div>
+                    <div className="key-info-value">{formatDate(offer.start_date)}</div>
+                  </div>
+                </div>
+              )}
+              {offer.experience_display && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaClock />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Expérience</div>
+                    <div className="key-info-value">{offer.experience_display}</div>
+                  </div>
+                </div>
+              )}
+              {offer.recruiter && (offer.recruiter.first_name || offer.recruiter.last_name || offer.recruiter_name) && (
+                <div className="key-info-item">
+                  <div className="key-info-icon">
+                    <FaUserTie />
+                  </div>
+                  <div className="key-info-content">
+                    <div className="key-info-label">Recruteur</div>
+                    <div className="key-info-value">
+                      {offer.recruiter.first_name && offer.recruiter.last_name 
+                        ? `${offer.recruiter.first_name} ${offer.recruiter.last_name}`
+                        : offer.recruiter_name || 'Non spécifié'}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Actions */}
+            <div className="offer-actions-section">
+              {space === 'candidate' && (
+                <>
+                  <button 
+                    className={`offer-action-button favorite ${isFavorite ? 'active' : ''}`}
+                    onClick={handleToggleFavorite}
+                    title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                  >
+                    {isFavorite ? <FaHeart /> : <FaHeart style={{ opacity: 0.5 }} />}
+                    {isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                  </button>
+                  {isVirtualOrHybrid && (
+                    <button 
+                      className="offer-action-button apply"
+                      onClick={() => {
+                        setIsApplicationModalOpen(true);
+                      }}
+                    >
+                      Postuler
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
-        
-        {/* Actions */}
-        <div className="offer-actions">
-          <button 
-            className={`action-button favorite ${isFavorite ? 'active' : ''}`}
-            onClick={handleToggleFavorite}
-            title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-          >
-            <FaHeart />
-          </button>
-          <button 
-            className="action-button share"
-            onClick={handleShare}
-            title="Partager l'offre"
-          >
-            <FaShare />
-          </button>
-        </div>
-      </div>
-
-      {/* Métadonnées */}
-      <div className="offer-meta-grid">
-        {offer.location && (
-          <div className="offer-meta-item">
-            <FaMapMarkerAlt className="meta-icon" />
-            <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.location) }}></span>
-          </div>
-        )}
-        {offer.contract_type && (
-          <div className="offer-meta-item">
-            <FaBriefcase className="meta-icon" />
-            <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.contract_type) }}></span>
-          </div>
-        )}
-        {offer.sector && (
-          <div className="offer-meta-item">
-            <FaBuilding className="meta-icon" />
-            <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.sector) }}></span>
-          </div>
-        )}
-        {offer.start_date && (
-          <div className="offer-meta-item">
-            <FaCalendarAlt className="meta-icon" />
-            <span>Début : {formatDate(offer.start_date)}</span>
-          </div>
-        )}
-        {offer.salary && (
-          <div className="offer-meta-item">
-            <FaInfoCircle className="meta-icon" />
-            <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.salary) }}></span>
-          </div>
-        )}
-      </div>
-
-      {/* Description */}
-      <div className="offer-description-section">
-        <h3 className="section-title">
-          <FaInfoCircle className="section-icon" />
-          Description du poste
-        </h3>
-        <div className="offer-description" dangerouslySetInnerHTML={{ __html: sanitizeText(offer.description) }}>
-        </div>
-      </div>
-
-      {/* Informations sur l'entreprise */}
-      {offer.company && (
-        <div className="company-info-section">
-          <h3 className="section-title">
-            <FaBuilding className="section-icon" />
-            À propos de l'entreprise
-          </h3>
-          <div className="company-info-grid">
-            {offer.company.website && isValidUrl(offer.company.website) && (
-              <div className="company-info-item">
-                <FaGlobe className="info-icon" />
-                <a href={offer.company.website} target="_blank" rel="noopener noreferrer">
-                  {sanitizeText(offer.company.website)}
-                </a>
-              </div>
-            )}
-            {offer.company.email && (
-              <div className="company-info-item">
-                <FaEnvelope className="info-icon" />
-                <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.company.email) }}></span>
-              </div>
-            )}
-            {offer.company.phone && (
-              <div className="company-info-item">
-                <FaPhone className="info-icon" />
-                <span dangerouslySetInnerHTML={{ __html: sanitizeText(offer.company.phone) }}></span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Informations sur le recruteur */}
-      {offer.recruiter && (
-        <div className="recruiter-info-section">
-          <h3 className="section-title">
-            <FaUserTie className="section-icon" />
-            Contact recruteur
-          </h3>
-          <div className="recruiter-person-card-container">
-            <PersonCard
-              person={{
-                ...offer.recruiter,
-                company: offer.company,
-                company_name: offer.company?.name
-              }}
-              type="recruiter"
-              showActions={false}
-              showContact={false}
-              showView={false}
-              showSend={false}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Date de publication */}
-      <div className="offer-date-section">
-        <FaCalendarAlt className="date-icon" />
-        <span>Offre publiée le {formatDate(offer.created_at)}</span>
       </div>
     </div>
   );
@@ -306,40 +370,27 @@ const OfferDetail = () => {
             )}
           </div>
           <div className="candidate-main-content">
-            {/* Header avec bouton retour */}
-            <div className="company-detail-header">
-              <button 
-                className="back-button"
-                onClick={handleBack}
-              >
-                <FaArrowLeft />
-                Retour
-              </button>
-              <div className="forum-info">
-                <h1 className="company-detail-title" dangerouslySetInnerHTML={{ __html: sanitizeText(forum.name) }}></h1>
-                <div className="forum-date">
-                  <FaCalendarAlt className="date-icon" />
-                  {formatDate(forum.start_date)} - {formatDate(forum.end_date)}
-                </div>
-              </div>
-            </div>
-            
-            <div className="offer-detail-content">
+            <div className="offer-detail-content-wrapper">
               {offerContent}
             </div>
           </div>
         </div>
       ) : (
         // Layout simple pour les autres espaces
-        <div className="offer-detail-content">
-          {/* Bouton retour */}
-          <button onClick={handleBack} className="back-button">
-            <FaArrowLeft />
-            Retour
-          </button>
-          
+        <div className="offer-detail-content-wrapper">
           {offerContent}
         </div>
+      )}
+      
+      {/* Modal de candidature */}
+      {isApplicationModalOpen && offer && forum && createPortal(
+        <CandidateApplicationPage
+          isModal={true}
+          onClose={() => setIsApplicationModalOpen(false)}
+          offer={offer}
+          forum={forum}
+        />,
+        document.body
       )}
     </div>
   );

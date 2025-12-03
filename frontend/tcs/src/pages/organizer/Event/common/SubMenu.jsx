@@ -1,6 +1,6 @@
 // SubMenuOrganizer.js
 import React from "react";
-import { FaBuilding, FaCalendarAlt, FaEdit, FaBriefcase, FaUsers } from "react-icons/fa";
+import { FaBuilding, FaCalendarAlt, FaEdit, FaBriefcase, FaUsers, FaChartBar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./SubMenu.css";
 
@@ -47,11 +47,28 @@ const actions = [
   }
 ];
 
+// Actions spécifiques aux forums virtuels
+const virtualActions = [
+  {
+    label: "Statistiques",
+    desc: "Consultez les statistiques détaillées de votre forum virtuel",
+    icon: <FaChartBar size={48} />,
+    cardClass: "stats-card",
+    key: "statistics",
+    route: "/organizer/statistics"
+  }
+];
+
 export default function SubMenu({ forum, forumId, isAuthenticated, API }) {
   const navigate = useNavigate();
+  const isVirtualForum = forum?.type === 'virtuel' || forum?.is_virtual;
+  
+  // Combiner les actions normales avec les actions virtuelles si c'est un forum virtuel
+  const allActions = isVirtualForum ? [...actions, ...virtualActions] : actions;
+  
   return (
     <div className="dashboard-submenu">
-      {actions.map((action) => (
+      {allActions.map((action) => (
         <div
           key={action.label}
           className={`dashboard-action-card ${action.cardClass}`}
@@ -66,6 +83,8 @@ export default function SubMenu({ forum, forumId, isAuthenticated, API }) {
               navigate(action.route, { state: { forumId, apiBaseUrl: API } });
             } else if (action.key === "programmes") {
               navigate('/organizer/programmes', { state: { forum, forumId, apiBaseUrl: API } });
+            } else if (action.key === "statistics") {
+              navigate(action.route, { state: { forum, forumId, apiBaseUrl: API } });
             }
           }}
           style={{ cursor: "pointer" }}

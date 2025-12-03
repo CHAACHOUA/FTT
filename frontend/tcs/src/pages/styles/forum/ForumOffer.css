@@ -149,24 +149,35 @@
   border-color: #3b82f6;
 }
 
-/* Container des offres */
-.forum-offers-container {
-  display: grid;
-  grid-template-columns: 1fr;
+/* Container des offres - Style organisateur */
+.organizer-offers-grid {
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
   padding: 0 1rem;
+}
+
+.organizer-offers-grid > * {
+  flex: 0 0 320px;
+  width: 320px;
+  max-width: 100%;
 }
 
 /* Responsive */
 @media screen and (min-width: 768px) {
-  .forum-offers-container {
-    grid-template-columns: repeat(2, 1fr);
+  .organizer-offers-grid > * {
+    flex: 0 0 calc(50% - 0.75rem);
+    width: calc(50% - 0.75rem);
   }
 }
 
 @media screen and (min-width: 1024px) {
-  .forum-offers-container {
-    grid-template-columns: repeat(3, 1fr);
+  .organizer-offers-grid > * {
+    flex: 0 0 320px;
+    width: 320px;
   }
 }
 

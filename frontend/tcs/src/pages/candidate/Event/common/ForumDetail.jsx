@@ -9,7 +9,8 @@ import Logo from '../../../../assets/Logo-FTT.png';
 import Photo from '../../../../assets/forum-base.webp';
 import { Button, Input, Card, Badge } from '../../../../components/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle, faBuilding, faBriefcase, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faBuilding, faBriefcase, faArrowLeft, faComments } from '@fortawesome/free-solid-svg-icons';
+import ChatContainer from '../../../../components/chat/ChatContainer';
 
 const ForumDetail = () => {
   const { state } = useLocation();
@@ -127,6 +128,15 @@ const ForumDetail = () => {
               <FontAwesomeIcon icon={faBriefcase} size="lg" />
               <span>Offres</span>
             </div>
+            {forum?.is_virtual && (
+              <div
+                className={`forum-detail-tab ${activeTab === 'chat' ? 'active' : ''}`}
+                onClick={() => setActiveTab('chat')}
+              >
+                <FontAwesomeIcon icon={faComments} size="lg" />
+                <span>Messages</span>
+              </div>
+            )}
           </div>
 
           {/* Contenu */}
@@ -160,6 +170,12 @@ const ForumDetail = () => {
                   S'inscrire
                 </button>
               </div>
+            </div>
+          )}
+
+          {activeTab === 'chat' && forum?.is_virtual && (
+            <div className="forum-detail-chat" style={{ padding: '1rem', minHeight: '600px' }}>
+              <ChatContainer forumId={forum.id} />
             </div>
           )}
 

@@ -1,0 +1,609 @@
+/* Container principal */
+.interview-management-container {
+  padding: var(--space-lg);
+  background: #f8fafc;
+  min-height: 100vh;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.interview-management-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.interview-management-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.interview-management-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.interview-management-header p {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Grille principale en 4 parties */
+.interview-management-grid {
+
+  display: grid;
+  grid-template-columns: 13% 60% 25%;
+  grid-template-areas:
+    "progress board candidates"
+    "stats stats stats";
+  grid-template-rows: auto auto;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+/* ===== PARTIE 1 : PROGRESSION CIRCULAIRE ===== */
+.progress-section {
+  grid-area: progress;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 0 !important;
+  padding: var(--space-sm);
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: start;
+  min-height: 480px;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+  padding: 0;
+}
+
+/* Renforcer pour les trois sections demandées */
+.progress-section .section-title,
+.trello-section .section-title,
+.candidates-section .section-title {
+  font-size: 0.8rem;
+}
+
+.circular-progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+}
+
+.circular-progress {
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.progress-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-percentage {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3b82f6;
+  line-height: 1;
+}
+
+.progress-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #0b2862;
+  margin-top: 0.1rem;
+}
+
+.progress-stats-grid {
+  display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 0;
+}
+
+.progress-stat-item {
+  width: 90%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  min-width: 0;
+}
+
+.stat-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.scheduled {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.stat-icon.in-progress {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.stat-icon.completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.stat-icon.total {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.4rem;
+  color: #6b7280;
+  margin-top: 0.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+  line-height: 1.1;
+}
+
+/* ===== PARTIE 2 : TRELLO ===== */
+.trello-section {
+  grid-area: board;
+  background: white;
+  border-radius: 12px;
+  padding: var(--space-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column !important;
+  min-width: 0;
+  align-items: flex-start;
+  align-self: start;
+  min-height: 480px;
+}
+
+.trello-section .interview-board {
+  padding: 0;
+  background: transparent;
+  min-height: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.trello-section .board-header {
+  display: none;
+}
+
+.trello-section .board-columns {
+  display: flex !important;
+  flex-direction: row !important;
+  flex: 1;
+  min-height: 360px;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.trello-section .interview-card {
+  padding: 12px;
+}
+
+/* ===== PARTIE 3 : CANDIDATURES ===== */
+.candidates-section {
+  grid-area: candidates;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  max-height: 480px;
+  width: 100%;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: flex-start;
+  padding: var(--space-md);
+  align-self: start;
+}
+
+.candidates-section::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+
+.candidates-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 0 var(--space-md) 0;
+  gap: 0;
+  width: 100%;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.candidates-header .section-title {
+  margin: 0 0 6px 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* champs de recherche retiré du header */
+
+.candidates-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  padding-right: 0;
+  align-items: start;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+.candidates-grid::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important; /* Chrome, Safari, Opera */
+  background: transparent !important;
+}
+
+
+.empty-state-candidates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  text-align: center;
+  color: #6b7280;
+  flex: 1;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: var(--space-md);
+}
+
+.empty-state-candidates h3 {
+  font-size: 1.25rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-candidates p {
+  font-size: 0.875rem;
+}
+
+/* Styles pour la section candidat et offre sélectionnés */
+.selected-application-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Container pour le composant CandidateCard */
+.candidate-component-container {
+  width: 100%;
+}
+
+/* Réduire la taille de la card candidat et ajouter la même bordure supérieure que la card offre */
+.candidate-component-container .candidate-card {
+  transform: scale(0.85);
+  transform-origin: top left;
+  margin-bottom: -15%;
+  position: relative;
+  overflow: hidden;
+}
+
+.candidate-component-container .candidate-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+  z-index: 1;
+}
+
+/* Container pour le composant Offer */
+.offer-component-container {
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+.offer-component-container .interview-offer-component {
+  width: 100%;
+  margin: 0;
+}
+
+.offer-details-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.offer-details-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.offer-header-icon {
+  color: #3b82f6;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.offer-details-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.offer-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.offer-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+.offer-detail-item:hover {
+  background: #f1f5f9;
+}
+
+.offer-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offer-detail-icon {
+  color: #3b82f6;
+  font-size: 0.75rem;
+  width: 14px;
+  height: 14px;
+}
+
+.offer-detail-item strong {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-detail-value {
+  font-size: 0.85rem;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.offer-detail-item p.offer-detail-value {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+
+/* ===== PARTIE 4 : STATISTIQUES ===== */
+.stats-section {
+  grid-area: stats;
+  background: white;
+  border-radius: 12px;
+  padding: var(--space-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.stats-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: var(--space-md);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.stat-card-icon.blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.stat-card-icon.green {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.stat-card-icon.orange {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.stat-card-icon.purple {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.stat-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.stat-card-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.quick-info {
+  border-top: 1px solid #e5e7eb;
+  padding-top: var(--space-lg);
+}
+
+.quick-info-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: var(--space-md);
+}
+
+.quick-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.quick-info-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: #6b7280;
+  padding: var(--space-sm);
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.quick-info-icon {
+  color: #3b82f6;
+  font-size: 0.875rem;
+}
+
+/* Wrapper pour le chat */
+.chat-content-wrapper {
+  width: 100%;
+}
+
+.chat-content-wrapper .chat-container {
+  height: calc(100vh - 280px);
+  min-height: 400px;
+  max-width: 100%;
+  margin: 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}

@@ -34,6 +34,34 @@ html {
   color: #1f2a4d;
   cursor: pointer;
   transition: border-color 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.status-dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.status-dropdown option {
+  color: #1f2a4d !important;
+  background: white !important;
+  padding: 10px;
+}
+
+.status-dropdown option:checked,
+.status-dropdown option:focus,
+.status-dropdown option:hover {
+  color: #1f2a4d !important;
+  background: #f8fafc !important;
+}
+
+.status-dropdown option:disabled {
+  color: #9ca3af !important;
+  background: #f3f4f6 !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
 }
 .forum-badge {
   background-color: #e2e8f0;
@@ -749,3 +777,20 @@ a:hover .btn-seekube,
   align-items: center;
   border: 1px solid #fbbf24;
 }
+
+/* Forum type pill on registered card */
+.forum-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: fit-content;
+}
+.forum-type-icon { font-size: 0.85rem; }
+.forum-type-pill.type-virtual { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.forum-type-pill.type-hybrid { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.forum-type-pill.type-physical { background: #dcfce7; color: #065f46; border: 1px solid #bbf7d0; }

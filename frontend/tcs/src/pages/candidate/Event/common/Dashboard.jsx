@@ -11,6 +11,7 @@ import { Button, Input, Card, Badge } from '../../../../components/common';
 import CandidateApplications from '../virtual/CandidateApplications';
 import Loading from '../../../../components/loyout/Loading';
 import PopupQRCode from '../hybrid/PopupQRCode';
+import ChatContainer from '../../../../components/chat/ChatContainer';
 import '../../../../pages/styles/candidate/Dashboard.css';
 
 const Dashboard = () => {
@@ -58,7 +59,7 @@ const Dashboard = () => {
   if (!forum) return <p className="px-6">Forum introuvable.</p>;
 
   return (
-    <div className="dashboard-container" style={{ paddingTop: '120px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div className="dashboard-container" style={{ paddingTop: '50px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <Navbar />
       <div className="candidate-dashboard-layout">
         <div className="candidate-sidebar">
@@ -71,6 +72,11 @@ const Dashboard = () => {
             {activeTab === 'offres' && <ForumOffers companies={forum.companies} forum={forum} />}
             {activeTab === 'candidatures' && (
               <CandidateApplications forumId={forum.id} />
+            )}
+            {activeTab === 'chat' && (
+              <div style={{ padding: '1rem', minHeight: '600px' }}>
+                <ChatContainer forumId={forum.id} />
+              </div>
             )}
             {activeTab === 'plan' && <Plan companies={forum.companies} forumId={forum.id} />}
             {activeTab === 'partager' && (

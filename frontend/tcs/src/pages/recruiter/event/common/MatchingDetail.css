@@ -2,15 +2,15 @@
 .matching-detail-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-xl);
+  padding: var(--space-lg);
 }
 
 .matching-detail-card {
   background: white;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-  padding: 30px;
-  margin-bottom: 20px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 /* Header de matching */
@@ -18,8 +18,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
   border-bottom: 2px solid #f1f5f9;
 }
 
@@ -28,10 +28,10 @@
 }
 
 .matching-offer-title {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 10px 0;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
   line-height: 1.2;
 }
 
@@ -69,24 +69,24 @@
 
 .stats-number {
   display: block;
-  font-size: 1.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #1f2937;
 }
 
 .stats-label {
   display: block;
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-top: 4px;
+  font-size: 0.65rem;
+  color: #6b7280;
+  margin-top: 0.1rem;
 }
 
 /* Métadonnées de l'offre */
 .offer-meta-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
 .offer-meta-item {
@@ -106,19 +106,19 @@
 
 /* Section candidats */
 .candidates-section {
-  margin-bottom: 30px;
+  margin-bottom: var(--space-lg);
 }
 
 .section-title {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.5rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e2e8f0;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  padding: 0;
+  line-height: 1.2;
 }
 
 .section-icon {
@@ -176,10 +176,11 @@
 }
 
 .matching-candidate-name {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #1e293b;
-  margin: 0;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
 }
 
 .matching-sectors-container {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
@@ -244,13 +245,12 @@ const Offer = ({
     }
   };
 
-  return (
-    <>
-      <div 
-        className={`forum-offer-card ${className}`}
-        onClick={handleCardClick}
-        style={{ cursor: onClick ? 'pointer' : 'default' }}
-      >
+  const cardContent = (
+    <div 
+      className={`forum-offer-card ${className}`}
+      onClick={handleCardClick}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
+    >
       {/* Section Logo et Entreprise */}
       <div className="forum-offer-company-section">
         <img
@@ -275,41 +275,35 @@ const Offer = ({
         <h3 className="forum-offer-title">{offerData.title}</h3>
         <p className="forum-offer-description">{offerData.description}</p>
         
-        {/* Métadonnées avec icônes */}
+        {/* Métadonnées avec badges */}
         <div className="forum-offer-meta">
           {offerData.location && (
-            <div className="forum-offer-meta-item">
-              <MdLocationOn className="forum-offer-meta-icon" />
-              <span className="forum-meta-text">{offerData.location}</span>
-            </div>
+            <Badge type="sector" icon={null} className="forum-offer-meta-badge">
+              <FaMapMarkerAlt className="forum-offer-meta-badge-icon" />
+              <span>{offerData.location}</span>
+            </Badge>
           )}
           {offerData.contract_type && (
-            <div className="forum-offer-meta-item">
-              <FaBriefcase className="forum-offer-meta-icon" />
-              <span className="forum-meta-text">
-                <strong>Type :</strong> {offerData.contract_type}
-              </span>
-            </div>
+            <Badge type="sector" icon={null} className="forum-offer-meta-badge">
+              <FaBriefcase className="forum-offer-meta-badge-icon" />
+              <span>Type : {offerData.contract_type}</span>
+            </Badge>
           )}
           {offerData.experience_display && (
-            <div className="forum-offer-meta-item">
-              <FaClock className="forum-offer-meta-icon" />
-              <span className="forum-meta-text">
-                <strong>Expérience :</strong> {offerData.experience_display}
-              </span>
-            </div>
+            <Badge type="sector" icon={null} className="forum-offer-meta-badge">
+              <FaClock className="forum-offer-meta-badge-icon" />
+              <span>Expérience : {offerData.experience_display}</span>
+            </Badge>
           )}
           {offerData.start_date && (
-            <div className="forum-offer-meta-item">
-              <FaCalendar className="forum-offer-meta-icon" />
-              <span className="forum-meta-text">
-                <strong>Début :</strong> {new Date(offerData.start_date).toLocaleDateString('fr-FR', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
-              </span>
-            </div>
+            <Badge type="sector" icon={null} className="forum-offer-meta-badge">
+              <FaCalendar className="forum-offer-meta-badge-icon" />
+              <span>Début : {new Date(offerData.start_date).toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}</span>
+            </Badge>
           )}
           {offerData.status && offerData.status_display && (space === 'organizer' || space === 'recruiter') && (
             <div className="forum-offer-meta-item">
@@ -361,18 +355,22 @@ const Offer = ({
 
       {/* Actions */}
       {getActionButtons()}
-
     </div>
+  );
 
-    {/* Modal de candidature */}
-    {isApplicationModalOpen && (
-      <CandidateApplicationPage
-        isModal={true}
-        onClose={() => setIsApplicationModalOpen(false)}
-        offer={offerData}
-        forum={forum}
-      />
-    )}
+  // Rendre le modal via Portal pour qu'il soit au niveau racine du DOM
+  return (
+    <>
+      {cardContent}
+      {isApplicationModalOpen && createPortal(
+        <CandidateApplicationPage
+          isModal={true}
+          onClose={() => setIsApplicationModalOpen(false)}
+          offer={offerData}
+          forum={forum}
+        />,
+        document.body
+      )}
     </>
   );
 };

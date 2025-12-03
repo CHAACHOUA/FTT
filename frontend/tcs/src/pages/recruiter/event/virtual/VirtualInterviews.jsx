@@ -193,16 +193,7 @@ const VirtualInterviews = ({ forum, accessToken, apiBaseUrl }) => {
     >
       <div className="offers-list-wrapper">
         <div className="offers-list-content">
-          <div className="company-recruiters-header">
-            <h2 className="company-recruiters-title">Entretiens virtuels</h2>
-            <button 
-              className="invite-recruiter-btn"
-              onClick={() => setShowAddModal(true)}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              Programmer un entretien
-            </button>
-          </div>
+         
 
           <div className="interviews-filters">
             <div className="date-filter">

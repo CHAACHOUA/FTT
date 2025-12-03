@@ -65,19 +65,6 @@ export default function CandidateFilters({ filters, onChange, options }) {
 
   const filterSections = [
     {
-      name: 'RECHERCHE',
-      key: 'search',
-      content: (
-        <input
-          type="text"
-          placeholder="Nom, prénom ou email..."
-          value={filters.text || ''}
-          onChange={e => onChange({ ...filters, text: e.target.value })}
-          className="filter-input"
-        />
-      )
-    },
-    {
       name: 'TYPE DE CONTRAT',
       key: 'contract',
       content: (

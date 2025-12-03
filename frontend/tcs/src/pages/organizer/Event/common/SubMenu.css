@@ -39,6 +39,10 @@
 .programmes-card {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
+
+.stats-card {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
 .dashboard-action-card:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow: 0 6px 24px 0 rgba(80, 0, 120, 0.18);

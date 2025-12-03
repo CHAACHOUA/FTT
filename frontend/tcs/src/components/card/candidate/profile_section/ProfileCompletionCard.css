@@ -1,0 +1,106 @@
+/* ===== Profile Completion (Gamification) - Self-contained styles ===== */
+
+.profile-completion-card,
+.profile-content .profile-completion-card {
+  background: #fff;
+  border-radius: var(--radius-2xl);
+  margin: var(--space-xl) auto !important; /* force centering vs .card-* margins */
+  padding: 40px 36px 32px 36px;
+  width: 90% !important; /* override card size margins if any */
+  max-width: 1200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== Responsive (aligné sur Presentation) ===== */
+@media (max-width: 1024px) {
+  .profile-completion-card {
+    width: 95%;
+    padding: var(--space-3xl) 28px 24px 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-completion-card {
+    width: 100%;
+    margin: var(--space-lg) auto;
+    padding: var(--space-2xl) 20px 20px 20px;
+    border-radius: var(--radius-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-completion-card {
+    padding: var(--space-xl) 16px 16px 16px;
+    margin: var(--space-md) auto;
+  }
+}
+
+.completion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.completion-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.completion-percentage {
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.completion-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.completion-progress-bar {
+  flex: 1;
+  height: 12px;
+  background: #f3f4f6;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.completion-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+  transition: width 0.3s ease;
+}
+
+.completion-ratio {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.completion-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.completion-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-lg);
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+}
+
+.completion-check-icon.completed { color: #16a34a; }
+.completion-check-icon.pending { color: #ef4444; }
+
+.completion-trait-icon { color: #3b82f6; margin-right: 6px; }
+.completion-check-label { color: #374151; font-weight: 500; }
+
+

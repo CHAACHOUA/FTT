@@ -78,7 +78,7 @@
 .dashboard-kpi-card {
   background: transparent;
   border-radius: var(--radius-2xl);
-  padding: 28px 24px;
+  padding: 1.5rem;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -127,32 +127,32 @@
 
 .kpi-label {
   color: #000000;
-  font-size: 0.9rem;
-  margin-bottom: 12px;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .kpi-value {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   color: #000000;
   line-height: 1;
 }
 
 .kpi-icon {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 48px;
-  height: 48px;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

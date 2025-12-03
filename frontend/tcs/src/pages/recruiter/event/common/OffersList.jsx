@@ -125,7 +125,6 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
     setEditingOffer(null);
   };
 
-  if (loading) return <Loading />;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
@@ -134,10 +133,15 @@ const OffersList = ({ forum, accessToken, apiBaseUrl }) => {
       apiBaseUrl={apiBaseUrl}
       fallbackMessage="L'ajout d'offres n'est pas disponible car votre entreprise n'est pas encore approuvée pour ce forum."
     >
+      {loading && (
+        <div className="offers-list-loading-overlay">
+          <Loading />
+        </div>
+      )}
       <div className="offers-list-wrapper">
         <div className="offers-list-content">
           <div className="page-title-section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h1>Liste des Offres</h1>
                 <p>Gérez toutes vos offres d'emploi</p>

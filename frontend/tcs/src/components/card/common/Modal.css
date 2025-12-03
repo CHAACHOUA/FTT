@@ -364,8 +364,8 @@
 }
 
 .modal-btn-secondary:hover:not(:disabled) {
-  background: #e5e7eb;
-  transform: translateY(-1px);
+  background: #f3f4f6;
+  transform: none;
 }
 
 .modal-btn-success {
@@ -869,7 +869,5 @@ body:has(.modal-overlay) {
     border-color: #4b5563;
   }
   
-  .modal-btn-secondary:hover:not(:disabled) {
-    background: #4b5563;
-  }
+
 }

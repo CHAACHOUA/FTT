@@ -203,6 +203,12 @@
 .filled,
 .input-wrapper-modern input:focus + .floating-label,
 .input-wrapper-modern input:not(:placeholder-shown) + .floating-label,
+.input-wrapper-modern input[type="date"]:not([value=""]) + .floating-label,
+.input-wrapper-modern input[type="date"]:focus + .floating-label,
+.input-wrapper-modern input[type="datetime-local"]:not([value=""]) + .floating-label,
+.input-wrapper-modern input[type="datetime-local"]:focus + .floating-label,
+.input-wrapper-modern input[type="time"]:not([value=""]) + .floating-label,
+.input-wrapper-modern input[type="time"]:focus + .floating-label,
 .input-wrapper-modern select:focus + .floating-label,
 .input-wrapper-modern select:not([value=""]):not([value=""]) + .floating-label {
   top: 7px;
@@ -229,6 +235,23 @@
 .input-wrapper-modern input:focus,
 .input-wrapper-modern select:focus {
   background: #fff;
+}
+
+/* Masquer l'icône native du navigateur pour les champs date/datetime-local */
+.input-wrapper-modern input[type="date"]::-webkit-calendar-picker-indicator,
+.input-wrapper-modern input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.input-wrapper-modern input[type="date"]::-webkit-inner-spin-button,
+.input-wrapper-modern input[type="datetime-local"]::-webkit-inner-spin-button {
+  display: none;
 }
 .modern-select {
   -webkit-appearance: none;

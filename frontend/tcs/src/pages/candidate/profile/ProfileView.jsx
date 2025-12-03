@@ -21,6 +21,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../../components/loyout/Loading';
 import Navbar from '../../../components/loyout/NavBar';
 import { validateEducationDates } from '../../../utils/dateValidation';
+import ProfileCompletionCard from '../../../components/card/candidate/profile_section/ProfileCompletionCard';
 
 const ProfileView = () => {
 
@@ -187,6 +188,9 @@ const ProfileView = () => {
         <div className="profile-content">
         {!isSettingsPage ? (
           <>
+          
+            <ProfileCompletionCard formData={formData} />
+          
             <section>
               <UploadCV onUpload={handleCVUpload} formData={formData} />
             </section>

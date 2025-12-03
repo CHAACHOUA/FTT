@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faClock, faVideo, faMapMarkerAlt, faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import Badge from '../../common/Badge';
 import '../../../pages/styles/forum/ForumList.css';
 import defaultImage from '../../../assets/forum-base.webp';
@@ -60,9 +60,36 @@ const ForumCardRegistered = ({ forum, role }) => {
   };
 
   const isOngoing = () => {
+    if (!forum.end_date) return false;
+    
+    // Normaliser le format de la date (enlever l'heure si présente)
+    let dateStr = forum.end_date;
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+    
+    // Normaliser le format de l'heure (ajouter les secondes si manquantes)
+    let timeStr = '23:59:59';
+    if (forum.end_time) {
+      const timeParts = forum.end_time.split(':');
+      if (timeParts.length === 2) {
+        // Format HH:MM -> ajouter :00 pour les secondes
+        timeStr = `${timeParts[0]}:${timeParts[1]}:00`;
+      } else if (timeParts.length === 3) {
+        // Format HH:MM:SS -> utiliser tel quel
+        timeStr = forum.end_time;
+      }
+    }
+    
+    const endDateTime = new Date(`${dateStr}T${timeStr}`);
     const now = new Date();
-    const forumDate = new Date(forum.start_date);
-    return forumDate.setHours(0, 0, 0, 0) >= now.setHours(0, 0, 0, 0);
+    
+    // Vérifier que la date est valide
+    if (isNaN(endDateTime.getTime())) {
+      return false;
+    }
+    
+    return endDateTime >= now;
   };
 
   const formatDate = (date) => {
@@ -87,6 +114,17 @@ const ForumCardRegistered = ({ forum, role }) => {
   };
 
   const ongoing = isOngoing();
+
+  // Type de forum avec icône
+  const getTypeData = (type) => {
+    const mapping = {
+      virtuel: { icon: faVideo, label: 'Virtuel', cls: 'type-virtual' },
+      hybride: { icon: faExchangeAlt, label: 'Hybride', cls: 'type-hybrid' },
+      presentiel: { icon: faMapMarkerAlt, label: 'Présentiel', cls: 'type-physical' },
+    };
+    return mapping[type] || mapping.virtuel;
+  };
+  const typeData = getTypeData(forum?.type);
 
   // Déterminer le lien du dashboard en fonction du rôle
 const dashboardPath =
@@ -127,6 +165,10 @@ const dashboardPath =
           </div>
 
           <div className="forum-card-title">{forum.name}</div>
+          <div className={`forum-type-pill ${typeData.cls}`}>
+            <FontAwesomeIcon icon={typeData.icon} className="forum-type-icon" />
+            <span className="forum-type-label">{typeData.label}</span>
+          </div>
         </div>
 
         {ongoing && (

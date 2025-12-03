@@ -10,36 +10,38 @@
 }
 
 .company-recruiters-content {
-  padding: 2rem;
+  padding: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .company-recruiters-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
-  padding: 2rem 0;
+  margin-bottom: var(--space-lg);
+  padding: var(--space-lg) 0;
 }
 
 .company-recruiters-title {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #2b3a5a;
-  margin: 0;
-  letter-spacing: -0.03em;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
 .invite-recruiter-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: #ffffff;
   color: #3b82f6;
   border: 2px solid #3b82f6;
   border-radius: var(--radius-lg);
-  padding: var(--space-md) 20px;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: var(--space-sm) 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -55,8 +57,8 @@
 }
 
 .invite-recruiter-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .recruiters-grid {
@@ -73,7 +75,7 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 4px 20px rgba(24, 56, 108, 0.08);
   overflow: hidden;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-lg);
 }
 
 .members-table {
@@ -88,11 +90,11 @@
 }
 
 .members-table th {
-  padding: 1rem 1.5rem;
+  padding: var(--space-md) var(--space-lg);
   text-align: left;
   font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
+  color: #1f2937;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: relative;
@@ -118,7 +120,7 @@
 }
 
 .members-table td {
-  padding: 1rem 1.5rem;
+  padding: var(--space-md) var(--space-lg);
   vertical-align: middle;
 }
 
@@ -126,15 +128,15 @@
 .recruiter-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-sm);
   background: transparent;
   border: none;
   padding: 0;
 }
 
 .recruiter-avatar {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -142,12 +144,14 @@
   border: none;
   outline: none;
   box-shadow: none;
+  position: relative;
 }
 
 .recruiter-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
@@ -161,8 +165,10 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 400;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 50%;
+  letter-spacing: 0.02em;
   border: none;
 }
 
@@ -170,39 +176,45 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-xs);
+  min-width: 0;
+  overflow: visible;
 }
 
 .recruiter-name {
-  font-weight: 600;
+  font-weight: 400;
   color: #1f2937;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   margin: 0;
+  line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* Autres colonnes */
 .date-added {
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-align: center;
 }
 
 .last-login {
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-align: center;
 }
 
 .offers-count {
   font-weight: 600;
-  color: #374151;
+  color: #1f2937;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .email {
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 /* Actions dropdown */
@@ -219,10 +231,10 @@
 .actions-trigger {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: #6b7280;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: var(--space-sm);
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
 }
@@ -252,14 +264,14 @@
 .action-item {
   display: block !important;
   width: 100%;
-  padding: var(--space-md) 16px;
+  padding: var(--space-md) var(--space-md);
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  font-size: 0.9rem;
-  color: #374151;
+  font-size: 0.85rem;
+  color: #1f2937;
   border-bottom: 1px solid #f3f4f6;
   white-space: nowrap;
   user-select: none;
@@ -290,8 +302,8 @@
 }
 
 .action-icon {
-  font-size: 1.1rem;
-  width: 18px;
+  font-size: 0.85rem;
+  width: 16px;
   text-align: center;
   color: #6b7280;
   display: inline-block;
@@ -343,13 +355,13 @@
 }
 
 .recruiter-photo {
-  width: 70px;
-  height: 70px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   background-color: #f3f4f6;
-  border: 3px solid #ffffff;
-  box-shadow: 0 4px 16px rgba(24, 56, 108, 0.1);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(24, 56, 108, 0.1);
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
@@ -368,43 +380,43 @@
 }
 
 .recruiter-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #18386c;
-  margin: 0;
-  letter-spacing: -0.02em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
 }
 
 .recruiter-email {
-  font-size: 0.95rem;
-  color: #64748b;
+  font-size: 0.85rem;
+  color: #6b7280;
   margin: 0;
   word-break: break-all;
-  font-weight: 500;
-  background: rgba(24, 56, 108, 0.05);
-  padding: var(--space-xs) 8px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(24, 56, 108, 0.1);
+  font-weight: 400;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: none;
 }
 
 .recruiter-company {
-  font-size: 0.9rem;
-  color: #06b6d4;
+  font-size: 0.85rem;
+  color: #3b82f6;
   margin: 0;
-  font-weight: 600;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(24, 56, 108, 0.1) 100%);
-  padding: var(--space-xs) 12px;
-  border-radius: var(--radius-3xl);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  font-weight: 500;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: none;
 }
 
 /* Bloc informatif - Style KPI Dashboard Organizer */
 .members-info-block {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-top: 3rem;
-  padding-top: 2rem;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
   border-top: 2px solid #e2e8f0;
   position: relative;
 }
@@ -424,7 +436,7 @@
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
   border-radius: var(--radius-2xl);
-  padding: var(--space-2xl);
+  padding: var(--space-lg);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
@@ -448,33 +460,34 @@
 }
 
 .info-card h3 {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
-  margin: 0 0 16px 0;
+  color: #1f2937;
+  margin: 0 0 6px 0;
   display: flex;
   align-items: center;
   gap: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1.2;
 }
 
 .info-card p {
-  font-size: 0.95rem;
-  color: #4b5563;
-  margin: 10px 0;
-  line-height: 1.6;
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 .info-card strong {
-  color: #1e293b;
+  color: #1f2937;
   font-weight: 700;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
   padding: var(--space-xs) 8px;
   border-radius: var(--radius-md);
   border: 1px solid rgba(59, 130, 246, 0.2);
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 /* Styles spécifiques pour les candidatures */
@@ -552,13 +565,13 @@
 }
 
 .empty-title {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #374151;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
   margin-bottom: 0.5rem;
 }
 
 .empty-description {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #6b7280;
 }

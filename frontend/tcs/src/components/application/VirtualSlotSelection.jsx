@@ -12,7 +12,6 @@ const VirtualSlotSelection = ({
   hideActions = false
 }) => {
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list' ou 'calendar'
 
   // Filtrer les slots pour l'offre spécifique
   const filteredSlots = React.useMemo(() => {
@@ -95,12 +94,35 @@ const VirtualSlotSelection = ({
       }
       grouped[date].push(slot);
     });
+    // Trier les slots par heure dans chaque groupe
+    Object.keys(grouped).forEach(date => {
+      grouped[date].sort((a, b) => {
+        if (a.start_time && b.start_time) {
+          return a.start_time.localeCompare(b.start_time);
+        }
+        return 0;
+      });
+    });
     return grouped;
   };
 
   const handleSlotClick = (slot) => {
-    setSelectedSlot(slot);
+    // Si le créneau est déjà sélectionné, le désélectionner
+    if (selectedSlot?.id === slot.id) {
+      setSelectedSlot(null);
+      // Si hideActions est true, appeler onSelect avec null pour désélectionner
+      if (hideActions) {
+        onSelect(null);
+      }
+    } else {
+      setSelectedSlot(slot);
+      // Si hideActions est true, appeler automatiquement onSelect pour sauvegarder la sélection
+      if (hideActions) {
+        onSelect(slot);
+      }
+    }
   };
+
 
   const handleConfirm = () => {
     if (selectedSlot) {
@@ -139,45 +161,30 @@ const VirtualSlotSelection = ({
       <div className="slot-selection-header">
         <h3>Sélection du créneau</h3>
         <p>Choisissez un créneau disponible pour votre entretien</p>
-        <div className="availability-info">
-          <span className="available-indicator">✅</span>
-          <span>Seuls les créneaux disponibles sont affichés</span>
-        </div>
-        
-        <div className="view-toggle">
-          <button 
-            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-            onClick={() => setViewMode('list')}
-          >
-            <FaUser /> Liste
-          </button>
-          <button 
-            className={`toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
-            onClick={() => setViewMode('calendar')}
-          >
-            <FaCalendar /> Calendrier
-          </button>
-        </div>
       </div>
 
-      {viewMode === 'list' ? (
-        <div className="slots-list">
-          {Object.entries(groupedSlots).map(([date, daySlots]) => (
-            <div key={date} className="day-group">
-              <h4>{formatDate(daySlots[0].date)}</h4>
-              <div className="day-slots">
+      <div className="slots-cards-container">
+        {Object.entries(groupedSlots).map(([date, daySlots]) => {
+          const dayName = formatDate(daySlots[0].date);
+          
+          return (
+            <div key={date} className="slots-day-section">
+              <h4 className="slots-day-title">{dayName}</h4>
+              <div className="slots-cards-grid">
                 {daySlots.map(slot => (
                   <div 
                     key={slot.id} 
-                    className={`slot-item ${selectedSlot?.id === slot.id ? 'selected' : ''}`}
+                    className={`slot-card ${selectedSlot?.id === slot.id ? 'selected' : ''}`}
                     onClick={() => handleSlotClick(slot)}
                   >
-                    <div className="slot-time">
-                      <FaClock />
-                      {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
-                    </div>
-                    <div className="slot-duration">
-                      {getSlotDuration(slot.start_time, slot.end_time)} min
+                    <div className="slot-card-header">
+                      <div className="slot-time">
+                        <FaClock />
+                        {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+                      </div>
+                      <div className="slot-duration">
+                        {getSlotDuration(slot.start_time, slot.end_time)} min
+                      </div>
                     </div>
                     <div className="slot-type">
                       {slot.slot_type || 'Entretien'}
@@ -192,33 +199,9 @@ const VirtualSlotSelection = ({
                 ))}
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="slots-calendar">
-          {/* Version simplifiée du calendrier */}
-          <div className="calendar-grid">
-            {Object.entries(groupedSlots).map(([date, daySlots]) => (
-              <div key={date} className="calendar-day">
-                <div className="day-header">
-                  {formatDate(daySlots[0].date)}
-                </div>
-                <div className="day-slots">
-                  {daySlots.map(slot => (
-                    <div 
-                      key={slot.id} 
-                      className={`calendar-slot ${selectedSlot?.id === slot.id ? 'selected' : ''}`}
-                      onClick={() => handleSlotClick(slot)}
-                    >
-                      {formatTime(slot.start_time)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
 
       {selectedSlot && (
         <div className="selected-slot-info">

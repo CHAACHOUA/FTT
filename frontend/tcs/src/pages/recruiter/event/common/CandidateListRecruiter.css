@@ -10,15 +10,15 @@
 .recruiter-header-block {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-lg);
 }
 
 .candidates-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto 32px auto;
-  padding: 2rem;
+  margin: 0 auto var(--space-lg) auto;
+  padding: var(--space-lg);
   background: #f8fafc;
   border: 1px solid #e9ecef;
   border-radius: var(--radius-xl);
@@ -28,16 +28,16 @@
 }
 
 .header-left h1 {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #212529;
+  color: #1f2937;
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.02em;
 }
 
 .header-left p {
-  font-size: 1rem;
-  color: #6c757d;
+  font-size: 0.85rem;
+  color: #6b7280;
   margin: 0;
   font-weight: 400;
 }
@@ -51,24 +51,23 @@
 .export-candidates-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: var(--space-md) 20px;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
-  border: none;
+  gap: 6px;
+  padding: var(--space-sm) 16px;
+  background: #ffffff;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   border-radius: var(--radius-lg);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .export-candidates-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
 }
 
 .export-candidates-btn:active {
@@ -76,11 +75,12 @@
 }
 
 .export-candidates-btn svg {
-  font-size: 1.1rem;
+  width: 14px;
+  height: 14px;
 }
 
 .kpi-section {
-  margin: 0 auto 1rem auto;
+  margin: 0;
   padding: 0 32px;
   width: 100%;
 }
@@ -97,7 +97,7 @@
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
   border-radius: var(--radius-2xl);
-  padding: 1.5rem;
+  padding: 1.25rem;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -122,7 +122,7 @@
 }
 
 .kpi-label {
-  font-size: 0.875rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
@@ -130,10 +130,10 @@
 }
 
 .kpi-value {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
+  color: #1f2937;
+  margin-bottom: 0.4rem;
 }
 
 .kpi-icon {
@@ -164,7 +164,7 @@
 
 .candidates-wrapper {
   margin: 0;
-  padding: 1.5rem;
+  padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);
   width: 100%;
 }
 
@@ -177,10 +177,10 @@
 }
 
 .candidates-filters {
-  flex: 0 0 250px;
+  flex: 0 0 220px;
   background: #f9fafb;
   border-radius: var(--radius-xl);
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid #e5e7eb;
   height: fit-content;
   position: sticky;
@@ -196,10 +196,11 @@
 }
 
 .candidates-main h2 {
-  font-size: 1.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #111827;
-  margin-bottom: 1.5rem;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
 }
 
 .cards-container {
@@ -223,12 +224,12 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--radius-xl);
-  padding: 1.5rem;
+  padding: 0.75rem;
   transition: all 0.3s ease;
   cursor: pointer;
   flex: 1;
-  min-width: 300px;
-  max-width: 400px;
+  min-width: 200px;
+  max-width: 300px;
   position: relative;
 }
 
@@ -238,8 +239,8 @@
 }
 
 .candidate-photo {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -263,28 +264,64 @@
 }
 
 .candidate-info {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.candidate-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.candidate-name-row h3 {
+  flex: 1;
+  margin: 0;
+}
+
+.cv-download-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #3b82f6;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+
+.cv-download-inline:hover {
+  background: #dbeafe;
+  color: #2563eb;
+  transform: scale(1.1);
 }
 
 .candidate-info h3 {
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
 }
 
 /* Style amélioré pour le nom des recruteurs */
-.candidate-card .candidate-info h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.8rem 0;
-  letter-spacing: -0.025em;
+.candidate-card .candidate-info .candidate-name-row h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
 }
 
 .candidate-info p {
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   margin: 0;
 }
 
@@ -325,7 +362,7 @@
   color: #1e40af;
   padding: var(--space-xs) 8px;
   border-radius: var(--radius-lg);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
   display: inline-block;
   white-space: nowrap;
@@ -563,7 +600,7 @@
 .candidate-card {
   background: #ffffff;
   border-radius: var(--radius-2xl);
-  padding: 1.5rem;
+  padding: 1rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -601,8 +638,8 @@
 }
 
 .candidate-photo img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   border: none;
@@ -610,8 +647,8 @@
 }
 
 .default-avatar {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border: none;
   border-radius: 50%;
   background: transparent;
@@ -622,16 +659,29 @@
   min-width: 0;
 }
 
+.candidate-info .candidate-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.candidate-info .candidate-name-row h3 {
+  flex: 1;
+  margin: 0;
+}
+
 .candidate-info h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #1f2937;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.3;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
 }
 
 .candidate-info p {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: #6b7280;
   margin: 0.25rem 0;
 }
@@ -648,7 +698,7 @@
   color: #1e40af;
   padding: var(--space-xs) 8px;
   border-radius: var(--radius-lg);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
   display: inline-block;
   white-space: nowrap;
@@ -688,6 +738,8 @@
   transition: all 0.3s ease;
   cursor: pointer;
   font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
 }
 
 .cv-download:hover {

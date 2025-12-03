@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import { Button, Card, Badge, Input } from '../../../components/common';
+import '../../../pages/styles/recruiter/CompanyProfile.css';
 
 const Sectors = ({ sectors, onUpdate, readOnly }) => {
   const handleChange = (index, value) => {
@@ -52,7 +53,7 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
               fontSize: 16,
               borderRadius: 9,
               border: '1.2px solid #b5c6d6',
-              background: '#f9fbfd',
+              background: '#fff',
               transition: 'border-color 0.2s',
               outline: 'none'
             }}
@@ -62,7 +63,7 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
             }}
             onBlur={(e) => {
               e.target.style.borderColor = '#b5c6d6';
-              e.target.style.background = '#f9fbfd';
+              e.target.style.background = '#fff';
             }}
           />
           {!readOnly && (
@@ -88,29 +89,12 @@ const Sectors = ({ sectors, onUpdate, readOnly }) => {
         <button
           type="button"
           onClick={handleAdd}
+          className="btn-add-sector"
           style={{
-            marginTop: 10,
-            background: '#ffffff',
-            color: '#3b82f6',
-            padding: '12px 20px',
-            border: '2px solid #3b82f6',
-            borderRadius: 8,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            fontWeight: 600,
-            fontSize: '1rem',
-            transition: 'all 0.3s ease',
-            gap: 8
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)';
+            marginTop: 10
           }}
         >
-          <FaPlus style={{ marginRight: 6 }} /> Ajouter un secteur
+          <FaPlus /> Ajouter un secteur
         </button>
       )}
     </div>
